@@ -255,6 +255,11 @@ Buffs: {
 		DisplayName: Стойкость
 		Description: Очки обороны и нападения могут естественно восстанавливаться до максимума
 	}
+
+	GuardianVoidQuarterstaffBuff: {
+		// Description: Void Rush
+		// DisplayName: 150% increased Echoing Lotus attack speed
+	}
 }
 
 AlchemistRecipe: {
@@ -3180,6 +3185,75 @@ Items: {
 		// Tooltip: ""
 		// DisplayName: Ice Gauntlet
 	}
+
+	ToyWarhammers: {
+		// DisplayName: The Big Honkers
+		// Tooltip: Lets you dual wield a pair of very squeaky hammers
+	}
+
+	ThoriumValadiumWarhammer: {
+		// DisplayName: Thorium Valadium Warhammer
+		/* Tooltip:
+			'''
+			Damage will blast enemies with inter-dimensional energy
+			Right click after throwing to make the hammer pull nearby enemies towards its center, costing a slam
+			Blocking will also periodically gravitate all nearby enemies towards the hammer's center
+			''' */
+	}
+
+	ThoriumLodestoneWarhammer: {
+		// DisplayName: Lodestone Crusher
+		/* Tooltip:
+			'''
+			Affected by gravity when thrown
+			Right click after throwing to make the hammer crash down to earth, costing 3 slams
+			Damage will sunder enemies, increasing the damage they take by 10%
+			''' */
+	}
+
+	ThoriumGeodeVeinhammer: {
+		// DisplayName: Geode Veinhammer
+		/* Tooltip:
+			'''
+			Charged throw hits can mine blocks
+			Mining power scales with the strongest pickaxe in your inventory 
+			''' */
+		// PickaxePower: Pickaxe power: {0}%
+		// PickaxePowerNone: Pickaxe power: N/A
+	}
+
+	ThoriumVoidQuarterstaff: {
+		// DisplayName: Echoing Lotus
+		/* Tooltip:
+			'''
+			Swing to warp to an enemy in line of sight, increasing melee speed dramatically
+			Hold UP or DOWN to control knockback trajectory
+			''' */
+	}
+
+	ThoriumNagaQuarterstaff: {
+		// DisplayName: Thorium Naga Quarterstaff
+		/* Tooltip:
+			'''
+			Fully charge while underwater to propel yourself to your cursor, ending in a massive full sweep attack
+			Counterattacks release bubbles around you
+			''' */
+	}
+
+	ThoriumConcentratedThoriumQuarterstaff: {
+		// DisplayName: Leyline
+		// Tooltip: Fully charging creates a damage-sharing link between enemies
+	}
+
+	ThoriumBoreanStriderQuarterstaff: {
+		// DisplayName: Frost Walker
+		// Tooltip: ""
+	}
+
+	ThoriumDreadGauntlet: {
+		// DisplayName: Dread Reaper's Claw
+		// Tooltip: ""
+	}
 }
 
 NPCs: {
@@ -3629,6 +3703,8 @@ Projectiles: {
 	SurfaceFireShamanProjectile.DisplayName: Ивовый огонёк
 	// IceGauntletProjectile.DisplayName: Ice Gauntlet Projectile
 	// IceGauntletProjectileShard.DisplayName: Ice Gauntlet Projectile Shard
+	// ToyWarhammerProjectile.DisplayName: Toy Warhammer Projectile
+	// ThoriumVoidQuarterstaffProjectile.DisplayName: Thorium Void Quarterstaff Projectile
 }
 
 Configs: {

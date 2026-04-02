@@ -12,7 +12,7 @@ using Terraria.UI;
 namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
 
     [CrossmodContent("ThoriumMod")]
-    public class LodestoneWarhammer : OrchidModGuardianHammer
+    public class ThoriumLodestoneWarhammer : OrchidModGuardianHammer
     {
     
         private static Mod ThoriumMod => ModLoader.GetMod("ThoriumMod");
@@ -92,23 +92,6 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
                         }
                     } 
                 }
-                else if (anchor.BlockDuration > 0 && anchor.BlockDuration <= BlockDuration - 10)
-                {
-                    // Logarithmically decreases chance of firing a projectile per block
-                    int logCalc = (int)(50 - 49*Math.Log(anchor.BlockDuration)/Math.Log(BlockDuration - 10));
-                    if (Main.rand.NextBool(logCalc + 1))
-                    {
-                        Projectile.NewProjectile(
-                            projectile.GetSource_FromAI(),
-                            projectile.position,
-                            -Vector2.UnitX.RotatedBy(MathHelper.TwoPi*Main.rand.NextFloat()) * Main.rand.NextFloat(2.5f, 7.5f),
-                            ThoriumMod.Find<ModProjectile>("LodestoneStaffPro5").Type, 
-                            (int)(projectile.damage * logCalc / 20f), 
-                            projectile.knockBack, 
-                            projectile.owner
-                        );
-                    }
-                }
             }
         }
 
@@ -123,18 +106,26 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
 
         public override void OnThrowHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak)
         {
-            target.AddBuff(ThoriumSunderedDebuff.Type, 240);
-            if (!Weak) DoBlastStuff(projectile, (int)projectile.ai[2] == 1, target);
+            if (OrchidMod.ThoriumMod != null) {
+                int debuffType = OrchidMod.ThoriumMod.Find<ModBuff>("Sundered").Type;
+                target.AddBuff(debuffType, 180);
+            }
         }
 
         public override void OnMeleeHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool FullyCharged)
         {
-            target.AddBuff(ThoriumSunderedDebuff.Type, 150);
+            if (OrchidMod.ThoriumMod != null) {
+                int debuffType = OrchidMod.ThoriumMod.Find<ModBuff>("Sundered").Type;
+                target.AddBuff(debuffType, 150);
+            }
         }
 
         public override void OnBlockHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit)
         {
-            target.AddBuff(ThoriumSunderedDebuff.Type, 90);
+            if (OrchidMod.ThoriumMod != null) {
+                int debuffType = OrchidMod.ThoriumMod.Find<ModBuff>("Sundered").Type;
+                target.AddBuff(debuffType, 90);
+            }
         }
 
         public override void OnThrowTileCollide(Player player, OrchidGuardian guardian, Projectile projectile, Vector2 oldVelocity)
@@ -144,12 +135,16 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             DoBlastStuff(projectile, (int)projectile.ai[2] == 1);
         }
 
+        
         public override void AddRecipes()
         {
-            CreateRecipe()
+            var thoriumMod = OrchidMod.ThoriumMod;
+            if (thoriumMod != null) {
+                CreateRecipe()
                 .AddTile(TileID.MythrilAnvil)
-                .AddIngredient(ThoriumMod, "LodeStoneIngot", 12)
+                .AddIngredient(thoriumMod, "LodeStoneIngot", 12)
                 .Register();
+            }
         }
 
         private static void DoBlastStuff(Projectile projectile, bool uberCharged, NPC hitTarget = null)
