@@ -11,16 +11,8 @@ using Terraria.ModLoader;
 namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
 
     [CrossmodContent("ThoriumMod")]
-    public class ValadiumWarhammer : OrchidModGuardianHammer
+    public class ThoriumValadiumWarhammer : OrchidModGuardianHammer
     {
-    
-        private static Mod ThoriumMod => ModLoader.GetMod("ThoriumMod");
-        private static ModBuff ThoriumLightCurseDebuff => ThoriumMod.Find<ModBuff>("LightCurse");
-
-        public override bool IsLoadingEnabled(Mod mod)
-        {
-            return ModLoader.HasMod("ThoriumMod");
-        }
 
         public override void SafeSetDefaults()
         {
@@ -108,25 +100,37 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
 
         public override void OnThrowHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak)
         {
-            target.AddBuff(ThoriumLightCurseDebuff.Type, 180);
+            if (OrchidMod.ThoriumMod != null) {
+                int debuffType = OrchidMod.ThoriumMod.Find<ModBuff>("LightCurse").Type;
+                target.AddBuff(debuffType, 180);
+            }
         }
 
         public override void OnMeleeHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool FullyCharged)
         {
-            target.AddBuff(ThoriumLightCurseDebuff.Type, 150);
+            if (OrchidMod.ThoriumMod != null) {
+                int debuffType = OrchidMod.ThoriumMod.Find<ModBuff>("LightCurse").Type;
+                target.AddBuff(debuffType, 150);
+            }
         }
 
         public override void OnBlockHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit)
         {
-            target.AddBuff(ThoriumLightCurseDebuff.Type, 90);
+            if (OrchidMod.ThoriumMod != null) {
+                int debuffType = OrchidMod.ThoriumMod.Find<ModBuff>("LightCurse").Type;
+                target.AddBuff(debuffType, 90);
+            }
         }
 
         public override void AddRecipes()
         {
-            CreateRecipe()
+            var thoriumMod = OrchidMod.ThoriumMod;
+            if (thoriumMod != null) {
+                CreateRecipe()
                 .AddTile(TileID.MythrilAnvil)
-                .AddIngredient(ThoriumMod, "ValadiumIngot", 12)
+                .AddIngredient(thoriumMod, "ValadiumIngot", 12)
                 .Register();
+            }
         }
         
         private static void GravitateNPCs(Vector2 target, float power = 30f, float maxDistance = 250f, float dustRingRadius = 60f, NPC excluded = null)
