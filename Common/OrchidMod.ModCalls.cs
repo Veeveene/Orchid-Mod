@@ -1,11 +1,15 @@
-﻿using OrchidMod.Common;
+﻿using Microsoft.Xna.Framework.Graphics;
+using OrchidMod.Common;
 using OrchidMod.Content.General.NPCs.Town;
 using OrchidMod.Content.Guardian;
 using OrchidMod.Content.Guardian.Weapons.Warhammers;
 using OrchidMod.Content.Shapeshifter;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using ReLogic.Content;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace OrchidMod
@@ -55,6 +59,49 @@ namespace OrchidMod
 				coloreddamagetypes.Call("AddDamageType", ModContent.GetInstance<GuardianDamageClass>(), (165, 130, 100), (198, 172, 146), (155, 109, 85));
 				coloreddamagetypes.Call("AddDamageType", ModContent.GetInstance<ShapeshifterDamageClass>(), (100, 175, 150), (120, 195, 170), (43, 132, 101));
 			}
+		}
+
+		private static void RecipeBrowserModCalls() 
+		{
+			if (ModLoader.TryGetMod("RecipeBrowser", out Mod recipeBrowser) && !Main.dedServ) 
+			{
+				Main.QueueMainThreadAction(() =>
+					{
+						var utilities = recipeBrowser.Code.GetType("RecipeBrowser.Utilities");
+						var method = utilities?.GetMethod("ResizeImage", BindingFlags.Static | BindingFlags.NonPublic);
+						if (method != null)
+						{
+							// Call RecipeBrowser's "ResizeImage" method to scale down Grond to a 24x24 asset
+							Asset<Texture2D> classWeaponIcon = (Asset<Texture2D>)method?.Invoke(null, [ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/Weapons/Warhammers/GoldWarhammer"), 24, 24]);
+							Asset<Texture2D> classToolIcon = (Asset<Texture2D>)method?.Invoke(null, [ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/Weapons/Standards/CopperStandard"), 24, 24]);
+
+							
+							// The item category creation call itself, using the resized Grond asset as the icon
+							recipeBrowser.Call("AddItemCategory", "Guardian", "Weapons", classWeaponIcon, (Predicate<Item>)(item =>
+								{
+									if (!item.accessory && item.damage > 0 && item?.ModItem is not OrchidModGuardianStandard)
+										return item.CountsAsClass<GuardianDamageClass>() || item.DamageType == ModContent.GetInstance<GuardianDamageClass>();
+									return false;
+								})
+							);
+							
+							recipeBrowser.Call("AddItemCategory", "Guardian", "Tools", classToolIcon, (Predicate<Item>)(item =>
+								{
+									if (!item.accessory)
+										return item?.ModItem is OrchidModGuardianStandard;
+									return false;
+								})
+							);
+						}
+					}
+				);
+			}
+		}
+
+		private void WikiThisModCalls() 
+		{
+			if (!Main.dedServ && ModLoader.TryGetMod("WikiThis", out Mod wikiThis))			
+				wikiThis.Call("AddModURL", this, "https://terrariamods.wiki.gg/wiki/Orchid_Mod");
 		}
 	}
 }
