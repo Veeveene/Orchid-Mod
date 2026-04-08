@@ -3284,11 +3284,10 @@ Items: {
 		Tooltip: ""
 	}
 
-
 	GuardianWizardLegs: {
 		DisplayName: Thaumic Fortress Greaves
-		Tooltip: 
-			'''	
+		Tooltip:
+			'''
 			Increases maximum guards by 1, and maximum mana by 40
 			12% increased movement speed
 			Enemies are more likely to target you		
@@ -3310,14 +3309,14 @@ Items: {
 
 	GuardianWizardHead: {
 		DisplayName: Thaumic Fortress Helmet
-		Tooltip: 
+		Tooltip:
 			'''
 			Increases maximum slams by 1, and maximum mana by 40
 			Slowly regenerates guards, slams, and mana over time
 			Enemies are more likely to target you
 			'Looks like something a thaumaturge would wear'
 			'''
-		SetBonus: 
+		SetBonus:
 			'''
 			Picking up Guardian or Mage resource items has a chance to regenerate the other class' resource
 			Running out of mana while using a mage weapon spends a slam to refill it

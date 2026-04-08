@@ -48,7 +48,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Gauntlets
 			Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
 			frame.Height /= 2;
 			frame.Y += frame.Height * MageMode;
-			spriteBatch.Draw(texture, position, frame, drawColor, 0f, frame.Size() * 0.5f, scale * 10f, SpriteEffects.None, 0f);
+			spriteBatch.Draw(texture, position, frame, drawColor, 0f, frame.Size() * 0.5f, scale * 2f, SpriteEffects.None, 0f);
 			return false;
 		}
 

@@ -3195,9 +3195,9 @@ Items: {
 		// DisplayName: Thorium Valadium Warhammer
 		/* Tooltip:
 			'''
-			Damage will blast enemies with inter-dimensional energy
 			Right click after throwing to make the hammer pull nearby enemies towards its center, costing a slam
-			Blocking will also periodically gravitate all nearby enemies towards the hammer's center
+			Blocking will periodically gravitate nearby enemies towards the center
+			Damage will blast enemies with inter-dimensional energy
 			''' */
 	}
 
@@ -3285,27 +3285,44 @@ Items: {
 		// Tooltip: ""
 	}
 
+	GuardianWizardLegs: {
+		// DisplayName: Thaumic Fortress Greaves
+		/* Tooltip:
+			'''
+			Increases maximum guards by 1, and maximum mana by 40
+			12% increased movement speed
+			Enemies are more likely to target you		
+			'Looks like something a thaumaturge would wear'
+			''' */
+	}
+
 	GuardianWizardChest: {
 		// DisplayName: Thaumic Fortress Chest
 		/* Tooltip:
 			'''
+			Increases maximum guards and slams by 1, and maximum mana by 60
+			8% increased melee and casting speed
 			10% increased opposing and magic damage
-			Increases maximum guards by 2 and slams by 1
-			Increases maximum mana by 60
 			Enemies are more likely to target you
 			'Looks like something a thaumaturge would wear'
 			''' */
 	}
 
-	GuardianWizardLegs: {
-		// Tooltip: ""
-		// DisplayName: Guardian Wizard Legs
-	}
-
 	GuardianWizardHead: {
-		// Tooltip: ""
-		// DisplayName: Guardian Wizard Head
-		// SetBonus: Mods.OrchidMod.Items.GuardianWizardHead.SetBonus
+		// DisplayName: Thaumic Fortress Helmet
+		/* Tooltip:
+			'''
+			Increases maximum slams by 1, and maximum mana by 40
+			Slowly regenerates guards, slams, and mana over time
+			Enemies are more likely to target you
+			'Looks like something a thaumaturge would wear'
+			''' */
+		/* SetBonus:
+			'''
+			Picking up Guardian or Mage resource items has a chance to regenerate the other class' resource
+			Running out of mana while using a mage weapon spends a slam to refill it
+			Running out of guards or slams while using an opposing weapons spends mana to refill them
+			''' */
 	}
 }
 
