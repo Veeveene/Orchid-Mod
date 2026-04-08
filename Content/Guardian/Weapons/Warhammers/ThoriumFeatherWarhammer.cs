@@ -107,10 +107,10 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			var thoriumMod = OrchidMod.ThoriumMod;
 			if (thoriumMod != null)
 			{
-				var recipe = CreateRecipe();
-				recipe.AddTile(thoriumMod, "ArcaneArmorFabricator");
-				recipe.AddIngredient(ItemID.Feather, 7);
-				recipe.Register();
+				CreateRecipe()
+				.AddTile(thoriumMod, "ArcaneArmorFabricator")
+				.AddIngredient(ItemID.Feather, 7)
+				.Register();
 			}
 		}
 	}

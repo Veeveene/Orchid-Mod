@@ -254,7 +254,7 @@ Buffs: {
 
 	GuardianVoidQuarterstaffBuff: {
 		Description: Void Rush
-		DisplayName: 150% increased Echoing Lotus attack speed
+		DisplayName: 150% increased Flux Ripper attack speed
 	}
 }
 
@@ -3194,9 +3194,9 @@ Items: {
 		DisplayName: Thorium Valadium Warhammer
 		Tooltip:
 			'''
-			Damage will blast enemies with inter-dimensional energy
 			Right click after throwing to make the hammer pull nearby enemies towards its center, costing a slam
-			Blocking will also periodically gravitate all nearby enemies towards the hammer's center
+			Blocking will periodically gravitate nearby enemies towards the center
+			Damage will blast enemies with inter-dimensional energy
 			'''
 	}
 
@@ -3222,7 +3222,7 @@ Items: {
 	}
 
 	ThoriumVoidQuarterstaff: {
-		DisplayName: Echoing Lotus
+		DisplayName: Flux Ripper
 		Tooltip:
 			'''
 			Swing to warp to an enemy in line of sight, increasing melee speed dramatically
@@ -3252,6 +3252,77 @@ Items: {
 	ThoriumDreadGauntlet: {
 		DisplayName: Dread Reaper's Claw
 		Tooltip: ""
+	}
+
+	ThoriumGuardianTitanHead: {
+		DisplayName: Titan Greathelm
+		Tooltip:
+			'''
+			'Infused with primordial energy'
+			8% increased melee speed
+			Slowly regenerates guards and slams over time
+			Increases maximum guards and slams by 1
+			Enemies are more likely to target you
+			'''
+		SetBonus: Damage done increased by 18%
+	}
+
+	ThoriumDemonBloodGauntlet: {
+		DisplayName: Demon Blood Blaster
+		Tooltip:
+			'''
+			Slam projectiles or rapidly approach enemies to deflect them
+			Deflecting consumes a guard, grants a slam and restores 20 life
+			Dealing damage will grant you a blood charge
+			At maximum charges, your next attack will deal 2x damage and heal you for 20% of the damage dealt
+			'Blood is fuel'
+			'''
+	}
+
+	WizardGauntlet: {
+		DisplayName: Wizard Gauntlet
+		Tooltip: ""
+	}
+
+
+	GuardianWizardLegs: {
+		DisplayName: Thaumic Fortress Greaves
+		Tooltip: 
+			'''	
+			Increases maximum guards by 1, and maximum mana by 40
+			12% increased movement speed
+			Enemies are more likely to target you		
+			'Looks like something a thaumaturge would wear'
+			'''
+	}
+
+	GuardianWizardChest: {
+		DisplayName: Thaumic Fortress Chest
+		Tooltip:
+			'''
+			Increases maximum guards and slams by 1, and maximum mana by 60
+			8% increased melee and casting speed
+			10% increased opposing and magic damage
+			Enemies are more likely to target you
+			'Looks like something a thaumaturge would wear'
+			'''
+	}
+
+	GuardianWizardHead: {
+		DisplayName: Thaumic Fortress Helmet
+		Tooltip: 
+			'''
+			Increases maximum slams by 1, and maximum mana by 40
+			Slowly regenerates guards, slams, and mana over time
+			Enemies are more likely to target you
+			'Looks like something a thaumaturge would wear'
+			'''
+		SetBonus: 
+			'''
+			Picking up Guardian or Mage resource items has a chance to regenerate the other class' resource
+			Running out of mana while using a mage weapon spends a slam to refill it
+			Running out of guards or slams while using an opposing weapons spends mana to refill them
+			'''
 	}
 }
 
@@ -3704,6 +3775,7 @@ Projectiles: {
 	IceGauntletProjectileShard.DisplayName: Ice Gauntlet Projectile Shard
 	ToyWarhammerProjectile.DisplayName: Toy Warhammer Projectile
 	ThoriumVoidQuarterstaffProjectile.DisplayName: Thorium Void Quarterstaff Projectile
+	ThoriumDemonBloodGauntletProjectile.DisplayName: Thorium Demon Blood Gauntlet Projectile
 }
 
 Configs: {
