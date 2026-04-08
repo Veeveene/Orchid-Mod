@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using OrchidMod.Common.Attributes;
 using OrchidMod.Common.ModObjects;
+using OrchidMod.Common;
 using OrchidMod.Utilities;
 using OrchidMod.Content.Guardian.Buffs;
 using Terraria.Audio;
@@ -16,9 +17,6 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 	[CrossmodContent("ThoriumMod")]
 	public class ThoriumVoidQuarterstaff : OrchidModGuardianQuarterstaff
 	{
-		public NPC HitNPC;
-		public int StaleHitCount;
-
 		public static Texture2D TextureAura;
 		public override void SetStaticDefaults()
 		{
@@ -35,13 +33,12 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			ParryDuration = 120;
 			Item.knockBack = 6f;
 			Item.damage = 150;
+			JabChargeGain = 0.25f;
 			SlamStacks = 2;
 			SwingStyle = 2;
 			JabSpeed = 1.0f;
 			SwingSpeed = 1.2f;
-
-			HitNPC = null;
-			StaleHitCount = 0;
+			CounterSpeed = 1.0f;
 		}
 
 		public override void SafeHoldItem(Player player)
@@ -50,44 +47,36 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			{
 				JabSpeed = 0.1667f;
 				SwingSpeed = 0.2f;
+				CounterSpeed = 0.1667f;
 
 			}
 			else {
 				JabSpeed = 1.0f;
 				SwingSpeed = 1.2f;
+				CounterSpeed = 1.0f;
 			}
 		}
 
 		public override void ExtraAIQuarterstaff(Player player, OrchidGuardian guardian, Projectile projectile)
 		{
-        	Vector2 tipPosition = projectile.Center - Vector2.UnitY.RotatedBy(projectile.rotation + MathHelper.PiOver4) * projectile.width * 0.5f;
-			if (player.direction == 1) tipPosition.X -= 12;
+			if (projectile.ModProjectile is GuardianQuarterstaffAnchor anchor) {
+				Vector2 tipPosition = projectile.Center - Vector2.UnitY.RotatedBy(projectile.rotation + MathHelper.PiOver4) * projectile.width * 0.4f;
+				if (player.direction == 1) tipPosition.X -= 12;
 
-			projectile.localAI[0]--;
-			if (projectile.localAI[0] < 0) projectile.localAI[0] = 0;
+				projectile.localAI[0]--;
+				if (projectile.localAI[0] < 0) projectile.localAI[0] = 0;
 
-			if (OrchidMod.ThoriumMod != null && Main.rand.NextBool(10))
-			{
-				int dustType = OrchidMod.ThoriumMod.Find<ModDust>("VoidHeartDust").Type;
-				Dust.NewDustDirect(tipPosition, 16, 16, dustType);
-			}
-			if (guardian.GuardianItemCharge >= 180f && projectile.ai[0] is 0 or 1)
-			{
-				Vector2 velocity = Vector2.UnitY.RotatedBy((player.Center - Main.MouseWorld).ToRotation() + MathHelper.PiOver2);
-				
-				for (int i = 0; i < 600; i++) 
+				if (OrchidMod.ThoriumMod != null && Main.rand.NextBool(10))
 				{
-					Vector2 point = player.Center + velocity * i;
-
-					NPC hitEnemy = Main.npc.FirstOrDefault(npc => npc.active && npc.whoAmI < Main.maxNPCs && !npc.friendly && Collision.CheckAABBvAABBCollision(point, player.Hitbox.Size(), npc.position, npc.Hitbox.Size()));
-					Tile hitTile = Framing.GetTileSafely((int)(point.X / 16f), (int)(point.Y / 16));
-					if (hitEnemy != null || (hitTile.HasTile && Main.tileSolid[hitTile.TileType] && !Main.tileSolidTop[hitTile.TileType])) break;
+					int dustType = OrchidMod.ThoriumMod.Find<ModDust>("VoidHeartDust").Type;
+					Dust.NewDustDirect(tipPosition, 16, 16, dustType);
 				}
-			}
-
-			if (HitNPC != null && !HitNPC.active) {
-				HitNPC = null;
-				// StaleHitCount = 0;
+				if (player.HasBuff<GuardianVoidQuarterstaffBuff>() && guardian.GuardianItemCharge >= 180f && !anchor.Ding)
+				{ // Try to fix sound cue not working consistently while supercharged
+					anchor.Ding = true;
+					if (ModContent.GetInstance<OrchidClientConfig>().GuardianAltChargeSounds) SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, player.Center);
+					else SoundEngine.PlaySound(SoundID.MaxMana, player.Center);
+				}
 			}
 		}
 
@@ -107,7 +96,9 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 
 				int dustType = OrchidMod.ThoriumMod.Find<ModDust>("VoidHeartDust").Type;
 
-				for (int i = 0; i < 10; i++) Dust.NewDustDirect(player.Center, 24, 24, dustType);
+				for (int i = 0; i < 10; i++) {
+					Dust.NewDustDirect(player.Center, 24, 24, dustType, Scale: 3f);
+				}
 
 				int distance = 0;
 				for (int i = 0; i < 600; i++) 
@@ -141,63 +132,50 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			{
                 int debuffType = OrchidMod.ThoriumMod.Find<ModBuff>("LightCurse").Type;
 				target.AddBuff(debuffType, jabAttack ? 45 : 180);
-
-				// if (player.HasBuff(ModContent.BuffType<GuardianVoidQuarterstaffBuff>()) && HitNPC != null) 
-				// {
-				// 	if (target.whoAmI == HitNPC.whoAmI)
-				// 		hit.Damage = (int)(hit.Damage * (float)Math.Max(0.8f - 0.05f * StaleHitCount, 0.25f));
-				// }
 			}
 		}
 
 		public override void OnHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, NPC.HitInfo hit, bool jabAttack, bool counterAttack)
 		{
-			if (!jabAttack && OrchidMod.ThoriumMod != null)
+			var thoriumMod = OrchidMod.ThoriumMod;
+			if (!jabAttack && thoriumMod != null)
 			{
-                int debuffType = OrchidMod.ThoriumMod.Find<ModBuff>("LightCurse").Type;
+                int debuffType = thoriumMod.Find<ModBuff>("LightCurse").Type;
 				target.AddBuff(debuffType, 180);
 				if (!counterAttack) {
+					player.AddBuff(ModContent.BuffType<GuardianVoidQuarterstaffBuff>(), 240);	
+
 					if (projectile.localAI[0] > 0 && !player.immune) {
-						player.GetModPlayer<OrchidPlayer>().PlayerImmunity = 45;
-						player.immuneTime = 45;
+						player.GetModPlayer<OrchidPlayer>().PlayerImmunity = 40;
+						player.immuneTime = 40;
 						player.immune = true;
+						projectile.localAI[0] = 0;
 					}
-					player.AddBuff(ModContent.BuffType<GuardianVoidQuarterstaffBuff>(), 180);
-					// SoundEngine.PlaySound(SoundID.Item103);
-					
+									
 
 					float launchAngle = 45f;
-					float launchPower = 15f;
+					float launchPower = 13.5f;
 					bool reduceGain = player.controlDown;
 					bool increaseGain = player.controlUp;
 					if (player.gravDir == -1) (reduceGain, increaseGain) = (increaseGain, reduceGain);
 
-					if (reduceGain) {
-						launchAngle -= 22.5f;
-					}
-					else if (increaseGain) {
-						launchAngle += 22.5f; 
-					}
+					if (reduceGain) launchAngle -= 22.5f;
+					else if (increaseGain) launchAngle += 22.5f; 
 
 					player.velocity.Y = -launchPower * (float)Math.Sin(MathHelper.ToRadians(launchAngle)) * player.gravDir;
 					if (player.direction == 1)
 						player.velocity.X = -launchPower * (float)Math.Cos(MathHelper.ToRadians(launchAngle));
 					else
 						player.velocity.X = launchPower * (float)Math.Cos(MathHelper.ToRadians(launchAngle));
-					HitNPC = target;
 
-					// if (player.HasBuff(ModContent.BuffType<GuardianVoidQuarterstaffBuff>()) && HitNPC != null)  
-					// {
-					// 	if (target.whoAmI == HitNPC.whoAmI)
-					// 	{
-					// 		hit.Damage = (int)(hit.Damage * (float)Math.Max(0.8f - 0.05f * StaleHitCount, 0.25f));
-					// 		StaleHitCount++;
-					// 		CombatText.NewText(projectile.getRect(), Color.DarkRed, StaleHitCount);
-					// 	}
-					// 	else StaleHitCount = 0;
-					// }
-
+					if (player.HasBuff(ModContent.BuffType<GuardianVoidQuarterstaffBuff>()))
+						SpawnVoidDaggers(player, target, guardian.GetGuardianDamage(Item.damage * 0.015f));
 				} 
+				else 
+				{
+					for (int i = 0; i < (player.HasBuff(ModContent.BuffType<GuardianVoidQuarterstaffBuff>()) ? 5 : 3); i++) 
+						SpawnVoidDaggers(player, target, guardian.GetGuardianDamage(Item.damage * 0.012f));
+				}
 			}
 		}
 
@@ -231,6 +209,10 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 						break;
 					}
 
+					Tile hitTile = Framing.GetTileSafely((int)(point.X / 16f), (int)(point.Y / 16));
+					if (hitTile.HasTile && Main.tileSolid[hitTile.TileType] && !Main.tileSolidTop[hitTile.TileType])
+						break;
+
 				}
 
 				spriteBatch.End();
@@ -260,6 +242,18 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 				.AddIngredient(ItemID.Shadewood, 60)
 				.Register();
 			}
+		}
+
+		public void SpawnVoidDaggers(Player player, NPC target, int damage) 
+		{
+			var thoriumMod = OrchidMod.ThoriumMod;
+			if (thoriumMod == null) return;
+			int projType = thoriumMod.Find<ModProjectile>("WrithingSheathPro").Type;
+			float maxDimension = Math.Max(target.width / 2f, target.height / 2f);
+			
+			Vector2 direction =  Vector2.UnitX.RotatedBy(Main.rand.NextFloat(-MathHelper.Pi * 12.5f / 9f, MathHelper.Pi * 12.5f / 9f));
+			Projectile proj = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), target.Center + direction * (maxDimension + 60), Vector2.Zero, projType, damage, 4f, Main.myPlayer, target.whoAmI);
+			proj.DamageType = ModContent.GetInstance<GuardianDamageClass>();
 		}
 	}
 }
