@@ -3320,56 +3320,11 @@ Items: {
 			'''
 			Slam projectiles or rapidly approach enemies to deflect them
 			Deflecting consumes a guard, grants a slam and restores 20 life
-			Dealing damage will grant you a blood charge
-			At maximum charges, your next attack will deal 2x damage and heal you for 20% of the damage dealt
 			'Blood is fuel'
 			'''
 	}
 
-	WizardGauntlet: {
-		DisplayName: Wizard Gauntlet
-		Tooltip: ""
-	}
-
-	GuardianWizardLegs: {
-		DisplayName: Thaumic Fortress Greaves
-		Tooltip:
-			'''
-			Increases maximum guards by 1, and maximum mana by 40
-			12% increased movement speed
-			Enemies are more likely to target you		
-			'Looks like something a thaumaturge would wear'
-			'''
-	}
-
-	GuardianWizardChest: {
-		DisplayName: Thaumic Fortress Chest
-		Tooltip:
-			'''
-			Increases maximum guards and slams by 1, and maximum mana by 60
-			8% increased melee and casting speed
-			10% increased opposing and magic damage
-			Enemies are more likely to target you
-			'Looks like something a thaumaturge would wear'
-			'''
-	}
-
-	GuardianWizardHead: {
-		DisplayName: Thaumic Fortress Helmet
-		Tooltip:
-			'''
-			Increases maximum slams by 1, and maximum mana by 40
-			Slowly regenerates guards, slams, and mana over time
-			Enemies are more likely to target you
-			'Looks like something a thaumaturge would wear'
-			'''
-		SetBonus:
-			'''
-			Picking up Guardian or Mage resource items has a chance to regenerate the other class' resource
-			Running out of mana while using a mage weapon spends a slam to refill it
-			Running out of guards or slams while using an opposing weapons spends mana to refill them
-			'''
-	}
+	
 }
 
 NPCs: {
