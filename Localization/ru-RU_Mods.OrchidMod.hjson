@@ -3290,7 +3290,8 @@ Items: {
 		/* Tooltip:
 			'''
 			Increases maximum guards by 1, and maximum mana by 40
-			12% increased movement speed
+			8% increased movement speed
+			10% reduced mana cost
 			Enemies are more likely to target you		
 			'Looks like something a thaumaturge would wear'
 			''' */
