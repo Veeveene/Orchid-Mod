@@ -139,12 +139,14 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             
             int index = tooltips.FindIndex(ttip => ttip.Mod == "Terraria" && ttip.Name == "Tooltip1");
             
+            int bestPickPower = 0;
             Item bestPick = Main.LocalPlayer?.GetBestPickaxe();
+            if (bestPick != null && bestPick?.pick > 0) bestPickPower = bestPick.pick;
             string TooltipToGet = Mod.GetLocalizationKey("Items.ThoriumGeodeVeinhammer.PickaxePowerNone");
-            if (bestPick != null && bestPick.pick > 0) TooltipToGet = Mod.GetLocalizationKey("Items.ThoriumGeodeVeinhammer.PickaxePower");
+            if (bestPickPower > 0) TooltipToGet = Mod.GetLocalizationKey("Items.ThoriumGeodeVeinhammer.PickaxePower");
 
-            string text = Language.GetText(TooltipToGet).Format(bestPick.pick);
-            if (Main.keyState.PressingShift()) text += string.Format(" ({0} [i:{1}])", bestPick.Name, bestPick.type);
+            string text = Language.GetText(TooltipToGet).Format(bestPickPower);
+            if (bestPick != null && Main.keyState.PressingShift()) text += string.Format(" ({0} [i:{1}])", bestPick.Name, bestPick.type);
 
             tooltips.Insert(index + 1, new TooltipLine(Mod, "VeinhammerPickPower", text));
         }

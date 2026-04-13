@@ -3272,17 +3272,17 @@ Items: {
 		DisplayName: Flux Ripper
 		Tooltip:
 			'''
-			Swing to warp to an enemy in line of sight, increasing melee speed dramatically
+			Slam to warp to an enemy in line of sight, increasing melee speed dramatically
 			Hold UP or DOWN to control knockback trajectory
 			'''
 	}
 
 	ThoriumNagaQuarterstaff: {
-		DisplayName: Thorium Naga Quarterstaff
+		DisplayName: Serpent's Riptide
 		Tooltip:
 			'''
+			Jab is replaced by a powerful sweep
 			Fully charge while underwater to propel yourself to your cursor, ending in a massive full sweep attack
-			Counterattacks release bubbles around you
 			'''
 	}
 
@@ -3323,8 +3323,6 @@ Items: {
 			'Blood is fuel'
 			'''
 	}
-
-	
 }
 
 NPCs: {
@@ -3781,6 +3779,7 @@ Projectiles: {
 	ToyWarhammerProjectile.DisplayName: Toy Warhammer Projectile
 	ThoriumVoidQuarterstaffProjectile.DisplayName: Thorium Void Quarterstaff Projectile
 	ThoriumDemonBloodGauntletProjectile.DisplayName: Thorium Demon Blood Gauntlet Projectile
+	ThoriumNagaQuarterstaffProjectile.DisplayName: Thorium Naga Quarterstaff Projectile
 }
 
 Configs: {
