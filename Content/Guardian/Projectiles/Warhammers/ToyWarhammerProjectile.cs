@@ -6,6 +6,7 @@ using OrchidMod.Content.Guardian.Weapons.Warhammers;
 using OrchidMod.Utilities;
 using ReLogic.Content;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
@@ -29,7 +30,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Warhammers
 		public List<int> BlockedNPCs;
 
 		public bool returning = false;
-        public Projectile MainAnchor;
+        public Projectile MainProjectile;
 		public ToyWarhammers HammerItem;
 		public Texture2D HammerTexture = ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/Weapons/Warhammers/ToyWarhammers_Hammer", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
@@ -76,6 +77,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Warhammers
 			Player player = Main.player[Projectile.owner];
 			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
 			Item item = player.inventory[player.selectedItem];
+			MainProjectile = Main.projectile.FirstOrDefault(proj => proj != null && proj.whoAmI < Main.maxProjectiles && proj.active && proj.owner == Main.myPlayer && proj.type == ModContent.ProjectileType<GuardianHammerAnchor>());
 
 			if (item == null || item.ModItem is not ToyWarhammers hammerItem)
 			{
@@ -263,23 +265,8 @@ namespace OrchidMod.Content.Guardian.Projectiles.Warhammers
 					}
 					else
 					{
-						if (Projectile.owner == Main.myPlayer)
-						{
-							if (Main.MouseWorld.X > owner.Center.X && owner.direction != 1) owner.ChangeDir(1);
-							else if (Main.MouseWorld.X < owner.Center.X && owner.direction != -1) owner.ChangeDir(-1);
-						}
-
-						owner.itemAnimation = 1;
 						Projectile.timeLeft = 600;
 						Projectile.spriteDirection = -owner.direction;
-						owner.heldProj = Projectile.whoAmI;
-
-						if (guardian.GuardianItemCharge >= 180f && !Ding)
-						{
-							Ding = true;
-							if (ModContent.GetInstance<OrchidClientConfig>().GuardianAltChargeSounds) SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, owner.Center);
-							else SoundEngine.PlaySound(SoundID.MaxMana, owner.Center);
-						}
 
 						if (Projectile.ai[1] == 0)
 						{
@@ -293,14 +280,8 @@ namespace OrchidMod.Content.Guardian.Projectiles.Warhammers
 							Vector2 armPosition = owner.GetBackHandPosition(Player.CompositeArmStretchAmount.Full, MathHelper.Pi - guardian.GuardianItemCharge * 0.006f * Projectile.spriteDirection) - (new Vector2(owner.Center.X, owner.Center.Y) - new Vector2(owner.Center.X, owner.Center.Y).Floor());
 							Projectile.Center = armPosition - new Vector2(((hitboxOffset + hammerItem.HoldOffset) * 2 + 0.3f * guardian.GuardianItemCharge + (float)Math.Sin(MathHelper.Pi / 210f * guardian.GuardianItemCharge) * 10f) * owner.direction * 0.4f, ((hitboxOffset + hammerItem.HoldOffset) * 2 - (hitboxOffset + hammerItem.HoldOffset) * 0.014f * guardian.GuardianItemCharge) * 0.4f);
 
-							if (guardian.GuardianItemCharge < 210f)
-							{
-								guardian.GuardianItemCharge += 30f / HammerItem.Item.useTime * owner.GetTotalAttackSpeed(DamageClass.Melee);
 
-								if (guardian.GuardianItemCharge > 210f) guardian.GuardianItemCharge = 210f;
-							}
-
-							if (owner.whoAmI == Main.myPlayer)
+							if (owner.whoAmI == Main.myPlayer && CheckMainProjectile() && ((MainProjectile.ai[1] < 0) || (MainProjectile.ModProjectile as GuardianHammerAnchor).range > 0))
 							{
 								if (!owner.controlUseItem)
 								{
@@ -312,7 +293,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Warhammers
 										Projectile.NewProjectile(owner.GetSource_ItemUse(owner.boneGloveItem), center.X, center.Y, vector.X, vector.Y, ProjectileID.BoneGloveProj, 25, 5f, owner.whoAmI);
 									}
 
-									if (guardian.GuardianItemCharge > 10f || hammerItem.CannotSwing)
+									if (guardian.GuardianItemCharge > 10f)
 									{ // Hammer is charged enough to be thrown (or can't be thrown)
 										Projectile.ai[1] = 1;
 
@@ -339,7 +320,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Warhammers
 										Projectile.netUpdate = true;
 									}
 								}
-								else if (Main.mouseRight && !hammerItem.CannotSwing && MainAnchor != null && MainAnchor.active && MainAnchor.owner == Main.myPlayer && MainAnchor.type == ModContent.ProjectileType<GuardianHammerAnchor>())
+								else if (Main.mouseRight)
 								{
 									if (owner.boneGloveItem != null && !owner.boneGloveItem.IsAir && owner.boneGloveTimer == 0)
 									{ // Bone glove compatibility, from vanilla code
@@ -630,7 +611,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Warhammers
 			writer.Write(BlockDuration);
             
 
-			int index = (MainAnchor != null && MainAnchor.active && MainAnchor.owner == Main.myPlayer && MainAnchor.type == ModContent.ProjectileType<GuardianHammerAnchor>() ? MainAnchor.whoAmI : 255); 
+			int index = (CheckMainProjectile() ? MainProjectile.whoAmI : 255); 
 			writer.Write((byte)index);
 		}
 
@@ -643,8 +624,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Warhammers
 			var index = reader.Read();
 			if (index != -1 && index < Main.maxProjectiles) {
 				var proj = Main.projectile[index];
-				if (proj != null && proj.active && proj.owner == Main.myPlayer && proj.type == ModContent.ProjectileType<GuardianHammerAnchor>())
-					MainAnchor = proj;
+				if (CheckMainProjectile()) MainProjectile = proj;
 			}
 
 			if (HammerItem == null)
@@ -670,6 +650,9 @@ namespace OrchidMod.Content.Guardian.Projectiles.Warhammers
 				}
 			}
 		}
+
+		public bool CheckMainProjectile() => MainProjectile != null && MainProjectile.active && MainProjectile.owner == Main.myPlayer && MainProjectile.type == ModContent.ProjectileType<GuardianHammerAnchor>();
+
 
 		public override bool OrchidPreDraw(SpriteBatch spriteBatch, ref Color lightColor)
 		{

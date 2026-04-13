@@ -32,7 +32,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             Item.UseSound = SoundID.DD2_MonkStaffSwing;
             Item.knockBack = 10f;
             Item.shootSpeed = 16f;
-            Item.damage = 162;
+            Item.damage = 225;
             Item.useTime = 30;
             Range = 300; // really high so that hammer can potentially hit the ground if you do something silly like launch it from 200ft in the air 
             GuardStacks = 1;
@@ -109,6 +109,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             if (OrchidMod.ThoriumMod != null) {
                 int debuffType = OrchidMod.ThoriumMod.Find<ModBuff>("Sundered").Type;
                 target.AddBuff(debuffType, 180);
+                if (projectile.ModProjectile is GuardianHammerAnchor anchor && anchor.range <= 285) DoBlastStuff(projectile, (int)projectile.ai[2] == 1);
             }
         }
 
@@ -151,14 +152,14 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
         {
             if (projectile.active && projectile.ModProjectile is GuardianHammerAnchor anchor)
             {
-                int verticalOffset = 40;
+                int verticalOffset = 8;
                 if (hitTarget != null) verticalOffset += (int)(hitTarget.height * 0.5f);
                 
                 // We only want the big explosion if the hammer was fully charged before Ultra Smashing
                 // (this may or may not already be covered for in ExtraAI() but it's good to be sure)
                 int blastProjType = uberCharged && anchor.Ding ? ThoriumMod.Find<ModProjectile>("LodestoneStaffPro4").Type : ThoriumMod.Find<ModProjectile>("LodestoneStaffPro2").Type;
                 // Boom projectile
-                Projectile.NewProjectile(
+                Projectile blastProj = Projectile.NewProjectileDirect(
                     projectile.GetSource_FromAI(), 
                     projectile.Center - Vector2.UnitY * verticalOffset, 
                     Vector2.Zero, blastProjType, 
@@ -166,19 +167,25 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
                     projectile.knockBack, 
                     projectile.owner
                 );
+                blastProj.DamageType = ModContent.GetInstance<GuardianDamageClass>();
                 
                 // We only want to make the rocks fly out if the hammer was fully charged: otherwise it just wouldn't have the "oomf" to it
                 if (anchor.Ding)
-                    for (int rock = 0; rock < 3 + (uberCharged ? 4 : 0); rock++)
-                        Projectile.NewProjectile(
+                    for (int rock = 0; rock < 3 + (uberCharged ? 4 : 0); rock++) 
+                    {
+                        Projectile rockProj = Projectile.NewProjectileDirect(
                             projectile.GetSource_FromAI(),
                             projectile.position - Vector2.UnitY * verticalOffset, 
                             new Vector2(Main.rand.NextFloat(-0.5f, 0.5f) * 3.5f, -Main.rand.NextFloat(1.25f,2.5f)*(uberCharged ? 4 : 2)),
                             ThoriumMod.Find<ModProjectile>("LodestoneStaffPro5").Type, 
                             (int)(projectile.damage * 0.25f), 
                             projectile.knockBack, 
-                            projectile.owner
+                            projectile.owner,
+                            Main.rand.Next(6),
+                            projectile.Center.Y
                         );
+                        rockProj.DamageType = ModContent.GetInstance<GuardianDamageClass>();
+                    }
                 SoundEngine.PlaySound(SoundID.Item14); 
                 // Kill the projectile so it can only go "boom" once
                 projectile.Kill();

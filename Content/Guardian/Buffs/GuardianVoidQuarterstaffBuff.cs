@@ -14,7 +14,7 @@ namespace OrchidMod.Content.Guardian.Buffs
 
 		public override void Update(Player player, ref int buffIndex)
 		{
-			if (player.HeldItem != null && player.HeldItem.ModItem is ThoriumVoidQuarterstaff) player.GetAttackSpeed(DamageClass.Melee) += 5f;
+			if (player.HeldItem != null && player.HeldItem.ModItem is ThoriumVoidQuarterstaff) player.GetAttackSpeed(DamageClass.Melee) += 2f;
 		}
 	}
 }
