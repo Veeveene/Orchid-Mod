@@ -3318,9 +3318,44 @@ Items: {
 		DisplayName: Demon Blood Blaster
 		Tooltip:
 			'''
-			Slam projectiles or rapidly approach enemies to deflect them
-			Deflecting consumes a guard, grants a slam and restores 20 life
-			'Blood is fuel'
+	ThoriumGuardianVoidLegs: {
+		DisplayName: Void Sentinel Greaves
+		Tooltip: 
+			'''
+			Regenerates slams over time
+			Increases maximum slams by 1
+			Increases movement speed by 20% and increases jump and fall speed
+			Enemies are significantly more likely to target you
+			'''
+	}
+
+	ThoriumGuardianVoidHead: {
+		DisplayName: Thorium Guardian Void Head
+		Tooltip: 
+			'''
+			Regenerates guards over time
+			Increases maximum guards by 1
+			10% increased opposing damage
+			Enemies are significantly more likely to target you
+			'''
+		SetBonus: 
+			'''
+			Decreases max life by 250
+			Guardian attacks briefly grant massively increased health and resource regeration
+			While blocking or parrying you will attract nearby blockable projectiles
+			'''
+	}
+
+	ThoriumGuardianVoidChest: {
+		DisplayName: Void Sentinel Carapace
+		Tooltip: 
+			'''
+			Regenerates guards and slams over time
+			Increases maximum guards and slams by 1
+			15% increased melee speed and 6% increased opposing critical strike chance 
+			Enemies are significantly more likely to target you
+			'''
+	}
 			'''
 	}
 }
