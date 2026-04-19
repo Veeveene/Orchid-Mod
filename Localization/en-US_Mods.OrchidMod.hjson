@@ -3309,6 +3309,18 @@ Items: {
 			Enemies are significantly more likely to target you
 			'''
 	}
+	HammerMagnet: {
+		DisplayName: Hammer Magnet
+		Tooltip: Allows most warhammers to bend toward the cursor when thrown
+	}
+
+	RemoteDetonator: {
+		DisplayName: Remote Detonator
+		Tooltip:
+			'''
+			Allows most warhammers to explode when left clicking after throwing
+			Costs 1 slam
+			'Somebody set up us the bomb'
 			'''
 	}
 }
