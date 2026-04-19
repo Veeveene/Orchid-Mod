@@ -2726,6 +2726,7 @@ Items: {
 	ThoriumThorsHammerWarhammer: {
 		DisplayName: Thor's Hammer: Opposing
 		Tooltip: ""
+		ChangeMode: Right click within your inventory to activate Melee Mode
 	}
 
 	ThoriumAquaiteQuarterstaff: {
@@ -3914,6 +3915,11 @@ Configs: {
 			Tooltip: Guardian Gauntlets will always try to consume a slam charge to perform a slam, no matter how long the input has been held
 		}
 
+		GuardianThoriumThorsHammerConversion: {
+			Label: "Convert Thor's Hammer to Opposing Mode on right click"
+			Tooltip: "If Thorium is installed, right clicking the Thor's Hammer: Magic will convert it to Opposing Mode, and Opposing into Melee"
+		}
+
 		GuardianUseFancyUI: {
 			Label: Fancy Guardian UI
 			Tooltip: Use 'fancy' textures for Guardian UI elements
@@ -3967,6 +3973,7 @@ Misc: {
 	CurrentСard: "Current card: "
 	PlayingСard: Playing Card :
 	Crossmod: "This is a crossmod item: "
+	ThoriumMagicThorHammer: Right click within your inventory to activate Opposing Mode
 }
 
 UI: {

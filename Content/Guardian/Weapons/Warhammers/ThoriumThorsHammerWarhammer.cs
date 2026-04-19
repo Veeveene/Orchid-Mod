@@ -1,8 +1,12 @@
 ﻿using Terraria;
+using Terraria.ModLoader;
 using Terraria.ID;
+using Terraria.Localization;
 using OrchidMod.Common.Attributes;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
+using OrchidMod.Common;
 
 namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 {
@@ -30,17 +34,16 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			BlockDuration = 80;
 		}
 
-		//public override bool CanRightClick() => true;
+		public override bool CanRightClick() => ModContent.GetInstance<OrchidClientConfig>().GuardianThoriumThorsHammerConversion;
 
-		/*
+		
 		public override void RightClick(Player player)
 		{
-			if (OrchidMod.ThoriumMod != null)
+			if (OrchidMod.ThoriumMod != null && ModContent.GetInstance<OrchidClientConfig>().GuardianThoriumThorsHammerConversion)
 			{
-				Item = new Item(OrchidMod.ThoriumMod.Find<ModItem>("MeleeThorHammer").Type);
+				Item.ChangeItemType(OrchidMod.ThoriumMod.Find<ModItem>("MeleeThorHammer").Type);
 			}
 		}
-		*/
 
 		public override void OnThrow(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak)
 		{
@@ -116,5 +119,16 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 				recipe.Register();
 			}
 		}
+
+		public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            base.ModifyTooltips(tooltips);
+            
+			if (ModContent.GetInstance<OrchidClientConfig>().GuardianThoriumThorsHammerConversion)
+			{
+				int index = tooltips.FindIndex(ttip => ttip.Mod == "Terraria" && ttip.Name == "Tooltip0");
+				tooltips[index].Text = Language.GetTextValue(Mod.GetLocalizationKey("Items.ThoriumThorsHammerWarhammer.ChangeMode"));
+			}
+        }
 	}
 }
