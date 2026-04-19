@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using OrchidMod.Common.Attributes;
+using OrchidMod.Content.Guardian.Projectiles.Quarterstaves;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -16,6 +18,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			Item.value = Item.sellPrice(0, 5);
 			Item.rare = ItemRarityID.Yellow;
 			Item.useTime = 36;
+			Item.shootSpeed = 20f;
 			ParryDuration = 150;
 			Item.knockBack = 5f;
 			Item.damage = 273;
@@ -48,6 +51,16 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 					newProjectile.scale = 1.5f;
 				}
 				
+			}
+		}
+
+		public override void OnAttack(Player player, OrchidGuardian guardian, Projectile projectile, bool jabAttack, bool counterAttack)
+		{
+			if (IsLocalPlayer(player) && !jabAttack && !counterAttack)
+			{
+				Vector2 velocity = Vector2.UnitY.RotatedBy((player.Center - Main.MouseWorld).ToRotation() + MathHelper.PiOver2) * Item.shootSpeed;
+				SoundEngine.PlaySound(SoundID.Item21, player.Center);
+				Projectile.NewProjectileDirect(projectile.GetSource_FromAI(), projectile.Center, velocity, ModContent.ProjectileType<ThoriumConcentratedThoriumQuarterstaffProjectile>(), guardian.GetGuardianDamage(Item.damage * 0.1f), 0f, projectile.owner);
 			}
 		}
 

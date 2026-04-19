@@ -40,6 +40,8 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             ReturnSpeed = 0.5f;
             BlockDuration = 240;
             HoldOffset = -2;
+            CannotMagnet = true;
+            CannotExplode = true;
         }
         
 
@@ -83,7 +85,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
                         if (projectile.velocity.Y > 20f) projectile.velocity.Y = 20f;
                         projectile.velocity.X *= 0.95f;
                     
-                        if (Main.mouseRight && anchor.Ding && (int)projectile.ai[2] != 1 && guardian.UseSlam(3, true))
+                        if (Main.mouseLeft && anchor.Ding && (int)projectile.ai[2] != 1 && guardian.UseSlam(3, true))
                         {
                             projectile.ai[2] = 1f;
                             SoundEngine.PlaySound(SoundID.Item88);
@@ -153,6 +155,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             if (projectile.active && projectile.ModProjectile is GuardianHammerAnchor anchor)
             {
                 int verticalOffset = 8;
+                if (uberCharged) verticalOffset += 8;
                 if (hitTarget != null) verticalOffset += (int)(hitTarget.height * 0.5f);
                 
                 // We only want the big explosion if the hammer was fully charged before Ultra Smashing

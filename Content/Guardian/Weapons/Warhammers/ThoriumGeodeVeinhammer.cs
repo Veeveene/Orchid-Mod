@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -35,7 +36,6 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             ReturnSpeed = 2f;
             SwingSpeed = 0.2f;
             SwingChargeGain = 0.1f;
-            SlamStacks = 1;
             BlockDuration = 120;
             
         }
@@ -54,7 +54,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
         {
             // guardian.SlamCostUI = 1;
             
-            if (Main.rand.NextBool(3))
+            if (Main.rand.NextBool(6))
             {
                 Dust dust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.BoneTorch, Alpha: 150, Scale: 0.75f);
                 dust.fadeIn = 1f;
@@ -87,7 +87,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
         
         public override void OnThrowTileCollide(Player player, OrchidGuardian guardian, Projectile projectile, Vector2 oldVelocity)
         {
-            if (projectile.ModProjectile is GuardianHammerAnchor anchor && !anchor.WeakThrow)
+            if (projectile.ModProjectile is GuardianHammerAnchor anchor && !anchor.WeakThrow && anchor.BlockDuration == 0)
             {
                 Point collisionPoint = new((int)((projectile.Center.X + oldVelocity.X) / 16f), (int)((projectile.Center.Y + oldVelocity.Y) / 16f));
                 int blastRadius = 2;

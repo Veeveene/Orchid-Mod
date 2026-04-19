@@ -3828,6 +3828,7 @@ Projectiles: {
 	ThoriumVoidQuarterstaffProjectile.DisplayName: Thorium Void Quarterstaff Projectile
 	ThoriumDemonBloodGauntletProjectile.DisplayName: Thorium Demon Blood Gauntlet Projectile
 	ThoriumNagaQuarterstaffProjectile.DisplayName: Thorium Naga Quarterstaff Projectile
+	ThoriumConcentratedThoriumQuarterstaffProjectile.DisplayName: Thorium Concentrated Thorium Quarterstaff Projectile
 }
 
 Configs: {
