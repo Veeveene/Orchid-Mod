@@ -16,7 +16,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Quarterstaves
 		{
 			Projectile.width = 15;
 			Projectile.height = 15;
-			Projectile.timeLeft = 50;
+			Projectile.timeLeft = 100;
 			Projectile.scale = 1f;
 			Projectile.penetrate = -1;
 			Projectile.alpha = 255;
@@ -41,12 +41,12 @@ namespace OrchidMod.Content.Guardian.Projectiles.Quarterstaves
 					float forkRot = dustRot + (MathHelper.TwoPi * i / 3);
 					for (int j = Strong ? 75 : 45; j > 0; j--)
 					{
-						Dust dust = Dust.NewDustPerfect(Projectile.Center, DustID.GreenFairy, newColor: Color.SeaGreen);
+						Dust dust = Dust.NewDustPerfect(Projectile.Center, DustID.GreenFairy, newColor: Color.Navy);
 						dust.velocity = Vector2.UnitX.RotatedBy(forkRot) * (j * 0.18f);
 						dust.scale *= (Strong ? 2f : 1.5f) - j * 0.015f;
 						dust.noGravity = true;
-						if (ccw) forkRot -= 0.2f - j * 0.003f;
-						else forkRot += 0.2f - j * 0.003f;
+						if (ccw) forkRot -= 0.2f - j * 0.001f;
+						else forkRot += 0.2f - j * 0.001f;
 						dust.alpha = 127;
 					}
 				}
@@ -60,8 +60,8 @@ namespace OrchidMod.Content.Guardian.Projectiles.Quarterstaves
 			}
 			else if (Projectile.timeLeft > 10)
 			{
-				Projectile.velocity *= 0.9f;
-				Dust dust = Dust.NewDustPerfect(Projectile.Center, DustID.BlueFairy, newColor: Color.SeaGreen);
+				Projectile.velocity *= 0.95f;
+				Dust dust = Dust.NewDustPerfect(Projectile.Center, DustID.GreenFairy, newColor: Color.Navy);
 				dust.velocity = Vector2.UnitY.RotatedBy(Projectile.velocity.ToRotation()) * 0.4f * dust.velocity.Length() * (float)Math.Sin(Projectile.timeLeft / 2f);
 				dust.noGravity = true;
 				dust.alpha = 127;
