@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using OrchidMod.Common;
+using OrchidMod.Common.ModObjects;
 using OrchidMod.Content.General.Prefixes;
 using OrchidMod.Utilities;
 using ReLogic.Content;
@@ -439,6 +440,37 @@ namespace OrchidMod.Content.Guardian
 							HammerItem.OnThrow(owner, guardian, Projectile, WeakThrow);
 							Projectile.ResetLocalNPCHitImmunity();
 							if (!HammerItem.Penetrate) Projectile.localNPCHitCooldown = -1;
+						}
+
+
+						if (guardian.GuardianHammerMagnet && !HammerItem.CannotMagnet && Projectile.timeLeft < 598 && range > 0 && BlockDuration == 0) {
+							if (owner == Main.LocalPlayer && !Main.dedServ) 
+							{
+								Projectile.velocity = Vector2.UnitX.RotatedBy(Projectile.velocity.ToRotation().AngleTowards(Projectile.AngleTo(Main.MouseWorld), MathHelper.Pi/40)) * Projectile.velocity.Length();
+								Projectile.netUpdate = true;
+							}
+						}
+
+						if (guardian.GuardianHammerDetonator && !HammerItem.CannotExplode && Projectile.timeLeft < 598 && range > 0 && BlockDuration == 0) {
+							if (range <= HammerItem.Range - 15)
+							{
+								// Blip sound to 
+								if (range == HammerItem.Range - 15) SoundEngine.PlaySound(SoundID.MaxMana);
+								
+								if (range <= HammerItem.Range - 30) Dust.NewDustPerfect(Projectile.position, DustID.Torch, -(Projectile.velocity*Main.rand.NextFloat(0.125f, 0.625f)).RotatedByRandom(MathHelper.Pi/18), Scale: 1.125f);
+							
+								guardian.SlamCostUI = 1;
+							
+								if (Main.mouseLeft && Ding && guardian.UseSlam(1, true))
+								{
+									SoundEngine.PlaySound(SoundID.MenuTick, Projectile.Center);
+									guardian.UseSlam(1);
+									OrchidModProjectile.spawnGenericExplosion(Projectile, (int)(Projectile.damage), 10f, 250, 0, true, true);
+									for (int i = 0; i < 10; i++) Dust.NewDustPerfect(Projectile.Center, DustID.Torch, Main.rand.NextVector2Circular(7.8125f, 7.8125f));
+									for (int i = 0; i < 10; i++) Dust.NewDustPerfect(Projectile.Center, DustID.Smoke, Main.rand.NextVector2CircularEdge(7.8125f, 7.8125f));
+									Projectile.Kill();
+								}
+							}
 						}
 
 						OldPosition.Add(new Vector2(Projectile.Center.X, Projectile.Center.Y));

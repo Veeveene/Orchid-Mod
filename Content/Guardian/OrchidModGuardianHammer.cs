@@ -44,6 +44,11 @@ namespace OrchidMod.Content.Guardian
 		public int GuardBlockCost;
 		public int HammerFrames = 1;
 
+		/// <summary>If true, the warhammer will be unaffected by the Hammer Magnet accessory.</summary>
+		public bool CannotMagnet;
+		/// <summary>If true, the warhammer will be unaffected by the Remote Detonator accessory.</summary>
+		public bool CannotExplode;
+
 		public virtual void OnBlockContact(Player player, OrchidGuardian guardian, NPC target, Projectile projectile) { } // Called upon pushing an enemy with a throw (can happen repeatedly)
 		public virtual void OnBlockNPC(Player player, OrchidGuardian guardian, NPC target, Projectile projectile) { } // Called upon blocking an enemy (1 time per throw per enemy)
 		public virtual void OnBlockFirstNPC(Player player, OrchidGuardian guardian, NPC target, Projectile projectile) { } // Called upon blocking the first enemy of a blocking throw

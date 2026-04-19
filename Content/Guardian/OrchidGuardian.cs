@@ -81,6 +81,8 @@ namespace OrchidMod
 		public float GuardianChain = 0f; // Increases the swing range on Warhammers (additive, 16f = 1 tile)
 		public string GuardianChainTexture = null; // Used to draw the warhammer chain
 		public int GuardianStaffRocket = 0; // If > 0, the player can dash by spending slams with a quarterstaff (1,2,3,4 = red,green,blue,yellow)
+		public bool GuardianHammerMagnet = false; // Standards
+		public bool GuardianHammerDetonator = false; // Standards
 
 		// Dynamic gameplay and UI fields
 
@@ -477,6 +479,8 @@ namespace OrchidMod
 			GuardianBronzeShieldBuff = false;
 			GuardianBronzeShieldProtection = false;
 			GuardianBadgeHoplite = false;
+			GuardianHammerMagnet = false;
+			GuardianHammerDetonator = false;
 		}
 
 		public override void PreUpdateMovement()
