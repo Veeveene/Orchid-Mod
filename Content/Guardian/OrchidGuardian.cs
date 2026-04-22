@@ -14,6 +14,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using System.Linq;
 
 namespace OrchidMod
 {
@@ -216,33 +217,32 @@ namespace OrchidMod
 				GuardianJewelerGauntlet = 0;
 			}
 			
-			if (GuardianCrystalNinja && GuardianGauntletParry && Player.dashDelay < 0)
-			{
-				DoParryItemParry(null);
-			}
+			if (GuardianGauntletParry) {
+				if (GuardianCrystalNinja && Player.dashDelay < 0) DoParryItemParry(null);
 
-			if ((Player.creativeGodMode || CrossModGodMode) && GuardianGauntletParry) {
-				bool colliding = false;
-				Entity entity = null;
-				foreach (Projectile proj in Main.projectile) {
-					if (proj.active && proj.hostile && proj.damage > 0 && Collision.CheckAABBvAABBCollision(Player.Center, Player.Hitbox.Size(), proj.Center, proj.Hitbox.Size())) {
-						colliding = true;
-						entity = proj;
-						break;
-					}
-				}
-				foreach (NPC npc in Main.npc) {
-					if (npc.active && !npc.friendly && npc.damage > 0 && Collision.CheckAABBvAABBCollision(Player.Center, Player.Hitbox.Size(), npc.Center, npc.Hitbox.Size())) {
-						colliding = true;
-						entity = npc;
-						break;
-					}
-				}
-
-				if (colliding) DoParryItemParry(entity);
-
-			}
+				// Condition for when the player is in God Mode (intangible otherwise)
+				if (Player.creativeGodMode || CrossModGodMode) {
 				
+					Entity entity = (Entity)Main.projectile?.FirstOrDefault(proj => proj.active && proj.hostile && proj.damage > 0 && Collision.CheckAABBvAABBCollision(Player.Center, Player.Hitbox.Size(), proj.Center, proj.Hitbox.Size()), null)
+					?? (Entity)Main.npc?.FirstOrDefault(npc => npc.active && (!npc.friendly && npc.damage > 0) && Collision.CheckAABBvAABBCollision(Player.Center, Player.Hitbox.Size(), npc.Center, npc.Hitbox.Size()));
+
+					if (entity != null) DoParryItemParry(entity);
+					}
+
+				// Condition for parrying an Aggro Dummy or Boss Dummy from Thorium 
+				// (only if the player is either in godmode, or if there aren't any enemies/bosses within 45 tiles)
+				if (OrchidMod.ThoriumMod != null && Main.npc.Any(npc => {
+					int aggroDummy = OrchidMod.ThoriumMod.Find<ModNPC>("AggroDummy").Type;
+					int bossDummy = OrchidMod.ThoriumMod.Find<ModNPC>("BossDummy").Type;
+					if ((npc.type == aggroDummy || npc.type == bossDummy) && Collision.CheckAABBvAABBCollision(Player.Center, Player.Hitbox.Size(), npc.Center, npc.Hitbox.Size())) 
+					{
+						if (Player.creativeGodMode || CrossModGodMode) return true;
+						else return !Main.npc.Any(n => n.active && (!n.friendly || n.boss) && !(npc.type == aggroDummy || npc.type == bossDummy) && n.Center.DistanceSQ(Player.Center) <= 1638400f);
+					}
+					return false;
+				})
+				) DoParryItemParry(null);
+			}
 
 			if (GauntletPunchCooldown > -10) GauntletPunchCooldown--;
 		}

@@ -28,6 +28,7 @@ namespace OrchidMod.Content.Guardian
 		/// <summary>Called before fully charged swing AI is executed, including repositioning the quarterstaff and the player's arms for its attack animation. Return false to prevent normal AI from running, effectively overriding <c>SwingStyle</c>.</summary>
 		/// <remarks>During a swing, <c>Projectile.ai[0]</c> is set to 41 as an animation timer and decremented by <c>SwingSpeed</c> every frame until it reaches 1. Use <c>Projectile.ResetLocalNPCHitImmunity()</c> for multi-swing animations to allow them to hit multiple times. See <c>GuardianQuarterstaffAnchor</c> for examples of default <c>SwingStyle</c> behavior.</remarks>
 		public virtual bool PreSwingAI(Player player, OrchidGuardian guardian, Projectile anchor) { return true; }
+		public virtual bool PreCounterAI(Player player, OrchidGuardian guardian, Projectile anchor) { return true; }
 		public virtual void OnParryQuarterstaff(Player player, OrchidGuardian guardian, Entity aggressor, Projectile anchor) { } // Called on parrying anything
 		public virtual void ExtraAIQuarterstaff(Player player, OrchidGuardian guardian, Projectile projectile) { } // Called at the end of the Anchor Projectile AI
 		public virtual void ExtraAIQuarterstaffJabbing(Player player, OrchidGuardian guardian, Projectile projectile) { } // Called while jabbing
@@ -58,11 +59,14 @@ namespace OrchidMod.Content.Guardian
 		public float JabKnockback = 1f; // spin knockback multiplier
 		public float CounterKnockback = 1f; // counter knockback multiplier
 		/// <summary>Indexes into <c>GuardianQuarterstaffAnchor.DoAnimStyle</c> to get jab animation AI.</summary>
-		/// <inheritdoc cref="GuardianQuarterstaffAnchor.DoAnimStyle(int, float)" select="remarks" />
+		/// <inheritdoc cref="GuardianQuarterstaffAnchor.DoAnimStyle(int, float, SoundStyle, bool)" select="remarks" />
 		public int JabStyle = 0;
 		/// <summary>Indexes into <c>GuardianQuarterstaffAnchor.DoAnimStyle</c> to get swing animation AI.</summary>
-		/// <inheritdoc cref="GuardianQuarterstaffAnchor.DoAnimStyle(int, float)" select="remarks" />
+		/// <inheritdoc cref="GuardianQuarterstaffAnchor.DoAnimStyle(int, float, SoundStyle, bool)" select="remarks" />
 		public int SwingStyle = 1;
+		/// <summary>Indexes into <c>GuardianQuarterstaffAnchor.DoAnimStyle</c> to get counterattack animation AI.</summary>
+		/// <inheritdoc cref="GuardianQuarterstaffAnchor.DoAnimStyle(int, float, SoundStyle, bool)" select="remarks" />
+		public int CounterStyle = 4;
 		//public bool SingleSwing = false; // allows a special swing behaviour
 		/// <summary>Multiplier for the amount of bonus charge gained from hitting with a jab.</summary>
 		public float JabChargeGain = 1;
@@ -101,6 +105,7 @@ namespace OrchidMod.Content.Guardian
 		public sealed override void OnParry(Player player, OrchidGuardian guardian, Entity aggressor, Projectile anchor)
 		{
 			anchor.ai[2] = -40f;
+			anchor.ai[1] = Vector2.Normalize(Main.MouseWorld - player.MountedCenter).ToRotation() - MathHelper.PiOver2;			
 			(anchor.ModProjectile as GuardianQuarterstaffAnchor).NeedNetUpdate = true;
 			OnParryQuarterstaff(player, guardian, aggressor, anchor);
 		}

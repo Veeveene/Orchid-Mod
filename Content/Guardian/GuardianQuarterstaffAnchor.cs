@@ -146,9 +146,7 @@ namespace OrchidMod.Content.Guardian
 					if (owner.immune)
 					{
 						if (owner.eocHit != -1 && owner.eocDash > 0)
-						{
 							guardian.DoParryItemParry(Main.npc[owner.eocHit]);
-						}
 						else
 						{
 							Projectile.ai[2] = 0f;
@@ -200,22 +198,30 @@ namespace OrchidMod.Content.Guardian
 						Projectile.height = (int)(Projectile.height * 1.2f);
 					}
 
-					if (guardianItem.CounterHits > 1 && Projectile.ai[2] >= -40 / guardianItem.CounterHits * (guardianItem.CounterHits - DamageReset))
-					{ // Reset damage twice while spinning
-						DamageReset ++;
-						Projectile.ResetLocalNPCHitImmunity();
+					if (Projectile.ai[1] is > -3.14f and < 0f) // Facing Right
+						owner.ChangeDir(1);
+					else
+						owner.ChangeDir(-1);
 
-						if ((int)(guardianItem.CounterHits * 0.5f) == DamageReset)
-						{
-							SoundEngine.PlaySound(SoundID.DD2_MonkStaffSwing, Projectile.Center);
-						}
-					}
+					if (guardianItem.PreCounterAI(owner, guardian, Projectile)) DoAnimStyle(guardianItem.CounterStyle, -Projectile.ai[2], SoundID.DD2_MonkStaffSwing, true);
 
-					Projectile.Center = owner.MountedCenter.Floor() + new Vector2(-4 * owner.direction, 0f);
-					Projectile.rotation = MathHelper.PiOver4 * 0.55f * owner.direction - MathHelper.PiOver4 + (Projectile.ai[2] + 60f) * 0.209f;
 
-					owner.SetCompositeArmFront(true, CompositeArmStretchAmount.ThreeQuarters, MathHelper.PiOver4 * owner.direction + (Projectile.ai[2] + 60f) * 0.209f);
-					owner.SetCompositeArmBack(true, CompositeArmStretchAmount.Quarter, MathHelper.PiOver2 * -1.4f * owner.direction);
+					// if (guardianItem.CounterHits > 1 && Projectile.ai[2] >= -40 / guardianItem.CounterHits * (guardianItem.CounterHits - DamageReset))
+					// { // Reset damage twice while spinning
+					// 	DamageReset ++;
+					// 	Projectile.ResetLocalNPCHitImmunity();
+
+					// 	if ((int)(guardianItem.CounterHits * 0.5f) == DamageReset)
+					// 	{
+					// 		SoundEngine.PlaySound(SoundID.DD2_MonkStaffSwing, Projectile.Center);
+					// 	}
+					// }
+
+					// Projectile.Center = owner.MountedCenter.Floor() + new Vector2(-4 * owner.direction, 0f);
+					// Projectile.rotation = MathHelper.PiOver4 * 0.55f * owner.direction - MathHelper.PiOver4 + (Projectile.ai[2] + 60f) * 0.209f;
+
+					// owner.SetCompositeArmFront(true, CompositeArmStretchAmount.ThreeQuarters, MathHelper.PiOver4 * owner.direction + (Projectile.ai[2] + 60f) * 0.209f);
+					// owner.SetCompositeArmBack(true, CompositeArmStretchAmount.Quarter, MathHelper.PiOver2 * -1.4f * owner.direction);
 
 					OldPosition.Add(Projectile.Center);
 					OldRotation.Add(Projectile.rotation);
@@ -324,6 +330,7 @@ namespace OrchidMod.Content.Guardian
 							guardian.GuardianItemCharge = 0;
 							Projectile.netUpdate = true;
 						}
+						
 						else if (jabInput)
 						{
 							Projectile.ai[0] = -40f;
@@ -361,38 +368,21 @@ namespace OrchidMod.Content.Guardian
 						}
 					}
 
-					if (Projectile.ai[1] > -3.14f && Projectile.ai[1] < 0f)
-					{ // Facing Right
-						if (owner.direction != 1)
-						{
-							owner.ChangeDir(1);
-						}
-					}
+					if (Projectile.ai[1] is > -3.14f and < 0f) // Facing Right
+						owner.ChangeDir(1);
 					else
-					{
-						if (owner.direction != -1)
-						{
-							owner.ChangeDir(-1);
-						}
-					}
+						owner.ChangeDir(-1);
 
-					if (guardianItem.PreJabAI(owner, guardian, Projectile)) DoAnimStyle(guardianItem.JabStyle, -Projectile.ai[0], SoundID.DD2_MonkStaffSwing);
-					/*if (Projectile.ai[0] >= -30)
-					{ // Returning
-						Projectile.friendly = false;
-						Projectile.rotation = Projectile.ai[1] - MathHelper.PiOver4 + (float)Math.Sin(0.1046f * (30 + Projectile.ai[0])) * 0.4f * -owner.direction + MathHelper.Pi;
-						Projectile.Center = owner.MountedCenter.Floor() + Vector2.UnitY.RotatedBy(Projectile.ai[1]) * (38f - (float)Math.Sin(0.0523f * (30 + Projectile.ai[0])) * 24f);
-						Projectile.position.Y -= (float)Math.Sin(0.0523f * (30 + Projectile.ai[0])) * 2f;
-						owner.SetCompositeArmFront(true, CompositeArmStretchAmount.Quarter, MathHelper.PiOver4 * owner.direction + Projectile.ai[1] + 0.1f + (float)Math.Sin(0.1046f * (30 + Projectile.ai[0])) * 0.3f * owner.direction);
-						owner.SetCompositeArmBack(true, CompositeArmStretchAmount.Full, Projectile.ai[1] - 0.1f + (float)Math.Sin(0.1046f * (30 + Projectile.ai[0])) * 0.2f * owner.direction);
+					if (guardianItem.PreJabAI(owner, guardian, Projectile)) DoAnimStyle(guardianItem.JabStyle, -Projectile.ai[0], SoundID.DD2_MonkStaffSwing, false);
+					
+					if (guardianItem.JabStyle == 1 && guardian.GuardianItemCharge < 180 && guardian.GuardianItemCharge > 0)
+					{
+						if (DamageReset == 1)
+						{
+							guardian.GuardianItemCharge += 90 * owner.GetTotalAttackSpeed(DamageClass.Melee);
+							if (guardian.GuardianItemCharge > 180) guardian.GuardianItemCharge = 180;
+						}	
 					}
-					else
-					{ // Jabbing
-						Projectile.Center = owner.MountedCenter.Floor() + Vector2.UnitY.RotatedBy(Projectile.ai[1]) * 3.8f * (Projectile.ai[0] + 40);
-						Projectile.rotation = Projectile.ai[1] - MathHelper.PiOver4 + MathHelper.Pi;
-						owner.SetCompositeArmFront(true, CompositeArmStretchAmount.None, MathHelper.PiOver4 * owner.direction + Projectile.ai[1] + 0.1f);
-						owner.SetCompositeArmBack(true, CompositeArmStretchAmount.ThreeQuarters, Projectile.ai[1] - 0.1f);
-					}*/
 
 					// Trail
 					OldPosition.Add(Projectile.Center);
@@ -414,14 +404,8 @@ namespace OrchidMod.Content.Guardian
 
 					if (Projectile.ai[0] >= 0)
 					{
-						if (guardian.GuardianItemCharge > 0)
-						{
-							Projectile.ai[0] = 1f;
-						}
-						else
-						{
-							Projectile.ai[0] = 0f;
-						}
+						if (guardian.GuardianItemCharge > 0) Projectile.ai[0] = 1f;
+						else Projectile.ai[0] = 0f;
 
 						Projectile.ai[1] = 0f;
 						Projectile.friendly = false;
@@ -463,22 +447,12 @@ namespace OrchidMod.Content.Guardian
 						}
 					}
 
-					if (Projectile.ai[1] > -3.14f && Projectile.ai[1] < 0f)
-					{ // Facing Right
-						if (owner.direction != 1)
-						{
-							owner.ChangeDir(1);
-						}
-					}
+					if (Projectile.ai[1] is > -3.14f and < 0f) // Facing Right
+						owner.ChangeDir(1);
 					else
-					{
-						if (owner.direction != -1)
-						{
-							owner.ChangeDir(-1);
-						}
-					}
+						owner.ChangeDir(-1);
 
-					if (guardianItem.PreSwingAI(owner, guardian, Projectile)) DoAnimStyle(guardianItem.SwingStyle, Projectile.ai[0] - 1, QuarterstaffItem.UseSound.Value);
+					if (guardianItem.PreSwingAI(owner, guardian, Projectile)) DoAnimStyle(guardianItem.SwingStyle, Projectile.ai[0] - 1, QuarterstaffItem.UseSound.Value, false);
 					/*if (guardianItem.SingleSwing)
 					{
 						Projectile.rotation = Projectile.ai[1] - MathHelper.PiOver4 + (float)Math.Cos(0.102f * (Projectile.ai[0] - 10)) * 1.9f * -owner.direction + MathHelper.Pi;
@@ -602,9 +576,11 @@ namespace OrchidMod.Content.Guardian
 		/// <remarks>Animation style IDs<br/>
 		/// 0: Jab (default jab)<br/>
 		/// 1: Double swing (default swing)<br/>
-		/// 2: Single swing<br/>
+		/// 2: Single swing, upward<br/>
+		/// 2: Single swing, downward <br/>
+		/// 3: 360° swing (default counterattack)<br/>
 		/// </remarks>
-		public void DoAnimStyle(int style, float ai, SoundStyle sound)
+		public void DoAnimStyle(int style, float ai, SoundStyle sound, bool counterAttack)
 		{
 			Player player = Main.player[Projectile.owner];
 			switch(style)
@@ -637,6 +613,10 @@ namespace OrchidMod.Content.Guardian
 					}
 					if (ai > 14)
 					{ // Swinging
+						if (counterAttack && DamageReset == 1) {
+							DamageReset ++;
+							Projectile.ResetLocalNPCHitImmunity();
+						}
 						Projectile.rotation = Projectile.ai[1] - MathHelper.PiOver4 - (float)Math.Cos(0.209f * (ai - 9)) * 1.75f * -player.direction + MathHelper.Pi;
 						Projectile.Center = player.MountedCenter.Floor() + Vector2.UnitY.RotatedBy(Projectile.ai[1] - (float)Math.Cos(0.209f * (ai - 9)) * 1.6f * -player.direction) * 24f;
 						player.SetCompositeArmFront(true, CompositeArmStretchAmount.Full, MathHelper.PiOver4 * player.direction + Projectile.ai[1] + 0.1f + (float)Math.Cos(0.209f * (ai - 9)) * player.direction);
@@ -656,6 +636,32 @@ namespace OrchidMod.Content.Guardian
 					Projectile.Center = player.MountedCenter.Floor() + Vector2.UnitY.RotatedBy(Projectile.ai[1] + (float)Math.Cos(0.102f * (ai - 9)) * 1.8f * -player.direction) * 24f;
 					player.SetCompositeArmFront(true, CompositeArmStretchAmount.Full, MathHelper.PiOver4 * player.direction + Projectile.ai[1] + 0.1f - (float)Math.Cos(0.102f * (ai - 9)) * player.direction);
 					player.SetCompositeArmBack(true, CompositeArmStretchAmount.Full, Projectile.ai[1] - 0.1f + (float)Math.Cos(0.102f * (ai- 9)) * 0.2f * player.direction);
+				break;
+				case 3:
+					Projectile.rotation = Projectile.ai[1] - MathHelper.PiOver4 + (float)Math.Cos(0.102f * (ai - 9)) * 1.9f * player.direction + MathHelper.Pi;
+					Projectile.Center = player.MountedCenter.Floor() + Vector2.UnitY.RotatedBy(Projectile.ai[1] + (float)Math.Cos(0.102f * (ai - 9)) * 1.8f * player.direction) * 24f;
+					player.SetCompositeArmFront(true, CompositeArmStretchAmount.Full, MathHelper.PiOver4 * player.direction + Projectile.ai[1] + 0.1f - (float)Math.Cos(0.102f * (ai - 9)) * -player.direction);
+					player.SetCompositeArmBack(true, CompositeArmStretchAmount.Full, Projectile.ai[1] - 0.1f + (float)Math.Cos(0.102f * (ai- 9)) * 0.2f * -player.direction);
+				break;
+				case 4:
+					if (QuarterstaffItem.ModItem is OrchidModGuardianQuarterstaff guardianItem) {
+
+						if (guardianItem.CounterHits > 1 && ai <= 40 / guardianItem.CounterHits * (guardianItem.CounterHits - DamageReset))
+						{ // Reset damage twice while spinning
+							DamageReset ++;
+							Projectile.ResetLocalNPCHitImmunity();
+
+							if ((int)(guardianItem.CounterHits * 0.5f) == DamageReset)
+								SoundEngine.PlaySound(SoundID.DD2_MonkStaffSwing, Projectile.Center);
+						}
+
+						Projectile.Center = player.MountedCenter.Floor() + new Vector2(-4 * player.direction, 0f);
+						Projectile.rotation = MathHelper.PiOver4 * 0.55f * player.direction - MathHelper.PiOver4 + (ai + 60f) * 0.209f * -player.direction;
+
+						player.SetCompositeArmFront(true, CompositeArmStretchAmount.ThreeQuarters, MathHelper.PiOver4 * player.direction + (ai + 60f) * 0.209f);
+						player.SetCompositeArmBack(true, CompositeArmStretchAmount.Quarter, MathHelper.PiOver2 * -1.4f * player.direction);
+					}
+					
 				break;
 			}
 		}
@@ -682,20 +688,14 @@ namespace OrchidMod.Content.Guardian
 						if (guardian.GuardianItemCharge > 0f)
 						{
 							guardian.GuardianItemCharge += 60f * guardianItem.JabChargeGain * player.GetTotalAttackSpeed(DamageClass.Melee);
-							if (guardian.GuardianItemCharge > 180f)
-							{
-								guardian.GuardianItemCharge = 180f;
-							}
+							if (guardian.GuardianItemCharge > 180f) guardian.GuardianItemCharge = 180f;
 						}
 					}
 					guardianItem.OnHit(player, guardian, target, Projectile, hit, true, false);
 				}
 				else
 				{ // Counterattack
-					if (FirstHit)
-					{
-						guardianItem.OnHitFirst(player, guardian, target, Projectile, hit, false, true);
-					}
+					if (FirstHit) guardianItem.OnHitFirst(player, guardian, target, Projectile, hit, false, true);
 					guardianItem.OnHit(player, guardian, target, Projectile, hit, false, true);
 				}
 			}

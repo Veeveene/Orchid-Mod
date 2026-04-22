@@ -3171,19 +3171,14 @@ Items: {
 			'''
 	}
 
-	painQuarterstaff: {
-		Tooltip: ""
-		DisplayName: pain Quarterstaff
-	}
-
 	IceHammer: {
-		Tooltip: ""
 		DisplayName: Ice Hammer
+		Tooltip: ""
 	}
 
 	IceGauntlet: {
-		Tooltip: ""
 		DisplayName: Ice Gauntlet
+		Tooltip: ""
 	}
 
 	ToyWarhammers: {
@@ -3983,7 +3978,7 @@ UI: {
 		Parry: "{0} click to parry"
 		ParryDash: "{0} click to parry, dashing downwards"
 		ChargeToThrow: Charge to throw
-		SwingWhileCharging: ", right click to swing while charging"
+		SwingWhileCharging: Charge to throw, right click to swing while charging
 		UsesUpTo: Uses up to {0} slams
 		RuneDuration: "{0} second rune duration"
 		Block: "{0} click to block"

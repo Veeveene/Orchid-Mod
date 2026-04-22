@@ -200,7 +200,7 @@ namespace OrchidMod.Content.Guardian
 			});
 
 			string ChargeToThrow = Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.ChargeToThrow");
-			if (!CannotSwing) ChargeToThrow += Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.SwingWhileCharging");
+			if (!CannotSwing) ChargeToThrow = Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.SwingWhileCharging");
 			tooltips.Insert(index + 3, new TooltipLine(Mod, "Swing", ChargeToThrow)
 			{
 				OverrideColor = new Color(175, 255, 175)

@@ -3152,7 +3152,7 @@ Items: {
 		DisplayName: Зловещая жатва
 		Tooltip:
 			'''
-			Вместо блока выпускает косу, которая расходует 3 очка нападения застревает в первом поражённом враге
+			Вместо блока выпускает косу, которая застревает в первом поражённом враге
 			Коса даёт очки обороны по возвращению или смерти поражённого врага
 			Атаки по другим врагам заряженными бросками увеличивают количество очков обороны, которое будет получено
 			'''
@@ -3172,19 +3172,14 @@ Items: {
 			'''
 	}
 
-	painQuarterstaff: {
-		// Tooltip: ""
-		// DisplayName: pain Quarterstaff
-	}
-
 	IceHammer: {
-		// Tooltip: ""
 		// DisplayName: Ice Hammer
+		// Tooltip: ""
 	}
 
 	IceGauntlet: {
-		// Tooltip: ""
 		// DisplayName: Ice Gauntlet
+		// Tooltip: ""
 	}
 
 	ToyWarhammers: {
@@ -4011,19 +4006,19 @@ UI: {
 		Slam: "{0} оч. нападения"
 		Parry: Нажмите {0}, чтобы совершить парирование
 		ParryDash: Нажмите {0}, чтобы совершить парирование рывком вниз
-		ChargeToThrow:
+		ChargeToThrow: Зарядите, чтобы бросить
+		SwingWhileCharging:
 			'''
 			Зарядите, чтобы бросить
 			Нажмите ПКМ, сделать взмах во время зарядки
 			'''
-		// SwingWhileCharging: ", right click to swing while charging"
 		UsesUpTo: Использует до {0} оч. нападения
 		RuneDuration: Время действия руны: {0} сек.
 		Block: Нажмите {0}, чтобы сделать блок
-		// BlockGuard: "{0} click to block, costing {1} {^1:guard;guards}"
-		// BlockSlam: "{0} click to block, costing {2} {^2:slam;slams}"
-		// BlockGuardSlamSame: "{0} click to block, costing {1} {^1:guard;guards} and {^1:slam;slams}"
-		// BlockGuardSlam: "{0} click to block, costing {1} {^1:guard;guards} and {2} {^2:slam;slams}"
+		BlockGuard: Нажмите {0}, чтобы сделать блок за {1} оч. обороны
+		BlockSlam: Нажмите {0}, чтобы сделать блок за {1} оч. нападения
+		BlockGuardSlamSame: Нажмите {0}, чтобы сделать блок за {1} оч. обороны и нападения
+		BlockGuardSlam: Нажмите {0}, чтобы сделать блок за {1} оч. обороны и {2} оч. нападения
 		BuffDuration: Длительность эффекта: {0} сек.
 		HorizonLaceShieldStacks: Даёт 3 оч. обороны при полном заряде
 		DamageOfDefense: Наносит противостоящий урон, равный {0}% от вашей защиты

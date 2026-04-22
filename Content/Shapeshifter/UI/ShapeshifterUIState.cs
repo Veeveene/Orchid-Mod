@@ -21,7 +21,7 @@ namespace OrchidMod.Content.Shapeshifter.UI
 		public static Texture2D TextureUIDash;
 
 		public override int InsertionIndex(List<GameInterfaceLayer> layers)
-			=> layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
+			=> layers.FindIndex(layer => layer.Name.Equals("Vanilla: Resource Bars"));
 
 		public override void OnInitialize()
 		{

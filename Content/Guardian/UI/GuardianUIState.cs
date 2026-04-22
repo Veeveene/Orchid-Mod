@@ -8,6 +8,7 @@ using OrchidMod.Utilities;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.UI;
@@ -64,7 +65,7 @@ namespace OrchidMod.Content.Guardian.UI
 		public static Texture2D textureIconRuneOff;
 
 		public override int InsertionIndex(List<GameInterfaceLayer> layers)
-			=> layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
+			=> layers.FindIndex(layer => layer.Name.Equals("Vanilla: Resource Bars"));
 		public override void OnInitialize()
 		{
 			textureBlockOn ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/BlockBarOn", AssetRequestMode.ImmediateLoad).Value;
@@ -326,14 +327,13 @@ namespace OrchidMod.Content.Guardian.UI
 						}
 						else
 						{
-							int projectileType = ModContent.ProjectileType<GuardianQuarterstaffAnchor>();
-							for (int i = 0; i < Main.projectile.Length; i++)
-							{
-								Projectile proj = Main.projectile[i];
-								if (proj.active && proj.owner == player.whoAmI && proj.type == projectileType && proj.ai[2] > 0f)
+							int staffType = ModContent.ProjectileType<GuardianQuarterstaffAnchor>();
+							Projectile staffAnchor = Main.projectile.FirstOrDefault(proj => proj.whoAmI < Main.maxProjectiles && proj.active && proj.owner == player.whoAmI && proj.type == staffType && proj.ai[2] > 0f);
+
+							if (staffAnchor != null)
 								{
 									int val = 22;
-									float block = proj.ai[2];
+								float block = staffAnchor.ai[2];
 									float step = (player.HeldItem.ModItem as OrchidModGuardianQuarterstaff).ParryDuration;
 									while (block < step)
 									{
@@ -350,7 +350,6 @@ namespace OrchidMod.Content.Guardian.UI
 									if (player.gravDir < 0) drawpos.Y -= (blockOn.Height - rectangle.Height);
 									spriteBatch.Draw(blockOn, drawpos, rectangle, Color.White, 0f, Vector2.Zero, 1f, effect, 0f);
 									return;
-								}
 							}
 						}
 					}
@@ -361,21 +360,23 @@ namespace OrchidMod.Content.Guardian.UI
 						chargeTextureOff = textureGauntletOff;
 						chargeTextureReady = textureGauntletReady;
 					}
-					else
+					// else
 					{
-						int projectileType = ModContent.ProjectileType<GuardianShieldAnchor>();
-						int projectileType2 = ModContent.ProjectileType<GuardianGauntletAnchor>();
-						int projectileType3 = ModContent.ProjectileType<GuardianHorizonLanceAnchor>();
-						for (int i = 0; i < Main.projectile.Length; i++)
-						{
-							Projectile proj = Main.projectile[i];
-							if (proj.active && proj.owner == player.whoAmI && (proj.type == projectileType || proj.type == projectileType2 || proj.type == projectileType3) && proj.ai[0] > 0f && proj.localAI[0] > 0f)
+						int shieldType = ModContent.ProjectileType<GuardianShieldAnchor>();
+						int gauntletType = ModContent.ProjectileType<GuardianGauntletAnchor>();
+						int lanceType = ModContent.ProjectileType<GuardianHorizonLanceAnchor>();
+							
+						Projectile charging = Main.projectile.FirstOrDefault(proj => proj.whoAmI < Main.maxProjectiles && proj.active && proj.owner == player.whoAmI && proj.type == gauntletType && proj.ai[2] > 0);
+						Projectile blockAnchor = Main.projectile.FirstOrDefault(proj => proj.whoAmI < Main.maxProjectiles && proj.active && proj.owner == player.whoAmI && (proj.type == shieldType || proj.type == gauntletType || proj.type == lanceType) && proj.ai[0] > 0f && proj.localAI[0] > 0f);
+
+						bool gauntletMinCharge = player.HeldItem.ModItem is OrchidModGuardianGauntlet gauntletItem && (maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - (player.HeldItem.useTime * gauntletItem.ChargeSpeedMultiplier)) / 2.5f));
+						if (blockAnchor != null)
 							{
 								int val = 22;
-								float block = proj.ai[0];
-								while (block < proj.localAI[0])
+							float block = blockAnchor.ai[0];
+							while (block < blockAnchor.localAI[0])
 								{
-									block += proj.localAI[0] / 20f;
+								block += blockAnchor.localAI[0] / 20f;
 									val--;
 								}
 
@@ -383,12 +384,15 @@ namespace OrchidMod.Content.Guardian.UI
 								rectangle.Height = val;
 								rectangle.Y = blockOn.Height - val;
 								drawpos = new Vector2(position.X - 10, position.Y - 92 * player.gravDir + 3f * (player.gravDir - 1));
+							if (charging != null && gauntletMinCharge && !drawAtCursor)
+								drawpos.X += 12;
 								spriteBatch.Draw(blockOff, drawpos, null, Color.White, 0f, Vector2.Zero, 1f, effect, 0f);
-								drawpos = new Vector2(position.X - 10, position.Y - 92 * player.gravDir + blockOn.Height - val + 3f * (player.gravDir - 1));
+							drawpos.Y += (blockOn.Height - val);
 								if (player.gravDir < 0) drawpos.Y -= (blockOn.Height - rectangle.Height);
 								spriteBatch.Draw(blockOn, drawpos, rectangle, Color.White, 0f, Vector2.Zero, 1f, effect, 0f);
+							
+							if (blockAnchor.type == shieldType || blockAnchor.type == lanceType || charging == null || (charging != null && modPlayer.GuardianItemCharge == 0)) 
 								return;
-							}
 						}
 					}
 
@@ -416,10 +420,9 @@ namespace OrchidMod.Content.Guardian.UI
 
 							drawpos = Main.MouseScreen + new Vector2(18f, 18f);
 
+
 							if (modPlayer.GuardianItemCharge >= 180f)
-							{
 								spriteBatch.Draw(chargeTextureReady, drawpos - new Vector2(2, 2), null, Color.White * 0.8f, 0f, Vector2.Zero, 1f, effect, 0f);
-							}
 
 							spriteBatch.Draw(chargeTextureOff, drawpos, null, Color.White, 0f, Vector2.Zero, 1f, effect, 0f);
 							drawpos.Y += chargeTextureOn.Height - val;
@@ -430,15 +433,20 @@ namespace OrchidMod.Content.Guardian.UI
 						}
 						else
 						{
+							int projectileType = ModContent.ProjectileType<GuardianGauntletAnchor>();
+							Projectile blocking = Main.projectile.FirstOrDefault(proj => proj.whoAmI < Main.maxProjectiles && proj.active && proj.type == projectileType && proj.ai[0] > 0);
+
 							if (modPlayer.GuardianItemCharge >= 180f)
 							{
 								drawpos = new Vector2(position.X - 11, position.Y - 96 * player.gravDir + 5f * (player.gravDir - 1));
+								if (chargeTextureOn == textureGauntletOn && blocking != null) drawpos.X -= 12;
 								spriteBatch.Draw(chargeTextureReady, drawpos, null, Color.White * 0.8f, 0f, Vector2.Zero, 1f, effect, 0f);
 							}
 
 							drawpos = new Vector2(position.X - 9, position.Y - 94 * player.gravDir + 3f * (player.gravDir - 1));
+							if (chargeTextureOn == textureGauntletOn && blocking != null) drawpos.X -= 12;
 							spriteBatch.Draw(chargeTextureOff, drawpos, null, Color.White, 0f, Vector2.Zero, 1f, effect, 0f);
-							drawpos = new Vector2(position.X - 9, position.Y - 94 * player.gravDir + chargeTextureOn.Height - val + 3f * (player.gravDir - 1));
+							drawpos.Y += chargeTextureOn.Height - val;
 							if (player.gravDir < 0) drawpos.Y -= (chargeTextureOn.Height - rectangle.Height);
 							spriteBatch.Draw(chargeTextureOn, drawpos, rectangle, Color.White, 0f, Vector2.Zero, 1f, effect, 0f);
 						}

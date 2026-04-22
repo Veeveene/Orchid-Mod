@@ -55,7 +55,7 @@ namespace OrchidMod.Content.Gambler.UI
 		public int cardIDNext3 = -1;
 
 		public override int InsertionIndex(List<GameInterfaceLayer> layers)
-			=> layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
+			=> layers.FindIndex(layer => layer.Name.Equals("Vanilla: Resource Bars"));
 
 		public override void OnInitialize()
 		{
