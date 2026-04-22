@@ -2738,6 +2738,7 @@ Items: {
 	ThoriumThorsHammerWarhammer: {
 		DisplayName: Молот Тора: противостоящий
 		Tooltip: ""
+		// ChangeMode: Right click within your inventory to activate Melee Mode
 	}
 
 	ThoriumAquaiteQuarterstaff: {
@@ -3279,11 +3280,11 @@ Items: {
 	}
 
 	ThoriumNagaQuarterstaff: {
-		// DisplayName: Thorium Naga Quarterstaff
+		// DisplayName: Serpent's Riptide
 		/* Tooltip:
 			'''
+			Jab is replaced by a powerful sweep
 			Fully charge while underwater to propel yourself to your cursor, ending in a massive full sweep attack
-			Counterattacks release bubbles around you
 			''' */
 	}
 
@@ -3315,14 +3316,63 @@ Items: {
 		// SetBonus: Damage done increased by 18%
 	}
 
-	ThoriumDemonBloodGauntlet: {
-		// DisplayName: Demon Blood Blaster
+	ThoriumGuardianVoidLegs: {
+		// DisplayName: Void Sentinel Greaves
 		/* Tooltip:
 			'''
-			Slam projectiles or rapidly approach enemies to deflect them
-			Deflecting consumes a guard, grants a slam and restores 20 life
-			'Blood is fuel'
+			Regenerates slams over time
+			Increases maximum slams by 1
+			Increases movement speed by 20% and increases jump and fall speed
+			Enemies are significantly more likely to target you
 			''' */
+	}
+
+	ThoriumGuardianVoidHead: {
+		// DisplayName: Thorium Guardian Void Head
+		/* Tooltip:
+			'''
+			Regenerates guards over time
+			Increases maximum guards by 1
+			10% increased opposing damage
+			Enemies are significantly more likely to target you
+			''' */
+		/* SetBonus:
+			'''
+			Decreases max life by 250
+			Guardian attacks briefly grant massively increased health and resource regeration
+			While blocking or parrying you will attract nearby blockable projectiles
+			''' */
+	}
+
+	ThoriumGuardianVoidChest: {
+		// DisplayName: Void Sentinel Carapace
+		/* Tooltip:
+			'''
+			Regenerates guards and slams over time
+			Increases maximum guards and slams by 1
+			15% increased melee speed and 6% increased opposing critical strike chance 
+			Enemies are significantly more likely to target you
+			''' */
+	}
+
+	HammerMagnet: {
+		// DisplayName: Hammer Magnet
+		// Tooltip: Allows most warhammers to bend toward the cursor when thrown
+	}
+
+	RemoteDetonator: {
+		// DisplayName: Remote Detonator
+		/* Tooltip:
+			'''
+			Allows most warhammers to explode when left clicking after throwing
+			Costs 1 slam
+			'Somebody set up us the bomb'
+			''' */
+	}
+
+	ThoriumTerrariumWarhammer: {
+		// Tooltip: ""
+		// DisplayName: Thorium Terrarium Warhammer
 	}
 }
 
@@ -3777,6 +3827,8 @@ Projectiles: {
 	// ThoriumVoidQuarterstaffProjectile.DisplayName: Thorium Void Quarterstaff Projectile
 	// ThoriumDemonBloodGauntletProjectile.DisplayName: Thorium Demon Blood Gauntlet Projectile
 	// ThoriumNagaQuarterstaffProjectile.DisplayName: Thorium Naga Quarterstaff Projectile
+	// ThoriumConcentratedThoriumQuarterstaffProjectile.DisplayName: Thorium Concentrated Thorium Quarterstaff Projectile
+	// ThoriumTerrariumWarhammerProjectile.DisplayName: Thorium Terrarium Warhammer Projectile
 }
 
 Configs: {
@@ -3884,6 +3936,11 @@ Configs: {
 			Tooltip: Перчатки хранителя при возможности всегда будут использовать атаку нападением, независимо от того, как долго удерживалась клавиша
 		}
 
+		GuardianThoriumThorsHammerConversion: {
+			// Label: Convert Thor's Hammer to Opposing Mode on right click
+			// Tooltip: If Thorium is installed, right clicking the Thor's Hammer: Magic will convert it to Opposing Mode, and Opposing into Melee
+		}
+
 		GuardianUseFancyUI: {
 			// Label: Fancy Guardian UI
 			// Tooltip: Use 'fancy' textures for Guardian UI elements
@@ -3937,6 +3994,7 @@ Misc: {
 	CurrentСard: "Текущая карта: "
 	PlayingСard: "Разыгранная карта: "
 	Crossmod: "Кроссмод предмет с "
+	// ThoriumMagicThorHammer: Right click within your inventory to activate Opposing Mode
 }
 
 UI: {

@@ -3315,13 +3315,9 @@ Items: {
 		SetBonus: Damage done increased by 18%
 	}
 
-	ThoriumDemonBloodGauntlet: {
-		DisplayName: Demon Blood Blaster
-		Tooltip:
-			'''
 	ThoriumGuardianVoidLegs: {
 		DisplayName: Void Sentinel Greaves
-		Tooltip: 
+		Tooltip:
 			'''
 			Regenerates slams over time
 			Increases maximum slams by 1
@@ -3332,14 +3328,14 @@ Items: {
 
 	ThoriumGuardianVoidHead: {
 		DisplayName: Thorium Guardian Void Head
-		Tooltip: 
+		Tooltip:
 			'''
 			Regenerates guards over time
 			Increases maximum guards by 1
 			10% increased opposing damage
 			Enemies are significantly more likely to target you
 			'''
-		SetBonus: 
+		SetBonus:
 			'''
 			Decreases max life by 250
 			Guardian attacks briefly grant massively increased health and resource regeration
@@ -3349,7 +3345,7 @@ Items: {
 
 	ThoriumGuardianVoidChest: {
 		DisplayName: Void Sentinel Carapace
-		Tooltip: 
+		Tooltip:
 			'''
 			Regenerates guards and slams over time
 			Increases maximum guards and slams by 1
@@ -3357,6 +3353,7 @@ Items: {
 			Enemies are significantly more likely to target you
 			'''
 	}
+
 	HammerMagnet: {
 		DisplayName: Hammer Magnet
 		Tooltip: Allows most warhammers to bend toward the cursor when thrown
@@ -3370,6 +3367,11 @@ Items: {
 			Costs 1 slam
 			'Somebody set up us the bomb'
 			'''
+	}
+
+	ThoriumTerrariumWarhammer: {
+		Tooltip: ""
+		DisplayName: Thorium Terrarium Warhammer
 	}
 }
 
@@ -3829,6 +3831,7 @@ Projectiles: {
 	ThoriumDemonBloodGauntletProjectile.DisplayName: Thorium Demon Blood Gauntlet Projectile
 	ThoriumNagaQuarterstaffProjectile.DisplayName: Thorium Naga Quarterstaff Projectile
 	ThoriumConcentratedThoriumQuarterstaffProjectile.DisplayName: Thorium Concentrated Thorium Quarterstaff Projectile
+	ThoriumTerrariumWarhammerProjectile.DisplayName: Thorium Terrarium Warhammer Projectile
 }
 
 Configs: {
@@ -3917,8 +3920,8 @@ Configs: {
 		}
 
 		GuardianThoriumThorsHammerConversion: {
-			Label: "Convert Thor's Hammer to Opposing Mode on right click"
-			Tooltip: "If Thorium is installed, right clicking the Thor's Hammer: Magic will convert it to Opposing Mode, and Opposing into Melee"
+			Label: Convert Thor's Hammer to Opposing Mode on right click
+			Tooltip: If Thorium is installed, right clicking the Thor's Hammer: Magic will convert it to Opposing Mode, and Opposing into Melee
 		}
 
 		GuardianUseFancyUI: {
