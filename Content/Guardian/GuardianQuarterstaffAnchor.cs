@@ -84,6 +84,10 @@ namespace OrchidMod.Content.Guardian
 				{
 					QuarterstaffTextureGlow = assetglow.Value;
 				}
+				else
+				{
+					QuarterstaffTextureGlow = null;
+				}
 			}
 			else if (IsLocalOwner)
 			{
