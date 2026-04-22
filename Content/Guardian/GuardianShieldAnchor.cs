@@ -218,6 +218,7 @@ namespace OrchidMod.Content.Guardian
 
 							if (!contained)
 							{ // First time blocking an enemy
+								guardian.OnBlockNPCNew(Projectile, target);
 								guardian.GuardianBlockedEnemies.Add(new BlockedEnemy(target, (int)Projectile.ai[0] + 60));
 								SoundEngine.PlaySound(SoundID.Dig, owner.Center);
 							}
