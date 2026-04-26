@@ -53,11 +53,11 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			{
 				int debuffType = thoriumMod.Find<ModBuff>("TerrariumBacklash").Type;
 				target.AddBuff(debuffType, 180);
-				if (!Weak)
-				{
-					Vector2 point = target.Center + Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * 20f;
-					Projectile echoProj = Projectile.NewProjectileDirect(projectile.GetSource_FromAI(), point, point.DirectionTo(target.Center) * 10f, ModContent.ProjectileType<ThoriumTerrariumWarhammerProjectile>(), guardian.GetGuardianDamage(Item.damage * 0.4f), 6f, Main.myPlayer, target.whoAmI);
-				}
+				
+				// if (!Weak) {
+					Vector2 point = Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * 120f;
+					Projectile echoProj = Projectile.NewProjectileDirect(projectile.GetSource_FromAI(), target.Center + point, Vector2.Normalize(point) * -10f, ModContent.ProjectileType<ThoriumTerrariumWarhammerProjectile>(), guardian.GetGuardianDamage(Item.damage * 0.4f), 6f, Main.myPlayer, target.whoAmI);
+				// }
 			}
 		}
 		
@@ -81,8 +81,8 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 				if (!Weak)
 					for (int i = 0; i < 3; i++)
 					{
-						Vector2 point = target.Center + Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * 20f;
-						Projectile echoProj = Projectile.NewProjectileDirect(projectile.GetSource_FromAI(), point, point.DirectionTo(target.Center) * 10f, ModContent.ProjectileType<ThoriumTerrariumWarhammerProjectile>(), guardian.GetGuardianDamage(Item.damage * 0.4f), 6f, Main.myPlayer, target.whoAmI);
+						Vector2 point = Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * 120f;
+						Projectile echoProj = Projectile.NewProjectileDirect(projectile.GetSource_FromAI(), target.Center + point, Vector2.Normalize(point) * -10f, ModContent.ProjectileType<ThoriumTerrariumWarhammerProjectile>(), guardian.GetGuardianDamage(Item.damage * 0.4f), 6f, Main.myPlayer, target.whoAmI);
 					}
 			}
 		}

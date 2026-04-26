@@ -3370,8 +3370,8 @@ Items: {
 	}
 
 	ThoriumTerrariumWarhammer: {
-		Tooltip: ""
-		DisplayName: Thorium Terrarium Warhammer
+		DisplayName: Terrarium Warhammer
+		Tooltip: Calls down piercing afterimages on hit
 	}
 }
 
