@@ -3175,6 +3175,11 @@ Items: {
 		// DisplayName: Ice Gauntlet
 		// Tooltip: ""
 	}
+
+	GoblinKatar: {
+		// Tooltip: ""
+		// DisplayName: Goblin Katar
+	}
 }
 
 NPCs: {
@@ -3624,6 +3629,8 @@ Projectiles: {
 	SurfaceFireShamanProjectile.DisplayName: Ивовый огонёк
 	// IceGauntletProjectile.DisplayName: Ice Gauntlet Projectile
 	// IceGauntletProjectileShard.DisplayName: Ice Gauntlet Projectile Shard
+	// KatarJabProjectile.DisplayName: Katar Jab Projectile
+	// GuardianKatarAnchor.DisplayName: Guardian Katar Anchor
 }
 
 Configs: {
@@ -3729,6 +3736,16 @@ Configs: {
 		GuardianGauntletAlwaysSlam: {
 			Label: Всегда использовать атаку нападением с перчатками
 			Tooltip: Перчатки хранителя при возможности всегда будут использовать атаку нападением, независимо от того, как долго удерживалась клавиша
+		}
+
+		NeedTextureReload: {
+			// Label: Need Texture Reload
+			// Tooltip: ""
+		}
+
+		GuardianUseFancyUI: {
+			// Label: Guardian Use Fancy U I
+			// Tooltip: ""
 		}
 	}
 

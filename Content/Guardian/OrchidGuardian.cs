@@ -136,6 +136,11 @@ namespace OrchidMod
 				}
 			}
 
+			if (item.ModItem is OrchidModGuardianKatar)
+			{
+				drawInfo.compBackArmFrame = new Rectangle(1, 1, 1, 1); // Makes the back arm disappear when holding a katar
+			}
+
 			if (item.ModItem is OrchidModGuardianItem && Player.compositeFrontArm.enabled)
 			{
 				drawInfo.compShoulderOverFrontArm = true; // Why is this not on by default

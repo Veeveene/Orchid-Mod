@@ -3174,6 +3174,11 @@ Items: {
 		DisplayName: Ice Gauntlet
 		Tooltip: ""
 	}
+
+	GoblinKatar: {
+		Tooltip: ""
+		DisplayName: Goblin Katar
+	}
 }
 
 NPCs: {
@@ -3623,6 +3628,8 @@ Projectiles: {
 	SurfaceFireShamanProjectile.DisplayName: Willow Wisp
 	IceGauntletProjectile.DisplayName: Ice Gauntlet Projectile
 	IceGauntletProjectileShard.DisplayName: Ice Gauntlet Projectile Shard
+	KatarJabProjectile.DisplayName: Katar Jab Projectile
+	GuardianKatarAnchor.DisplayName: Guardian Katar Anchor
 }
 
 Configs: {
@@ -3708,6 +3715,16 @@ Configs: {
 		GuardianGauntletAlwaysSlam: {
 			Label: Guardian Gauntlets always consume Slams
 			Tooltip: Guardian Gauntlets will always try to consume a slam charge to perform a slam, no matter how long the input has been held
+		}
+
+		NeedTextureReload: {
+			Label: Need Texture Reload
+			Tooltip: ""
+		}
+
+		GuardianUseFancyUI: {
+			Label: Guardian Use Fancy U I
+			Tooltip: ""
 		}
 	}
 

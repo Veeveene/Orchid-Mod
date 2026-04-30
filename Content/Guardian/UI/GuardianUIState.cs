@@ -47,6 +47,10 @@ namespace OrchidMod.Content.Guardian.UI
 		public static Texture2D textureQuarterstaffOff;
 		public static Texture2D textureQuarterstaffReady;
 
+		public static Texture2D textureKatarOn;
+		public static Texture2D textureKatarOff;
+		public static Texture2D textureKatarReady;
+
 		public static Texture2D textureHorizonLanceOn;
 		public static Texture2D textureHorizonLanceOff;
 		public static Texture2D textureHorizonLanceReady;
@@ -68,57 +72,74 @@ namespace OrchidMod.Content.Guardian.UI
 			=> layers.FindIndex(layer => layer.Name.Equals("Vanilla: Resource Bars"));
 		public override void OnInitialize()
 		{
-			textureBlockOn ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/BlockBarOn", AssetRequestMode.ImmediateLoad).Value;
-			textureBlockOff ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/BlockBarOff", AssetRequestMode.ImmediateLoad).Value;
-			textureSlamOn ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/SlamBarOn", AssetRequestMode.ImmediateLoad).Value;
-			textureSlamOff ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/SlamBarOff", AssetRequestMode.ImmediateLoad).Value;
-			textureSlamHighlight ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/SlamBarHighlight", AssetRequestMode.ImmediateLoad).Value;
-
-			textureHammerMain ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/HammerBar", AssetRequestMode.ImmediateLoad).Value;
-			textureHammerIcon ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/HammerIcon1", AssetRequestMode.ImmediateLoad).Value;
-			textureHammerIconBig ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/HammerIcon2", AssetRequestMode.ImmediateLoad).Value;
-
-			textureGauntletOn ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/GauntletOn", AssetRequestMode.ImmediateLoad).Value;
-			textureGauntletOff ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/GauntletOff", AssetRequestMode.ImmediateLoad).Value;
-			textureGauntletReady ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/GauntletReady", AssetRequestMode.ImmediateLoad).Value;
-
-			textureStandardOn ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/StandardOn", AssetRequestMode.ImmediateLoad).Value;
-			textureStandardOff ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/StandardOff", AssetRequestMode.ImmediateLoad).Value;
-			textureStandardReady ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/StandardReady", AssetRequestMode.ImmediateLoad).Value;
-
-			textureRuneOn ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/RuneOn", AssetRequestMode.ImmediateLoad).Value;
-			textureRuneOff ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/RuneOff", AssetRequestMode.ImmediateLoad).Value;
-			textureRuneReady ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/RuneReady", AssetRequestMode.ImmediateLoad).Value;
-
-			textureQuarterstaffOn ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/QuarterstaffOn", AssetRequestMode.ImmediateLoad).Value;
-			textureQuarterstaffOff ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/QuarterstaffOff", AssetRequestMode.ImmediateLoad).Value;
-			textureQuarterstaffReady ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/QuarterstaffReady", AssetRequestMode.ImmediateLoad).Value;
-
-			textureHammerOn ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/HammerOn", AssetRequestMode.ImmediateLoad).Value;
-			textureHammerOff ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/HammerOff", AssetRequestMode.ImmediateLoad).Value;
-			textureHammerReady ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/HammerReady", AssetRequestMode.ImmediateLoad).Value;
-
-			textureHorizonLanceOn ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/HorizonLanceOn", AssetRequestMode.ImmediateLoad).Value;
-			textureHorizonLanceOff ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/HorizonLanceOff", AssetRequestMode.ImmediateLoad).Value;
-			textureHorizonLanceReady ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/HorizonLanceReady", AssetRequestMode.ImmediateLoad).Value;
-
-			textureGuardianNeedleOn ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/GuardianNeedleOn", AssetRequestMode.ImmediateLoad).Value;
-			textureGuardianNeedleOff ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/GuardianNeedleOff", AssetRequestMode.ImmediateLoad).Value;
-			textureGuardianNeedleReady ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/GuardianNeedleReady", AssetRequestMode.ImmediateLoad).Value;
-
-			blockOn ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/BlockOn", AssetRequestMode.ImmediateLoad).Value;
-			blockOff ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/BlockOff", AssetRequestMode.ImmediateLoad).Value;
-
-			textureIconStandardOn ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/IconStandardOn", AssetRequestMode.ImmediateLoad).Value;
-			textureIconStandardOff ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/IconStandardOff", AssetRequestMode.ImmediateLoad).Value;
-			textureIconStandardHighlight ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/IconStandardHighlight", AssetRequestMode.ImmediateLoad).Value;
-			textureIconRuneOn ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/IconRuneOn", AssetRequestMode.ImmediateLoad).Value;
-			textureIconRuneOff ??= ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/UI/Textures/IconRuneOff", AssetRequestMode.ImmediateLoad).Value;
+			ReloadTextures();
 
 			Width.Set(0f, 0f);
 			Height.Set(0f, 0f);
 			Left.Set(Main.screenWidth / 2, 0f);
 			Top.Set(Main.screenHeight / 2, 0f);
+		}
+
+		public static void ReloadTextures()
+		{
+			string path = "OrchidMod/Content/Guardian/UI/Textures/";
+			textureHammerMain = ModContent.Request<Texture2D>(path + "HammerBar", AssetRequestMode.ImmediateLoad).Value;
+			textureHammerIcon = ModContent.Request<Texture2D>(path + "HammerIcon1", AssetRequestMode.ImmediateLoad).Value;
+			textureHammerIconBig = ModContent.Request<Texture2D>(path + "HammerIcon2", AssetRequestMode.ImmediateLoad).Value;
+
+			// Chance textures file path if the fancy config option is enabled
+			if (ModContent.GetInstance<OrchidClientConfig>().GuardianUseFancyUI) path += "Fancy/";
+
+			textureBlockOn = ModContent.Request<Texture2D>(path + "BlockBarOn", AssetRequestMode.ImmediateLoad).Value;
+			textureBlockOff = ModContent.Request<Texture2D>(path + "BlockBarOff", AssetRequestMode.ImmediateLoad).Value;
+			textureSlamOn = ModContent.Request<Texture2D>(path + "SlamBarOn", AssetRequestMode.ImmediateLoad).Value;
+			textureSlamOff = ModContent.Request<Texture2D>(path + "SlamBarOff", AssetRequestMode.ImmediateLoad).Value;
+			textureSlamHighlight = ModContent.Request<Texture2D>(path + "SlamBarHighlight", AssetRequestMode.ImmediateLoad).Value;
+
+			textureGauntletOn = ModContent.Request<Texture2D>(path + "GauntletOn", AssetRequestMode.ImmediateLoad).Value;
+			textureGauntletOff = ModContent.Request<Texture2D>(path + "GauntletOff", AssetRequestMode.ImmediateLoad).Value;
+			textureGauntletReady = ModContent.Request<Texture2D>(path + "GauntletReady", AssetRequestMode.ImmediateLoad).Value;
+
+			textureGauntletOn = ModContent.Request<Texture2D>(path + "GauntletOn", AssetRequestMode.ImmediateLoad).Value;
+			textureGauntletOff = ModContent.Request<Texture2D>(path + "GauntletOff", AssetRequestMode.ImmediateLoad).Value;
+			textureGauntletReady = ModContent.Request<Texture2D>(path + "GauntletReady", AssetRequestMode.ImmediateLoad).Value;
+
+			textureStandardOn = ModContent.Request<Texture2D>(path + "StandardOn", AssetRequestMode.ImmediateLoad).Value;
+			textureStandardOff = ModContent.Request<Texture2D>(path + "StandardOff", AssetRequestMode.ImmediateLoad).Value;
+			textureStandardReady = ModContent.Request<Texture2D>(path + "StandardReady", AssetRequestMode.ImmediateLoad).Value;
+
+			textureRuneOn = ModContent.Request<Texture2D>(path + "RuneOn", AssetRequestMode.ImmediateLoad).Value;
+			textureRuneOff = ModContent.Request<Texture2D>(path + "RuneOff", AssetRequestMode.ImmediateLoad).Value;
+			textureRuneReady = ModContent.Request<Texture2D>(path + "RuneReady", AssetRequestMode.ImmediateLoad).Value;
+
+			textureQuarterstaffOn = ModContent.Request<Texture2D>(path + "QuarterstaffOn", AssetRequestMode.ImmediateLoad).Value;
+			textureQuarterstaffOff = ModContent.Request<Texture2D>(path + "QuarterstaffOff", AssetRequestMode.ImmediateLoad).Value;
+			textureQuarterstaffReady = ModContent.Request<Texture2D>(path + "QuarterstaffReady", AssetRequestMode.ImmediateLoad).Value;
+
+			textureKatarOn = ModContent.Request<Texture2D>(path + "KatarOn", AssetRequestMode.ImmediateLoad).Value;
+			textureKatarOff = ModContent.Request<Texture2D>(path + "KatarOff", AssetRequestMode.ImmediateLoad).Value;
+			textureKatarReady = ModContent.Request<Texture2D>(path + "KatarReady", AssetRequestMode.ImmediateLoad).Value;
+
+			textureHammerOn = ModContent.Request<Texture2D>(path + "HammerOn", AssetRequestMode.ImmediateLoad).Value;
+			textureHammerOff = ModContent.Request<Texture2D>(path + "HammerOff", AssetRequestMode.ImmediateLoad).Value;
+			textureHammerReady = ModContent.Request<Texture2D>(path + "HammerReady", AssetRequestMode.ImmediateLoad).Value;
+
+			textureHorizonLanceOn = ModContent.Request<Texture2D>(path + "HorizonLanceOn", AssetRequestMode.ImmediateLoad).Value;
+			textureHorizonLanceOff = ModContent.Request<Texture2D>(path + "HorizonLanceOff", AssetRequestMode.ImmediateLoad).Value;
+			textureHorizonLanceReady = ModContent.Request<Texture2D>(path + "HorizonLanceReady", AssetRequestMode.ImmediateLoad).Value;
+
+			textureGuardianNeedleOn = ModContent.Request<Texture2D>(path + "GuardianNeedleOn", AssetRequestMode.ImmediateLoad).Value;
+			textureGuardianNeedleOff = ModContent.Request<Texture2D>(path + "GuardianNeedleOff", AssetRequestMode.ImmediateLoad).Value;
+			textureGuardianNeedleReady = ModContent.Request<Texture2D>(path + "GuardianNeedleReady", AssetRequestMode.ImmediateLoad).Value;
+
+			blockOn = ModContent.Request<Texture2D>(path + "BlockOn", AssetRequestMode.ImmediateLoad).Value;
+			blockOff = ModContent.Request<Texture2D>(path + "BlockOff", AssetRequestMode.ImmediateLoad).Value;
+
+			textureIconStandardOn = ModContent.Request<Texture2D>(path + "IconStandardOn", AssetRequestMode.ImmediateLoad).Value;
+			textureIconStandardOff = ModContent.Request<Texture2D>(path + "IconStandardOff", AssetRequestMode.ImmediateLoad).Value;
+			textureIconStandardHighlight = ModContent.Request<Texture2D>(path + "IconStandardHighlight", AssetRequestMode.ImmediateLoad).Value;
+			textureIconRuneOn = ModContent.Request<Texture2D>(path + "IconRuneOn", AssetRequestMode.ImmediateLoad).Value;
+			textureIconRuneOff = ModContent.Request<Texture2D>(path + "IconRuneOff", AssetRequestMode.ImmediateLoad).Value;
 		}
 
 		public override void Draw(SpriteBatch spriteBatch)
@@ -331,27 +352,34 @@ namespace OrchidMod.Content.Guardian.UI
 							Projectile staffAnchor = Main.projectile.FirstOrDefault(proj => proj.whoAmI < Main.maxProjectiles && proj.active && proj.owner == player.whoAmI && proj.type == staffType && proj.ai[2] > 0f);
 
 							if (staffAnchor != null)
-								{
-									int val = 22;
+							{
+								int val = 22;
 								float block = staffAnchor.ai[2];
-									float step = (player.HeldItem.ModItem as OrchidModGuardianQuarterstaff).ParryDuration;
-									while (block < step)
-									{
-										block += step / 20f;
-										val--;
-									}
+								float step = (player.HeldItem.ModItem as OrchidModGuardianQuarterstaff).ParryDuration;
+								while (block < step)
+								{
+									block += step / 20f;
+									val--;
+								}
 
-									Rectangle rectangle = blockOn.Bounds;
-									rectangle.Height = val;
-									rectangle.Y = blockOn.Height - val;
-									drawpos = new Vector2(position.X - 10, position.Y - 92 * player.gravDir + 3f * (player.gravDir - 1));
-									spriteBatch.Draw(blockOff, drawpos, null, Color.White, 0f, Vector2.Zero, 1f, effect, 0f);
-									drawpos = new Vector2(position.X - 10, position.Y - 92 * player.gravDir + blockOn.Height - val + 3f * (player.gravDir - 1));
-									if (player.gravDir < 0) drawpos.Y -= (blockOn.Height - rectangle.Height);
-									spriteBatch.Draw(blockOn, drawpos, rectangle, Color.White, 0f, Vector2.Zero, 1f, effect, 0f);
-									return;
+								Rectangle rectangle = blockOn.Bounds;
+								rectangle.Height = val;
+								rectangle.Y = blockOn.Height - val;
+								drawpos = new Vector2(position.X - 10, position.Y - 92 * player.gravDir + 3f * (player.gravDir - 1));
+								spriteBatch.Draw(blockOff, drawpos, null, Color.White, 0f, Vector2.Zero, 1f, effect, 0f);
+								drawpos = new Vector2(position.X - 10, position.Y - 92 * player.gravDir + blockOn.Height - val + 3f * (player.gravDir - 1));
+								if (player.gravDir < 0) drawpos.Y -= (blockOn.Height - rectangle.Height);
+								spriteBatch.Draw(blockOn, drawpos, rectangle, Color.White, 0f, Vector2.Zero, 1f, effect, 0f);
+								return;
 							}
 						}
+					}
+
+					if (player.HeldItem.ModItem is OrchidModGuardianKatar katar && (maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - (player.HeldItem.useTime * katar.ChargeSpeedMultiplier)) / 2.5f)))
+					{
+						chargeTextureOn = textureKatarOn;
+						chargeTextureOff = textureKatarOff;
+						chargeTextureReady = textureKatarReady;
 					}
 
 					if (player.HeldItem.ModItem is OrchidModGuardianGauntlet gauntlet && (maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - (player.HeldItem.useTime * gauntlet.ChargeSpeedMultiplier)) / 2.5f)))
@@ -360,41 +388,42 @@ namespace OrchidMod.Content.Guardian.UI
 						chargeTextureOff = textureGauntletOff;
 						chargeTextureReady = textureGauntletReady;
 					}
-					// else
+
+					// Parry duration display on standard weapons
+					int shieldType = ModContent.ProjectileType<GuardianShieldAnchor>();
+					int gauntletType = ModContent.ProjectileType<GuardianGauntletAnchor>();
+					int lanceType = ModContent.ProjectileType<GuardianHorizonLanceAnchor>();
+					int katarType = ModContent.ProjectileType<GuardianKatarAnchor>();
+
+					Projectile charging = Main.projectile.FirstOrDefault(proj => proj.whoAmI < Main.maxProjectiles && proj.active && proj.owner == player.whoAmI && proj.type == gauntletType && proj.ai[2] > 0);
+					Projectile blockAnchor = Main.projectile.FirstOrDefault(proj => proj.whoAmI < Main.maxProjectiles && proj.active && proj.owner == player.whoAmI && (proj.type == shieldType || proj.type == gauntletType || proj.type == lanceType || proj.type == katarType) && proj.ai[0] > 0f && proj.localAI[0] > 0f && (proj.type != gauntletType || proj.ai[2] <= 0));
+
+					bool gauntletMinCharge = player.HeldItem.ModItem is OrchidModGuardianGauntlet gauntletItem && (maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - (player.HeldItem.useTime * gauntletItem.ChargeSpeedMultiplier)) / 2.5f));
+					if (blockAnchor != null)
 					{
-						int shieldType = ModContent.ProjectileType<GuardianShieldAnchor>();
-						int gauntletType = ModContent.ProjectileType<GuardianGauntletAnchor>();
-						int lanceType = ModContent.ProjectileType<GuardianHorizonLanceAnchor>();
-							
-						Projectile charging = Main.projectile.FirstOrDefault(proj => proj.whoAmI < Main.maxProjectiles && proj.active && proj.owner == player.whoAmI && proj.type == gauntletType && proj.ai[2] > 0);
-						Projectile blockAnchor = Main.projectile.FirstOrDefault(proj => proj.whoAmI < Main.maxProjectiles && proj.active && proj.owner == player.whoAmI && (proj.type == shieldType || proj.type == gauntletType || proj.type == lanceType) && proj.ai[0] > 0f && proj.localAI[0] > 0f);
-
-						bool gauntletMinCharge = player.HeldItem.ModItem is OrchidModGuardianGauntlet gauntletItem && (maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - (player.HeldItem.useTime * gauntletItem.ChargeSpeedMultiplier)) / 2.5f));
-						if (blockAnchor != null)
-							{
-								int val = 22;
-							float block = blockAnchor.ai[0];
-							while (block < blockAnchor.localAI[0])
-								{
-								block += blockAnchor.localAI[0] / 20f;
-									val--;
-								}
-
-								Rectangle rectangle = blockOn.Bounds;
-								rectangle.Height = val;
-								rectangle.Y = blockOn.Height - val;
-								drawpos = new Vector2(position.X - 10, position.Y - 92 * player.gravDir + 3f * (player.gravDir - 1));
-							if (charging != null && gauntletMinCharge && !drawAtCursor)
-								drawpos.X += 12;
-								spriteBatch.Draw(blockOff, drawpos, null, Color.White, 0f, Vector2.Zero, 1f, effect, 0f);
-							drawpos.Y += (blockOn.Height - val);
-								if (player.gravDir < 0) drawpos.Y -= (blockOn.Height - rectangle.Height);
-								spriteBatch.Draw(blockOn, drawpos, rectangle, Color.White, 0f, Vector2.Zero, 1f, effect, 0f);
-							
-							if (blockAnchor.type == shieldType || blockAnchor.type == lanceType || charging == null || (charging != null && modPlayer.GuardianItemCharge == 0)) 
-								return;
+						int val = 22;
+						float block = blockAnchor.ai[0];
+						while (block < blockAnchor.localAI[0])
+						{
+							block += blockAnchor.localAI[0] / 20f;
+							val--;
 						}
+
+						Rectangle rectangle = blockOn.Bounds;
+						rectangle.Height = val;
+						rectangle.Y = blockOn.Height - val;
+						drawpos = new Vector2(position.X - 10, position.Y - 92 * player.gravDir + 3f * (player.gravDir - 1));
+						if (charging != null && gauntletMinCharge && !drawAtCursor)
+							drawpos.X += 12;
+						spriteBatch.Draw(blockOff, drawpos, null, Color.White, 0f, Vector2.Zero, 1f, effect, 0f);
+						drawpos.Y += (blockOn.Height - val);
+						if (player.gravDir < 0) drawpos.Y -= (blockOn.Height - rectangle.Height);
+						spriteBatch.Draw(blockOn, drawpos, rectangle, Color.White, 0f, Vector2.Zero, 1f, effect, 0f);
+
+						if (blockAnchor.type == shieldType || blockAnchor.type == lanceType || blockAnchor.type == katarType || charging == null || (charging != null && modPlayer.GuardianItemCharge == 0))
+							return;
 					}
+					// end of parry duration stuff
 
 					if (chargeTextureOn != null)
 					{
