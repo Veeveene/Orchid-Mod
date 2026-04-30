@@ -227,7 +227,7 @@ namespace OrchidMod.Content.Guardian
 									{
 										HitNPCs.Add(npc.whoAmI);
 										int damage = guardian.GetGuardianDamage(guardianItem.Item.damage * guardianItem.ParryDamage);
-										Owner.ApplyDamageToNPC(npc, damage, guardianItem.ParryKnockback, owner.direction, Main.rand.Next(100) < Projectile.CritChance, ModContent.GetInstance<GuardianDamageClass>())
+										Owner.ApplyDamageToNPC(npc, damage, guardianItem.ParryKnockback, owner.direction, Main.rand.Next(100) < Projectile.CritChance, ModContent.GetInstance<GuardianDamageClass>());
 										guardianItem.OnHitParry(owner, guardian, npc, Projectile);
 									}
 								}
