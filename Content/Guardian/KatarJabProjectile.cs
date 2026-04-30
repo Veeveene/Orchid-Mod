@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using OrchidMod.Common;
 using OrchidMod.Utilities;
 using Terraria;
 using Terraria.Audio;
@@ -13,7 +14,6 @@ namespace OrchidMod.Content.Guardian
 		private static Texture2D TextureMain;
 		public OrchidModGuardianKatar KatarItem;
 		public bool ChargedHit => Projectile.ai[0] == 1f;
-		public bool OffHand => Projectile.ai[1] == 1f;
 		public bool FirstFrame = false;
 
 		public override void Load()
@@ -94,6 +94,26 @@ namespace OrchidMod.Content.Guardian
 		{
 			var owner = Main.player[Projectile.owner];
 			KatarItem.KatarModifyHitNPC(owner, owner.GetModPlayer<OrchidGuardian>(), target, Projectile, ref modifiers, ChargedHit);
+			if (ChargedHit) 
+			{
+				modifiers.FinalDamage *= 1f - Projectile.ai[1]; // Deals a % of the jab damage as a DoT
+				int bleedAmount = (int)(Projectile.damage * Projectile.ai[1]);
+				
+				// Applies the bleed while in singleplayer, sends a packet for it while on a server
+				if (Main.netMode == NetmodeID.SinglePlayer)
+				{
+					GuardianGlobalNPC globalNPC = target.GetGlobalNPC<GuardianGlobalNPC>();
+					globalNPC.KatarBleed += bleedAmount;
+				}
+				else
+				{
+					var packet = OrchidMod.Instance.GetPacket();
+					packet.Write((byte)OrchidModMessageType.GUARDIANKATARAPPLYBLEEDTONPC);
+					packet.Write(target.whoAmI);
+					packet.Write(bleedAmount);
+					packet.Send();
+				}
+			}
 		}
 
 		public override void SafeOnHitNPC(NPC target, NPC.HitInfo hit, int damageDone, Player player, OrchidGuardian guardian)
@@ -109,12 +129,7 @@ namespace OrchidMod.Content.Guardian
 				{
 					if (ChargedHit)
 					{
-						guardian.GuardianGuardRecharging += 0.5f;
-					}
-					else
-					{
-						guardian.GuardianSlamRecharging += guardian.GauntletSlamPool;
-						guardian.GauntletSlamPool *= 0.8f;
+						guardian.AddGuard(1);
 					}
 
 					KatarItem.OnHitFirst(owner, guardian, target, Projectile, hit, ChargedHit);
@@ -142,7 +157,7 @@ namespace OrchidMod.Content.Guardian
 
 				float scale = Projectile.scale * (ChargedHit ? 1.2f : 1f);
 				Vector2 drawPosition = Projectile.Center - offsetVector - Main.screenPosition;
-				spriteBatch.Draw(TextureMain, drawPosition, null, KatarItem.GetColor(OffHand) * colorMult, Projectile.rotation, TextureMain.Size() * 0.5f, scale, effect, 0f);
+				spriteBatch.Draw(TextureMain, drawPosition, null, KatarItem.GetColor() * colorMult, Projectile.rotation, TextureMain.Size() * 0.5f, scale, effect, 0f);
 
 				// Draw code ends here
 

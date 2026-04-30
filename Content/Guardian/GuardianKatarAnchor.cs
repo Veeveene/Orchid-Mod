@@ -24,6 +24,7 @@ namespace OrchidMod.Content.Guardian
 		public float KatarDashAngle = 0f;
 		public int KatarDashTimer = 0;
 		public float SlamTime = 0;
+		public List<int> HitNPCs;
 
 		public int KatarAnimFrame = 0;
 
@@ -56,6 +57,7 @@ namespace OrchidMod.Content.Guardian
 			Projectile.netImportant = true;
 			KatarDashAngle = 0f;
 			KatarDashTimer = 0;
+			HitNPCs = new List<int>();
 		}
 
 		public override void SendExtraAI(BinaryWriter writer)
@@ -160,6 +162,25 @@ namespace OrchidMod.Content.Guardian
 					}
 				}
 
+				if (Charging)
+				{ // Katars never stop charging, even while jabbing
+					guardian.GuardianItemCharge += 30f / KatarItem.useTime * (owner.GetTotalAttackSpeed(DamageClass.Melee) * 2f - 1f) * guardianItem.ChargeSpeedMultiplier;
+					if (guardian.GuardianItemCharge > 180f)
+					{
+						if (!Ding && IsLocalOwner)
+						{
+							if (ModContent.GetInstance<OrchidClientConfig>().GuardianAltChargeSounds) SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, owner.Center);
+							else SoundEngine.PlaySound(SoundID.MaxMana, owner.Center);
+							Ding = true;
+						}
+						guardian.GuardianItemCharge = 180f;
+					}
+				}
+				else
+				{
+					Ding = false;
+				}
+
 
 				if (KatarDashTimer > 0 || (OffHandKatar && LinkedKatarAnchor.KatarDashTimer > 0))
 				{ // handles the player dash (after a parry)
@@ -195,6 +216,20 @@ namespace OrchidMod.Content.Guardian
 									gore.rotation = Main.rand.NextFloat(MathHelper.Pi);
 									gore.scale *= Main.rand.NextFloat(0.4f, 0.66f);
 									gore.velocity *= Main.rand.NextFloat(0.5f, 0.75f);
+								}
+							}
+
+							if (IsLocalOwner)
+							{
+								foreach (NPC npc in Main.npc)
+								{
+									if (IsValidTarget(npc) && !HitNPCs.Contains(npc.whoAmI) && npc.Hitbox.Intersects(owner.Hitbox))
+									{
+										HitNPCs.Add(npc.whoAmI);
+										int damage = guardian.GetGuardianDamage(guardianItem.Item.damage * guardianItem.ParryDamage);
+										Owner.ApplyDamageToNPC(npc, damage, guardianItem.ParryKnockback, owner.direction, Main.rand.Next(100) < Projectile.CritChance, ModContent.GetInstance<GuardianDamageClass>())
+										guardianItem.OnHitParry(owner, guardian, npc, Projectile);
+									}
 								}
 							}
 						}
@@ -262,8 +297,8 @@ namespace OrchidMod.Content.Guardian
 						}
 						else if (Projectile.localAI[1] == SlamTime)
 						{ // Slam just started, make projectile
-							int damage = guardian.GetGuardianDamage(guardianItem.Item.damage);
 							bool charged = Projectile.ai[0] == -2f;
+							int damage = guardian.GetGuardianDamage(guardianItem.Item.damage * (charged ? guardianItem.ChargedAttackDamage : guardianItem.SlamDamage));
 							if (guardianItem.OnJab(owner, guardian, Projectile, OffHandKatar, Ding, ref charged, ref damage))
 							{
 								if (owner.boneGloveItem != null && !owner.boneGloveItem.IsAir && owner.boneGloveTimer == 0)
@@ -277,24 +312,23 @@ namespace OrchidMod.Content.Guardian
 								int projectileType = ModContent.ProjectileType<KatarJabProjectile>();
 								float strikeVelocity = guardianItem.JabVelocity * (charged ? 1f : 0.75f) * guardianItem.Item.GetGlobalItem<GuardianPrefixItem>().GetSlamDistance() * owner.GetTotalAttackSpeed(DamageClass.Melee);
 								Vector2 velocity = Vector2.UnitY.RotatedBy((Main.MouseWorld - owner.MountedCenter).ToRotation() - MathHelper.PiOver2) * strikeVelocity * 0.25f;
-								Projectile punchProj = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, velocity, projectileType, 1, 1f, owner.whoAmI, charged ? 1f : 0f, OffHandKatar ? 1f : 0f);
-								if (punchProj.ModProjectile is KatarJabProjectile jab)
+								Projectile jabProj = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, velocity, projectileType, 1, 1f, owner.whoAmI, charged ? 1f : 0f, guardianItem.ChargedAttackDoT);
+								if (jabProj.ModProjectile is KatarJabProjectile jab)
 								{
 									jab.KatarItem = KatarItem.ModItem as OrchidModGuardianKatar;
-									punchProj.damage = damage;
-									punchProj.CritChance = (int)(owner.GetCritChance<GuardianDamageClass>() + owner.GetCritChance<GenericDamageClass>() + guardianItem.Item.crit);
-									punchProj.knockBack = guardianItem.Item.knockBack;
+									jabProj.damage = damage;
+									jabProj.CritChance = (int)(owner.GetCritChance<GuardianDamageClass>() + owner.GetCritChance<GenericDamageClass>() + guardianItem.Item.crit);
+									jabProj.knockBack = guardianItem.Item.knockBack;
 									//punchProj.position += punchProj.velocity * 0.5f;
-									punchProj.velocity += owner.velocity * 0.375f;
+									jabProj.velocity += owner.velocity * 0.375f;
 
-									if (!charged) punchProj.damage = (int)(punchProj.damage * guardianItem.SlamDamage);
+									if (!charged) jabProj.damage = (int)(jabProj.damage * guardianItem.SlamDamage);
 									guardianItem.PlayPunchSound(owner, guardian, Projectile, charged);
 
-									punchProj.netUpdate = true;
+									jabProj.netUpdate = true;
 								}
-								else punchProj.Kill();
+								else jabProj.Kill();
 							}
-							Ding = false;
 						}
 					}
 
@@ -321,7 +355,7 @@ namespace OrchidMod.Content.Guardian
 							Projectile.ai[1] = 0;
 						}
 
-						if (owner.direction == -1) Projectile.rotation += MathHelper.Pi; // weird issue fix, katars flips for 1 frame at the end of a punch when facing left
+						if (owner.direction == -1 && projectile.ai[2] <= 0) Projectile.rotation += MathHelper.Pi; // weird issue fix, katars flips for 1 frame at the end of a punch when facing left
 					}
 				}
 				else
@@ -329,43 +363,32 @@ namespace OrchidMod.Content.Guardian
 					if (Charging || OffHandKatar && LinkedKatarAnchor.Charging)
 					{
 						if (!OffHandKatar)
-						{ // Unlike gauntlets, Katars aren't asynchronous, so the main hand katar will always be the "one charging"
-							guardian.GuardianItemCharge += 30f / KatarItem.useTime * (owner.GetTotalAttackSpeed(DamageClass.Melee) * 2f - 1f) * guardianItem.ChargeSpeedMultiplier;
-							if (guardian.GuardianItemCharge > 180f)
-							{
-								if (!Ding && IsLocalOwner)
-								{
-									if (ModContent.GetInstance<OrchidClientConfig>().GuardianAltChargeSounds) SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, owner.Center);
-									else SoundEngine.PlaySound(SoundID.MaxMana, owner.Center);
-									Ding = true;
-								}
-								guardian.GuardianItemCharge = 180f;
-							}
-						}
-
-						if ((ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs ? !Main.mouseRight : !Main.mouseLeft) && owner.whoAmI == Main.myPlayer)
 						{
-							if (!OffHandKatar)
+							guardianItem.ChargeJabCostUI(owner, guardian, Projectile);
+							if ((ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs ? Main.mouseLeft : Main.mouseRight) && owner.whoAmI == Main.myPlayer && guardianItem.ChargeJabCost(owner, guardian, Projectile, true))
 							{
-								if (guardian.GuardianItemCharge >= 180f) Projectile.ai[0] = -2f;
-								else Projectile.ai[0] = -1f;
-
-								guardian.GuardianItemCharge = 0;
-
-								if (IsLocalOwner)
+								guardianItem.ChargeJabCost(owner, guardian, Projectile, false);
+								Projectile.ai[0] = -1f; // not fully charged
+								Projectile.ai[1] = Vector2.Normalize(Main.MouseWorld - owner.MountedCenter).ToRotation() - MathHelper.PiOver2;
+								Projectile.netUpdate = true;
+							}
+							else if ((ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs ? !Main.mouseRight : !Main.mouseLeft) && owner.whoAmI == Main.myPlayer)
+							{
+								if (IsLocalOwner && guardian.GuardianItemCharge >= 180f)
 								{
+									Projectile.ai[0] = -2f; // fully charged
 									Projectile.ai[1] = Vector2.Normalize(Main.MouseWorld - owner.MountedCenter).ToRotation() - MathHelper.PiOver2;
-									Projectile.ai[2] = 0f;
 									Projectile.netUpdate = true;
 								}
+
+								Projectile.ai[2] = 0f;
+								guardian.GuardianItemCharge = 0;
 							}
 						}
-						else
-						{
-							Projectile.Center = owner.MountedCenter.Floor() + new Vector2((2 - guardian.GuardianItemCharge * 0.02f) * owner.direction, 4);
-							if (OffHandKatar) Projectile.position += new Vector2(4 * owner.direction, -1);
-							Projectile.rotation = MathHelper.PiOver2;
-						}
+
+						Projectile.Center = owner.MountedCenter.Floor() + new Vector2((2 - guardian.GuardianItemCharge * 0.02f) * owner.direction, 4);
+						if (OffHandKatar) Projectile.position += new Vector2(4 * owner.direction, -1);
+						Projectile.rotation = MathHelper.PiOver2;
 					}
 					else
 					{

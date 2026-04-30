@@ -16,6 +16,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria.Graphics.Shaders;
 using OrchidMod.Content.Shapeshifter;
 using Terraria.ModLoader.IO;
+using OrchidMod.Content.Guardian;
 
 namespace OrchidMod
 {
@@ -185,6 +186,23 @@ namespace OrchidMod
 						packet.Write((byte)OrchidModMessageType.SHAPESHIFTERHOOKDASH);
 						packet.Write(whoamI);
 						packet.Send(ignoreClient: whoAmI);
+					}
+
+					break;
+
+				case OrchidModMessageType.GUARDIANKATARAPPLYBLEEDTONPC:
+					npc = Main.npc[reader.ReadInt32()];
+					GuardianGlobalNPC globalNPCGuardian = npc.GetGlobalNPC<GuardianGlobalNPC>();
+					potency = reader.ReadInt32();
+					globalNPCGuardian.KatarBleed = potency;
+
+					if (Main.netMode == NetmodeID.Server)
+					{
+						var packet = GetPacket();
+						packet.Write((byte)OrchidModMessageType.GUARDIANKATARAPPLYBLEEDTONPC);
+						packet.Write(npc.whoAmI);
+						packet.Write(potency);
+						packet.Send();
 					}
 
 					break;

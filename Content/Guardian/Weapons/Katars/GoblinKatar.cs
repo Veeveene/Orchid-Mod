@@ -11,17 +11,17 @@ namespace OrchidMod.Content.Guardian.Weapons.Katars
 			Item.width = 30;
 			Item.height = 32;
 			Item.knockBack = 3f;
-			Item.damage = 58;
+			Item.damage = 100;
 			Item.value = Item.sellPrice(0, 0, 8, 40);
 			Item.rare = ItemRarityID.White;
-			Item.useTime = 31;
+			Item.useTime = 30;
 			JabVelocity = 15f;
 			ParryDuration = 10;
 		}
 
-		public override Color GetColor(bool offHand)
+		public override Color GetColor()
 		{
-			return new Color(209, 216, 217);
+			return new Color(137, 175, 133);
 		}
 
 		public override void AddRecipes()

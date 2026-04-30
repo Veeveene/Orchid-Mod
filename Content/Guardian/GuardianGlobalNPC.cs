@@ -8,11 +8,46 @@ namespace OrchidMod.Content.Guardian
 {
 	internal class GuardianGlobalNPC : GlobalNPC
 	{
+		public float KatarBleed = 0;
+		public int KatarBleedTimer = 0;
+		public override bool InstancePerEntity => true;
+
 		public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
 		{
 			if (projectile.ModProjectile is OrchidModGuardianAnchor anchor && npc.ModNPC != null)
 			{
 				npc.ModNPC.OnHitByItem(anchor.Owner, anchor.Owner.HeldItem, hit, damageDone);
+			}
+		}
+
+		public override void UpdateLifeRegen(NPC npc, ref int damage)
+		{
+			if (KatarBleed > 1)
+			{
+				if (npc.lifeRegen > 0)
+				{
+					npc.lifeRegen = 0;
+				}
+
+				if (damage < 0)
+				{
+					damage = 0;
+				}
+
+				damage += (int)(KatarBleed * 0.5f);
+				npc.lifeRegen -= (int)KatarBleed;
+
+				KatarBleedTimer++;
+				if (KatarBleedTimer >= 60)
+				{
+					KatarBleedTimer = 0;
+					KatarBleed = (int)(KatarBleed * 0.5f);
+				}
+			}
+			else
+			{
+				KatarBleedTimer = 0;
+				KatarBleed = 0;
 			}
 		}
 

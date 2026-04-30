@@ -3819,6 +3819,7 @@ UI: {
 		LeftClick: Left
 		RightClick: Right
 		ChargeToSwing: Charge to swing, {0} click to jab while charging
+		ChargeToJab: Charge to swing, {0} click to slam while charging
 		ChargeToDash: Charge to dash, {0} click to jab while charging
 		ParryDuration: "{0} second parry duration"
 		BlockDuration: "{0} second block duration"

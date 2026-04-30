@@ -615,7 +615,7 @@ namespace OrchidMod
 			}
 		}
 
-		public bool UseSlam(int nb = 1, bool checkOnly = false)
+		public bool UseSlam(int nb = 1, bool checkOnly = false, bool showUICost = false)
 		{
 			if (GuardianHorizon && Player.statLife > Player.statLifeMax2 * 0.5f && Player.statLife > 20)
 			{ // Horizon armor set consumes health instead of guardian charges
@@ -624,6 +624,10 @@ namespace OrchidMod
 					Player.statLife -= 20;
 					CombatText.NewText(Player.Hitbox, CombatText.DamagedFriendly, 20, false, true);
 					SoundEngine.PlaySound(SoundID.DD2_DarkMageAttack, Player.Center);
+				}
+				if (showUICost)
+				{
+					SlamCostUI = nb;
 				}
 				return true;
 			}

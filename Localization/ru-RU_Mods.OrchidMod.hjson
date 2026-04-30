@@ -3844,6 +3844,7 @@ UI: {
 			Зарядите, чтобы взмахнуть
 			Нажмите {0}, чтобы нанести колющий удар во время зарядки
 			'''
+		// ChargeToJab: Charge to swing, {0} click to slam while charging
 		ChargeToDash:
 			'''
 			Зарядите, чтобы совершить рывок
