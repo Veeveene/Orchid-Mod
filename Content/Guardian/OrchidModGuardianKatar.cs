@@ -78,7 +78,9 @@ namespace OrchidMod.Content.Guardian
 		/// <summary> Multiplier applied to the item damage to get a Slam damage. Defaults to 2f. </summary>
 		public float SlamDamage = 1f;
 		/// <summary> Multiplier applied to the item damage to get a Charged attack damage. Defaults to 2f. </summary>
-		public float ChargedAttackDamage = 2f;
+		public float ChargedAttackDamage = 3f;
+		/// <summary> Multiplier applied to the item knockback to get a Charged attack knockback (note that slams deal normal item knockback). Defaults to 1.5f. </summary>
+		public float ChargedAttackKnockback = 1.5f;
 		/// <summary> Multiplier for how much of a charged attack damage should be dealt as a DoT. Defaults to 0.5f. </summary>
 		public float ChargedAttackDoT = 0.5f;
 		/// <summary> Duration (in frames) of a right click parry (also the duration of the parry dash). Defaults to 10. </summary>

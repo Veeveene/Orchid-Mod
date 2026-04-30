@@ -3180,6 +3180,11 @@ Items: {
 		// Tooltip: ""
 		// DisplayName: Goblin Katar
 	}
+
+	ThoriumIcyShardKatar: {
+		// Tooltip: ""
+		// DisplayName: Thorium Icy Shard Katar
+	}
 }
 
 NPCs: {

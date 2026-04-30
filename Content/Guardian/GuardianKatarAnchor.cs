@@ -318,7 +318,7 @@ namespace OrchidMod.Content.Guardian
 									jab.KatarItem = KatarItem.ModItem as OrchidModGuardianKatar;
 									jabProj.damage = damage;
 									jabProj.CritChance = (int)(owner.GetCritChance<GuardianDamageClass>() + owner.GetCritChance<GenericDamageClass>() + guardianItem.Item.crit);
-									jabProj.knockBack = guardianItem.Item.knockBack;
+									jabProj.knockBack = guardianItem.Item.knockBack * (charged ? 2f : 1f);
 									//punchProj.position += punchProj.velocity * 0.5f;
 									jabProj.velocity += owner.velocity * 0.375f;
 

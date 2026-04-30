@@ -10,7 +10,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Katars
 		{
 			Item.width = 30;
 			Item.height = 32;
-			Item.knockBack = 3f;
+			Item.knockBack = 10f;
 			Item.damage = 100;
 			Item.value = Item.sellPrice(0, 0, 8, 40);
 			Item.rare = ItemRarityID.White;
