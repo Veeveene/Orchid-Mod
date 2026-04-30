@@ -309,6 +309,7 @@ namespace OrchidMod.Content.Guardian
 
 					Projectile.rotation = projectile.ai[1];
 					if (owner.direction == 1) Projectile.rotation += MathHelper.Pi;
+					else if (OffHandKatar && projectile.localAI[1] == 0f) Projectile.rotation += MathHelper.Pi;
 
 					Projectile.localAI[1]--;
 					if (projectile.localAI[1] <= (OffHandKatar ? 1 : 0))
@@ -375,7 +376,7 @@ namespace OrchidMod.Content.Guardian
 						{
 							Projectile.position.X -= 2 * owner.direction;
 							Projectile.position.Y -= 4;
-							Projectile.rotation = MathHelper.PiOver2 + MathHelper.PiOver4 * owner.direction * 0.75f;
+							Projectile.rotation = MathHelper.Pi - MathHelper.PiOver4 * 1.1f * owner.direction;
 						}
 						else
 						{
@@ -436,7 +437,7 @@ namespace OrchidMod.Content.Guardian
 				if (player.direction != 1)
 				{
 					GuardianKatarAnchor anchor = OffHandKatar ? LinkedKatarAnchor : this;
-					if (player.velocity.X != 0 && anchor.KatarDashTimer <= 0 || (player.GetModPlayer<OrchidGuardian>().GuardianItemCharge > 0 && anchor.Projectile.ai[2] != 0) || anchor.Slamming) effect = SpriteEffects.FlipVertically;
+					if (anchor.Charging || anchor.Slamming) effect = SpriteEffects.FlipVertically;
 					else effect = SpriteEffects.FlipHorizontally;
 				}
 
