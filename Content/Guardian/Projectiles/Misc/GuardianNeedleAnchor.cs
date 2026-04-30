@@ -118,8 +118,8 @@ namespace OrchidMod.Content.Guardian.Projectiles.Misc
 				if (Projectile.ai[2] > 0f)
 				{ // Blocking
 					Projectile.friendly = false;
-					guardian.GuardianGauntletParry = true;
-					guardian.GuardianGauntletParry2 = true;
+					guardian.GuardianParry = true;
+					guardian.GuardianParryBuffer = true;
 
 					Projectile.Center = owner.MountedCenter.Floor() + new Vector2(10f * owner.direction, -2f);
 					Projectile.rotation = MathHelper.PiOver4 * 0.55f * owner.direction - MathHelper.PiOver4;

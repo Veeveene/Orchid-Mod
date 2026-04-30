@@ -3738,14 +3738,9 @@ Configs: {
 			Tooltip: Перчатки хранителя при возможности всегда будут использовать атаку нападением, независимо от того, как долго удерживалась клавиша
 		}
 
-		NeedTextureReload: {
-			// Label: Need Texture Reload
-			// Tooltip: ""
-		}
-
 		GuardianUseFancyUI: {
-			// Label: Guardian Use Fancy U I
-			// Tooltip: ""
+			// Label: Fancy Guardian UI
+			// Tooltip: Use 'fancy' textures for Guardian UI elements
 		}
 	}
 

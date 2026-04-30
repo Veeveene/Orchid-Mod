@@ -141,7 +141,7 @@ namespace OrchidMod.Content.Guardian
 					bool guardTap = swap ? Main.mouseLeftRelease : Main.mouseRightRelease;
 
 					if (punchHold && punchTap && guardian.GuardianItemCharge <= 0) punchTimer = 6;
-					if (guardHold && guardTap && !guardian.GuardianGauntletParry) shouldGuard = true;
+					if (guardHold && guardTap && !guardian.GuardianParry) shouldGuard = true;
 				}
 			}
 			return false;
@@ -161,7 +161,7 @@ namespace OrchidMod.Content.Guardian
 
 				if (guardian.GuardianItemCharge > 0) punchTimer = 0;
 				if (shouldPunch && !punchHold) punchTimer--;
-				if (!guardHold || guardian.GuardianGauntletParry) shouldGuard = false;
+				if (!guardHold || guardian.GuardianParry) shouldGuard = false;
 				
 				if (shouldPunch || shouldGuard)
 				{
@@ -210,7 +210,7 @@ namespace OrchidMod.Content.Guardian
 									}
 									else
 									{ // Projectile Direction (no input)
-										anchor.KatarDashAngle = MathHelper.Pi * (1f + player.direction * 0.5f);
+										anchor.KatarDashAngle = MathHelper.Pi * (1f + -player.direction * 0.5f);
 									}
 
 									anchor.KatarDashTimer = ParryDuration + 1;
@@ -219,7 +219,7 @@ namespace OrchidMod.Content.Guardian
 									player.immuneTime = 0;
 									guardian.modPlayer.PlayerImmunity = 0;
 									player.immune = false;
-									guardian.GuardianGauntletParry = true; //remind the player that they are in fact parrying because the projectile ai runs on a slight delay
+									guardian.GuardianParry = true; //remind the player that they are in fact parrying because the projectile ai runs on a slight delay
 									projectileMain.ai[0] = (int)(ParryDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianParryDuration);
 									(projectileMain.ModProjectile as GuardianKatarAnchor).NeedNetUpdate = true;
 								}

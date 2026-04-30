@@ -79,7 +79,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Gauntlets
 		{
 			//this line is to prevent weird behavior while weapon switching
 			//todo later: implement weapon switching hook properly and make it so stored iframes from this weapon are returned if guarding is interrupted
-			if (clashImmune > 0 && !player.GetModPlayer<OrchidGuardian>().GuardianGauntletParry)
+			if (clashImmune > 0 && !player.GetModPlayer<OrchidGuardian>().GuardianParry)
 			{
 				clashImmune = 0;
 				InvincibilityDuration = 40;

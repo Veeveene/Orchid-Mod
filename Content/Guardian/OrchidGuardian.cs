@@ -93,8 +93,8 @@ namespace OrchidMod
 		public bool OverThresholdSlams => GuardianSlam + GuardianSlamRecharging > GuardianSlamMax * GuardianRegenThreshold;
 		public int GuardianDisplayUI = 0; // Guardian UI is displayed if > 0
 		public float GuardianItemCharge = 0f; // Player Warhammer Throw Charge, max is 180f
-		public bool GuardianGauntletParry = false; // Player is currently parrying with a gauntlet
-		public bool GuardianGauntletParry2 = false; // Player is currently parrying with a gauntlet (1 frame buffer)
+		public bool GuardianParry = false; // Player is currently parrying
+		public bool GuardianParryBuffer = false; // Player is currently parrying (1 frame buffer)
 		/// <summary> Cooldown in frames between starting a new punch charge since starting the last one. Can begin a punch when 0 or lower, goes down to -10. Half of the gauntlet's punch animation time is added when a charge is started. </summary>
 		public int GauntletPunchCooldown = 0;
 		public bool GuardianStandardBuffer = false; // used to delay the deactivation of various standards effects by 1 frame
@@ -220,7 +220,7 @@ namespace OrchidMod
 				GuardianJewelerGauntlet = 0;
 			}
 			
-			if (GuardianGauntletParry) {
+			if (GuardianParry) {
 				if (GuardianCrystalNinja && Player.dashDelay < 0) DoParryItemParry(null);
 
 				// Condition for when the player is in God Mode (intangible otherwise)
@@ -361,8 +361,8 @@ namespace OrchidMod
 
 			if (Player.HeldItem.ModItem is not OrchidModGuardianItem) GuardianItemCharge = 0f;
 
-			if (GuardianGauntletParry2) GuardianGauntletParry2 = false;
-			else GuardianGauntletParry = false;
+			if (GuardianParryBuffer) GuardianParryBuffer = false;
+			else GuardianParry = false;
 
 			SlamCostUI = 0;
 
@@ -531,7 +531,7 @@ namespace OrchidMod
 		{
 			foreach (BlockedEnemy blockedEnemy in GuardianBlockedEnemies)
 			{
-				if (blockedEnemy.npc.whoAmI == npc.whoAmI && !GuardianGauntletParry)
+				if (blockedEnemy.npc.whoAmI == npc.whoAmI && !GuardianParry)
 				{
 					return false;
 				}
@@ -579,7 +579,7 @@ namespace OrchidMod
 
 		public override void ModifyHurt(ref Player.HurtModifiers modifiers)
 		{
-			if (GuardianGauntletParry)
+			if (GuardianParry)
 			{
 				modifiers.DamageSource.TryGetCausingEntity(out Entity entity);
 				DoParryItemParry(entity);
@@ -870,7 +870,7 @@ namespace OrchidMod
 
 		public void DoParryItemParry(Entity aggressor)
 		{
-			GuardianGauntletParry2 = false;
+			GuardianParryBuffer = false;
 
 			if (Player.HeldItem.ModItem is OrchidModGuardianParryItem parryItem)
 			{

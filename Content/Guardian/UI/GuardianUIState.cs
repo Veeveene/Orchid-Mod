@@ -17,6 +17,8 @@ namespace OrchidMod.Content.Guardian.UI
 {
 	public class GuardianUIState : OrchidUIState
 	{
+		public static bool NeedTextureReload;
+
 		public static Texture2D textureBlockOn;
 		public static Texture2D textureBlockOff;
 		public static Texture2D textureSlamOn;

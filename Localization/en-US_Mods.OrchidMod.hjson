@@ -3717,14 +3717,9 @@ Configs: {
 			Tooltip: Guardian Gauntlets will always try to consume a slam charge to perform a slam, no matter how long the input has been held
 		}
 
-		NeedTextureReload: {
-			Label: Need Texture Reload
-			Tooltip: "this should never be seen by clients, please report if you somehow accessed this?"
-		}
-
 		GuardianUseFancyUI: {
 			Label: Fancy Guardian UI
-			Tooltip: "Use 'fancy' textures for Guardian UI elements"
+			Tooltip: Use 'fancy' textures for Guardian UI elements
 		}
 	}
 
