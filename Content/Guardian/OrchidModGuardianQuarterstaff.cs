@@ -143,7 +143,7 @@ namespace OrchidMod.Content.Guardian
 							proj.ai[0] = 0f;
 							proj.ai[2] = ParryDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianParryDuration;
 							anchor.NeedNetUpdate = true;
-							SoundEngine.PlaySound(SoundID.Item37, player.Center);
+							SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), player.Center);
 						}
 
 						if (shouldCharge && guardian.GuardianItemCharge == 0f && proj.ai[0] == 0f && proj.ai[2] >= -10f && (proj.ai[2] <= 0 || guardian.GuardianStaffRocket == 0))

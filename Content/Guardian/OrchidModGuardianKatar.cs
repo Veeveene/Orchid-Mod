@@ -75,6 +75,8 @@ namespace OrchidMod.Content.Guardian
 		public int ParryDuration = 10;
 		/// <summary> Velocity of the Parry dash. Defaults to 20f. </summary>
 		public float ParryDashSpeed = 20f;
+		/// <summary> Multiplies the velocity of the player after the parry dash (retains more momentum with higher values). Defaults to 0.33f (for early game weapons). </summary>
+		public float ParryDashMomentum = 0.33f;
 		/// <summary> Multiplier to the weapon charge speed when holding left click. Defaults to 1f. </summary>
 		public float ChargeSpeedMultiplier = 1f;
 

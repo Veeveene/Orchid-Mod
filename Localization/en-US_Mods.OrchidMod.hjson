@@ -3719,12 +3719,12 @@ Configs: {
 
 		NeedTextureReload: {
 			Label: Need Texture Reload
-			Tooltip: ""
+			Tooltip: "this should never be seen by clients, please report if you somehow accessed this?"
 		}
 
 		GuardianUseFancyUI: {
-			Label: Guardian Use Fancy U I
-			Tooltip: ""
+			Label: Fancy Guardian UI
+			Tooltip: "Use 'fancy' textures for Guardian UI elements"
 		}
 	}
 

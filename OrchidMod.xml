@@ -81,7 +81,7 @@
             <param name="anchor"> A gauntlet currently eligible for parrying. Will be the main hand gauntlet if both can parry. </param>
         </member>
         <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGauntlet.PlayGuardSound(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile)">
-            <summary> Responsible for playing the sound when the player begins guarding with the weapon. Default behavior is <c>SoundEngine.PlaySound(SoundID.Item37, player.Center);</c> </summary>
+            <summary> Responsible for playing the sound when the player begins guarding with the weapon. Default behavior is <c>SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), player.Center);</c> </summary>
         </member>
         <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGauntlet.PlayPunchSound(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile,System.Boolean)">
             <summary> Responsible for playing the sound when the player punches with the weapon. Default behavior is <c>SoundEngine.PlaySound(charged ? SoundID.DD2_MonkStaffGroundMiss : SoundID.DD2_MonkStaffSwing, player.Center);</c> </summary>
@@ -161,7 +161,7 @@
             <summary> Called when drawing the katar jab projectiles color. </summary>
         </member>
         <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.PlayGuardSound(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile)">
-            <summary> Responsible for playing the sound when the player begins guarding with the weapon. Default behavior is <c>SoundEngine.PlaySound(SoundID.Item37, player.Center);</c> </summary>
+            <summary> Responsible for playing the sound when the player begins guarding with the weapon. Default behavior is <c>SoundEngine.PlaySound(SoundID.DD2_JavelinThrowersAttack.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), player.Center);</c> </summary>
         </member>
         <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.PlayPunchSound(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile,System.Boolean)">
             <summary> Responsible for playing the sound when the player punches with the weapon. Default behavior is <c>SoundEngine.PlaySound(charged ? SoundID.DD2_MonkStaffGroundMiss : SoundID.DD2_MonkStaffSwing, player.Center);</c> </summary>
@@ -169,14 +169,44 @@
         <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.SafeHoldItem(Terraria.Player)">
             <summary> Called at the end of OrchidModGuardianKatar.HoldItem. </summary>
         </member>
-        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.PunchSpeed">
-            <summary> Jab and slam animation speed multiplier. Also affected by melee speed, but not by usetime. </summary>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.GetKatarGlowmaskColor(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile,Microsoft.Xna.Framework.Color)">
+            <summary> Color used to draw potential glowmasks. Defaults to Color.White. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.hasBackKatar">
+            <summary> Return true if the weapon should use a different texture for the offhand katar. Remember to add a corresponding XXX_KatarBack.png texture. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.Frames">
+            <summary> How many frames does the spritesheet uses? </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.JabVelocity">
+            <summary> Velocity of jab projectiles. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.JabSpeed">
+            <summary> Jab and slam animation speed multiplier. Also affected by melee speed, but not by usetime. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.SlamDamage">
+            <summary> Multiplier applied to the item damage to get a Slam damage. Defaults to 1f. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.ChargedAttackDamage">
+            <summary> Multiplier applied to the item damage to get a Slam damage. Defaults to 2f. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.ChargedAttackDoT">
+            <summary> Multiplier for how much of a charged attack damage should be dealt as a DoT. Defaults to 0.5f. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.ParryDuration">
+            <summary> Duration (in frames) of a right click parry (also the duration of the parry dash). Defaults to 10. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.ParryDashSpeed">
+            <summary> Velocity of the Parry dash. Defaults to 20f. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.ChargeSpeedMultiplier">
+            <summary> Multiplier to the weapon charge speed when holding left click. Defaults to 1f. </summary>
         </member>
         <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianParryItem.OnParryOther(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile)">
             <summary>Specifically called if the aggressor when initiating the parry is neither an NPC nor a Projectile.</summary>
         </member>
         <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianParryItem.PlayParrySound(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile)">
-            <summary> Responsible for playing the sound when the player parries with this weapon. Default behavior is <c>SoundEngine.PlaySound(SoundID.Item37, player.Center);</c> </summary>
+            <summary> Responsible for playing the sound when the player parries with this weapon. Default behavior is <c>SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), player.Center);</c> </summary>
         </member>
         <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianProjectile.FirstHit">
             <summary>Set to false in ModifyHitNPC when this projectile or specific anchor attack hits an enemy a second time. Flagged before most hit functions.</summary>

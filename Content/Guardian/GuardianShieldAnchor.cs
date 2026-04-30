@@ -192,7 +192,7 @@ namespace OrchidMod.Content.Guardian
 									guardian.OnBlockProjectileFirst(Projectile, proj);
 									guardianItem.Protect(owner, Projectile);
 									shieldEffectReady = false;
-									SoundEngine.PlaySound(SoundID.Item37, owner.Center);
+									SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), owner.Center);
 								}
 								if (killProj) proj.Kill();
 								SoundEngine.PlaySound(SoundID.Dig, owner.Center);
@@ -238,7 +238,7 @@ namespace OrchidMod.Content.Guardian
 								guardian.OnBlockNPCFirst(Projectile, target);
 								guardianItem.Protect(owner, Projectile);
 								shieldEffectReady = false;
-								SoundEngine.PlaySound(SoundID.Item37, owner.Center);
+								SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), owner.Center);
 							}
 						}
 					}

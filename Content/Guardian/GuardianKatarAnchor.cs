@@ -151,7 +151,7 @@ namespace OrchidMod.Content.Guardian
 					}
 					else
 					{
-						owner.velocity *= 0.5f;
+						owner.velocity *= guardianItem.ParryDashMomentum;
 
 						for (int i = 0; i < 5; i++)
 						{
