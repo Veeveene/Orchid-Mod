@@ -30,7 +30,7 @@ namespace OrchidMod.Content.Guardian
 
 		public int SelectedItem { get; set; } = -1;
 		public Item KatarItem => Main.player[Projectile.owner].inventory[SelectedItem];
-		public bool Blocking => Projectile.ai[0] > 0 && !Charging;
+		public bool Blocking => Projectile.ai[0] > 0;
 		public bool Slamming => Projectile.ai[0] < 0;
 		public bool Charging => Projectile.ai[2] > 0;
 
@@ -164,7 +164,7 @@ namespace OrchidMod.Content.Guardian
 
 				if (Charging)
 				{ // Katars never stop charging, even while jabbing
-					guardian.GuardianItemCharge += 30f / KatarItem.useTime * (owner.GetTotalAttackSpeed(DamageClass.Melee) * 2f - 1f) * guardianItem.ChargeSpeedMultiplier;
+					guardian.GuardianItemCharge += 45f / KatarItem.useTime * (owner.GetTotalAttackSpeed(DamageClass.Melee) * 2f - 1f) * guardianItem.ChargeSpeedMultiplier;
 					if (guardian.GuardianItemCharge > 180f)
 					{
 						if (!Ding && IsLocalOwner)
@@ -345,17 +345,30 @@ namespace OrchidMod.Content.Guardian
 					if (owner.direction == 1) Projectile.rotation += MathHelper.Pi;
 					else if (OffHandKatar && projectile.localAI[1] == 0f) Projectile.rotation += MathHelper.Pi;
 
-					Projectile.localAI[1]--;
-					if (projectile.localAI[1] <= (OffHandKatar ? 1 : 0))
-					{
-						if (!OffHandKatar)
-						{
-							Projectile.localAI[1] = 0f;
-							Projectile.ai[0] = 0;
-							Projectile.ai[1] = 0;
-						}
 
-						if (owner.direction == -1 && projectile.ai[2] <= 0) Projectile.rotation += MathHelper.Pi; // weird issue fix, katars flips for 1 frame at the end of a punch when facing left
+					if ((ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs ? !Main.mouseRight : !Main.mouseLeft) && owner.whoAmI == Main.myPlayer && guardian.GuardianItemCharge >= 180f && ! OffHandKatar)
+					{
+						Projectile.ai[0] = -2f; // fully charged
+						Projectile.ai[1] = Vector2.Normalize(Main.MouseWorld - owner.MountedCenter).ToRotation() - MathHelper.PiOver2;
+						Projectile.ai[2] = 0f;
+						Projectile.localAI[1] = 0f;
+						guardian.GuardianItemCharge = 0;
+						Projectile.netUpdate = true;
+					}
+					else
+					{
+						Projectile.localAI[1]--;
+						if (projectile.localAI[1] <= (OffHandKatar ? 1 : 0))
+						{
+							if (!OffHandKatar)
+							{
+								Projectile.localAI[1] = 0f;
+								Projectile.ai[0] = 0;
+								Projectile.ai[1] = 0;
+							}
+
+							if (owner.direction == -1 && projectile.ai[2] <= 0) Projectile.rotation += MathHelper.Pi; // weird issue fix, katars flips for 1 frame at the end of a punch when facing left
+						}
 					}
 				}
 				else

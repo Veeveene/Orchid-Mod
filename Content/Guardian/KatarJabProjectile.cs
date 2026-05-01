@@ -104,6 +104,7 @@ namespace OrchidMod.Content.Guardian
 				{
 					GuardianGlobalNPC globalNPC = target.GetGlobalNPC<GuardianGlobalNPC>();
 					globalNPC.KatarBleed += bleedAmount;
+					SoundEngine.PlaySound(SoundID.NPCHit18.WithPitchOffset(Main.rand.NextFloat(0.2f, 0.5f)), target.Center);
 				}
 				else
 				{

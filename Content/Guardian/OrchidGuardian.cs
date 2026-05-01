@@ -258,8 +258,8 @@ namespace OrchidMod
 		public override void ResetEffects()
 		{
 			if (
-				(ModLoader.TryGetMod("CheatSheet", out Mod CheatSheet) && (bool)(CheatSheet.Code.GetType("CheatSheet.Menus.GodMode")?.GetField("Enabled", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)?.GetValue(null)))
-				|| 
+				//(ModLoader.TryGetMod("CheatSheet", out Mod CheatSheet) && (bool)(CheatSheet.Code.GetType("CheatSheet.Menus.GodMode")?.GetField("Enabled", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)?.GetValue(null)))
+				//|| 
 				(ModLoader.TryGetMod("HEROsMod", out Mod HerosMod) && (bool)(HerosMod.Code.GetType("HEROsMod.HEROsModServices.GodModeService")?.GetField("Enabled", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)?.GetValue(null)))
 				|| 
 				(ModLoader.TryGetMod("DragonLens", out Mod DragonLens) && (bool)(DragonLens.Code.GetType("DragonLens.Content.Tools.Gameplay.Godmode")?.GetField("godMode", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)?.GetValue(null)))
@@ -880,6 +880,7 @@ namespace OrchidMod
 			{
 				int intendedImmunityLength = parryItem.InvincibilityDuration + ParryInvincibilityBonus;
 				if (Player.longInvince) intendedImmunityLength += 20;
+				if (parryItem is OrchidModGuardianKatar katar && Main.projectile[katar.GetAnchors(Player)[1]].ModProjectile is GuardianKatarAnchor katarAnchor && katarAnchor.KatarDashTimer > 0) intendedImmunityLength += katarAnchor.KatarDashTimer;
 				modPlayer.PlayerImmunity = intendedImmunityLength;
 				Player.immuneTime = intendedImmunityLength;
 				Player.immune = true;

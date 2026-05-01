@@ -3177,13 +3177,18 @@ Items: {
 	}
 
 	GoblinKatar: {
-		// Tooltip: ""
+		// Tooltip: test item
 		// DisplayName: Goblin Katar
 	}
 
 	ThoriumIcyShardKatar: {
-		// Tooltip: ""
-		// DisplayName: Thorium Icy Shard Katar
+		// Tooltip: Significantly hinder the hit enemies movement
+		// DisplayName: Icy Katar
+	}
+
+	GoldChestKatar: {
+		// DisplayName: Serrated Katar
+		// Tooltip: Fully charged attacks bleeds deal additional damage
 	}
 }
 

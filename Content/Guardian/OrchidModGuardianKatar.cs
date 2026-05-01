@@ -71,17 +71,17 @@ namespace OrchidMod.Content.Guardian
 		public float JabVelocity = 10f;
 		/// <summary> Jab and slam animation speed multiplier. Also affected by melee speed, but not by usetime. Defaults to 1f.</summary>
 		public float JabSpeed = 1f;
-		/// <summary> Multiplier applied to the item damage to get a Parry damage. Defaults to 0.5f. </summary>
-		public float ParryDamage = 0.5f;
+		/// <summary> Multiplier applied to the item damage to get a Parry damage. Defaults to 1f. </summary>
+		public float ParryDamage = 1f;
 		/// <summary> Parry knockback. Defaults to 1f. </summary>
 		public float ParryKnockback = 1f;
 		/// <summary> Multiplier applied to the item damage to get a Slam damage. Defaults to 2f. </summary>
 		public float SlamDamage = 1f;
 		/// <summary> Multiplier applied to the item damage to get a Charged attack damage. Defaults to 2f. </summary>
-		public float ChargedAttackDamage = 3f;
+		public float ChargedAttackDamage = 2f;
 		/// <summary> Multiplier applied to the item knockback to get a Charged attack knockback (note that slams deal normal item knockback). Defaults to 1.5f. </summary>
 		public float ChargedAttackKnockback = 1.5f;
-		/// <summary> Multiplier for how much of a charged attack damage should be dealt as a DoT. Defaults to 0.5f. </summary>
+		/// <summary> Multiplier for how much of a charged attack damage should be dealt as a DoT. Defaults to 0.5f, should never be equal or higher than 1f. </summary>
 		public float ChargedAttackDoT = 0.5f;
 		/// <summary> Duration (in frames) of a right click parry (also the duration of the parry dash). Defaults to 10. </summary>
 		public int ParryDuration = 10;
@@ -178,76 +178,77 @@ namespace OrchidMod.Content.Guardian
 				if (shouldPunch || shouldGuard)
 				{
 					Projectile projectileMain = Main.projectile[anchors[1]];
-					if (projectileMain.ai[0] == 0f || projectileMain.ai[0] > 0f)
+					if (shouldGuard)
 					{
-						if (shouldGuard)
+						bool mainKatarFree = projectileMain.ai[0] <= 0f && projectileMain.ai[2] <= 0f;
+						if (mainKatarFree)
 						{
-							bool mainGauntletFree = projectileMain.ai[0] == 0f && projectileMain.ai[2] <= 0f;
-							if (mainGauntletFree)
+							if (PreGuard(player, guardian, projectileMain) && projectileMain.ModProjectile is GuardianKatarAnchor anchor)
 							{
-								if (PreGuard(player, guardian, projectileMain) && projectileMain.ModProjectile is GuardianKatarAnchor anchor)
+								// 8 dir input
+								if (player.controlLeft && !player.controlRight)
 								{
-									// 8 dir input
-									if (player.controlLeft && !player.controlRight)
+									anchor.KatarDashAngle = MathHelper.Pi * 1.5f; // Left
+									if (player.controlUp && !player.controlDown)
 									{
-										anchor.KatarDashAngle = MathHelper.Pi * 1.5f; // Left
-										if (player.controlUp && !player.controlDown)
-										{
-											anchor.KatarDashAngle += MathHelper.Pi * 0.25f; // Top Left
-										}
-										else if (!player.controlUp && player.controlDown)
-										{
-											anchor.KatarDashAngle -= MathHelper.Pi * 0.25f; // Bottom Left
-										}
-									}
-									else if (!player.controlLeft && player.controlRight)
-									{
-										anchor.KatarDashAngle = MathHelper.Pi * 0.5f; // Right
-										if (player.controlUp && !player.controlDown)
-										{
-											anchor.KatarDashAngle -= MathHelper.Pi * 0.25f; // Top Right
-										}
-										else if (!player.controlUp && player.controlDown)
-										{
-											anchor.KatarDashAngle += MathHelper.Pi * 0.25f; // Bottom Right
-										}
-									}
-									else if (player.controlUp && !player.controlDown)
-									{
-										anchor.KatarDashAngle = 0f; // Up
+										anchor.KatarDashAngle += MathHelper.Pi * 0.25f; // Top Left
 									}
 									else if (!player.controlUp && player.controlDown)
 									{
-										anchor.KatarDashAngle = MathHelper.Pi; // Down
+										anchor.KatarDashAngle -= MathHelper.Pi * 0.25f; // Bottom Left
 									}
-									else
-									{ // Projectile Direction (no input)
-										anchor.KatarDashAngle = MathHelper.Pi * (1f + -player.direction * 0.5f);
-									}
-
-									anchor.KatarDashTimer = ParryDuration + 1;
-									anchor.HitNPCs.Clear();
-
-									shouldGuard = false;
-									player.immuneTime = 0;
-									guardian.modPlayer.PlayerImmunity = 0;
-									player.immune = false;
-									guardian.GuardianParry = true; //remind the player that they are in fact parrying because the projectile ai runs on a slight delay
-									projectileMain.ai[0] = (int)(ParryDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianParryDuration);
-									(projectileMain.ModProjectile as GuardianKatarAnchor).NeedNetUpdate = true;
 								}
+								else if (!player.controlLeft && player.controlRight)
+								{
+									anchor.KatarDashAngle = MathHelper.Pi * 0.5f; // Right
+									if (player.controlUp && !player.controlDown)
+									{
+										anchor.KatarDashAngle -= MathHelper.Pi * 0.25f; // Top Right
+									}
+									else if (!player.controlUp && player.controlDown)
+									{
+										anchor.KatarDashAngle += MathHelper.Pi * 0.25f; // Bottom Right
+									}
+								}
+								else if (player.controlUp && !player.controlDown)
+								{
+									anchor.KatarDashAngle = 0f; // Up
+								}
+								else if (!player.controlUp && player.controlDown)
+								{
+									anchor.KatarDashAngle = MathHelper.Pi; // Down
+								}
+								else
+								{ // Projectile Direction (no input)
+									anchor.KatarDashAngle = MathHelper.Pi * (1f + -player.direction * 0.5f);
+								}
+
+								anchor.KatarDashTimer = ParryDuration + 1;
+								anchor.HitNPCs.Clear();
+
+								shouldGuard = false;
+								player.immuneTime = 0;
+								guardian.modPlayer.PlayerImmunity = 0;
+								player.immune = false;
+								guardian.GuardianParry = true; //remind the player that they are in fact parrying because the projectile ai runs on a slight delay
+								projectileMain.ai[0] = (int)(ParryDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianParryDuration);
+								projectileMain.ai[1] = 0f;
+								projectileMain.ai[2] = 0f;
+								projectileMain.localAI[1] = 0f;
+								guardian.GuardianItemCharge = 0;
+								(projectileMain.ModProjectile as GuardianKatarAnchor).NeedNetUpdate = true;
 							}
 						}
-						//or, if trying to punch
-						else if (shouldPunch && guardian.GauntletPunchCooldown <= 0)
-						{
-							guardian.GauntletPunchCooldown += (int)(30f / (JabSpeed * player.GetAttackSpeed<MeleeDamageClass>())) - 1;
-							punchTimer = 0;
-							SoundEngine.PlaySound(Item.UseSound, player.Center);
+					}
+					//or, if trying to punch
+					else if (shouldPunch && guardian.GauntletPunchCooldown <= 0)
+					{
+						guardian.GauntletPunchCooldown += (int)(30f / (JabSpeed * player.GetAttackSpeed<MeleeDamageClass>())) - 1;
+						punchTimer = 0;
+						SoundEngine.PlaySound(Item.UseSound, player.Center);
 
-							projectileMain.ai[2] = 1f;
-							(projectileMain.ModProjectile as GuardianKatarAnchor).NeedNetUpdate = true;
-						}
+						projectileMain.ai[2] = 1f;
+						(projectileMain.ModProjectile as GuardianKatarAnchor).NeedNetUpdate = true;
 					}
 				}
 			}

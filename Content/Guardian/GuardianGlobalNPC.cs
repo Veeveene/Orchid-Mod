@@ -1,7 +1,9 @@
-﻿using OrchidMod.Common.Global.NPCs;
+﻿using Microsoft.Xna.Framework;
+using OrchidMod.Common.Global.NPCs;
 using OrchidMod.Common.ModSystems;
 using OrchidMod.Content.Guardian.Misc;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace OrchidMod.Content.Guardian
@@ -48,6 +50,31 @@ namespace OrchidMod.Content.Guardian
 			{
 				KatarBleedTimer = 0;
 				KatarBleed = 0;
+			}
+		}
+		public override void DrawEffects(NPC npc, ref Color drawColor)
+		{
+			if (KatarBleed > 0)
+			{
+				int intensity = (int)(KatarBleed * 1.5f);
+				if (intensity > 250) intensity = 250;
+				int red = drawColor.R;
+				int green = drawColor.G;
+				int blue = drawColor.B;
+				red += intensity;
+				green -= (int)(intensity * 0.5f);
+				blue -= (int)(intensity * 0.5f);
+				if (red > 255) red = 255;
+				if (green < 0) green = 0;
+				if (blue < 0) blue = 0;
+				Color newColor = new Color(red, green, blue);
+				drawColor = newColor.MultiplyRGBA(drawColor);
+
+				if (Main.rand.NextBool((int)(1 + (350 - intensity) * 0.01f)))
+				{
+					Dust dust = Dust.NewDustDirect(npc.position + new Vector2(4, 4), npc.width - 8, npc.height - 8, DustID.Blood);
+					dust.velocity *= 0.75f;
+				}
 			}
 		}
 
