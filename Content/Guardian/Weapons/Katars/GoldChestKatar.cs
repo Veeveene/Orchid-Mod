@@ -8,7 +8,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Katars
 	{
 		public override void SafeSetDefaults()
 		{
-			Item.width = 30;
+			Item.width = 32;
 			Item.height = 32;
 			Item.knockBack = 6f;
 			Item.damage = 57;

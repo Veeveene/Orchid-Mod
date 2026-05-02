@@ -3189,6 +3189,11 @@ Items: {
 		DisplayName: Serrated Katar
 		Tooltip: Fully charged attacks bleeds deal additional damage
 	}
+
+	CrimtaneKatar: {
+		DisplayName: Scoliosis
+		Tooltip: Parries recover up to half a guard on hit
+	}
 }
 
 NPCs: {
