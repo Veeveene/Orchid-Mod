@@ -203,7 +203,7 @@ namespace OrchidMod.Content.Guardian
 					for (int k = 0; k < Main.maxNPCs; k++)
 					{
 						NPC target = Main.npc[k];
-						if (target.active && !target.dontTakeDamage && !target.friendly && this.LineIntersectsRect(p2, p1, target.Hitbox))
+						if (target.active && !target.dontTakeDamage && !target.friendly && LineIntersectsRect(p2, p1, target.Hitbox))
 						{
 							bool contained = false;
 							foreach(BlockedEnemy blockedEnemy in guardian.GuardianBlockedEnemies)
@@ -319,7 +319,7 @@ namespace OrchidMod.Content.Guardian
 		}
 
 		// https://stackoverflow.com/questions/5514366/how-to-know-if-a-line-intersects-a-rectangle
-		public bool LineIntersectsRect(Point p1, Point p2, Rectangle r)
+		public static bool LineIntersectsRect(Point p1, Point p2, Rectangle r)
 		{
 			return LineIntersectsLine(p1, p2, new Point(r.X, r.Y), new Point(r.X + r.Width, r.Y)) ||
 				   LineIntersectsLine(p1, p2, new Point(r.X + r.Width, r.Y), new Point(r.X + r.Width, r.Y + r.Height)) ||
@@ -328,7 +328,7 @@ namespace OrchidMod.Content.Guardian
 				   (r.Contains(p1) && r.Contains(p2));
 		}
 
-		private bool LineIntersectsLine(Point l1p1, Point l1p2, Point l2p1, Point l2p2)
+		private static bool LineIntersectsLine(Point l1p1, Point l1p2, Point l2p1, Point l2p2)
 		{
 			float q = (l1p1.Y - l2p1.Y) * (l2p2.X - l2p1.X) - (l1p1.X - l2p1.X) * (l2p2.Y - l2p1.Y);
 			float d = (l1p2.X - l1p1.X) * (l2p2.Y - l2p1.Y) - (l1p2.Y - l1p1.Y) * (l2p2.X - l2p1.X);

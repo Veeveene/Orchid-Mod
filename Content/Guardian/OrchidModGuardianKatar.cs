@@ -36,7 +36,9 @@ namespace OrchidMod.Content.Guardian
 		public virtual bool OnJab(Player player, OrchidGuardian guardian, Projectile projectile, bool offHandKatar, bool manuallyFullyCharged, ref bool charged, ref int damage) => true;
 		/// <summary> Called after the player parries damage. </summary>
 		public virtual void OnParryKatar(Player player, OrchidGuardian guardian, Entity aggressor, Projectile anchor) { }
-		/// <summary> Called before the players begins a parry (which is a dash when using katars). Return false to prevent parrying. </summary>
+		/// <summary> Called as the players begins a katar dash. </summary>
+		public virtual void OnDashKatar(Player player, OrchidGuardian guardian, Projectile anchor) { }
+		/// <summary> Called every frame by Katar jab projectiles. Return false to prevent normal projectile AI from running (which simply slows down the projectile). </summary>
 		public virtual bool PreGuard(Player player, OrchidGuardian guardian, Projectile anchor) { return guardian.UseGuard(1); }
 		/// <summary> Called every frame by Katar jab projectiles. Return false to prevent normal projectile AI from running (which simply slows down the projectile). </summary>
 		public virtual bool ProjectileAI(Player player, Projectile projectile, bool charged) => true;
@@ -237,6 +239,8 @@ namespace OrchidMod.Content.Guardian
 								projectileMain.localAI[1] = 0f;
 								guardian.GuardianItemCharge = 0;
 								(projectileMain.ModProjectile as GuardianKatarAnchor).NeedNetUpdate = true;
+
+								OnDashKatar(player, guardian, projectileMain);
 							}
 						}
 					}

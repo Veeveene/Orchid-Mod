@@ -3195,6 +3195,11 @@ Items: {
 		// DisplayName: Scoliosis
 		// Tooltip: Parries recover up to half a guard on hit
 	}
+
+	HellstoneKatar: {
+		// Tooltip: ""
+		// DisplayName: Hellstone Katar
+	}
 }
 
 NPCs: {
@@ -3646,6 +3651,7 @@ Projectiles: {
 	// IceGauntletProjectileShard.DisplayName: Ice Gauntlet Projectile Shard
 	// KatarJabProjectile.DisplayName: Katar Jab Projectile
 	// GuardianKatarAnchor.DisplayName: Guardian Katar Anchor
+	// HellstoneKatarProjectile.DisplayName: Hellstone Katar Projectile
 }
 
 Configs: {
