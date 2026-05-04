@@ -3655,12 +3655,12 @@ Projectiles: {
 	PumpkingWarhammerProjectile.DisplayName: Harvesting Scythe
 	SurfaceFireShamanWeaponAnchor.DisplayName: Willow Wisp
 	SurfaceFireShamanProjectile.DisplayName: Willow Wisp
-	IceGauntletProjectile.DisplayName: Ice Gauntlet Projectile
-	IceGauntletProjectileShard.DisplayName: Ice Gauntlet Projectile Shard
-	KatarJabProjectile.DisplayName: Katar Jab Projectile
-	GuardianKatarAnchor.DisplayName: Guardian Katar Anchor
-	HellstoneKatarProjectile.DisplayName: Hellstone Katar Projectile
-	ThoriumGraniteKatarProjectile.DisplayName: Thorium Granite Katar Projectile
+	IceGauntletProjectile.DisplayName: Ice Shard
+	IceGauntletProjectileShard.DisplayName: Ice Shard
+	KatarJabProjectile.DisplayName: Katar Jab
+	GuardianKatarAnchor.DisplayName: Katar
+	HellstoneKatarProjectile.DisplayName: Trailblaze
+	ThoriumGraniteKatarProjectile.DisplayName: Ion Deluge
 }
 
 Configs: {
