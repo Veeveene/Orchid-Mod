@@ -3196,8 +3196,17 @@ Items: {
 	}
 
 	HellstoneKatar: {
-		Tooltip: ""
-		DisplayName: Hellstone Katar
+		DisplayName: Trailblaze
+		Tooltip: Parries leave a trail of fire
+	}
+
+	ThoriumGraniteKatar: {
+		DisplayName: Ion Deluge
+		Tooltip:
+			'''
+			Parry hits generate energy orbs
+			Fully charged attacks release energy orbs
+			'''
 	}
 }
 
@@ -3651,6 +3660,7 @@ Projectiles: {
 	KatarJabProjectile.DisplayName: Katar Jab Projectile
 	GuardianKatarAnchor.DisplayName: Guardian Katar Anchor
 	HellstoneKatarProjectile.DisplayName: Hellstone Katar Projectile
+	ThoriumGraniteKatarProjectile.DisplayName: Thorium Granite Katar Projectile
 }
 
 Configs: {

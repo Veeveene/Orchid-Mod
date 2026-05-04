@@ -225,7 +225,7 @@ namespace OrchidMod.Content.Guardian
 									anchor.KatarDashAngle = MathHelper.Pi * (1f + -player.direction * 0.5f);
 								}
 
-								anchor.KatarDashTimer = ParryDuration + 1;
+								anchor.KatarDashTimer = (int)(ParryDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianParryDuration) + 1;
 								anchor.HitNPCs.Clear();
 
 								shouldGuard = false;

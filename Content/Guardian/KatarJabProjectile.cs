@@ -35,7 +35,7 @@ namespace OrchidMod.Content.Guardian
 			Projectile.alpha = 255;
 			Projectile.extraUpdates = 3;
 			Projectile.usesLocalNPCImmunity = true;
-			Projectile.localNPCHitCooldown = 90;
+			Projectile.localNPCHitCooldown = -1;
 		}
 
 		public override void AI()

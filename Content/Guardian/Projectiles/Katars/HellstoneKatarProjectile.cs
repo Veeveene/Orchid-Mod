@@ -1,29 +1,26 @@
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using System.Reflection.Metadata.Ecma335;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace OrchidMod.Content.Guardian.Projectiles.Katars
 {
 	public class HellstoneKatarProjectile : OrchidModGuardianProjectile
 	{
-		public List<int> HitNPCs;
-
 		public override void SafeSetDefaults()
 		{
 			Projectile.width = 1;
 			Projectile.height = 1;
 			Projectile.friendly = true;
 			Projectile.aiStyle = -1;
-			Projectile.timeLeft = 621;
+			Projectile.timeLeft = 321;
 			Projectile.scale = 1f;
 			Projectile.penetrate = -1;
 			Projectile.alpha = 255;
 			Projectile.tileCollide = false;
-			HitNPCs = new List<int>();
+			Projectile.usesLocalNPCImmunity = true;
+			Projectile.localNPCHitCooldown = 30;
 		}
 
 		public override bool? CanHitNPC(NPC target)
@@ -74,12 +71,12 @@ namespace OrchidMod.Content.Guardian.Projectiles.Katars
 
 		public override void AI()
 		{
-			if (Projectile.timeLeft >= 600)
+			if (Projectile.timeLeft >= 300)
 			{
 				Projectile.ai[0] = Owner.Center.X;
 				Projectile.ai[1] = Owner.Center.Y;
 
-				if (Projectile.timeLeft == 600)
+				if (Projectile.timeLeft == 300)
 				{
 					SoundEngine.PlaySound(SoundID.Item74.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), Owner.Center);
 					Projectile.netUpdate = true;
@@ -92,7 +89,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Katars
 
 				int length = (int)((300 - direction.Length()) / 10f); // used for dust spawn randomness, the dash length should be 20 * 15 = 300 (katar dash velocity * katar dash duration)
 				if (length < 1) length = 1;
-				if (length > 10) length = 10;
+				if (length > 4) length = 4;
 
 				if (Main.rand.NextBool(length))
 				{
