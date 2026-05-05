@@ -3208,6 +3208,15 @@ Items: {
 			Fully charged attacks release energy orbs
 			'''
 	}
+
+	BadgeHoplite: {
+		DisplayName: Legion Insigna
+		Tooltip:
+			'''
+			25% increased katar speed for one attack after a katar parry
+			Stackable twice
+			'''
+	}
 }
 
 NPCs: {

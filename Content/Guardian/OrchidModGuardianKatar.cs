@@ -241,6 +241,11 @@ namespace OrchidMod.Content.Guardian
 								(projectileMain.ModProjectile as GuardianKatarAnchor).NeedNetUpdate = true;
 
 								OnDashKatar(player, guardian, projectileMain);
+
+								if (guardian.GuardianBadgeHoplite && guardian.GuardianBadgeHopliteLevel < 2)
+								{ // Accessory increases charge speed after a katar dash
+									guardian.GuardianBadgeHopliteLevel++;
+								}
 							}
 						}
 					}

@@ -8,6 +8,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Katars
 {
 	public class HellstoneKatarProjectile : OrchidModGuardianProjectile
 	{
+		public List<int> HitNPCs;
 		public override void SafeSetDefaults()
 		{
 			Projectile.width = 1;
@@ -21,6 +22,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Katars
 			Projectile.tileCollide = false;
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = 30;
+			HitNPCs = new List<int>();
 		}
 
 		public override bool? CanHitNPC(NPC target)
@@ -33,6 +35,15 @@ namespace OrchidMod.Content.Guardian.Projectiles.Katars
 				}
 			}
 			return false;
+		}
+
+		public override void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+		{
+			if (!HitNPCs.Contains(target.whoAmI))
+			{
+				HitNPCs.Add(target.whoAmI);
+				modifiers.FinalDamage *= 2f;
+			}
 		}
 
 		public override void ModifyDamageHitbox(ref Rectangle hitbox)

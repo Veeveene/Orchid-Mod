@@ -164,7 +164,7 @@ namespace OrchidMod.Content.Guardian
 
 				if (Charging)
 				{ // Katars never stop charging, even while jabbing
-					guardian.GuardianItemCharge += 45f / KatarItem.useTime * (owner.GetTotalAttackSpeed(DamageClass.Melee) * 2f - 1f) * guardianItem.ChargeSpeedMultiplier;
+					guardian.GuardianItemCharge += 45f / KatarItem.useTime * ((owner.GetTotalAttackSpeed(DamageClass.Melee) * 2f + guardian.GuardianBadgeHopliteLevel * 0.25f) - 1f) * guardianItem.ChargeSpeedMultiplier;
 					if (guardian.GuardianItemCharge > 180f)
 					{
 						if (!Ding && IsLocalOwner)
@@ -188,11 +188,6 @@ namespace OrchidMod.Content.Guardian
 					{
 						if (KatarDashTimer > 1)
 						{
-							Vector2 intendedVelocity = Vector2.UnitY.RotatedBy(KatarDashAngle) * -guardianItem.ParryDashSpeed;
-							owner.velocity = intendedVelocity;
-							owner.direction = intendedVelocity.X > 0 ? 1 : -1;
-							owner.fallStart = (int)(owner.position.Y / 16);
-
 							if (Main.rand.NextBool())
 							{
 								Dust dust = Dust.NewDustDirect(owner.position, owner.width, owner.height, DustID.Smoke);
@@ -354,6 +349,7 @@ namespace OrchidMod.Content.Guardian
 						Projectile.localAI[1] = 0f;
 						guardian.GuardianItemCharge = 0;
 						Projectile.netUpdate = true;
+						guardian.GuardianBadgeHopliteLevel = 0; // reset hoplite badge charges after an attack
 					}
 					else
 					{
@@ -392,6 +388,7 @@ namespace OrchidMod.Content.Guardian
 									Projectile.ai[0] = -2f; // fully charged
 									Projectile.ai[1] = Vector2.Normalize(Main.MouseWorld - owner.MountedCenter).ToRotation() - MathHelper.PiOver2;
 									Projectile.netUpdate = true;
+									guardian.GuardianBadgeHopliteLevel = 0; // reset hoplite badge charges after an attack
 								}
 
 								Projectile.ai[2] = 0f;

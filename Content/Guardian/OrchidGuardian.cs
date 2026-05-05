@@ -65,6 +65,7 @@ namespace OrchidMod
 		public bool GuardianSharpRebuttalParry = false;
 		public bool GuardianWormTooth = false;
 		public bool GuardianMonsterFang = false;
+		public bool GuardianBadgeHoplite = false;
 		public bool GuardianStandardDesert = false; // Standards
 		public int GuardianStandardStarScouter = -1; //Points to current StarScouterStandard holder
 		public bool GuardianStandardStarScouterWarp = false;
@@ -112,6 +113,7 @@ namespace OrchidMod
 		public Projectile GuardianCurrentStandardAnchor;
 		public float GauntletSlamPool = 0f; // How much slam charge will be granted by hitting the next punch
 		public int GuardianStaffRocketCooldown = 0; // Cooldown between rocket dashes
+		public int GuardianBadgeHopliteLevel = 0; // goes up to 2 for bonus katar charge speed
 
 		public const int GuardianRechargeTime = 600;
 
@@ -334,6 +336,11 @@ namespace OrchidMod
 				GauntletSlamPool = 0f;
 			}
 
+			if (Player.HeldItem.ModItem is not OrchidModGuardianKatar)
+			{
+				GuardianBadgeHopliteLevel = 0;
+			}
+
 			if (GuardianCounter)
 			{
 				if (GuardianCounterTime > 0) GuardianCounterTime--;
@@ -415,6 +422,7 @@ namespace OrchidMod
 			GuardianShowDebugVisuals = false;
 			GuardianBronzeShieldBuff = false;
 			GuardianBronzeShieldProtection = false;
+			GuardianBadgeHoplite = false;
 		}
 
 		public override void PreUpdateMovement()
@@ -497,6 +505,24 @@ namespace OrchidMod
 					dust.velocity.X *= 0.6f;
 					dust.position += dust.velocity * 6f;
 					dust.velocity *= 3f;
+				}
+			}
+
+			if (Player.HeldItem != null)
+			{ // Ucaps players Y velocity while dashing downwards with a katar
+				if (Player.HeldItem.ModItem != null)
+				{
+					if (Player.HeldItem.ModItem is OrchidModGuardianKatar katar && katar.GetAnchors(Player) != null)
+					{
+						if (Main.projectile[katar.GetAnchors(Player)[1]].ModProjectile is GuardianKatarAnchor anchor && anchor.KatarDashTimer > 1)
+						{
+							Vector2 intendedVelocity = Vector2.UnitY.RotatedBy(anchor.KatarDashAngle) * -katar.ParryDashSpeed;
+							Player.velocity = intendedVelocity;
+							Player.direction = intendedVelocity.X > 0 ? 1 : -1;
+							Player.fallStart = (int)(Player.position.Y / 16);
+							Player.maxFallSpeed = katar.ParryDashSpeed;
+						}
+					}
 				}
 			}
 		}

@@ -3209,6 +3209,15 @@ Items: {
 			Fully charged attacks release energy orbs
 			''' */
 	}
+
+	BadgeHoplite: {
+		// DisplayName: Legion Insigna
+		/* Tooltip:
+			'''
+			25% increased katar speed for one attack after a katar parry
+			Stackable twice
+			''' */
+	}
 }
 
 NPCs: {
@@ -3656,12 +3665,12 @@ Projectiles: {
 	PumpkingWarhammerProjectile.DisplayName: Коса жатвы
 	SurfaceFireShamanWeaponAnchor.DisplayName: Ивовый огонёк
 	SurfaceFireShamanProjectile.DisplayName: Ивовый огонёк
-	// IceGauntletProjectile.DisplayName: Ice Gauntlet Projectile
-	// IceGauntletProjectileShard.DisplayName: Ice Gauntlet Projectile Shard
-	// KatarJabProjectile.DisplayName: Katar Jab Projectile
-	// GuardianKatarAnchor.DisplayName: Guardian Katar Anchor
-	// HellstoneKatarProjectile.DisplayName: Hellstone Katar Projectile
-	// ThoriumGraniteKatarProjectile.DisplayName: Thorium Granite Katar Projectile
+	// IceGauntletProjectile.DisplayName: Ice Shard
+	// IceGauntletProjectileShard.DisplayName: Ice Shard
+	// KatarJabProjectile.DisplayName: Katar Jab
+	// GuardianKatarAnchor.DisplayName: Katar
+	// HellstoneKatarProjectile.DisplayName: Trailblaze
+	// ThoriumGraniteKatarProjectile.DisplayName: Ion Deluge
 }
 
 Configs: {
