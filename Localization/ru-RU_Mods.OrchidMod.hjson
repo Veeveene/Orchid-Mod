@@ -3322,6 +3322,49 @@ Items: {
 		// Tooltip: ""
 		// DisplayName: Thorium Terrarium Warhammer
 	}
+
+	GoblinKatar: {
+		// Tooltip: test item
+		// DisplayName: Goblin Katar
+	}
+
+	ThoriumIcyShardKatar: {
+		// Tooltip: Significantly hinder the hit enemies movement
+		// DisplayName: Icy Katar
+	}
+
+	GoldChestKatar: {
+		// DisplayName: Serrated Katar
+		// Tooltip: Fully charged attacks bleeds deal additional damage
+	}
+
+	CrimtaneKatar: {
+		// DisplayName: Scoliosis
+		// Tooltip: Parries recover up to half a guard on hit
+	}
+
+	HellstoneKatar: {
+		// DisplayName: Trailblaze
+		// Tooltip: Parries leave a trail of fire
+	}
+
+	ThoriumGraniteKatar: {
+		// DisplayName: Ion Deluge
+		/* Tooltip:
+			'''
+			Parry hits generate energy orbs
+			Fully charged attacks release energy orbs
+			''' */
+	}
+
+	BadgeHoplite: {
+		// DisplayName: Legion Insigna
+		/* Tooltip:
+			'''
+			25% increased katar speed for one attack after a katar parry
+			Stackable twice
+			''' */
+	}
 }
 
 NPCs: {
@@ -3769,8 +3812,12 @@ Projectiles: {
 	PumpkingWarhammerProjectile.DisplayName: Коса жатвы
 	SurfaceFireShamanWeaponAnchor.DisplayName: Ивовый огонёк
 	SurfaceFireShamanProjectile.DisplayName: Ивовый огонёк
-	// IceGauntletProjectile.DisplayName: Ice Gauntlet Projectile
-	// IceGauntletProjectileShard.DisplayName: Ice Gauntlet Projectile Shard
+	// IceGauntletProjectile.DisplayName: Ice Shard
+	// IceGauntletProjectileShard.DisplayName: Ice Shard
+	// KatarJabProjectile.DisplayName: Katar Jab
+	// GuardianKatarAnchor.DisplayName: Katar
+	// HellstoneKatarProjectile.DisplayName: Trailblaze
+	// ThoriumGraniteKatarProjectile.DisplayName: Ion Deluge
 	// ToyWarhammerProjectile.DisplayName: Toy Warhammer Projectile
 	// ThoriumVoidQuarterstaffProjectile.DisplayName: Thorium Void Quarterstaff Projectile
 	// ThoriumDemonBloodGauntletProjectile.DisplayName: Thorium Demon Blood Gauntlet Projectile
@@ -3888,6 +3935,11 @@ Configs: {
 			// Label: Convert Thor's Hammer to Opposing Mode on right click
 			// Tooltip: If Thorium is installed, right clicking the Thor's Hammer: Magic will convert it to Opposing Mode, and Opposing into Melee
 		}
+
+		GuardianUseFancyUI: {
+			// Label: Fancy Guardian UI
+			// Tooltip: Use 'fancy' textures for Guardian UI elements
+		}
 	}
 
 	OrchidServerConfig: {
@@ -3991,6 +4043,7 @@ UI: {
 			Зарядите, чтобы взмахнуть
 			Нажмите {0}, чтобы нанести колющий удар во время зарядки
 			'''
+		// ChargeToJab: Charge to swing, {0} click to slam while charging
 		ChargeToDash:
 			'''
 			Зарядите, чтобы совершить рывок

@@ -65,6 +65,7 @@ namespace OrchidMod
 		public bool GuardianSharpRebuttalParry = false;
 		public bool GuardianWormTooth = false;
 		public bool GuardianMonsterFang = false;
+		public bool GuardianBadgeHoplite = false;
 		public bool GuardianStandardDesert = false; // Standards
 		public int GuardianStandardStarScouter = -1; //Points to current StarScouterStandard holder
 		public bool GuardianStandardStarScouterWarp = false;
@@ -95,8 +96,8 @@ namespace OrchidMod
 		public bool OverThresholdSlams => GuardianSlam + GuardianSlamRecharging > GuardianSlamMax * GuardianRegenThreshold;
 		public int GuardianDisplayUI = 0; // Guardian UI is displayed if > 0
 		public float GuardianItemCharge = 0f; // Player Warhammer Throw Charge, max is 180f
-		public bool GuardianGauntletParry = false; // Player is currently parrying with a gauntlet
-		public bool GuardianGauntletParry2 = false; // Player is currently parrying with a gauntlet (1 frame buffer)
+		public bool GuardianParry = false; // Player is currently parrying
+		public bool GuardianParryBuffer = false; // Player is currently parrying (1 frame buffer)
 		/// <summary> Cooldown in frames between starting a new punch charge since starting the last one. Can begin a punch when 0 or lower, goes down to -10. Half of the gauntlet's punch animation time is added when a charge is started. </summary>
 		public int GauntletPunchCooldown = 0;
 		public bool GuardianStandardBuffer = false; // used to delay the deactivation of various standards effects by 1 frame
@@ -114,6 +115,7 @@ namespace OrchidMod
 		public Projectile GuardianCurrentStandardAnchor;
 		public float GauntletSlamPool = 0f; // How much slam charge will be granted by hitting the next punch
 		public int GuardianStaffRocketCooldown = 0; // Cooldown between rocket dashes
+		public int GuardianBadgeHopliteLevel = 0; // goes up to 2 for bonus katar charge speed
 
 		public const int GuardianRechargeTime = 600;
 
@@ -136,6 +138,11 @@ namespace OrchidMod
 				{
 					drawInfo.hideCompositeShoulders = true; // Makes the shoulders disappear if the gauntlet has its own shoulder texture
 				}
+			}
+
+			if (item.ModItem is OrchidModGuardianKatar)
+			{
+				drawInfo.compBackArmFrame = new Rectangle(1, 1, 1, 1); // Makes the back arm disappear when holding a katar
 			}
 
 			if (item.ModItem is OrchidModGuardianItem && Player.compositeFrontArm.enabled)
@@ -217,7 +224,7 @@ namespace OrchidMod
 				GuardianJewelerGauntlet = 0;
 			}
 			
-			if (GuardianGauntletParry) {
+			if (GuardianParry) {
 				if (GuardianCrystalNinja && Player.dashDelay < 0) DoParryItemParry(null);
 
 				// Condition for when the player is in God Mode (intangible otherwise)
@@ -255,8 +262,8 @@ namespace OrchidMod
 		public override void ResetEffects()
 		{
 			if (
-				(ModLoader.TryGetMod("CheatSheet", out Mod CheatSheet) && (bool)(CheatSheet.Code.GetType("CheatSheet.Menus.GodMode")?.GetField("Enabled", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)?.GetValue(null)))
-				|| 
+				//(ModLoader.TryGetMod("CheatSheet", out Mod CheatSheet) && (bool)(CheatSheet.Code.GetType("CheatSheet.Menus.GodMode")?.GetField("Enabled", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)?.GetValue(null)))
+				//|| 
 				(ModLoader.TryGetMod("HEROsMod", out Mod HerosMod) && (bool)(HerosMod.Code.GetType("HEROsMod.HEROsModServices.GodModeService")?.GetField("Enabled", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)?.GetValue(null)))
 				|| 
 				(ModLoader.TryGetMod("DragonLens", out Mod DragonLens) && (bool)(DragonLens.Code.GetType("DragonLens.Content.Tools.Gameplay.Godmode")?.GetField("godMode", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)?.GetValue(null)))
@@ -331,6 +338,11 @@ namespace OrchidMod
 				GauntletSlamPool = 0f;
 			}
 
+			if (Player.HeldItem.ModItem is not OrchidModGuardianKatar)
+			{
+				GuardianBadgeHopliteLevel = 0;
+			}
+
 			if (GuardianCounter)
 			{
 				if (GuardianCounterTime > 0) GuardianCounterTime--;
@@ -358,8 +370,8 @@ namespace OrchidMod
 
 			if (Player.HeldItem.ModItem is not OrchidModGuardianItem) GuardianItemCharge = 0f;
 
-			if (GuardianGauntletParry2) GuardianGauntletParry2 = false;
-			else GuardianGauntletParry = false;
+			if (GuardianParryBuffer) GuardianParryBuffer = false;
+			else GuardianParry = false;
 
 			SlamCostUI = 0;
 
@@ -414,6 +426,7 @@ namespace OrchidMod
 			GuardianBronzeShieldProtection = false;
 			GuardianHammerMagnet = false;
 			GuardianHammerDetonator = false;
+			GuardianBadgeHoplite = false;
 		}
 
 		public override void PreUpdateMovement()
@@ -498,6 +511,24 @@ namespace OrchidMod
 					dust.velocity *= 3f;
 				}
 			}
+
+			if (Player.HeldItem != null)
+			{ // Ucaps players Y velocity while dashing downwards with a katar
+				if (Player.HeldItem.ModItem != null)
+				{
+					if (Player.HeldItem.ModItem is OrchidModGuardianKatar katar && katar.GetAnchors(Player) != null)
+					{
+						if (Main.projectile[katar.GetAnchors(Player)[1]].ModProjectile is GuardianKatarAnchor anchor && anchor.KatarDashTimer > 1)
+						{
+							Vector2 intendedVelocity = Vector2.UnitY.RotatedBy(anchor.KatarDashAngle) * -katar.ParryDashSpeed;
+							Player.velocity = intendedVelocity;
+							Player.direction = intendedVelocity.X > 0 ? 1 : -1;
+							Player.fallStart = (int)(Player.position.Y / 16);
+							Player.maxFallSpeed = katar.ParryDashSpeed;
+						}
+					}
+				}
+			}
 		}
 
 		public override void OnHitByNPC(NPC npc, Player.HurtInfo hurtInfo)
@@ -530,7 +561,7 @@ namespace OrchidMod
 		{
 			foreach (BlockedEnemy blockedEnemy in GuardianBlockedEnemies)
 			{
-				if (blockedEnemy.npc.whoAmI == npc.whoAmI && !GuardianGauntletParry)
+				if (blockedEnemy.npc.whoAmI == npc.whoAmI && !GuardianParry)
 				{
 					return false;
 				}
@@ -578,7 +609,7 @@ namespace OrchidMod
 
 		public override void ModifyHurt(ref Player.HurtModifiers modifiers)
 		{
-			if (GuardianGauntletParry)
+			if (GuardianParry)
 			{
 				modifiers.DamageSource.TryGetCausingEntity(out Entity entity);
 				DoParryItemParry(entity);
@@ -614,7 +645,7 @@ namespace OrchidMod
 			}
 		}
 
-		public bool UseSlam(int nb = 1, bool checkOnly = false)
+		public bool UseSlam(int nb = 1, bool checkOnly = false, bool showUICost = false)
 		{
 			if (GuardianHorizon && Player.statLife > Player.statLifeMax2 * 0.5f && Player.statLife > 20)
 			{ // Horizon armor set consumes health instead of guardian charges
@@ -623,6 +654,10 @@ namespace OrchidMod
 					Player.statLife -= 20;
 					CombatText.NewText(Player.Hitbox, CombatText.DamagedFriendly, 20, false, true);
 					SoundEngine.PlaySound(SoundID.DD2_DarkMageAttack, Player.Center);
+				}
+				if (showUICost)
+				{
+					SlamCostUI = nb;
 				}
 				return true;
 			}
@@ -750,12 +785,9 @@ namespace OrchidMod
 					GuardianCounterTime = (int)(40 / (qs.CounterSpeed * Player.GetTotalAttackSpeed<MeleeDamageClass>()));
 			}
 		}
-
-		public void OnBlockNPCFirst(Projectile anchor, NPC target, int toAdd = 1, bool parry = false)
-		{ // Called anytime the player blocks/parries their first NPC
-			OnBlockAnyFirst(anchor, ref toAdd, parry);
-
-			if (anchor.ModProjectile is GuardianShieldAnchor shieldAnchor && Player.whoAmI == Main.myPlayer)
+		public void OnBlockNPCNew(Projectile anchor, NPC target, int toAdd = 1, bool parry = false)
+		{ // Called anytime the player blocks/parries a NPC for the first time (NPC not contained in GuardianBlockedEnemies)
+			if (Player.whoAmI == Main.myPlayer)
 			{
 				if (GuardianSpikeDamage > 0)
 				{
@@ -768,6 +800,11 @@ namespace OrchidMod
 					Player.ApplyDamageToNPC(target, (int)damage, 0f, Player.direction, crit, ModContent.GetInstance<GuardianDamageClass>());
 				}
 			}
+		}
+
+		public void OnBlockNPCFirst(Projectile anchor, NPC target, int toAdd = 1, bool parry = false)
+		{ // Called anytime the player blocks/parries their first NPC
+			OnBlockAnyFirst(anchor, ref toAdd, parry);
 
 			if (anchor.ModProjectile is not GuardianHammerAnchor)
 			{
@@ -867,12 +904,13 @@ namespace OrchidMod
 
 		public void DoParryItemParry(Entity aggressor)
 		{
-			GuardianGauntletParry2 = false;
+			GuardianParryBuffer = false;
 
 			if (Player.HeldItem.ModItem is OrchidModGuardianParryItem parryItem)
 			{
 				int intendedImmunityLength = parryItem.InvincibilityDuration + ParryInvincibilityBonus;
 				if (Player.longInvince) intendedImmunityLength += 20;
+				if (parryItem is OrchidModGuardianKatar katar && Main.projectile[katar.GetAnchors(Player)[1]].ModProjectile is GuardianKatarAnchor katarAnchor && katarAnchor.KatarDashTimer > 0) intendedImmunityLength += katarAnchor.KatarDashTimer;
 				modPlayer.PlayerImmunity = intendedImmunityLength;
 				Player.immuneTime = intendedImmunityLength;
 				Player.immune = true;

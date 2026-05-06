@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using OrchidMod.Content.Guardian.UI;
+using System.ComponentModel;
 using Terraria.ModLoader.Config;
 
 namespace OrchidMod.Common
@@ -19,6 +20,10 @@ namespace OrchidMod.Common
 		[DefaultValue(false)]
 		[BackgroundColor(151, 120, 79)]
 		public bool GuardianUseOldHammerUi { get; set; }
+
+		[DefaultValue(false)]
+		[BackgroundColor(151, 120, 79)]
+		public bool GuardianUseFancyUI { get; set; }
 
 		[DefaultValue(false)]
 		[BackgroundColor(151, 120, 79)]
@@ -80,6 +85,20 @@ namespace OrchidMod.Common
 		[DefaultValue(false)]
 		[BackgroundColor(100, 175, 150)]
 		public bool ShapeshifterHookDashRelease { get; set; }
+
+		public override void OnChanged()
+		{
+			if (GuardianUIState.NeedTextureReload != GuardianUseFancyUI)
+			{
+				GuardianUIState.NeedTextureReload = GuardianUseFancyUI;
+				GuardianUIState.ReloadTextures();
+			}
+		}
+
+		public override void OnLoaded()
+		{
+			GuardianUIState.NeedTextureReload = GuardianUseFancyUI;
+		}
 	}
 
 	public class OrchidServerConfig : ModConfig

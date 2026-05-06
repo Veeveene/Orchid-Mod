@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using OrchidMod.Common;
-using OrchidMod.Content.Shapeshifter.Buffs;
 using OrchidMod.Content.Shapeshifter.Projectiles.Sage;
 using OrchidMod.Content.Shapeshifter.Projectiles.Warden;
 using OrchidMod.Content.Shapeshifter.Weapons.Sage;

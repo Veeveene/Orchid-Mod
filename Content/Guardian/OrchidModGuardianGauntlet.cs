@@ -44,8 +44,8 @@ namespace OrchidMod.Content.Guardian
 		public virtual void SafeModifyTooltips(List<TooltipLine> tooltips) { } // Called at the end of ModifyTooltips
 
 		public virtual Color GetColor(bool offHand) => Color.White;
-		/// <summary> Responsible for playing the sound when the player begins guarding with the weapon. Default behavior is <c>SoundEngine.PlaySound(SoundID.Item37, player.Center);</c> </summary>
-		public virtual void PlayGuardSound(Player player, OrchidGuardian guardian, Projectile anchor) => SoundEngine.PlaySound(SoundID.Item37, player.Center);
+		/// <summary> Responsible for playing the sound when the player begins guarding with the weapon. Default behavior is <c>SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), player.Center);</c> </summary>
+		public virtual void PlayGuardSound(Player player, OrchidGuardian guardian, Projectile anchor) => SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), player.Center);
 		/// <summary> Responsible for playing the sound when the player punches with the weapon. Default behavior is <c>SoundEngine.PlaySound(charged ? SoundID.DD2_MonkStaffGroundMiss : SoundID.DD2_MonkStaffSwing, player.Center);</c> </summary>
 		public virtual void PlayPunchSound(Player player, OrchidGuardian guardian, Projectile anchor, bool charged) => SoundEngine.PlaySound(charged ? SoundID.DD2_MonkStaffGroundMiss : SoundID.DD2_MonkStaffSwing, player.Center);
 
@@ -168,7 +168,7 @@ namespace OrchidMod.Content.Guardian
 					bool guardTap = swap ? Main.mouseLeftRelease : Main.mouseRightRelease;
 
 					if (punchHold && punchTap && guardian.GuardianItemCharge <= 0) punchTimer = 6;
-					if (guardHold && guardTap && !guardian.GuardianGauntletParry) shouldGuard = true;
+					if (guardHold && guardTap && !guardian.GuardianParry) shouldGuard = true;
 				}
 			}
 			return false;
@@ -188,7 +188,7 @@ namespace OrchidMod.Content.Guardian
 
 				if (guardian.GuardianItemCharge > 0) punchTimer = 0;
 				if (shouldPunch && !punchHold) punchTimer--;
-				if (!guardHold || guardian.GuardianGauntletParry) shouldGuard = false;
+				if (!guardHold || guardian.GuardianParry) shouldGuard = false;
 				
 				if (shouldPunch || shouldGuard)
 				{
@@ -209,7 +209,7 @@ namespace OrchidMod.Content.Guardian
 									player.immuneTime = 0;
 									guardian.modPlayer.PlayerImmunity = 0;
 									player.immune = false;
-									guardian.GuardianGauntletParry = true; //remind the player that they are in fact parrying because the projectile ai runs on a slight delay
+									guardian.GuardianParry = true; //remind the player that they are in fact parrying because the projectile ai runs on a slight delay
 									PlayGuardSound(player, guardian, mainGauntletFree ? projectileMain : projectileOff);
 									if (mainGauntletFree)
 									{
