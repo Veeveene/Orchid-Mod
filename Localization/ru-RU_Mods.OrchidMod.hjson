@@ -3177,13 +3177,17 @@ Items: {
 	}
 
 	GoblinKatar: {
-		// Tooltip: test item
 		// DisplayName: Goblin Katar
+		// Tooltip: "[c/FF0000:Test Item]"
 	}
 
 	ThoriumIcyShardKatar: {
-		// Tooltip: Significantly hinder the hit enemies movement
 		// DisplayName: Icy Katar
+		/* Tooltip:
+			'''
+			Significantly hinder the hit enemies movement
+			Cannot dash upwards
+			''' */
 	}
 
 	GoldChestKatar: {
@@ -3217,6 +3221,11 @@ Items: {
 			25% increased katar speed for one attack after a katar parry
 			Stackable twice
 			''' */
+	}
+
+	PalmKatar: {
+		// DisplayName: Palm Katar
+		// Tooltip: Cannot dash upwards
 	}
 }
 

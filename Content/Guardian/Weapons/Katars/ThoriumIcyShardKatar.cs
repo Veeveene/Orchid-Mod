@@ -20,6 +20,8 @@ namespace OrchidMod.Content.Guardian.Weapons.Katars
 			Item.useTime = 25;
 			JabVelocity = 15f;
 			ParryDuration = 10;
+			ParryDashSpeed = 16f;
+			NoUpwardsParryDash = true;
 		}
 
 		public override Color GetColor()

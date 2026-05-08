@@ -93,6 +93,8 @@ namespace OrchidMod.Content.Guardian
 		public float ParryDashMomentum = 0.33f;
 		/// <summary> Multiplier to the weapon charge speed when holding left click. Defaults to 1f. </summary>
 		public float ChargeSpeedMultiplier = 1f;
+		/// <summary> Prevents the user from dashing upwards. Generally used to balance very early game katars. Defaults to false. </summary>
+		public bool NoUpwardsParryDash = false;
 
 		public sealed override void SetDefaults()
 		{
@@ -161,7 +163,7 @@ namespace OrchidMod.Content.Guardian
 			return false;
 		}
 
-		void DoBufferedKatarInputs(Player player)
+		public void DoBufferedKatarInputs(Player player)
 		{
 			int[] anchors = GetAnchors(player);
 			if (anchors != null)
@@ -191,11 +193,11 @@ namespace OrchidMod.Content.Guardian
 								if (player.controlLeft && !player.controlRight)
 								{
 									anchor.KatarDashAngle = MathHelper.Pi * 1.5f; // Left
-									if (player.controlUp && !player.controlDown)
+									if (player.controlUp && !NoUpwardsParryDash && !player.controlDown)
 									{
 										anchor.KatarDashAngle += MathHelper.Pi * 0.25f; // Top Left
 									}
-									else if (!player.controlUp && player.controlDown)
+									else if ((!player.controlUp || NoUpwardsParryDash) && player.controlDown)
 									{
 										anchor.KatarDashAngle -= MathHelper.Pi * 0.25f; // Bottom Left
 									}
@@ -203,20 +205,20 @@ namespace OrchidMod.Content.Guardian
 								else if (!player.controlLeft && player.controlRight)
 								{
 									anchor.KatarDashAngle = MathHelper.Pi * 0.5f; // Right
-									if (player.controlUp && !player.controlDown)
+									if (player.controlUp && !player.controlDown && !NoUpwardsParryDash)
 									{
 										anchor.KatarDashAngle -= MathHelper.Pi * 0.25f; // Top Right
 									}
-									else if (!player.controlUp && player.controlDown)
+									else if ((!player.controlUp || NoUpwardsParryDash) && player.controlDown)
 									{
 										anchor.KatarDashAngle += MathHelper.Pi * 0.25f; // Bottom Right
 									}
 								}
-								else if (player.controlUp && !player.controlDown)
+								else if (player.controlUp && !player.controlDown && !NoUpwardsParryDash)
 								{
 									anchor.KatarDashAngle = 0f; // Up
 								}
-								else if (!player.controlUp && player.controlDown)
+								else if ((!player.controlUp || NoUpwardsParryDash) && player.controlDown)
 								{
 									anchor.KatarDashAngle = MathHelper.Pi; // Down
 								}
