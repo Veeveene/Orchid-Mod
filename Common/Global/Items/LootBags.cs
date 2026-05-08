@@ -31,6 +31,7 @@ using OrchidMod.Utilities;
 using OrchidMod.Content.Shapeshifter.Accessories;
 using OrchidMod.Content.Shapeshifter.Misc;
 using OrchidMod.Content.Guardian.Armors.Misc;
+using OrchidMod.Content.Guardian.Weapons.Katars;
 
 namespace OrchidMod.Common.Global.Items
 {
@@ -186,6 +187,12 @@ namespace OrchidMod.Common.Global.Items
 			if (thoriumMod.IsItemTypeEquals("CountBag", arg))
 			{
 				QuickSpawnItem<ThoriumViscountQuarterstaff>(player, 1, 3);
+				return;
+			}
+
+			if (thoriumMod.IsItemTypeEquals("GraniteBag", arg))
+			{
+				QuickSpawnItem<ThoriumGraniteKatar>(player, 1, 3);
 				return;
 			}
 
