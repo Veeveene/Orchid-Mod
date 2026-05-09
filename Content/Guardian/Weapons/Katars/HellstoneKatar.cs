@@ -36,6 +36,11 @@ namespace OrchidMod.Content.Guardian.Weapons.Katars
 			SoundEngine.PlaySound(SoundID.Item73.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), player.Center);
 		}
 
+		public override void OnHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, NPC.HitInfo hit, bool fullyCharged)
+		{
+			target.AddBuff(BuffID.OnFire, 300);
+		}
+
 		public override void AddRecipes()
 		{
 			var recipe = CreateRecipe();
