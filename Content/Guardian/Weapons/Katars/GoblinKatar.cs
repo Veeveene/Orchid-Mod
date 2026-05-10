@@ -23,13 +23,5 @@ namespace OrchidMod.Content.Guardian.Weapons.Katars
 		{
 			return new Color(137, 175, 133);
 		}
-
-		public override void AddRecipes()
-		{
-			var recipe = CreateRecipe();
-			recipe.AddTile(TileID.Anvils);
-			recipe.AddIngredient(ItemID.SilverBar, 8);
-			recipe.Register();
-		}
 	}
 }
