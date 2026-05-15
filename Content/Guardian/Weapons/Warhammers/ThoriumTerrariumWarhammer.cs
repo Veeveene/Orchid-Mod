@@ -2,11 +2,12 @@
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
+using OrchidMod.Content.Guardian.Weapons.Misc;
 using OrchidMod.Content.Guardian.Projectiles.Warhammers;
 
 namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 {
-	public class ThoriumTerrariumWarhammer : OrchidModGuardianHammer
+	public class ThoriumTerrariumWarhammer : GuardianDoubleHammer
 	{
 
 		public static readonly int[] PotentialDusts =
@@ -39,62 +40,41 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			BlockDuration = 270;
 		}
 
-		public override void ExtraAI(Player player, OrchidGuardian guardian, Projectile projectile)
+		public override void ExtraAI(Player player, OrchidGuardian guardian, Projectile anchor, bool offHandHammer)
 		{
 			if (Main.rand.NextBool(6))
-                Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, PotentialDusts[Main.rand.Next(7)]);
-
+                Dust.NewDustDirect(anchor.position, anchor.width, anchor.height, PotentialDusts[Main.rand.Next(7)]);
 		}
 
-		public override void OnMeleeHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak) 
-		{
-			var thoriumMod = OrchidMod.ThoriumMod;
-			if (thoriumMod != null)
-			{
-				int debuffType = thoriumMod.Find<ModBuff>("TerrariumBacklash").Type;
-				target.AddBuff(debuffType, 180);
+		// public override void OnMeleeHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Charged, bool firstHit) 
+		// {
+		// 	var thoriumMod = OrchidMod.ThoriumMod;
+		// 	if (thoriumMod != null)
+		// 	{
+		// 		int debuffType = thoriumMod.Find<ModBuff>("TerrariumBacklash").Type;
+		// 		target.AddBuff(debuffType, firstHit ? 180 : 120);
 				
-				// if (!Weak) {
-					Vector2 point = Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * 120f;
-					Projectile echoProj = Projectile.NewProjectileDirect(projectile.GetSource_FromAI(), target.Center + point, Vector2.Normalize(point) * -10f, ModContent.ProjectileType<ThoriumTerrariumWarhammerProjectile>(), guardian.GetGuardianDamage(Item.damage * 0.4f), 6f, Main.myPlayer, target.whoAmI);
-				// }
-			}
-		}
-		
-		public override void OnMeleeHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak) 
-		{
-			var thoriumMod = OrchidMod.ThoriumMod;
-			if (thoriumMod != null)
-			{
-				int debuffType = thoriumMod.Find<ModBuff>("TerrariumBacklash").Type;
-				target.AddBuff(debuffType, 120);
-			}
-		}
+		// 		// if (!Weak) {
+		// 			Vector2 point = Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * 120f;
+		// 			Projectile echoProj = Projectile.NewProjectileDirect(projectile.GetSource_FromAI(), target.Center + point, Vector2.Normalize(point) * -10f, ModContent.ProjectileType<ThoriumTerrariumWarhammerProjectile>(), guardian.GetGuardianDamage(Item.damage * 0.4f), 6f, Main.myPlayer, target.whoAmI);
+		// 		// }
+		// 	}
+		// }
 
-		public override void OnThrowHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak) 
-		{
-			var thoriumMod = OrchidMod.ThoriumMod;
-			if (thoriumMod != null)
-			{
-				int debuffType = thoriumMod.Find<ModBuff>("TerrariumBacklash").Type;
-				target.AddBuff(debuffType, 180);
-				if (!Weak)
-					for (int i = 0; i < 3; i++)
-					{
-						Vector2 point = Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * 120f;
-						Projectile echoProj = Projectile.NewProjectileDirect(projectile.GetSource_FromAI(), target.Center + point, Vector2.Normalize(point) * -10f, ModContent.ProjectileType<ThoriumTerrariumWarhammerProjectile>(), guardian.GetGuardianDamage(Item.damage * 0.4f), 6f, Main.myPlayer, target.whoAmI);
-					}
-			}
-		}
-		
-		public override void OnThrowHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak) 
-		{
-			var thoriumMod = OrchidMod.ThoriumMod;
-			if (thoriumMod != null)
-			{
-				int debuffType = thoriumMod.Find<ModBuff>("TerrariumBacklash").Type;
-				target.AddBuff(debuffType, 120);
-			}
-		}
+		// public override void OnThrowHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Charged, bool firstHit) 
+		// {
+		// 	var thoriumMod = OrchidMod.ThoriumMod;
+		// 	if (thoriumMod != null)
+		// 	{
+		// 		int debuffType = thoriumMod.Find<ModBuff>("TerrariumBacklash").Type;
+		// 		target.AddBuff(debuffType, firstHit ? 180 : 120);
+		// 		if (Charged)
+		// 			for (int i = 0; i < 3; i++)
+		// 			{
+		// 				Vector2 point = Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * 120f;
+		// 				Projectile echoProj = Projectile.NewProjectileDirect(projectile.GetSource_FromAI(), target.Center + point, Vector2.Normalize(point) * -10f, ModContent.ProjectileType<ThoriumTerrariumWarhammerProjectile>(), guardian.GetGuardianDamage(Item.damage * 0.4f), 6f, Main.myPlayer, target.whoAmI);
+		// 			}
+		// 	}
+		// }
 	}
 }
