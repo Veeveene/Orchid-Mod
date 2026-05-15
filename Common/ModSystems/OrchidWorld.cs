@@ -21,7 +21,6 @@ using OrchidMod.Content.Alchemist.Accessories;
 using OrchidMod.Content.Gambler.Decks;
 using OrchidMod.Content.Gambler.Accessories;
 using OrchidMod.Utilities;
-using OrchidMod.Content.Guardian.Weapons.Warhammers;
 using OrchidMod.Content.Guardian.Weapons.Runes;
 using OrchidMod.Content.Guardian.Weapons.Shields;
 using OrchidMod.Content.Guardian.Accessories;
@@ -36,6 +35,7 @@ using OrchidMod.Content.Guardian.Weapons.Quarterstaves;
 using OrchidMod.Content.Shapeshifter.Weapons.Symbiote;
 using OrchidMod.Content.Shapeshifter.Accessories;
 using OrchidMod.Content.Shapeshifter.Misc;
+using OrchidMod.Content.Guardian.Weapons.Katars;
 
 namespace OrchidMod.Common.ModSystems
 {
@@ -280,6 +280,7 @@ namespace OrchidMod.Common.ModSystems
 
 			// Gold Chests
 			chestLoots.Add(new ChestLoot(ItemType<EnchantedRune>(), ChestType.Gold, 20));
+			chestLoots.Add(new ChestLoot(ItemType<GoldChestKatar>(), ChestType.Gold, 20));
 			chestLoots.Add(new ChestLoot(ItemType<EnchantedPavise>(), ChestType.Gold, 20));
 
 			// Ice Chests

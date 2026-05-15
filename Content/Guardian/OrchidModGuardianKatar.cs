@@ -24,6 +24,8 @@ namespace OrchidMod.Content.Guardian
 		public virtual string KatarTextureGlow => Texture + "_Katar_Glow";
 		/// <summary> Path to the texture of the offhand katar held texture, if any. </summary>
 		public virtual string KatarBackTexture => Texture + "_KatarBack";
+		/// <summary> Called upon hitting an enemy with a parry. </summary>
+		public virtual void OnHitParry(Player player, OrchidGuardian guardian, NPC target, Projectile projectile) { }
 		/// <summary> Called upon hitting an enemy with a slam or a charged attack. </summary>
 		public virtual void OnHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, HitInfo hit, bool fullyCharged) { }
 		/// <summary> Called upon hitting the first enemy of a given slam or a charged attack. Use this to trigger effects that should not happen multiple times when hitting multiple targets with one attack. </summary>
@@ -34,7 +36,9 @@ namespace OrchidMod.Content.Guardian
 		public virtual bool OnJab(Player player, OrchidGuardian guardian, Projectile projectile, bool offHandKatar, bool manuallyFullyCharged, ref bool charged, ref int damage) => true;
 		/// <summary> Called after the player parries damage. </summary>
 		public virtual void OnParryKatar(Player player, OrchidGuardian guardian, Entity aggressor, Projectile anchor) { }
-		/// <summary> Called before the players begins a parry (which is a dash when using katars). Return false to prevent parrying. </summary>
+		/// <summary> Called as the players begins a katar dash. </summary>
+		public virtual void OnDashKatar(Player player, OrchidGuardian guardian, Projectile anchor) { }
+		/// <summary> Called every frame by Katar jab projectiles. Return false to prevent normal projectile AI from running (which simply slows down the projectile). </summary>
 		public virtual bool PreGuard(Player player, OrchidGuardian guardian, Projectile anchor) { return guardian.UseGuard(1); }
 		/// <summary> Called every frame by Katar jab projectiles. Return false to prevent normal projectile AI from running (which simply slows down the projectile). </summary>
 		public virtual bool ProjectileAI(Player player, Projectile projectile, bool charged) => true;
@@ -47,13 +51,17 @@ namespace OrchidMod.Content.Guardian
 		/// <summary> Called at the end of ModifyTooltips, allowing for further tooltip changes. </summary>
 		public virtual void SafeModifyTooltips(List<TooltipLine> tooltips) { }
 		/// <summary> Called when drawing the katar jab projectiles color. </summary>
-		public virtual Color GetColor(bool offHand) => Color.White;
+		public virtual Color GetColor() => Color.White;
 		/// <summary> Responsible for playing the sound when the player begins guarding with the weapon. Default behavior is <c>SoundEngine.PlaySound(SoundID.DD2_JavelinThrowersAttack.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), player.Center);</c> </summary>
 		public virtual void PlayGuardSound(Player player, OrchidGuardian guardian, Projectile anchor) => SoundEngine.PlaySound(SoundID.DD2_JavelinThrowersAttack.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), player.Center);
 		/// <summary> Responsible for playing the sound when the player punches with the weapon. Default behavior is <c>SoundEngine.PlaySound(charged ? SoundID.DD2_MonkStaffGroundMiss : SoundID.DD2_MonkStaffSwing, player.Center);</c> </summary>
 		public virtual void PlayPunchSound(Player player, OrchidGuardian guardian, Projectile anchor, bool charged) => SoundEngine.PlaySound(charged ? SoundID.DD2_MonkStaffGroundMiss : SoundID.DD2_MonkStaffSwing, player.Center);
 		/// <summary> Called at the end of OrchidModGuardianKatar.HoldItem. </summary>
 		public virtual void SafeHoldItem(Player player) { }
+		/// <summary> Cost to jab while charging the katar. Defaults to 1 slam. </summary>
+		public virtual bool ChargeJabCost(Player player, OrchidGuardian guardian, Projectile anchor, bool checkOnly) => guardian.UseSlam(1, checkOnly, checkOnly);
+		/// <summary> Should mirror ChargeJabCost() for clarity, highlighting the jab cost when using the weapon. </summary>
+		public virtual void ChargeJabCostUI(Player player, OrchidGuardian guardian, Projectile anchor) => guardian.SlamCostUI = 1;
 		/// <summary> Color used to draw potential glowmasks. Defaults to Color.White. </summary>
 		public virtual Color GetKatarGlowmaskColor(Player player, OrchidGuardian guardian, Projectile projectile, Color lightColor) => Color.White;
 
@@ -65,11 +73,17 @@ namespace OrchidMod.Content.Guardian
 		public float JabVelocity = 10f;
 		/// <summary> Jab and slam animation speed multiplier. Also affected by melee speed, but not by usetime. Defaults to 1f.</summary>
 		public float JabSpeed = 1f;
-		/// <summary> Multiplier applied to the item damage to get a Slam damage. Defaults to 1f. </summary>
-		public float SlamDamage = 1f;
+		/// <summary> Multiplier applied to the item damage to get a Parry damage. Defaults to 1f. </summary>
+		public float ParryDamage = 1f;
+		/// <summary> Parry knockback. Defaults to 1f. </summary>
+		public float ParryKnockback = 1f;
 		/// <summary> Multiplier applied to the item damage to get a Slam damage. Defaults to 2f. </summary>
-		public float ChargedAttackDamage = 1f;
-		/// <summary> Multiplier for how much of a charged attack damage should be dealt as a DoT. Defaults to 0.5f. </summary>
+		public float SlamDamage = 1f;
+		/// <summary> Multiplier applied to the item damage to get a Charged attack damage. Defaults to 2f. </summary>
+		public float ChargedAttackDamage = 2f;
+		/// <summary> Multiplier applied to the item knockback to get a Charged attack knockback (note that slams deal normal item knockback). Defaults to 1.5f. </summary>
+		public float ChargedAttackKnockback = 1.5f;
+		/// <summary> Multiplier for how much of a charged attack damage should be dealt as a DoT. Defaults to 0.5f, should never be equal or higher than 1f. </summary>
 		public float ChargedAttackDoT = 0.5f;
 		/// <summary> Duration (in frames) of a right click parry (also the duration of the parry dash). Defaults to 10. </summary>
 		public int ParryDuration = 10;
@@ -79,6 +93,8 @@ namespace OrchidMod.Content.Guardian
 		public float ParryDashMomentum = 0.33f;
 		/// <summary> Multiplier to the weapon charge speed when holding left click. Defaults to 1f. </summary>
 		public float ChargeSpeedMultiplier = 1f;
+		/// <summary> Prevents the user from dashing upwards. Generally used to balance very early game katars. Defaults to false. </summary>
+		public bool NoUpwardsParryDash = false;
 
 		public sealed override void SetDefaults()
 		{
@@ -141,13 +157,13 @@ namespace OrchidMod.Content.Guardian
 					bool guardTap = swap ? Main.mouseLeftRelease : Main.mouseRightRelease;
 
 					if (punchHold && punchTap && guardian.GuardianItemCharge <= 0) punchTimer = 6;
-					if (guardHold && guardTap && !guardian.GuardianGauntletParry) shouldGuard = true;
+					if (guardHold && guardTap && !guardian.GuardianParry) shouldGuard = true;
 				}
 			}
 			return false;
 		}
 
-		void DoBufferedKatarInputs(Player player)
+		public void DoBufferedKatarInputs(Player player)
 		{
 			int[] anchors = GetAnchors(player);
 			if (anchors != null)
@@ -161,80 +177,89 @@ namespace OrchidMod.Content.Guardian
 
 				if (guardian.GuardianItemCharge > 0) punchTimer = 0;
 				if (shouldPunch && !punchHold) punchTimer--;
-				if (!guardHold || guardian.GuardianGauntletParry) shouldGuard = false;
+				if (!guardHold || guardian.GuardianParry) shouldGuard = false;
 				
 				if (shouldPunch || shouldGuard)
 				{
 					Projectile projectileMain = Main.projectile[anchors[1]];
-					if (projectileMain.ai[0] == 0f || projectileMain.ai[0] > 0f)
+					if (shouldGuard)
 					{
-						if (shouldGuard)
+						bool mainKatarFree = projectileMain.ai[0] <= 0f && projectileMain.ai[2] <= 0f;
+						if (mainKatarFree)
 						{
-							bool mainGauntletFree = projectileMain.ai[0] == 0f && projectileMain.ai[2] <= 0f;
-							if (mainGauntletFree)
+							if (PreGuard(player, guardian, projectileMain) && projectileMain.ModProjectile is GuardianKatarAnchor anchor)
 							{
-								if (PreGuard(player, guardian, projectileMain) && projectileMain.ModProjectile is GuardianKatarAnchor anchor)
+								// 8 dir input
+								if (player.controlLeft && !player.controlRight)
 								{
-									// 8 dir input
-									if (player.controlLeft && !player.controlRight)
+									anchor.KatarDashAngle = MathHelper.Pi * 1.5f; // Left
+									if (player.controlUp && !NoUpwardsParryDash && !player.controlDown)
 									{
-										anchor.KatarDashAngle = MathHelper.Pi * 1.5f; // Left
-										if (player.controlUp && !player.controlDown)
-										{
-											anchor.KatarDashAngle += MathHelper.Pi * 0.25f; // Top Left
-										}
-										else if (!player.controlUp && player.controlDown)
-										{
-											anchor.KatarDashAngle -= MathHelper.Pi * 0.25f; // Bottom Left
-										}
+										anchor.KatarDashAngle += MathHelper.Pi * 0.25f; // Top Left
 									}
-									else if (!player.controlLeft && player.controlRight)
+									else if ((!player.controlUp || NoUpwardsParryDash) && player.controlDown)
 									{
-										anchor.KatarDashAngle = MathHelper.Pi * 0.5f; // Right
-										if (player.controlUp && !player.controlDown)
-										{
-											anchor.KatarDashAngle -= MathHelper.Pi * 0.25f; // Top Right
-										}
-										else if (!player.controlUp && player.controlDown)
-										{
-											anchor.KatarDashAngle += MathHelper.Pi * 0.25f; // Bottom Right
-										}
+										anchor.KatarDashAngle -= MathHelper.Pi * 0.25f; // Bottom Left
 									}
-									else if (player.controlUp && !player.controlDown)
+								}
+								else if (!player.controlLeft && player.controlRight)
+								{
+									anchor.KatarDashAngle = MathHelper.Pi * 0.5f; // Right
+									if (player.controlUp && !player.controlDown && !NoUpwardsParryDash)
 									{
-										anchor.KatarDashAngle = 0f; // Up
+										anchor.KatarDashAngle -= MathHelper.Pi * 0.25f; // Top Right
 									}
-									else if (!player.controlUp && player.controlDown)
+									else if ((!player.controlUp || NoUpwardsParryDash) && player.controlDown)
 									{
-										anchor.KatarDashAngle = MathHelper.Pi; // Down
+										anchor.KatarDashAngle += MathHelper.Pi * 0.25f; // Bottom Right
 									}
-									else
-									{ // Projectile Direction (no input)
-										anchor.KatarDashAngle = MathHelper.Pi * (1f + player.direction * 0.5f);
-									}
+								}
+								else if (player.controlUp && !player.controlDown && !NoUpwardsParryDash)
+								{
+									anchor.KatarDashAngle = 0f; // Up
+								}
+								else if ((!player.controlUp || NoUpwardsParryDash) && player.controlDown)
+								{
+									anchor.KatarDashAngle = MathHelper.Pi; // Down
+								}
+								else
+								{ // Projectile Direction (no input)
+									anchor.KatarDashAngle = MathHelper.Pi * (1f + -player.direction * 0.5f);
+								}
 
-									anchor.KatarDashTimer = ParryDuration + 1;
+								anchor.KatarDashTimer = (int)(ParryDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianParryDuration) + 1;
+								anchor.HitNPCs.Clear();
 
-									shouldGuard = false;
-									player.immuneTime = 0;
-									guardian.modPlayer.PlayerImmunity = 0;
-									player.immune = false;
-									guardian.GuardianGauntletParry = true; //remind the player that they are in fact parrying because the projectile ai runs on a slight delay
-									projectileMain.ai[0] = (int)(ParryDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianParryDuration);
-									(projectileMain.ModProjectile as GuardianKatarAnchor).NeedNetUpdate = true;
+								shouldGuard = false;
+								player.immuneTime = 0;
+								guardian.modPlayer.PlayerImmunity = 0;
+								player.immune = false;
+								guardian.GuardianParry = true; //remind the player that they are in fact parrying because the projectile ai runs on a slight delay
+								projectileMain.ai[0] = (int)(ParryDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianParryDuration);
+								projectileMain.ai[1] = 0f;
+								projectileMain.ai[2] = 0f;
+								projectileMain.localAI[1] = 0f;
+								guardian.GuardianItemCharge = 0;
+								(projectileMain.ModProjectile as GuardianKatarAnchor).NeedNetUpdate = true;
+
+								OnDashKatar(player, guardian, projectileMain);
+
+								if (guardian.GuardianBadgeHoplite && guardian.GuardianBadgeHopliteLevel < 2)
+								{ // Accessory increases charge speed after a katar dash
+									guardian.GuardianBadgeHopliteLevel++;
 								}
 							}
 						}
-						//or, if trying to punch
-						else if (shouldPunch && guardian.GauntletPunchCooldown <= 0)
-						{
-							guardian.GauntletPunchCooldown += (int)(30f / (JabSpeed * player.GetAttackSpeed<MeleeDamageClass>())) - 1;
-							punchTimer = 0;
-							SoundEngine.PlaySound(Item.UseSound, player.Center);
+					}
+					//or, if trying to punch
+					else if (shouldPunch && guardian.GauntletPunchCooldown <= 0)
+					{
+						guardian.GauntletPunchCooldown += (int)(30f / (JabSpeed * player.GetAttackSpeed<MeleeDamageClass>())) - 1;
+						punchTimer = 0;
+						SoundEngine.PlaySound(Item.UseSound, player.Center);
 
-							projectileMain.ai[2] = 1f;
-							(projectileMain.ModProjectile as GuardianKatarAnchor).NeedNetUpdate = true;
-						}
+						projectileMain.ai[2] = 1f;
+						(projectileMain.ModProjectile as GuardianKatarAnchor).NeedNetUpdate = true;
 					}
 				}
 			}
@@ -343,6 +368,11 @@ namespace OrchidMod.Content.Guardian
 
 			string click = ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs ? Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.LeftClick") : Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.RightClick");
 			tooltips.Insert(index + 2, new TooltipLine(Mod, "ClickInfo", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.Parry", click))
+			{
+				OverrideColor = new Color(175, 255, 175)
+			});
+
+			tooltips.Insert(index + 3, new TooltipLine(Mod, "Swing", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.ChargeToSwing", click))
 			{
 				OverrideColor = new Color(175, 255, 175)
 			});

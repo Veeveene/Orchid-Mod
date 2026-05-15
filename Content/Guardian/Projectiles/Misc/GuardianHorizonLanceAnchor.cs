@@ -209,8 +209,8 @@ namespace OrchidMod.Content.Guardian.Projectiles.Misc
 					else if (Projectile.ai[0] > 1f)
 					{ // Blocking
 						Projectile.localAI[0] = 90f; // used for block UI display
-						guardian.GuardianGauntletParry = true;
-						guardian.GuardianGauntletParry2 = true;
+						guardian.GuardianParry = true;
+						guardian.GuardianParryBuffer = true;
 
 						Projectile.ai[0]--;
 						if (owner.immune)

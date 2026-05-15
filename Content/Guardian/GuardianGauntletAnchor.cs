@@ -130,8 +130,8 @@ namespace OrchidMod.Content.Guardian
 
 				if (Blocking)
 				{
-					guardian.GuardianGauntletParry = true;
-					guardian.GuardianGauntletParry2 = true;
+					guardian.GuardianParry = true;
+					guardian.GuardianParryBuffer = true;
 
 					Projectile.Center = owner.MountedCenter.Floor() + new Vector2(4 * owner.direction, 0);
 					if (OffHandGauntlet) Projectile.position.X += 6 * owner.direction;
