@@ -256,12 +256,10 @@ namespace OrchidMod.Content.Guardian.Projectiles.Warhammers
 				}
 				else if (Projectile.ai[1] <= 0) // Held
 				{
-					if (owner.dead || owner.HeldItem.ModItem is not ToyWarhammers hammerItem)
+					if (owner.dead || owner.HeldItem.ModItem is not ToyWarhammers hammerItem || !CheckMainProjectile() || (MainProjectile.ModProjectile as GuardianHammerAnchor).HammerItem is not ToyWarhammers)
 					{
 						if (Projectile.owner == Main.myPlayer)
-						{
 							Projectile.Kill();
-						}
 					}
 					else
 					{
@@ -281,7 +279,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Warhammers
 							Projectile.Center = armPosition - new Vector2(((hitboxOffset + hammerItem.HoldOffset) * 2 + 0.3f * guardian.GuardianItemCharge + (float)Math.Sin(MathHelper.Pi / 210f * guardian.GuardianItemCharge) * 10f) * owner.direction * 0.4f, ((hitboxOffset + hammerItem.HoldOffset) * 2 - (hitboxOffset + hammerItem.HoldOffset) * 0.014f * guardian.GuardianItemCharge) * 0.4f);
 
 
-							if (owner.whoAmI == Main.myPlayer && CheckMainProjectile() && ((MainProjectile.ai[1] < 0) || (MainProjectile.ModProjectile as GuardianHammerAnchor).range > 0))
+							if (owner.whoAmI == Main.myPlayer && CheckMainProjectile() && ((MainProjectile.ai[1] < 0 && MainProjectile.ai[1] >= -30f) || (MainProjectile.ModProjectile as GuardianHammerAnchor).range > 0))
 							{
 								if (!owner.controlUseItem)
 								{
@@ -624,7 +622,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Warhammers
 			var index = reader.Read();
 			if (index != -1 && index < Main.maxProjectiles) {
 				var proj = Main.projectile[index];
-				if (CheckMainProjectile()) MainProjectile = proj;
+				if (CheckMainProjectile(proj)) MainProjectile = proj;
 			}
 
 			if (HammerItem == null)
@@ -651,8 +649,9 @@ namespace OrchidMod.Content.Guardian.Projectiles.Warhammers
 			}
 		}
 
-		public bool CheckMainProjectile() => MainProjectile != null && MainProjectile.active && MainProjectile.owner == Main.myPlayer && MainProjectile.type == ModContent.ProjectileType<GuardianHammerAnchor>();
+		public bool CheckMainProjectile(Projectile proj) => proj != null && proj.active && proj.owner == Main.myPlayer && proj.type == ModContent.ProjectileType<GuardianHammerAnchor>();
 
+		public bool CheckMainProjectile() => CheckMainProjectile(MainProjectile);
 
 		public override bool OrchidPreDraw(SpriteBatch spriteBatch, ref Color lightColor)
 		{

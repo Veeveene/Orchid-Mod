@@ -104,6 +104,12 @@
         <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.hasSpecialHammerTexture">
             <summary>If true, the anchor will load and use ItemName_Hammer.png as its texture.</summary>
         </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.CannotMagnet">
+            <summary>If true, the warhammer will be unaffected by the Hammer Magnet accessory.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.CannotExplode">
+            <summary>If true, the warhammer will be unaffected by the Remote Detonator accessory.</summary>
+        </member>
         <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.ThrowAI(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile,System.Boolean)">
             <summary>Called before default throw AI. Return false to prevent the default AI from running.</summary>
             <remarks>Remember to set <c>Projectile.friendly</c> and <c>OrchidModGuardianProjectile.ResetHitStatus()</c> if overriding default behavior.</remarks>
