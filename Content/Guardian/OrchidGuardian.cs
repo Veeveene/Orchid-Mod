@@ -160,7 +160,14 @@ namespace OrchidMod
 				}
 			}
 		}
-
+		
+		public Mod CheatSheet;
+		public Mod HerosMod;
+		public Mod DragonLens;
+		public FieldInfo CSGodMode;
+		public FieldInfo HMGodMode;
+		public FieldInfo DLGodMode;
+		
 		public override void SetStaticDefaults()
 		{
 			ProjectilesBlockBlacklist = new List<int>
@@ -183,41 +190,46 @@ namespace OrchidMod
 				ProjectilesBlockBlacklist.Add(thoriumMod.Find<ModProjectile>("GraniteEradicatorArm").Type);
 				ProjectilesBlockBlacklist.Add(thoriumMod.Find<ModProjectile>("KrakenArm").Type);
 			}
-		}
-		
-		
-		public Mod CheatSheet;
-		public Mod HerosMod;
-		public Mod DragonLens;
-		public FieldInfo CSGodMode;
-		public FieldInfo HMGodMode;
-		public FieldInfo DLGodMode;
-
-		public override void Load()
-		{
+			
 			if (ModLoader.TryGetMod("CheatSheet", out Mod cheatSheet))
 			{
 				CheatSheet = cheatSheet;
-				var godModeService = cheatSheet.Code.GetType("CheatSheet.Menus.GodMode");
-				if (godModeService != null) CSGodMode = godModeService.GetField("Enabled", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-				if (CSGodMode != null) Mod.Logger.Debug("OrchidGuardian: CheatSheet detected");
+				// var godModeService = CheatSheet.Code.GetType("CheatSheet.Menus.GodMode");
+				// if (godModeService != null) CSGodMode ??= godModeService.GetField("Enabled", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+				CSGodMode = CheatSheet.Code.GetType("CheatSheet.Menus.GodMode")?.GetField("Enabled", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+				if (CSGodMode != null)
+				{
+					Console.Out.WriteLine("OrchidGuardian: CheatSheet detected");
+					Mod.Logger.Debug("OrchidGuardian: CheatSheet detected");
+				}
 			}
 			if (ModLoader.TryGetMod("HEROsMod", out Mod herosMod))
 			{
 				HerosMod = herosMod;
-				var godModeService = herosMod.Code.GetType("HEROsMod.HEROsModServices.GodModeService");
-				if (godModeService != null) HMGodMode = godModeService.GetField("Enabled", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-				if (HMGodMode != null) Mod.Logger.Debug("OrchidGuardian: HERO's Mod detected");
+				// var godModeService = HerosMod.Code.GetType("HEROsMod.HEROsModServices.GodModeService");
+				// if (godModeService != null) HMGodMode ??= godModeService.GetField("Enabled", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+				HMGodMode = HerosMod.Code.GetType("HEROsMod.HEROsModServices.GodModeService")?.GetField("Enabled", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+				if (HMGodMode != null)
+				{
+					Console.Out.WriteLine("OrchidGuardian: HERO's Mod detected");
+					Mod.Logger.Debug("OrchidGuardian: HERO's Mod detected");
+				}
 
 			}
 			if (ModLoader.TryGetMod("DragonLens", out Mod dragonLens))
 			{
 				DragonLens = dragonLens;
-				var godModeService = dragonLens.Code.GetType("DragonLens.Content.Tools.Gameplay.Godmode");
-				if (godModeService != null) DLGodMode = godModeService.GetField("godMode", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-				if (DLGodMode != null) Mod.Logger.Debug("OrchidGuardian: DragonLens detected");
+				// var godModeService = DragonLens.Code.GetType("DragonLens.Content.Tools.Gameplay.Godmode");
+				// if (godModeService != null) DLGodMode ??= godModeService.GetField("godMode", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+				DLGodMode = DragonLens.Code.GetType("DragonLens.Content.Tools.Gameplay.Godmode")?.GetField("godMode", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+				if (DLGodMode != null)
+				{
+					Console.Out.WriteLine("OrchidGuardian: DragonLens detected");
+					Mod.Logger.Debug("OrchidGuardian: DragonLens detected");
+				}
 			}
 		}
+
 
 		public override void Unload()
 		{
