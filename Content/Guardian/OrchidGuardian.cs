@@ -21,6 +21,7 @@ namespace OrchidMod
 	public class OrchidGuardian : ModPlayer
 	{
 
+
 		public bool CrossModGodMode;
 
 		// Misc & Static fields
@@ -183,6 +184,50 @@ namespace OrchidMod
 				ProjectilesBlockBlacklist.Add(thoriumMod.Find<ModProjectile>("KrakenArm").Type);
 			}
 		}
+		
+		
+		public Mod CheatSheet;
+		public Mod HerosMod;
+		public Mod DragonLens;
+		public FieldInfo CSGodMode;
+		public FieldInfo HMGodMode;
+		public FieldInfo DLGodMode;
+
+		public override void Load()
+		{
+			if (ModLoader.TryGetMod("CheatSheet", out Mod cheatSheet))
+			{
+				CheatSheet = cheatSheet;
+				var godModeService = cheatSheet.Code.GetType("CheatSheet.Menus.GodMode");
+				if (godModeService != null) CSGodMode = godModeService.GetField("Enabled", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+				if (CSGodMode != null) Mod.Logger.Debug("OrchidGuardian: CheatSheet detected");
+			}
+			if (ModLoader.TryGetMod("HEROsMod", out Mod herosMod))
+			{
+				HerosMod = herosMod;
+				var godModeService = herosMod.Code.GetType("HEROsMod.HEROsModServices.GodModeService");
+				if (godModeService != null) HMGodMode = godModeService.GetField("Enabled", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+				if (HMGodMode != null) Mod.Logger.Debug("OrchidGuardian: HERO's Mod detected");
+
+			}
+			if (ModLoader.TryGetMod("DragonLens", out Mod dragonLens))
+			{
+				DragonLens = dragonLens;
+				var godModeService = dragonLens.Code.GetType("DragonLens.Content.Tools.Gameplay.Godmode");
+				if (godModeService != null) DLGodMode = godModeService.GetField("godMode", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+				if (DLGodMode != null) Mod.Logger.Debug("OrchidGuardian: DragonLens detected");
+			}
+		}
+
+		public override void Unload()
+		{
+			CheatSheet = null;
+			HerosMod = null;
+			DragonLens = null;
+			CSGodMode = null;
+			HMGodMode = null;
+			DLGodMode = null;
+		}
 
 		public override void Initialize()
 		{
@@ -257,15 +302,11 @@ namespace OrchidMod
 
 		public override void ResetEffects()
 		{
-			if (
-				(ModLoader.TryGetMod("CheatSheet", out Mod CheatSheet) && (bool)(CheatSheet.Code.GetType("CheatSheet.Menus.GodMode")?.GetField("Enabled", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)?.GetValue(null)))
-				|| 
-				(ModLoader.TryGetMod("HEROsMod", out Mod HerosMod) && (bool)(HerosMod.Code.GetType("HEROsMod.HEROsModServices.GodModeService")?.GetField("Enabled", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)?.GetValue(null)))
-				|| 
-				(ModLoader.TryGetMod("DragonLens", out Mod DragonLens) && (bool)(DragonLens.Code.GetType("DragonLens.Content.Tools.Gameplay.Godmode")?.GetField("godMode", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)?.GetValue(null)))
-			)
-			CrossModGodMode = true;
-			else CrossModGodMode = false;
+		
+			bool csGodMode = CheatSheet != null && CSGodMode != null && CSGodMode?.GetValue(null) is true;
+			bool hmGodMode = HerosMod != null && HMGodMode != null && HMGodMode?.GetValue(null) is true;
+			bool dlGodMode = DragonLens != null && DLGodMode != null && DLGodMode?.GetValue(null) is true;
+			CrossModGodMode = csGodMode || hmGodMode || dlGodMode;
 
 			// Resetting Core guardian fields
 			if (Player.itemTime > 0 && Player.HeldItem.damage > 0 && Player.HeldItem.ModItem is not OrchidModGuardianItem && Player.HeldItem.pick + Player.HeldItem.hammer + Player.HeldItem.axe == 0)
@@ -411,10 +452,13 @@ namespace OrchidMod
 			GuardianHoneyPotion = false;
 			GuardianWormTooth = false;
 			GuardianMonsterFang = false;
+			// GuardianInfiniteResources = false;
 			GuardianInfiniteResources = (Player.creativeGodMode || CrossModGodMode);
 			GuardianShowDebugVisuals = false;
 			GuardianBronzeShieldBuff = false;
 			GuardianBronzeShieldProtection = false;
+			
+			// if (Player.creativeGodMode || CrossModGodMode) GuardianInfiniteResources = true;
 		}
 
 		public override void PreUpdateMovement()
