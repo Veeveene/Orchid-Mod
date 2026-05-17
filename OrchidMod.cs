@@ -116,6 +116,8 @@ namespace OrchidMod
 			//BossChecklistCalls();
 			CensusModCalls();
 			ColoredDamageTypeModCalls();
+			RecipeBrowserModCalls();
+			// WikiThisModCalls();
 		}
 
 		public override void HandlePacket(BinaryReader reader, int whoAmI)
