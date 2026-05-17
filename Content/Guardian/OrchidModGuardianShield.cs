@@ -73,6 +73,8 @@ namespace OrchidMod.Content.Guardian
 		/// If true, slams performed with the shield will be locked to the rotation they started with, rather than being free to rotate mid-slam.
 		/// </summary>
 		public bool lockSlamRotation;
+		/// <summary>How fast the pavise rotates towards the player cursor while blocking. Arbitrary value, defaults to 10f.</summary>
+		public float parryRotation;
 
 		public sealed override void SetDefaults()
 		{
@@ -90,6 +92,7 @@ namespace OrchidMod.Content.Guardian
 			discreteAimRotation = 0;
 			lockSlamRotation = false;
 			ShieldFrames = 1;
+			parryRotation = 10f;
 
 			OrchidGlobalItemPerEntity orchidItem = Item.GetGlobalItem<OrchidGlobalItemPerEntity>();
 			orchidItem.guardianWeapon = true;
@@ -158,13 +161,13 @@ namespace OrchidMod.Content.Guardian
 								if (ModContent.GetInstance<OrchidClientConfig>().GuardianBlockCancelChain && guardian.UseGuard(1, true))
 								{
 									// Taken from the shield anchor code
-									Vector2 aimedLocation = Main.MouseWorld - player.Center.Floor();
+									Vector2 aimedLocation = Main.MouseWorld - player.MountedCenter.Floor();
 									aimedLocation.Normalize();
 									proj.velocity = aimedLocation * float.Epsilon;
 									aimedLocation *= -distance;
 									proj.rotation = aimedLocation.ToRotation();
 									proj.direction = proj.spriteDirection;
-									aimedLocation = player.Center.Floor() - aimedLocation - new Vector2(proj.width / 2f, proj.height / 2f);
+									aimedLocation = player.MountedCenter.Floor() - aimedLocation - new Vector2(proj.width / 2f, proj.height / 2f);
 									proj.position = aimedLocation;
 									shield.aimedLocation = aimedLocation;
 									proj.ai[2] = proj.rotation; // networked rotation
