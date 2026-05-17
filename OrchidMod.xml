@@ -232,6 +232,9 @@
         <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.ChargeSpeedMultiplier">
             <summary> Multiplier to the weapon charge speed when holding left click. Defaults to 1f. </summary>
         </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.NoUpwardsParryDash">
+            <summary> Prevents the user from dashing upwards. Generally used to balance very early game katars. Defaults to false. </summary>
+        </member>
         <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianParryItem.OnParryOther(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile)">
             <summary>Specifically called if the aggressor when initiating the parry is neither an NPC nor a Projectile.</summary>
         </member>
@@ -336,6 +339,9 @@
             <summary>
             If true, slams performed with the shield will be locked to the rotation they started with, rather than being free to rotate mid-slam.
             </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianShield.parryRotation">
+            <summary>How fast the pavise rotates towards the player cursor while blocking. Arbitrary value, defaults to 10f.</summary>
         </member>
         <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianStandard.DrawCustomFlag(Microsoft.Xna.Framework.Graphics.SpriteBatch,Terraria.Projectile,Terraria.Player,Microsoft.Xna.Framework.Color,Microsoft.Xna.Framework.Vector2,System.Single)">
             <summary>Overrides the default flag drawing, but still renders the shaft. Return true to prevent the default flag from being drawn.</summary>

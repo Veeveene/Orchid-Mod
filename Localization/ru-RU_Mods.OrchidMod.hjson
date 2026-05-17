@@ -3374,6 +3374,49 @@ Items: {
 		// DisplayName: Terrarium Warhammer
 		// Tooltip: Calls down piercing afterimages on hit
 	}
+
+	GoblinKatar: {
+		// Tooltip: test item
+		// DisplayName: Goblin Katar
+	}
+
+	ThoriumIcyShardKatar: {
+		// Tooltip: Significantly hinder the hit enemies movement
+		// DisplayName: Icy Katar
+	}
+
+	GoldChestKatar: {
+		// DisplayName: Serrated Katar
+		// Tooltip: Fully charged attacks bleeds deal additional damage
+	}
+
+	CrimtaneKatar: {
+		// DisplayName: Scoliosis
+		// Tooltip: Parries recover up to half a guard on hit
+	}
+
+	HellstoneKatar: {
+		// DisplayName: Trailblaze
+		// Tooltip: Parries leave a trail of fire
+	}
+
+	ThoriumGraniteKatar: {
+		// DisplayName: Ion Deluge
+		/* Tooltip:
+			'''
+			Parries and slam hits generate energy orbs
+			Fully charged attacks release energy orbs
+			''' */
+	}
+
+	BadgeHoplite: {
+		// DisplayName: Legion Insigna
+		/* Tooltip:
+			'''
+			25% increased katar speed for one attack after a katar parry
+			Stackable twice
+			''' */
+	}
 }
 
 NPCs: {

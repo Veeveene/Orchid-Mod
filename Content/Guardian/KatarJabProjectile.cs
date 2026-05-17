@@ -98,6 +98,16 @@ namespace OrchidMod.Content.Guardian
 			{
 				modifiers.FinalDamage *= 1f - Projectile.ai[1]; // Deals a % of the jab damage as a DoT
 				int bleedAmount = (int)(Projectile.damage * Projectile.ai[1]);
+
+				if (Main.rand.Next(100) < Projectile.CritChance)
+				{ // It doesn't seem like you can access if the hit crit, so I have to recalculate the crit chance
+					bleedAmount *= 2;
+					modifiers.SetCrit();
+				}
+				else
+				{
+					modifiers.DisableCrit();
+				}
 				
 				// Applies the bleed while in singleplayer, sends a packet for it while on a server
 				if (Main.netMode == NetmodeID.SinglePlayer)
