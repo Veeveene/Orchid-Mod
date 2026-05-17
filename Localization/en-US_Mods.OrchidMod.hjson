@@ -3323,13 +3323,17 @@ Items: {
 	}
 
 	GoblinKatar: {
-		Tooltip: test item
 		DisplayName: Goblin Katar
+		Tooltip: "[c/FF0000:Test Item]"
 	}
 
 	ThoriumIcyShardKatar: {
-		Tooltip: Significantly hinder the hit enemies movement
 		DisplayName: Icy Katar
+		Tooltip:
+			'''
+			Significantly hinder the hit enemies movement
+			Cannot dash upwards
+			'''
 	}
 
 	GoldChestKatar: {
@@ -3351,7 +3355,7 @@ Items: {
 		DisplayName: Ion Deluge
 		Tooltip:
 			'''
-			Parry hits generate energy orbs
+			Parries and slam hits generate energy orbs
 			Fully charged attacks release energy orbs
 			'''
 	}
@@ -3363,6 +3367,11 @@ Items: {
 			25% increased katar speed for one attack after a katar parry
 			Stackable twice
 			'''
+	}
+
+	PalmKatar: {
+		DisplayName: Palm Katar
+		Tooltip: Cannot dash upwards
 	}
 }
 

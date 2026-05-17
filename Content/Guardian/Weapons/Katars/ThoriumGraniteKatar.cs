@@ -42,28 +42,31 @@ namespace OrchidMod.Content.Guardian.Weapons.Katars
 
 		public override void ExtraAIKatar(Player player, OrchidGuardian guardian, Projectile anchor, bool offHandKatar)
 		{
+			int count = 0;
+			int lowestTimeLeft = 630;
+			Projectile lowestTimeLeftProjectile = null;
+			int projectileType = ModContent.ProjectileType<ThoriumGraniteKatarProjectile>();
+
+			foreach (Projectile katarOrb in Main.projectile)
+			{
+				if (katarOrb.type == projectileType && katarOrb.owner == player.whoAmI && katarOrb.active && (katarOrb.ai[2] < 0f || katarOrb.ai[1] > 1f))
+				{
+					count++;
+
+					if (katarOrb.timeLeft < lowestTimeLeft)
+					{
+						lowestTimeLeft = katarOrb.timeLeft;
+						lowestTimeLeftProjectile = katarOrb;
+					}
+				}
+			}
+
+			JabVelocity = 20f + count * 2f;
+
 			if (toSpawn > 0 && spawnDelay <= 0)
 			{
 				toSpawn--;
 				spawnDelay = 15;
-				int count = 0;
-				int lowestTimeLeft = 630;
-				Projectile lowestTimeLeftProjectile = null;
-				int projectileType = ModContent.ProjectileType<ThoriumGraniteKatarProjectile>();
-
-				foreach (Projectile katarOrb in Main.projectile)
-				{
-					if (katarOrb.type == projectileType && katarOrb.owner == player.whoAmI && katarOrb.active && (katarOrb.ai[2] < 0f || katarOrb.ai[1] > 1f))
-					{
-						count++;
-
-						if (katarOrb.timeLeft < lowestTimeLeft)
-						{
-							lowestTimeLeft = katarOrb.timeLeft;
-							lowestTimeLeftProjectile = katarOrb;
-						}
-					}
-				}
 
 				if (count < 6)
 				{
@@ -94,6 +97,10 @@ namespace OrchidMod.Content.Guardian.Weapons.Katars
 						proj.netUpdate = true;
 					}
 				}
+			}
+			else
+			{
+				toSpawn++;
 			}
 		}
 	}

@@ -34,6 +34,7 @@ using OrchidMod.Content.Gambler.Misc;
 using OrchidMod.Content.Gambler.Decks;
 using OrchidMod.Content.Shapeshifter.Weapons.Predator;
 using OrchidMod.Content.Guardian.Weapons.Misc;
+using OrchidMod.Content.Guardian.Weapons.Katars;
 
 namespace OrchidMod.Common.Global.NPCs
 {
@@ -364,6 +365,11 @@ namespace OrchidMod.Common.Global.NPCs
 						npcLoot.Add(ItemDropRule.NormalvsExpert(ItemType<SturdySlab>(), 40, 20));
 						break;
 					}
+				case NPCID.GreekSkeleton:
+					{
+						npcLoot.Add(ItemDropRule.NormalvsExpert(ItemType<BadgeHoplite>(), 40, 20));
+						break;
+					}
 				default:
 					break;
 			}
@@ -526,6 +532,11 @@ namespace OrchidMod.Common.Global.NPCs
 				if (thoriumMod.IsNPCTypeEquals("Viscount", npc.type))
 				{
 					npcLoot.Add(ItemDropRule.ByCondition(NotExpert, ItemType<ThoriumViscountQuarterstaff>(), 6)); // 1 in 7 is brutal damn
+				}
+
+				if (thoriumMod.IsNPCTypeEquals("GraniteEnergyStorm", npc.type))
+				{
+					npcLoot.Add(ItemDropRule.ByCondition(NotExpert, ItemType<ThoriumGraniteKatar>(), 6)); // 1 in 7 is brutal damn
 				}
 
 				if (thoriumMod.IsNPCTypeEquals("Illusionist", npc.type))

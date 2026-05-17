@@ -46,6 +46,11 @@ namespace OrchidMod.Content.Guardian.Projectiles.Katars
 			}
 		}
 
+		public override void SafeOnHitNPC(NPC target, NPC.HitInfo hit, int damageDone, Player player, OrchidGuardian guardian)
+		{
+			target.AddBuff(BuffID.OnFire, 300);
+		}
+
 		public override void ModifyDamageHitbox(ref Rectangle hitbox)
 		{
 			Point origin = new Point((int)Projectile.position.X, (int)Projectile.position.Y);
