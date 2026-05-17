@@ -29,6 +29,8 @@ namespace OrchidMod.Content.Guardian
 		public Vector2 hitbox = Vector2.Zero;
 		public Vector2 hitboxOrigin = Vector2.Zero;
 
+		public byte blockRotation = 0;
+
 		public float networkedRotation => Projectile.ai[2];
 
 		// ...
@@ -140,7 +142,7 @@ namespace OrchidMod.Content.Guardian
 						if (owner.boneGloveItem != null && !owner.boneGloveItem.IsAir && owner.boneGloveTimer == 0)
 						{ // Bone glove compatibility, from vanilla code
 							owner.boneGloveTimer = 60;
-							Vector2 center = owner.Center;
+							Vector2 center = owner.MountedCenter;
 							Vector2 vector = owner.DirectionTo(owner.ApplyRangeCompensation(0.2f, center, Main.MouseWorld)) * 10f;
 							Projectile.NewProjectile(owner.GetSource_ItemUse(owner.boneGloveItem), center.X, center.Y, vector.X, vector.Y, ProjectileID.BoneGloveProj, 25, 5f, owner.whoAmI);
 						}
@@ -170,9 +172,42 @@ namespace OrchidMod.Content.Guardian
 						Projectile.width = (int)(texture.Height * guardian.GuardianWeaponScale / guardianItem.ShieldFrames);
 						Projectile.height = (int)(texture.Height * guardian.GuardianWeaponScale / guardianItem.ShieldFrames);
 						aimedLocation += (oldDimensions * 0.5f - new Vector2(texture.Height * guardian.GuardianWeaponScale / guardianItem.ShieldFrames, texture.Height * guardian.GuardianWeaponScale / guardianItem.ShieldFrames) * 0.5f).Floor();
+						Projectile.localAI[1] = 0f;
 					}
 
-					aimedLocation += owner.Center.Floor() - oldOwnerPos.Floor();
+					aimedLocation += owner.MountedCenter.Floor() - oldOwnerPos.Floor();
+
+					if (IsLocalOwner)
+					{ // pavise rotation while blocking
+						Vector2 toPavise = Vector2.Normalize(Projectile.Center - owner.MountedCenter.Floor());
+						Vector2 toPaviseClock = toPavise.RotatedBy(0.001f * guardianItem.parryRotation);
+						Vector2 toPaviseCClock = toPavise.RotatedBy(-0.001f * guardianItem.parryRotation);
+						Vector2 toCursor = Vector2.Normalize(Main.MouseWorld - owner.MountedCenter.Floor());
+						double angle = Math.Acos(Vector2.Dot(toPavise, toCursor));
+						double angleClock = Math.Acos(Vector2.Dot(toPaviseClock, toCursor));
+						double angleCClock = Math.Acos(Vector2.Dot(toPaviseCClock, toCursor));
+
+						if (angle < guardianItem.parryRotation * 0.001f || (angle < angleClock && angle < angleCClock))
+						{
+							if (blockRotation != 0)
+							{
+								blockRotation = 0;
+								Projectile.netUpdate = true;
+							}
+						}
+						else if (angleClock < angle && angleClock < angleCClock && blockRotation != 1)
+						{
+							blockRotation = 1;
+							Projectile.netUpdate = true;
+						}
+						else if (angleCClock < angle && angleCClock < angleClock && blockRotation != 2)
+						{
+							blockRotation = 2;
+							Projectile.netUpdate = true;
+						}
+					}
+
+
 					Point p1 = new Point((int)hitboxOrigin.X, (int)hitboxOrigin.Y);
 					Point p2 = new Point((int)(hitboxOrigin.X + hitbox.X), (int)(hitboxOrigin.Y + hitbox.Y));
 
@@ -192,10 +227,10 @@ namespace OrchidMod.Content.Guardian
 									guardian.OnBlockProjectileFirst(Projectile, proj);
 									guardianItem.Protect(owner, Projectile);
 									shieldEffectReady = false;
-									SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), owner.Center);
+									SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), owner.MountedCenter);
 								}
 								if (killProj) proj.Kill();
-								SoundEngine.PlaySound(SoundID.Dig, owner.Center);
+								SoundEngine.PlaySound(SoundID.Dig, owner.MountedCenter);
 							}
 						}
 					}
@@ -220,14 +255,14 @@ namespace OrchidMod.Content.Guardian
 							{ // First time blocking an enemy
 								guardian.OnBlockNPCNew(Projectile, target);
 								guardian.GuardianBlockedEnemies.Add(new BlockedEnemy(target, (int)Projectile.ai[0] + 60));
-								SoundEngine.PlaySound(SoundID.Dig, owner.Center);
+								SoundEngine.PlaySound(SoundID.Dig, owner.MountedCenter);
 							}
 
 							if (target.knockBackResist > 0f)
 							{ // Push enemy if possible
-								Vector2 push = Projectile.Center - owner.Center;
+								Vector2 push = Projectile.Center - owner.MountedCenter;
 								push.Normalize();
-								push += owner.Center - oldOwnerPos;
+								push += owner.MountedCenter - oldOwnerPos;
 								target.velocity = push;
 							}
 
@@ -238,7 +273,7 @@ namespace OrchidMod.Content.Guardian
 								guardian.OnBlockNPCFirst(Projectile, target);
 								guardianItem.Protect(owner, Projectile);
 								shieldEffectReady = false;
-								SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), owner.Center);
+								SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), owner.MountedCenter);
 							}
 						}
 					}
@@ -255,9 +290,10 @@ namespace OrchidMod.Content.Guardian
 				}
 				else
 				{
+					Projectile.localAI[1] = 0f;
 					if (Main.myPlayer == Projectile.owner)
 					{
-						aimedLocation = Main.MouseWorld - owner.Center.Floor();
+						aimedLocation = Main.MouseWorld - owner.MountedCenter.Floor();
 						aimedLocation.Normalize();
 						
 						aimedLocation = Vector2.UnitX.RotatedBy(IsRotationLocked ? LockedRotation : OrchidModGuardianShield.GetSnappedAngle(guardianItem, owner,aimedLocation.ToRotation()));
@@ -275,7 +311,7 @@ namespace OrchidMod.Content.Guardian
 						}
 						Projectile.direction = Projectile.spriteDirection;
 
-						aimedLocation = owner.Center.Floor() - aimedLocation - new Vector2(Projectile.width / 2f, Projectile.height / 2f);
+						aimedLocation = owner.MountedCenter.Floor() - aimedLocation - new Vector2(Projectile.width / 2f, Projectile.height / 2f);
 
 						if (Math.Abs(networkedRotation - Projectile.rotation) > 0.025f)
 						{
@@ -291,8 +327,20 @@ namespace OrchidMod.Content.Guardian
 				}
 				else
 				{
-					Projectile.Center = owner.Center.Floor() - networkedRotation.ToRotationVector2() * (guardianItem.distance + addedDistance);
+					Projectile.Center = owner.MountedCenter.Floor() - networkedRotation.ToRotationVector2() * (guardianItem.distance + addedDistance);
 					Projectile.rotation = networkedRotation;
+				}
+
+				// Projectile rotation offset while parrying
+				Vector2 toPlayer = Projectile.Center - owner.Center;
+				Projectile.position -= toPlayer;
+				toPlayer = toPlayer.RotatedBy(Projectile.localAI[1]);
+				Projectile.position += toPlayer;
+				Projectile.rotation = (toPlayer * -1f).ToRotation();
+
+				if (blockRotation > 0)
+				{
+					Projectile.localAI[1] += guardianItem.parryRotation * 0.001f * (blockRotation == 1 ? 1 : -1);
 				}
 
 				Projectile.timeLeft = 5;
@@ -314,7 +362,7 @@ namespace OrchidMod.Content.Guardian
 				if (guardian.GuardianShowDebugVisuals) SeeHitbox();
 			}
 
-			oldOwnerPos = owner.Center;
+			oldOwnerPos = owner.MountedCenter;
 			guardianItem.ExtraAIShield(Projectile);
 		}
 
@@ -430,11 +478,13 @@ namespace OrchidMod.Content.Guardian
 		public override void SendExtraAI(BinaryWriter writer)
 		{
 			writer.Write(this.SelectedItem);
+			writer.Write(this.blockRotation);
 		}
 
 		public override void ReceiveExtraAI(BinaryReader reader)
 		{
 			this.SelectedItem = reader.ReadInt32();
+			this.blockRotation = reader.ReadByte();
 		}
 	}
 }

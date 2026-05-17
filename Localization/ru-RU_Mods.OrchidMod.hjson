@@ -3352,7 +3352,7 @@ Items: {
 		// DisplayName: Ion Deluge
 		/* Tooltip:
 			'''
-			Parry hits generate energy orbs
+			Parries and slam hits generate energy orbs
 			Fully charged attacks release energy orbs
 			''' */
 	}
