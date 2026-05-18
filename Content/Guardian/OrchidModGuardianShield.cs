@@ -49,6 +49,8 @@ namespace OrchidMod.Content.Guardian
 		public virtual bool BlockEnd(Player player, Projectile shield) => true;
 		public virtual void PaviseModifyHitNPC(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, ref HitModifiers modifiers, bool firstHit) { }
 		public virtual Color GetPaviseGlowmaskColor(Player player, OrchidGuardian guardian, Projectile projectile, Color lightColor) => Color.White;
+		/// <summary> Responsible for playing the sound when the player begins guarding with the weapon. Default behavior is <c>SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), player.Center);</c> </summary>
+		public virtual void PlayGuardSound(Player player, OrchidGuardian guardian, Projectile anchor) => SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), player.Center);
 
 		public float distance = 100f;
 		public float slamDistance = 100f;
@@ -75,6 +77,8 @@ namespace OrchidMod.Content.Guardian
 		public bool lockSlamRotation;
 		/// <summary>How fast the pavise rotates towards the player cursor while blocking. Arbitrary value, defaults to 10f.</summary>
 		public float parryRotation;
+		/// <summary>Charge speed multiplier for this item. Defaults to 1f.</summary>
+		public float ChargeSpeedMultiplier;
 
 		public sealed override void SetDefaults()
 		{
@@ -93,6 +97,7 @@ namespace OrchidMod.Content.Guardian
 			lockSlamRotation = false;
 			ShieldFrames = 1;
 			parryRotation = 10f;
+			ChargeSpeedMultiplier = 1f;
 
 			OrchidGlobalItemPerEntity orchidItem = Item.GetGlobalItem<OrchidGlobalItemPerEntity>();
 			orchidItem.guardianWeapon = true;
@@ -115,78 +120,56 @@ namespace OrchidMod.Content.Guardian
 				var projectileType = ModContent.ProjectileType<GuardianShieldAnchor>();
 				if (player.ownedProjectileCounts[projectileType] > 0) {
 					var guardian = player.GetModPlayer<OrchidGuardian>();
-					var proj = Main.projectile.First(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
+					var projectile = Main.projectile.First(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
 
-					bool shouldBlock = Main.mouseRight && Main.mouseRightRelease;
+					bool shouldBlock = Main.mouseRight;
 					bool shouldSlam = Main.mouseLeft && (Main.mouseLeftRelease || slamAutoReuse);
 					if (ModContent.GetInstance<OrchidClientConfig>().GuardianSwapPaviseImputs)
 					{
-						shouldBlock = Main.mouseLeft && Main.mouseLeftRelease;
+						shouldBlock = Main.mouseLeft;
 						shouldSlam = Main.mouseRight && (Main.mouseRightRelease || slamAutoReuse);
 					}
 
-					if (proj != null && proj.ModProjectile is GuardianShieldAnchor shield)
+					if (projectile != null && projectile.ModProjectile is GuardianShieldAnchor shield)
 					{
 						if (shouldSlam) { // Slam
-							if (proj.ai[1] == 0f && guardian.UseSlam(1, true)) 
+							if (projectile.ai[1] == 0f) 
 							{
-								SoundEngine.PlaySound(Item.UseSound, player.Center);
-								guardian.UseSlam();
-								shield.shieldEffectReady = true;
-								proj.ai[1] = 60f;
-								if (proj.ai[0] > 0f) 
+								if (guardian.UseSlam(1, true))
 								{
-									if (BlockEnd(player, proj))
-									{
-										shield.spawnDusts();
-									}
-									proj.ai[0] = 0f;
-									resetBlockedEnemiesDuration(guardian);
-								}
-								proj.ResetLocalNPCHitImmunity();
-								shield.NeedNetUpdate = true;
-							}
-						} else if (shouldBlock) { // Block
-							if (proj.ai[1] + proj.ai[0] == 0f && guardian.UseGuard(1, true)) 
-							{
-								shield.shieldEffectReady = true;
-								guardian.UseGuard();
-								proj.ai[0] = (int)(blockDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianBlockDuration);
-								shield.NeedNetUpdate = true;
-								BlockStart(player, proj);
-								SoundEngine.PlaySound(SoundID.Item1, player.Center);
-							}
-							else if (proj.ai[0] > 0f && Main.mouseLeftRelease) // Remove block stance if click again
-							{
-								if (ModContent.GetInstance<OrchidClientConfig>().GuardianBlockCancelChain && guardian.UseGuard(1, true))
-								{
-									// Taken from the shield anchor code
-									Vector2 aimedLocation = Main.MouseWorld - player.MountedCenter.Floor();
-									aimedLocation.Normalize();
-									proj.velocity = aimedLocation * float.Epsilon;
-									aimedLocation *= -distance;
-									proj.rotation = aimedLocation.ToRotation();
-									proj.direction = proj.spriteDirection;
-									aimedLocation = player.MountedCenter.Floor() - aimedLocation - new Vector2(proj.width / 2f, proj.height / 2f);
-									proj.position = aimedLocation;
-									shield.aimedLocation = aimedLocation;
-									proj.ai[2] = proj.rotation; // networked rotation
-
-									shield.shieldEffectReady = true;
-									guardian.UseGuard();
-									proj.ai[0] = (int)(blockDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianBlockDuration);
-									shield.NeedNetUpdate = true;
-									BlockStart(player, proj);
-									SoundEngine.PlaySound(SoundID.Item1, player.Center);
+									guardian.UseSlam();
+									shield.WeakSlam = false;
+									SoundEngine.PlaySound(Item.UseSound, player.Center);
 								}
 								else
 								{
-									shield.shieldEffectReady = true;
-									shield.spawnDusts();
-									proj.ai[0] = 0f;
-									shield.NeedNetUpdate = true;
+									shield.WeakSlam = true;
+									SoundEngine.PlaySound(Item.UseSound.Value.WithPitchOffset(Main.rand.NextFloat(-0.5f, -0.25f)).WithVolumeScale(0.5f), player.Center);
 								}
-							} 
+
+								shield.shieldEffectReady = true;
+								projectile.ai[1] = 60f;
+								if (projectile.ai[0] > 0f)
+								{
+									if (BlockEnd(player, projectile))
+									{
+										shield.spawnDusts();
+									}
+									resetBlockedEnemiesDuration(guardian);
+								}
+
+								projectile.ai[0] = 0f;
+								projectile.ResetLocalNPCHitImmunity();
+								shield.NeedNetUpdate = true;
+							}
+						} 
+						else if (shouldBlock && projectile.ai[1] == 0f)
+						{ // Block
+							projectile.ai[0] = -1f;
+							shield.NeedNetUpdate = true;
+							shield.Ding = false;
+							guardian.GuardianItemCharge = 1f;
+							SoundEngine.PlaySound(SoundID.Item7, player.Center);
 						}
 					}
 				}

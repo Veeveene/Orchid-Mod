@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using OrchidMod.Common;
 using OrchidMod.Common.ModObjects;
 using OrchidMod.Content.General.Prefixes;
 using ReLogic.Content;
@@ -21,6 +22,8 @@ namespace OrchidMod.Content.Guardian
 
 		public bool shieldEffectReady = true;
 		public bool NeedNetUpdate = false;
+		public bool Ding = false;
+		public bool WeakSlam = false;
 
 		public byte isSlamming = 0;
 		public Vector2 aimedLocation = Vector2.Zero;
@@ -132,6 +135,12 @@ namespace OrchidMod.Content.Guardian
 						Projectile.friendly = true;
 						ResetHitStatus(true);
 
+						if (WeakSlam)
+						{
+							Projectile.damage = (int)(Projectile.damage * 0.2f);
+							Projectile.knockBack *= 0.5f;
+						}
+
 						if (IsLocalOwner)
 						{
 							var texture = ModContent.Request<Texture2D>((ShieldItem.ModItem as OrchidModGuardianShield)?.ShieldTexture).Value;
@@ -148,7 +157,7 @@ namespace OrchidMod.Content.Guardian
 						}
 					}
 
-					float slamDistance = (int)(guardianItem.slamDistance * guardianItem.Item.GetGlobalItem<GuardianPrefixItem>().GetSlamDistance() * owner.GetTotalAttackSpeed(DamageClass.Melee));
+					float slamDistance = (int)(guardianItem.slamDistance * guardianItem.Item.GetGlobalItem<GuardianPrefixItem>().GetSlamDistance() * owner.GetTotalAttackSpeed(DamageClass.Melee) * (WeakSlam ? 0.5f : 1f));
 					addedDistance = (float)Math.Sin(MathHelper.Pi / 60f * Projectile.ai[1]) * slamDistance;
 					Projectile.ai[1] -= 60f / guardianItem.Item.useTime;
 
@@ -160,11 +169,12 @@ namespace OrchidMod.Content.Guardian
 						Projectile.friendly = false;
 						IsRotationLocked = false;
 						Projectile.netUpdate = true;
+						WeakSlam = false;
 					}
 				}
 
 				if (Projectile.ai[0] > 0f)
-				{
+				{ // blocking
 					if (Projectile.ai[0] >= (int)(guardianItem.blockDuration * item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianBlockDuration))
 					{
 						Vector2 oldDimensions = new Vector2(Projectile.width, Projectile.height);
@@ -172,7 +182,6 @@ namespace OrchidMod.Content.Guardian
 						Projectile.width = (int)(texture.Height * guardian.GuardianWeaponScale / guardianItem.ShieldFrames);
 						Projectile.height = (int)(texture.Height * guardian.GuardianWeaponScale / guardianItem.ShieldFrames);
 						aimedLocation += (oldDimensions * 0.5f - new Vector2(texture.Height * guardian.GuardianWeaponScale / guardianItem.ShieldFrames, texture.Height * guardian.GuardianWeaponScale / guardianItem.ShieldFrames) * 0.5f).Floor();
-						Projectile.localAI[1] = 0f;
 					}
 
 					aimedLocation += owner.MountedCenter.Floor() - oldOwnerPos.Floor();
@@ -187,7 +196,7 @@ namespace OrchidMod.Content.Guardian
 						double angleClock = Math.Acos(Vector2.Dot(toPaviseClock, toCursor));
 						double angleCClock = Math.Acos(Vector2.Dot(toPaviseCClock, toCursor));
 
-						if (angle < guardianItem.parryRotation * 0.001f || (angle < angleClock && angle < angleCClock))
+						if (angle < guardianItem.parryRotation * 0.0015f || (angle < angleClock && angle < angleCClock))
 						{
 							if (blockRotation != 0)
 							{
@@ -206,7 +215,6 @@ namespace OrchidMod.Content.Guardian
 							Projectile.netUpdate = true;
 						}
 					}
-
 
 					Point p1 = new Point((int)hitboxOrigin.X, (int)hitboxOrigin.Y);
 					Point p2 = new Point((int)(hitboxOrigin.X + hitbox.X), (int)(hitboxOrigin.Y + hitbox.Y));
@@ -286,6 +294,82 @@ namespace OrchidMod.Content.Guardian
 							spawnDusts();
 						}
 						Projectile.ai[0] = 0f;
+					}
+				}
+				else if (Projectile.ai[0] < 0)
+				{ // Charging
+					aimedLocation += owner.MountedCenter.Floor() - oldOwnerPos.Floor();
+
+					if (IsLocalOwner)
+					{ // pavise rotation while blocking
+						Vector2 toPavise = Vector2.Normalize(Projectile.Center - owner.MountedCenter.Floor());
+						Vector2 toPaviseClock = toPavise.RotatedBy(0.001f * guardianItem.parryRotation);
+						Vector2 toPaviseCClock = toPavise.RotatedBy(-0.001f * guardianItem.parryRotation);
+						Vector2 toCursor = Vector2.Normalize(Main.MouseWorld - owner.MountedCenter.Floor());
+						double angle = Math.Acos(Vector2.Dot(toPavise, toCursor));
+						double angleClock = Math.Acos(Vector2.Dot(toPaviseClock, toCursor));
+						double angleCClock = Math.Acos(Vector2.Dot(toPaviseCClock, toCursor));
+
+						if (angle < guardianItem.parryRotation * 0.0015f || (angle < angleClock && angle < angleCClock))
+						{
+							if (blockRotation != 0)
+							{
+								blockRotation = 0;
+								Projectile.netUpdate = true;
+							}
+						}
+						else if (angleClock < angle && angleClock < angleCClock && blockRotation != 1)
+						{
+							blockRotation = 1;
+							Projectile.netUpdate = true;
+						}
+						else if (angleCClock < angle && angleCClock < angleClock && blockRotation != 2)
+						{
+							blockRotation = 2;
+							Projectile.netUpdate = true;
+						}
+					}
+
+					guardian.GuardianItemCharge += 45f / guardianItem.Item.useTime * (owner.GetTotalAttackSpeed(DamageClass.Melee) * 2f - 1f) * guardianItem.ChargeSpeedMultiplier;
+					if (guardian.GuardianItemCharge > 180f)
+					{
+						if (!Ding && IsLocalOwner)
+						{
+							if (ModContent.GetInstance<OrchidClientConfig>().GuardianAltChargeSounds) SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, owner.Center);
+							else SoundEngine.PlaySound(SoundID.MaxMana, owner.Center);
+							Ding = true;
+						}
+						guardian.GuardianItemCharge = 180f;
+					}
+					else guardian.GuardCostUI = 1;
+
+					bool input = ModContent.GetInstance<OrchidClientConfig>().GuardianSwapPaviseImputs ? Main.mouseLeft : Main.mouseRight;
+					if (!input)
+					{
+						if (guardian.UseGuard(1, true) || guardian.GuardianItemCharge >= 180f)
+						{
+							if (guardian.GuardianItemCharge < 180f)
+							{ // Consume a guard to fully charge if the player has one
+								guardian.UseGuard();
+							}
+
+							// Starts a block
+							Projectile.ai[2] = Projectile.rotation; // networked rotation
+							blockRotation = 0;
+
+							shieldEffectReady = true;
+							Projectile.ai[0] = (int)(guardianItem.blockDuration * guardianItem.Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianBlockDuration);
+							guardianItem.BlockStart(owner, Projectile);
+							guardianItem.PlayGuardSound(owner, guardian, Projectile);
+
+							Projectile.netUpdate = true;
+						}
+						else
+						{
+							Projectile.ai[0] = 0f;
+						}
+
+						guardian.GuardianItemCharge = 0f;
 					}
 				}
 				else
@@ -479,12 +563,14 @@ namespace OrchidMod.Content.Guardian
 		{
 			writer.Write(this.SelectedItem);
 			writer.Write(this.blockRotation);
+			writer.Write(this.WeakSlam);
 		}
 
 		public override void ReceiveExtraAI(BinaryReader reader)
 		{
 			this.SelectedItem = reader.ReadInt32();
 			this.blockRotation = reader.ReadByte();
+			this.WeakSlam = reader.ReadBoolean();
 		}
 	}
 }
