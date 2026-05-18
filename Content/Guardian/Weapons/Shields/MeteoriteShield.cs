@@ -25,9 +25,9 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			npc.AddBuff(BuffID.OnFire, 600);
 		}
 
-		public override void SlamHit(Player player, Projectile shield, NPC npc)
+		public override void SlamHit(Player player, Projectile shield, NPC npc, bool WeakSlam)
 		{
-			npc.AddBuff(BuffID.OnFire, 600);
+			npc.AddBuff(BuffID.OnFire, WeakSlam ? 150 : 600);
 		}
 
 		public override void AddRecipes()

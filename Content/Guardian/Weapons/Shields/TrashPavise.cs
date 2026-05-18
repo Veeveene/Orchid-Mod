@@ -21,9 +21,9 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			blockDuration = 60;
 		}
 
-		public override void SlamHit(Player player, Projectile shield, NPC npc)
+		public override void SlamHit(Player player, Projectile shield, NPC npc, bool WeakSlam)
 		{
-			npc.AddBuff(BuffID.Stinky, 300);
+			npc.AddBuff(BuffID.Stinky, WeakSlam ? 100 : 300);
 		}
 	}
 }

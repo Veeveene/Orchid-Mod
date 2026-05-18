@@ -102,7 +102,10 @@ namespace OrchidMod
 		/// <summary> Cooldown in frames between starting a new punch charge since starting the last one. Can begin a punch when 0 or lower, goes down to -10. Half of the gauntlet's punch animation time is added when a charge is started. </summary>
 		public int GauntletPunchCooldown = 0;
 		public bool GuardianStandardBuffer = false; // used to delay the deactivation of various standards effects by 1 frame
-		public int SlamCostUI = 0; // Displays an outline around slams in the UI if > 0
+		/// <summary> Displays an outline around guards in the UI if > 0.</summary>
+		public int SlamCostUI = 0; // 
+		/// <summary> Displays an outline around slams in the UI if > 0.</summary>
+		public int GuardCostUI = 0; // Displays an outline around slams in the UI if > 0
 		public int ChargeHoldTimer; // Timer (in frames) since GuardianItemCharge has been >0 
 		/// <summary> Allows the player to trigger counterattack effects. Set when able to use an item that has counterattack effects. Use GuardianCounterTime to check for counterattack eligibility. </summary>
 		public bool GuardianCounter;
@@ -427,6 +430,7 @@ namespace OrchidMod
 			else GuardianParry = false;
 
 			SlamCostUI = 0;
+			GuardCostUI = 0;
 
 			if (GuardianGuard > GuardianGuardMax) GuardianGuard = GuardianGuardMax;
 			if (GuardianSlam > GuardianSlamMax) GuardianSlam = GuardianSlamMax;
@@ -744,7 +748,7 @@ namespace OrchidMod
 			return false;
 		}
 
-		public bool UseGuard(int nb = 1, bool checkOnly = false)
+		public bool UseGuard(int nb = 1, bool checkOnly = false, bool showUICost = false)
 		{
 			if (GuardianHorizon && Player.statLife > Player.statLifeMax2 * 0.5f && Player.statLife > 20)
 			{ // Horizon armor set consumes health instead of guardian charges
@@ -753,6 +757,10 @@ namespace OrchidMod
 					Player.statLife -= 20;
 					CombatText.NewText(Player.Hitbox, CombatText.DamagedFriendly, 20, false, true);
 					SoundEngine.PlaySound(SoundID.DD2_DarkMageAttack, Player.Center);
+				}
+				if (showUICost)
+				{
+					GuardCostUI = nb;
 				}
 				return true;
 			}

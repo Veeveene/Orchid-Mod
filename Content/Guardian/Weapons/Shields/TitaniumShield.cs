@@ -40,9 +40,9 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			return true;
 		}
 
-		public override void Slam(Player player, Projectile shield)
+		public override void Slam(Player player, Projectile shield, bool WeakSlam)
 		{
-			if (player.GetModPlayer<OrchidGuardian>().GuardianCounterTime > 0)
+			if (player.GetModPlayer<OrchidGuardian>().GuardianCounterTime > 0 && !WeakSlam)
 			{
 				player.GetModPlayer<OrchidPlayer>().SpawnTitaniumShards(shield.GetSource_FromThis(), 4);
 				Terraria.Audio.SoundEngine.PlaySound(SoundID.Item82, player.Center);
