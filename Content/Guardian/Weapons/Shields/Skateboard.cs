@@ -34,6 +34,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			blockDuration = 240;
 			TextureWheels ??= ModContent.Request<Texture2D>(Texture + "_Wheels", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 			ShieldFrames = 4;
+			parryRotation = 0f;
 		}
 
 		public override void BlockStart(Player player, Projectile shield)
@@ -41,10 +42,10 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			playerVelocity = 0;
 		}
 
-		public override void SlamHitFirst(Player player, Projectile shield, NPC npc)
+		public override void SlamHitFirst(Player player, Projectile shield, NPC npc, bool WeakSlam)
 		{
 			Player owner = Main.player[shield.owner];
-			if (shield.ModProjectile is GuardianShieldAnchor anchor)
+			if (shield.ModProjectile is GuardianShieldAnchor anchor && !WeakSlam)
 			{
 				if (anchor.aimedLocation.Y > owner.Center.Y && (Math.Abs(anchor.aimedLocation.X - owner.Center.X) < 48f) && owner.grapCount == 0 && owner.mount.Type == MountID.None)
 				{

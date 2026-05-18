@@ -27,13 +27,13 @@ namespace OrchidMod.Content.Guardian
 
 		public virtual void SafeHoldItem(Player player) { }
 		/// <summary>Called once per slam, when the slam first hits an enemy.</summary>
-		public virtual void SlamHitFirst(Player player, Projectile shield, NPC npc) { }
+		public virtual void SlamHitFirst(Player player, Projectile shield, NPC npc, bool WeakSlam) { }
 		/// <summary>Called when this shield's slam hits an enemy.</summary>
-		public virtual void SlamHit(Player player, Projectile shield, NPC npc) { }
+		public virtual void SlamHit(Player player, Projectile shield, NPC npc, bool WeakSlam) { }
 		/// <summary>Called on the first frame of a slam.</summary>
-		public virtual void Slam(Player player, Projectile shield) { }
+		public virtual void Slam(Player player, Projectile shield, bool WeakSlam) { }
 		/// <summary>Called on the last frame of a slam.</summary>
-		public virtual void SlamEnd(Player player, Projectile shield) { }
+		public virtual void SlamEnd(Player player, Projectile shield, bool WeakSlam) { }
 		/// <summary>Called when an enemy collides with the shield during a block. Will be called once per frame per enemy colliding with it.</summary>
 		public virtual void Push(Player player, Projectile shield, NPC npc) { }
 		/// <summary>Called once per block when the first enemy or projectile is blocked. This is called after <c>Push</c> or <c>Block</c>, but before <c>Block</c> destroys the projectile.</summary>

@@ -79,10 +79,10 @@ namespace OrchidMod.Content.Guardian
 				return;
 			}
 
-			guardianItem.SlamHit(owner, Projectile, target);
+			guardianItem.SlamHit(owner, Projectile, target, WeakSlam);
 			if (FirstHit)
 			{
-				guardianItem.SlamHitFirst(owner, Projectile, target);
+				guardianItem.SlamHitFirst(owner, Projectile, target, WeakSlam);
 			}
 		}
 
@@ -163,7 +163,7 @@ namespace OrchidMod.Content.Guardian
 
 					if (Projectile.ai[1] <= 0f)
 					{
-						guardianItem.SlamEnd(owner, Projectile);
+						guardianItem.SlamEnd(owner, Projectile, WeakSlam);
 						Projectile.ai[1] = 0f;
 						isSlamming = 0;
 						Projectile.friendly = false;
@@ -438,7 +438,7 @@ namespace OrchidMod.Content.Guardian
 						LockedRotation = Projectile.rotation + MathHelper.Pi;
 						Projectile.netUpdate = true;
 					}
-					guardianItem.Slam(owner, Projectile);
+					guardianItem.Slam(owner, Projectile, WeakSlam);
 					guardian.GuardianCounterTime = 0;
 				} 
 

@@ -27,21 +27,24 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			shouldFlip = true;
 		}
 
-		public override void Slam(Player player, Projectile shield)
+		public override void Slam(Player player, Projectile shield, bool WeakSlam)
 		{
-			Vector2 dir = Vector2.Zero;
-			if (Main.MouseWorld != player.Center) dir = Vector2.Normalize(Main.MouseWorld - player.Center) * Item.shootSpeed;
-			if (IsLocalPlayer(player))
+			if (!WeakSlam)
 			{
-				OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
-				Projectile anchor = GetAnchor(player).Projectile;
-				int type = ModContent.ProjectileType<DemoniteShieldProjectile>();
-				Projectile projectile = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), anchor.Center, dir, type, guardian.GetGuardianDamage(Item.damage), Item.knockBack, player.whoAmI);
-				projectile.CritChance = (int)(player.GetCritChance<GuardianDamageClass>() + player.GetCritChance<GenericDamageClass>() + Item.crit);
-			}
-			for (int i = 0; i < 10; i++)
-			{
-				Dust.NewDustDirect(shield.position, shield.width, shield.height, DustID.Demonite, 0f, 0f, 200, default, 1.2f).velocity += dir;
+				Vector2 dir = Vector2.Zero;
+				if (Main.MouseWorld != player.Center) dir = Vector2.Normalize(Main.MouseWorld - player.Center) * Item.shootSpeed;
+				if (IsLocalPlayer(player))
+				{
+					OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+					Projectile anchor = GetAnchor(player).Projectile;
+					int type = ModContent.ProjectileType<DemoniteShieldProjectile>();
+					Projectile projectile = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), anchor.Center, dir, type, guardian.GetGuardianDamage(Item.damage), Item.knockBack, player.whoAmI);
+					projectile.CritChance = (int)(player.GetCritChance<GuardianDamageClass>() + player.GetCritChance<GenericDamageClass>() + Item.crit);
+				}
+				for (int i = 0; i < 10; i++)
+				{
+					Dust.NewDustDirect(shield.position, shield.width, shield.height, DustID.Demonite, 0f, 0f, 200, default, 1.2f).velocity += dir;
+				}
 			}
 		}
 

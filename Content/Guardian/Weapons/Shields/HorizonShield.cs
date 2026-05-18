@@ -63,9 +63,9 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			TimeHeld ++;
 		}
 
-		public override void Slam(Player player, Projectile shield)
+		public override void Slam(Player player, Projectile shield, bool WeakSlam)
 		{
-			if (IsLocalPlayer(player))
+			if (IsLocalPlayer(player) && !WeakSlam)
 			{
 				Projectile anchor = GetAnchor(player).Projectile;
 				int type = ModContent.ProjectileType<HorizonShieldProj>();
