@@ -305,7 +305,7 @@ namespace OrchidMod.Content.Guardian
 								}
 
 								int projectileType = ModContent.ProjectileType<KatarJabProjectile>();
-								float strikeVelocity = guardianItem.JabVelocity * (charged ? 1f : 0.75f) * guardianItem.Item.GetGlobalItem<GuardianPrefixItem>().GetSlamDistance() * owner.GetTotalAttackSpeed(DamageClass.Melee);
+								float strikeVelocity = guardianItem.JabVelocity * (charged ? 1.25f : 1f) * guardianItem.Item.GetGlobalItem<GuardianPrefixItem>().GetSlamDistance() * owner.GetTotalAttackSpeed(DamageClass.Melee);
 								Vector2 velocity = Vector2.UnitY.RotatedBy((Main.MouseWorld - owner.MountedCenter).ToRotation() - MathHelper.PiOver2) * strikeVelocity * 0.25f;
 								Projectile jabProj = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, velocity, projectileType, 1, 1f, owner.whoAmI, charged ? 1f : 0f, guardianItem.ChargedAttackDoT);
 								if (jabProj.ModProjectile is KatarJabProjectile jab)
