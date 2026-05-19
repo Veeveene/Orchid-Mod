@@ -9,6 +9,8 @@ using Terraria.Localization;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
+using MonoMod.RuntimeDetour;
+using OrchidMod.Content.Guardian.Weapons.Warhammers;
 
 namespace OrchidMod.Common.Global.Items
 {
@@ -44,9 +46,36 @@ namespace OrchidMod.Common.Global.Items
 			}
 		}
 
+
+		private static Hook _RightClickHook;
+		
+		internal delegate void orig_RightClick(Item item, Player player);
+
+
+		public override void Load()
+		{
+			MethodInfo m_RightClick = typeof(ItemLoader).GetMethod("RightClick", BindingFlags.Static | BindingFlags.Public);
+			if (m_RightClick != null)
+				_RightClickHook = new Hook(m_RightClick, Detour_RightClick);
+
+		}
+
 		public override void Unload()
 		{
 			tagsByItemType.Clear();
+
+			_RightClickHook?.Dispose();
+			_RightClickHook = null;
+		}
+
+		private void Detour_RightClick(orig_RightClick orig, Item item, Player player)
+		{
+			if (OrchidMod.ThoriumMod != null && item.type == OrchidMod.ThoriumMod.Find<ModItem>("MagicThorHammer").Type && ModContent.GetInstance<OrchidClientConfig>().GuardianThoriumThorsHammerConversion)
+			{
+				item.ChangeItemType(ModContent.ItemType<ThoriumThorsHammerWarhammer>());
+				return;
+			}
+			orig(item, player);
 		}
 
 		// ...
@@ -66,6 +95,12 @@ namespace OrchidMod.Common.Global.Items
 				{
 					AddCrossmodInfoToTooltips(item, tooltips, atr.Mods);
 				}
+			}
+
+			if (OrchidMod.ThoriumMod != null && item.type == OrchidMod.ThoriumMod.Find<ModItem>("MagicThorHammer").Type && ModContent.GetInstance<OrchidClientConfig>().GuardianThoriumThorsHammerConversion)
+			{
+				var index = tooltips.FindIndex(i => i.Mod.Equals("Terraria") && i.Name.Equals("Tooltip0"));
+				tooltips[index].Text = Language.GetTextValue("Mods.OrchidMod.Misc.ThoriumMagicThorHammer");
 			}
 		}
 
@@ -101,6 +136,7 @@ namespace OrchidMod.Common.Global.Items
 			{
 				OverrideColor = OrchidColors.CrossmodContentWarning
 			});
+
 		}
 
 		// ...

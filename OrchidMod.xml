@@ -104,6 +104,12 @@
         <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.hasSpecialHammerTexture">
             <summary>If true, the anchor will load and use ItemName_Hammer.png as its texture.</summary>
         </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.CannotMagnet">
+            <summary>If true, the warhammer will be unaffected by the Hammer Magnet accessory.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.CannotExplode">
+            <summary>If true, the warhammer will be unaffected by the Remote Detonator accessory.</summary>
+        </member>
         <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.ThrowAI(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile,System.Boolean)">
             <summary>Called before default throw AI. Return false to prevent the default AI from running.</summary>
             <remarks>Remember to set <c>Projectile.friendly</c> and <c>OrchidModGuardianProjectile.ResetHitStatus()</c> if overriding default behavior.</remarks>
@@ -226,6 +232,9 @@
         <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.ChargeSpeedMultiplier">
             <summary> Multiplier to the weapon charge speed when holding left click. Defaults to 1f. </summary>
         </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.NoUpwardsParryDash">
+            <summary> Prevents the user from dashing upwards. Generally used to balance very early game katars. Defaults to false. </summary>
+        </member>
         <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianParryItem.OnParryOther(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile)">
             <summary>Specifically called if the aggressor when initiating the parry is neither an NPC nor a Projectile.</summary>
         </member>
@@ -331,8 +340,20 @@
             If true, slams performed with the shield will be locked to the rotation they started with, rather than being free to rotate mid-slam.
             </summary>
         </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianShield.parryRotation">
+            <summary>How fast the pavise rotates towards the player cursor while blocking. Arbitrary value, defaults to 10f.</summary>
+        </member>
         <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianStandard.DrawCustomFlag(Microsoft.Xna.Framework.Graphics.SpriteBatch,Terraria.Projectile,Terraria.Player,Microsoft.Xna.Framework.Color,Microsoft.Xna.Framework.Vector2,System.Single)">
             <summary>Overrides the default flag drawing, but still renders the shaft. Return true to prevent the default flag from being drawn.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.Projectiles.Misc.DoubleHammerHitContext.Swing">
+            <summary>Melee hit</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.Projectiles.Misc.DoubleHammerHitContext.Throw">
+            <summary>Throw hit</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.Projectiles.Misc.DoubleHammerHitContext.Block">
+            <summary>Block hit</summary>
         </member>
         <member name="M:OrchidMod.Content.Guardian.Projectiles.Misc.GuardianHorizonLanceAnchor.GetHorizonGlowColor(System.Single,System.Single,System.Single)">
             <summary> Mimics the <c>HorizonGlow</c> shader, returning a color modified by the given phase similar to what the shader would provide. </summary>
@@ -351,6 +372,43 @@
         </member>
         <member name="M:OrchidMod.Content.Guardian.Projectiles.Misc.GuardianHorizonLanceAnchor.GetHorizonGlowColor(System.Double,Microsoft.Xna.Framework.Color)">
             <inheritdoc cref="M:OrchidMod.Content.Guardian.Projectiles.Misc.GuardianHorizonLanceAnchor.GetHorizonGlowColor(System.Single,Microsoft.Xna.Framework.Color)"/>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.Weapons.Misc.GuardianDoubleHammer.hasBackHammer">
+            <summary>If true, the offhand hammer will be drawn using a separate texture</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.Weapons.Misc.GuardianDoubleHammer.SwingChargeGain">
+            <summary>Multiplier for the amount of bonus charge gained from hitting with a melee swing.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.Weapons.Misc.GuardianDoubleHammer.CannotSwing">
+            <summary>If true, the warhammer will never be swung.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.Weapons.Misc.GuardianDoubleHammer.HoldOffset">
+            <summary>offsets the drawing of the warhammer while being held (in pixels). Negative values draw it closer, while positive further.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.Weapons.Misc.GuardianDoubleHammer.BlockVelocityMult">
+            <summary>Multiplier for the initial velocity of the hammer when blocking.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.Weapons.Misc.GuardianDoubleHammer.CannotMagnet">
+            <summary>If true, the warhammer will be unaffected by the Hammer Magnet accessory.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.Weapons.Misc.GuardianDoubleHammer.CannotExplode">
+            <summary>If true, the warhammer will be unaffected by the Remote Detonator accessory.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.Weapons.Misc.GuardianDoubleHammer.WarhammerOnHitNPC(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.NPC,Terraria.Projectile,System.Single,System.Boolean,OrchidMod.Content.Guardian.Projectiles.Misc.DoubleHammerHitContext,System.Boolean,System.Boolean)">
+            <summary>
+            Called upon landing a hit on an enemy.
+            </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.Weapons.Misc.GuardianDoubleHammer.PreThrowAI(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile,System.Boolean)">
+            <summary>Called before default throw AI. Return false to prevent the default AI from running.</summary>
+            <remarks>Remember to set <c>Projectile.friendly</c> and <c>OrchidModGuardianProjectile.ResetHitStatus()</c> if overriding default behavior.</remarks>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.Weapons.Misc.GuardianDoubleHammer.PreDrawHammer(Microsoft.Xna.Framework.Graphics.SpriteBatch,OrchidMod.OrchidGuardian,Terraria.Player,Terraria.Projectile,System.Boolean,Microsoft.Xna.Framework.Color@,Microsoft.Xna.Framework.Graphics.Texture2D@,Microsoft.Xna.Framework.Rectangle@)">
+            <summary>Called before drawing the hammer. Return false to prevent the default draw code from running.</summary>
+            <remarks>The default draw code will use hammerTexture and drawRectangle (which defaults to null)</remarks>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.Weapons.Misc.GuardianDoubleHammer.PostDrawHammer(Microsoft.Xna.Framework.Graphics.SpriteBatch,OrchidMod.OrchidGuardian,Terraria.Player,Terraria.Projectile,System.Boolean,Microsoft.Xna.Framework.Color,Microsoft.Xna.Framework.Graphics.Texture2D,Microsoft.Xna.Framework.Rectangle)">
+            <summary>Called after drawing the hammer.</summary>
         </member>
         <member name="F:OrchidMod.Content.Guardian.Weapons.Warhammers.PumpkingWarhammer.EmbeddedScythe">
             <summary> 

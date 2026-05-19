@@ -182,6 +182,7 @@ namespace OrchidMod.Content.Guardian
 						Projectile.width = (int)(texture.Height * guardian.GuardianWeaponScale / guardianItem.ShieldFrames);
 						Projectile.height = (int)(texture.Height * guardian.GuardianWeaponScale / guardianItem.ShieldFrames);
 						aimedLocation += (oldDimensions * 0.5f - new Vector2(texture.Height * guardian.GuardianWeaponScale / guardianItem.ShieldFrames, texture.Height * guardian.GuardianWeaponScale / guardianItem.ShieldFrames) * 0.5f).Floor();
+						Projectile.localAI[1] = 0f;
 					}
 
 					aimedLocation += owner.MountedCenter.Floor() - oldOwnerPos.Floor();

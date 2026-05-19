@@ -81,6 +81,14 @@ namespace OrchidMod
 		public float GuardianChain = 0f; // Increases the swing range on Warhammers (additive, 16f = 1 tile)
 		public string GuardianChainTexture = null; // Used to draw the warhammer chain
 		public int GuardianStaffRocket = 0; // If > 0, the player can dash by spending slams with a quarterstaff (1,2,3,4 = red,green,blue,yellow)
+		public bool GuardianHammerMagnet = false; // Standards
+		public bool GuardianHammerDetonator = false; // Standards
+
+		// Debug bonus resources that do not get updated (for use with DragonLens)
+		
+		public int GuardianDebugBonusGuards = 0;
+		public int GuardianDebugBonusSlams = 0;
+		public int GuardianDebugBonusRunes = 0;
 
 		// Dynamic gameplay and UI fields
 
@@ -292,7 +300,7 @@ namespace OrchidMod
 					?? (Entity)Main.npc?.FirstOrDefault(npc => npc.active && (!npc.friendly && npc.damage > 0) && Collision.CheckAABBvAABBCollision(Player.Center, Player.Hitbox.Size(), npc.Center, npc.Hitbox.Size()));
 
 					if (entity != null) DoParryItemParry(entity);
-					}
+				}
 
 				// Condition for parrying an Aggro Dummy or Boss Dummy from Thorium 
 				// (only if the player is either in godmode, or if there aren't any enemies/bosses within 45 tiles)
@@ -481,6 +489,12 @@ namespace OrchidMod
 			GuardianBronzeShieldBuff = false;
 			GuardianBronzeShieldProtection = false;
 			GuardianBadgeHoplite = false;
+			GuardianHammerMagnet = false;
+			GuardianHammerDetonator = false;
+
+			GuardianGuardMax += GuardianDebugBonusGuards;
+			GuardianSlamMax += GuardianDebugBonusSlams;
+			GuardianBonusRune += GuardianDebugBonusRunes;
 		}
 
 		public override void PreUpdateMovement()

@@ -1,11 +1,12 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using OrchidMod.Common;
-using OrchidMod.Common.ModObjects;
 using OrchidMod.Content.General.Prefixes;
+using OrchidMod.Content.Guardian.Weapons.Warhammers;
 using OrchidMod.Utilities;
 using ReLogic.Content;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
@@ -15,18 +16,23 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace OrchidMod.Content.Guardian
+namespace OrchidMod.Content.Guardian.Projectiles.Warhammers
 {
-	public class GuardianHammerAnchor : OrchidModGuardianAnchor
+
+    // this is basically just GuardianWarhammerAnchor.cs, just with some stuff tweaked to act as a rear warhammer
+	public class ToyWarhammerProjectile : OrchidModGuardianAnchor
 	{
+
+        public override string Texture => "OrchidMod/Assets/Textures/Misc/Invisible";
+
 		public List<Vector2> OldPosition;
 		public List<float> OldRotation;
 		public List<int> BlockedNPCs;
 
 		public bool returning = false;
-		public OrchidModGuardianHammer HammerItem;
-		public Texture2D HammerTexture;
-		public Texture2D HammerTextureGlow;
+        public Projectile MainProjectile;
+		public ToyWarhammers HammerItem;
+		public Texture2D HammerTexture = ModContent.Request<Texture2D>("OrchidMod/Content/Guardian/Weapons/Warhammers/ToyWarhammers_Hammer", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
 		public int range = 0;
 		public int HitCount = 0;
@@ -43,8 +49,6 @@ namespace OrchidMod.Content.Guardian
 		public int HammerAnimFrame = 0;
 
 		public bool WeakThrow => Projectile.ai[0] == 1;
-
-		public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI) => overPlayers.Add(index);
 
 		public override void SafeSetDefaults()
 		{
@@ -73,8 +77,9 @@ namespace OrchidMod.Content.Guardian
 			Player player = Main.player[Projectile.owner];
 			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
 			Item item = player.inventory[player.selectedItem];
+			MainProjectile = Main.projectile.FirstOrDefault(proj => proj != null && proj.whoAmI < Main.maxProjectiles && proj.active && proj.owner == Main.myPlayer && proj.type == ModContent.ProjectileType<GuardianHammerAnchor>());
 
-			if (item == null || !(item.ModItem is OrchidModGuardianHammer hammerItem))
+			if (item == null || item.ModItem is not ToyWarhammers hammerItem)
 			{
 				if (Projectile.owner == Main.myPlayer) Projectile.Kill();
 				return;
@@ -82,22 +87,8 @@ namespace OrchidMod.Content.Guardian
 			else
 			{
 				HammerItem = hammerItem;
-				HammerTexture = TextureAssets.Item[hammerItem.Item.type].Value;
-				//Projectile.width = (int)(HammerTexture.Width * hammerItem.Item.scale);
-				//Projectile.height = (int)(HammerTexture.Height * hammerItem.Item.scale);
-				hitboxOffset = (int)(HammerTexture.Width * guardian.GuardianWeaponScale * hammerItem.Item.scale / 2f);
+				hitboxOffset = (int)(19 * guardian.GuardianWeaponScale * hammerItem.Item.scale);
 				DrawOriginOffsetX = DrawOriginOffsetY = hitboxOffset;
-
-				if (HammerItem.hasSpecialHammerTexture) HammerTexture = ModContent.Request<Texture2D>(hammerItem.HammerTexture, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-
-				if (ModContent.RequestIfExists<Texture2D>(hammerItem.Texture + "_Glow", out Asset<Texture2D> assetglow, AssetRequestMode.ImmediateLoad))
-				{
-					HammerTextureGlow = assetglow.Value;
-				}
-
-
-				//Projectile.position.X -= Projectile.width / 2;
-				//Projectile.position.Y -= Projectile.height / 2;
 
 				range = HammerItem.Range;
 				penetrate = HammerItem.Penetrate;
@@ -116,7 +107,7 @@ namespace OrchidMod.Content.Guardian
 				Projectile.scale = HammerItem.Item.scale * guardian.GuardianWeaponScale;
 				if (IsLocalOwner)
 				{ // OnSpawn() is called too early, guardian.GuardianWeaponScale is always equal to 1f
-					hitboxOffset = (int)(HammerTexture.Width * guardian.GuardianWeaponScale * HammerItem.Item.scale / 2f);
+					hitboxOffset = (int)(19 * guardian.GuardianWeaponScale * HammerItem.Item.scale);
 				}
 
 				if (NeedNetUpdate)
@@ -168,10 +159,10 @@ namespace OrchidMod.Content.Guardian
 					}
 
 					Rectangle hitBox = Projectile.Hitbox; // larger hitbox for projectiles
-					hitBox.X -= (int)(HammerTexture.Width / 2f) - 4;
-					hitBox.Y -= (int)(HammerTexture.Width / 2f) - 4;
-					hitBox.Width += HammerTexture.Width + 8;
-					hitBox.Height += HammerTexture.Width + 8;
+					hitBox.X -= 15;
+					hitBox.Y -= 15;
+					hitBox.Width += 46;
+					hitBox.Height += 46;
 
 					for (int l = 0; l < Main.projectile.Length; l++)
 					{
@@ -187,7 +178,7 @@ namespace OrchidMod.Content.Guardian
 									FirstBlock = true;
 									guardian.OnBlockProjectileFirst(Projectile, proj);
 									HammerItem.OnBlockFirstProjectile(owner, guardian, Projectile, proj);
-									SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), owner.Center);
+									SoundEngine.PlaySound(SoundID.Item37, Projectile.Center);
 								}
 								if (killProj) proj.Kill();
 								SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
@@ -222,7 +213,6 @@ namespace OrchidMod.Content.Guardian
 							if (!contained)
 							{ // First time blocking an enemy
 								guardian.GuardianBlockedEnemies.Add(new BlockedEnemy(target, 120));
-								guardian.OnBlockNPCNew(Projectile, target);
 								SoundEngine.PlaySound(SoundID.Dig, owner.Center);
 
 								if (!BlockedNPCs.Contains(target.whoAmI))
@@ -245,7 +235,7 @@ namespace OrchidMod.Content.Guardian
 								FirstBlock = true;
 								guardian.OnBlockNPCFirst(Projectile, target);
 								HammerItem.OnBlockFirstNPC(owner, guardian, target, Projectile);
-								SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), owner.Center);
+								SoundEngine.PlaySound(SoundID.Item37, owner.Center);
 							}
 						}
 					}
@@ -266,32 +256,15 @@ namespace OrchidMod.Content.Guardian
 				}
 				else if (Projectile.ai[1] <= 0) // Held
 				{
-					if (owner.dead || owner.HeldItem.ModItem is not OrchidModGuardianHammer hammerItem)
+					if (owner.dead || owner.HeldItem.ModItem is not ToyWarhammers hammerItem || !CheckMainProjectile() || (MainProjectile.ModProjectile as GuardianHammerAnchor).HammerItem is not ToyWarhammers)
 					{
 						if (Projectile.owner == Main.myPlayer)
-						{
 							Projectile.Kill();
-						}
 					}
 					else
 					{
-						if (Projectile.owner == Main.myPlayer)
-						{
-							if (Main.MouseWorld.X > owner.Center.X && owner.direction != 1) owner.ChangeDir(1);
-							else if (Main.MouseWorld.X < owner.Center.X && owner.direction != -1) owner.ChangeDir(-1);
-						}
-
-						owner.itemAnimation = 1;
 						Projectile.timeLeft = 600;
 						Projectile.spriteDirection = -owner.direction;
-						owner.heldProj = Projectile.whoAmI;
-
-						if (guardian.GuardianItemCharge >= 180f && !Ding)
-						{
-							Ding = true;
-							if (ModContent.GetInstance<OrchidClientConfig>().GuardianAltChargeSounds) SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, owner.Center);
-							else SoundEngine.PlaySound(SoundID.MaxMana, owner.Center);
-						}
 
 						if (Projectile.ai[1] == 0)
 						{
@@ -301,18 +274,12 @@ namespace OrchidMod.Content.Guardian
 								return;
 							}
 
-							owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, MathHelper.Pi + guardian.GuardianItemCharge * 0.006f * Projectile.spriteDirection); // set arm position (90 degree offset since arm starts lowered)
-							Vector2 armPosition = owner.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, MathHelper.Pi - guardian.GuardianItemCharge * 0.006f * Projectile.spriteDirection) - (new Vector2(owner.Center.X, owner.Center.Y) - new Vector2(owner.Center.X, owner.Center.Y).Floor());
+							owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, MathHelper.Pi + guardian.GuardianItemCharge * 0.006f * Projectile.spriteDirection); // set arm position (90 degree offset since arm starts lowered)
+							Vector2 armPosition = owner.GetBackHandPosition(Player.CompositeArmStretchAmount.Full, MathHelper.Pi - guardian.GuardianItemCharge * 0.006f * Projectile.spriteDirection) - (new Vector2(owner.Center.X, owner.Center.Y) - new Vector2(owner.Center.X, owner.Center.Y).Floor());
 							Projectile.Center = armPosition - new Vector2(((hitboxOffset + hammerItem.HoldOffset) * 2 + 0.3f * guardian.GuardianItemCharge + (float)Math.Sin(MathHelper.Pi / 210f * guardian.GuardianItemCharge) * 10f) * owner.direction * 0.4f, ((hitboxOffset + hammerItem.HoldOffset) * 2 - (hitboxOffset + hammerItem.HoldOffset) * 0.014f * guardian.GuardianItemCharge) * 0.4f);
 
-							if (guardian.GuardianItemCharge < 210f)
-							{
-								guardian.GuardianItemCharge += 30f / HammerItem.Item.useTime * owner.GetTotalAttackSpeed(DamageClass.Melee);
 
-								if (guardian.GuardianItemCharge > 210f) guardian.GuardianItemCharge = 210f;
-							}
-
-							if (owner.whoAmI == Main.myPlayer)
+							if (owner.whoAmI == Main.myPlayer && CheckMainProjectile() && ((MainProjectile.ai[1] < 0 && MainProjectile.ai[1] >= -30f) || (MainProjectile.ModProjectile as GuardianHammerAnchor).range > 0))
 							{
 								if (!owner.controlUseItem)
 								{
@@ -324,7 +291,7 @@ namespace OrchidMod.Content.Guardian
 										Projectile.NewProjectile(owner.GetSource_ItemUse(owner.boneGloveItem), center.X, center.Y, vector.X, vector.Y, ProjectileID.BoneGloveProj, 25, 5f, owner.whoAmI);
 									}
 
-									if (guardian.GuardianItemCharge > 10f || hammerItem.CannotSwing)
+									if (guardian.GuardianItemCharge > 10f)
 									{ // Hammer is charged enough to be thrown (or can't be thrown)
 										Projectile.ai[1] = 1;
 
@@ -351,7 +318,7 @@ namespace OrchidMod.Content.Guardian
 										Projectile.netUpdate = true;
 									}
 								}
-								else if (Main.mouseRight && !hammerItem.CannotSwing)
+								else if (Main.mouseRight)
 								{
 									if (owner.boneGloveItem != null && !owner.boneGloveItem.IsAir && owner.boneGloveTimer == 0)
 									{ // Bone glove compatibility, from vanilla code
@@ -389,9 +356,9 @@ namespace OrchidMod.Content.Guardian
 							Projectile.velocity = Vector2.UnitX * 0.001f * owner.direction; // So enemies are KBd in the right direction
 
 							float SwingOffset = (float)Math.Sin(MathHelper.Pi / 60f * Projectile.ai[1]);
-							Vector2 arm = owner.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, MathHelper.Pi - (guardian.GuardianItemCharge * 0.006f) * Projectile.spriteDirection);
-							owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, MathHelper.Pi + (guardian.GuardianItemCharge * 0.006f + SwingOffset * (3f + guardian.GuardianItemCharge * 0.006f)) * Projectile.spriteDirection);
-							Vector2 armPosition = owner.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, MathHelper.Pi - (guardian.GuardianItemCharge * 0.006f + SwingOffset * (3f + guardian.GuardianItemCharge * 0.006f)) * Projectile.spriteDirection) - (new Vector2(owner.Center.X, owner.Center.Y) - new Vector2(owner.Center.X, owner.Center.Y).Floor());
+							Vector2 arm = owner.GetBackHandPosition(Player.CompositeArmStretchAmount.Full, MathHelper.Pi - (guardian.GuardianItemCharge * 0.006f) * Projectile.spriteDirection);
+							owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, MathHelper.Pi + (guardian.GuardianItemCharge * 0.006f + SwingOffset * (3f + guardian.GuardianItemCharge * 0.006f)) * Projectile.spriteDirection);
+							Vector2 armPosition = owner.GetBackHandPosition(Player.CompositeArmStretchAmount.Full, MathHelper.Pi - (guardian.GuardianItemCharge * 0.006f + SwingOffset * (3f + guardian.GuardianItemCharge * 0.006f)) * Projectile.spriteDirection) - (new Vector2(owner.Center.X, owner.Center.Y) - new Vector2(owner.Center.X, owner.Center.Y).Floor());
 							Projectile.Center = armPosition - new Vector2((hitboxOffset * 2 + 0.3f * guardian.GuardianItemCharge + (float)Math.Sin(MathHelper.Pi / 210f * guardian.GuardianItemCharge) * 10f) * owner.direction * 0.4f + (armPosition.X - arm.X) * (2.5f + hitboxOffset * 0.07f), (armPosition.Y - arm.Y) * -(1.1f + hitboxOffset * 0.03f) + (210f - guardian.GuardianItemCharge) * 0.075f);
 
 							if (guardian.GuardianChain > 0f && Projectile.ai[1] < -20)
@@ -440,37 +407,6 @@ namespace OrchidMod.Content.Guardian
 							HammerItem.OnThrow(owner, guardian, Projectile, WeakThrow);
 							Projectile.ResetLocalNPCHitImmunity();
 							if (!HammerItem.Penetrate) Projectile.localNPCHitCooldown = -1;
-						}
-
-
-						if (guardian.GuardianHammerMagnet && !HammerItem.CannotMagnet && Projectile.timeLeft < 598 && range > 0 && BlockDuration == 0) {
-							if (owner == Main.LocalPlayer && !Main.dedServ) 
-							{
-								Projectile.velocity = Vector2.UnitX.RotatedBy(Projectile.velocity.ToRotation().AngleTowards(Projectile.AngleTo(Main.MouseWorld), MathHelper.Pi/40)) * Projectile.velocity.Length();
-								Projectile.netUpdate = true;
-							}
-						}
-
-						if (guardian.GuardianHammerDetonator && !HammerItem.CannotExplode && Projectile.timeLeft < 598 && range > 0 && BlockDuration == 0) {
-							if (range <= HammerItem.Range - 15)
-							{
-								// Blip sound to 
-								if (range == HammerItem.Range - 15) SoundEngine.PlaySound(SoundID.MaxMana);
-								
-								if (range <= HammerItem.Range - 30) Dust.NewDustPerfect(Projectile.position, DustID.Torch, -(Projectile.velocity*Main.rand.NextFloat(0.125f, 0.625f)).RotatedByRandom(MathHelper.Pi/18), Scale: 1.125f);
-							
-								guardian.SlamCostUI = 1;
-							
-								if (Main.mouseLeft && Ding && guardian.UseSlam(1, true))
-								{
-									SoundEngine.PlaySound(SoundID.MenuTick, Projectile.Center);
-									guardian.UseSlam(1);
-									OrchidModProjectile.spawnGenericExplosion(Projectile, (int)(Projectile.damage), 10f, 250, 0, true, true);
-									for (int i = 0; i < 10; i++) Dust.NewDustPerfect(Projectile.Center, DustID.Torch, Main.rand.NextVector2Circular(7.8125f, 7.8125f));
-									for (int i = 0; i < 10; i++) Dust.NewDustPerfect(Projectile.Center, DustID.Smoke, Main.rand.NextVector2CircularEdge(7.8125f, 7.8125f));
-									Projectile.Kill();
-								}
-							}
 						}
 
 						OldPosition.Add(new Vector2(Projectile.Center.X, Projectile.Center.Y));
@@ -671,6 +607,10 @@ namespace OrchidMod.Content.Guardian
 			writer.Write(HammerItem.Item.type);
 			writer.Write(range);
 			writer.Write(BlockDuration);
+            
+
+			int index = (CheckMainProjectile() ? MainProjectile.whoAmI : 255); 
+			writer.Write((byte)index);
 		}
 
 		public override void ReceiveExtraAI(BinaryReader reader)
@@ -679,32 +619,29 @@ namespace OrchidMod.Content.Guardian
 			range = reader.ReadInt32();
 			BlockDuration = reader.ReadInt32();
 
+			var index = reader.Read();
+			if (index != -1 && index < Main.maxProjectiles) {
+				var proj = Main.projectile[index];
+				if (CheckMainProjectile(proj)) MainProjectile = proj;
+			}
+
 			if (HammerItem == null)
 			{
 				OrchidGuardian guardian = Main.player[Projectile.owner].GetModPlayer<OrchidGuardian>();
 				guardian.GuardianItemCharge = 0f;
 
-				Item item = new Item();
-				item.SetDefaults(itemtype);
-				if (item.ModItem is OrchidModGuardianHammer hammerItem)
+				Item item = new(itemtype);
+				if (item.ModItem is ToyWarhammers hammerItem)
 				{
 					HammerItem = hammerItem;
 
 					if (Main.netMode != NetmodeID.Server)
 					{
-						HammerTexture = TextureAssets.Item[hammerItem.Item.type].Value;
-						hitboxOffset = (int)(HammerTexture.Width * hammerItem.Item.scale / 2f);
+						hitboxOffset = (int)(19 * hammerItem.Item.scale);
 						DrawOriginOffsetX = DrawOriginOffsetY = hitboxOffset;
-						//Projectile.width = (int)(HammerTexture.Width * hammerItem.Item.scale);
-						//Projectile.height = (int)(HammerTexture.Height * hammerItem.Item.scale);
-						
-						if (HammerItem.hasSpecialHammerTexture) HammerTexture =  ModContent.Request<Texture2D>(hammerItem.HammerTexture, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 					}
 
 					Projectile.scale = hammerItem.Item.scale * guardian.GuardianWeaponScale;
-
-					//Projectile.position.X -= Projectile.width / 2;
-					//Projectile.position.Y -= Projectile.height / 2;
 
 					range = HammerItem.Range;
 					penetrate = HammerItem.Penetrate;
@@ -712,12 +649,16 @@ namespace OrchidMod.Content.Guardian
 			}
 		}
 
+		public bool CheckMainProjectile(Projectile proj) => proj != null && proj.active && proj.owner == Main.myPlayer && proj.type == ModContent.ProjectileType<GuardianHammerAnchor>();
+
+		public bool CheckMainProjectile() => CheckMainProjectile(MainProjectile);
+
 		public override bool OrchidPreDraw(SpriteBatch spriteBatch, ref Color lightColor)
 		{
 			if (HammerTexture == null) return false;
 			Player player = Main.player[Projectile.owner];
 			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
-			Rectangle drawRectangle = HammerTexture.Frame(1, HammerItem.HammerFrames, 0, HammerAnimFrame % HammerItem.HammerFrames);
+			Rectangle drawRectangle = HammerTexture.Frame();
 
 			if (HammerItem.PreDrawHammer(player, guardian, Projectile, spriteBatch, ref lightColor, ref HammerTexture, ref drawRectangle))
 			{
@@ -786,7 +727,7 @@ namespace OrchidMod.Content.Guardian
 
 					while (chainOffset > 0f)
 					{
-						Vector2 chainPos = position - chainDirection * (chainOffset + (HammerTexture.Height / HammerItem.HammerFrames) * 0.3f);
+						Vector2 chainPos = position - chainDirection * (chainOffset + 5.4f);
 						chainOffset -= chainTexture.Height * 0.66f;
 						spriteBatch.Draw(chainTexture, chainPos, null, color, 0f, chainTexture.Size() * 0.5f, 1f, effect, 0f);
 					}
@@ -805,16 +746,10 @@ namespace OrchidMod.Content.Guardian
 
 				spriteBatch.Draw(HammerTexture, position, drawRectangle, color, Projectile.rotation + rotationBonus, drawRectangle.Size() * 0.5f, Projectile.scale, effect, 0f);
 
-				if (HammerTextureGlow != null)
-				{
-					Color glowColor = HammerItem.GetHammerGlowmaskColor(player, guardian, Projectile, lightColor); 
-					spriteBatch.Draw(HammerTextureGlow, position, drawRectangle, glowColor, Projectile.rotation + rotationBonus, HammerTextureGlow.Size() * 0.5f, Projectile.scale, effect, 0f);
-				}
-
 				HammerItem.PostDrawHammer(player, guardian, Projectile, spriteBatch, lightColor, HammerTexture, drawRectangle);
 			}
 
 			return false;
-		}
+        }
 	}
 }
