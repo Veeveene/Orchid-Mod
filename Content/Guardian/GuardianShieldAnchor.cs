@@ -299,6 +299,7 @@ namespace OrchidMod.Content.Guardian
 				else if (Projectile.ai[0] < 0)
 				{ // Charging
 					aimedLocation += owner.MountedCenter.Floor() - oldOwnerPos.Floor();
+					guardian.GuardianItemCharge += 45f / guardianItem.Item.useTime * (owner.GetTotalAttackSpeed(DamageClass.Melee) * 2f - 1f) * guardianItem.ChargeSpeedMultiplier;
 
 					if (IsLocalOwner)
 					{ // pavise rotation while blocking
@@ -328,48 +329,46 @@ namespace OrchidMod.Content.Guardian
 							blockRotation = 2;
 							Projectile.netUpdate = true;
 						}
-					}
 
-					guardian.GuardianItemCharge += 45f / guardianItem.Item.useTime * (owner.GetTotalAttackSpeed(DamageClass.Melee) * 2f - 1f) * guardianItem.ChargeSpeedMultiplier;
-					if (guardian.GuardianItemCharge > 180f)
-					{
-						if (!Ding && IsLocalOwner)
+						if (guardian.GuardianItemCharge > 180f)
 						{
-							if (ModContent.GetInstance<OrchidClientConfig>().GuardianAltChargeSounds) SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, owner.Center);
-							else SoundEngine.PlaySound(SoundID.MaxMana, owner.Center);
-							Ding = true;
+							if (!Ding)
+							{
+								if (ModContent.GetInstance<OrchidClientConfig>().GuardianAltChargeSounds) SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, owner.Center);
+								else SoundEngine.PlaySound(SoundID.MaxMana, owner.Center);
+								Ding = true;
+							}
+							guardian.GuardianItemCharge = 180f;
 						}
-						guardian.GuardianItemCharge = 180f;
-					}
-					else guardian.GuardCostUI = 1;
+						else guardian.GuardCostUI = 1;
 
-					bool input = ModContent.GetInstance<OrchidClientConfig>().GuardianSwapPaviseImputs ? Main.mouseLeft : Main.mouseRight;
-					if (!input)
-					{
-						if (guardian.UseGuard(1, true) || guardian.GuardianItemCharge >= 180f)
+						bool input = ModContent.GetInstance<OrchidClientConfig>().GuardianSwapPaviseImputs ? Main.mouseLeft : Main.mouseRight;
+						if (!input)
 						{
-							if (guardian.GuardianItemCharge < 180f)
-							{ // Consume a guard to fully charge if the player has one
-								guardian.UseGuard();
+							if (guardian.UseGuard(1, true) || guardian.GuardianItemCharge >= 180f)
+							{
+								if (guardian.GuardianItemCharge < 180f)
+								{ // Consume a guard to fully charge if the player has one
+									guardian.UseGuard();
+								}
+
+								// Starts a block
+								Projectile.ai[2] = Projectile.rotation; // networked rotation
+								blockRotation = 0;
+
+								shieldEffectReady = true;
+								Projectile.ai[0] = (int)(guardianItem.blockDuration * guardianItem.Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianBlockDuration);
+								guardianItem.BlockStart(owner, Projectile);
+								guardianItem.PlayGuardSound(owner, guardian, Projectile);
+							}
+							else
+							{
+								Projectile.ai[0] = 0f;
 							}
 
-							// Starts a block
-							Projectile.ai[2] = Projectile.rotation; // networked rotation
-							blockRotation = 0;
-
-							shieldEffectReady = true;
-							Projectile.ai[0] = (int)(guardianItem.blockDuration * guardianItem.Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianBlockDuration);
-							guardianItem.BlockStart(owner, Projectile);
-							guardianItem.PlayGuardSound(owner, guardian, Projectile);
-
+							guardian.GuardianItemCharge = 0f;
 							Projectile.netUpdate = true;
 						}
-						else
-						{
-							Projectile.ai[0] = 0f;
-						}
-
-						guardian.GuardianItemCharge = 0f;
 					}
 				}
 				else
