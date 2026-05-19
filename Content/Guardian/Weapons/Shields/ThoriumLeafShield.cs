@@ -64,9 +64,9 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			}
 		}
 
-		public override void SlamHitFirst(Player player, Projectile shield, NPC npc)
+		public override void SlamHitFirst(Player player, Projectile shield, NPC npc, bool WeakSlam)
 		{
-			if (IsLocalPlayer(player))
+			if (IsLocalPlayer(player) && !WeakSlam)
 			{
 				LeafBurst(player, shield, 62 - (int)((player.Center - shield.Center).Length() / 120), 25, (shield.ai[1] * 0.15f) - 4f);
 				ResetState(shield);

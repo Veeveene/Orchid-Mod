@@ -36,7 +36,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			blockDuration = 360;
 		}
 
-		public override void SlamHit(Player player, Projectile shield, NPC npc)
+		public override void SlamHit(Player player, Projectile shield, NPC npc, bool WeakSlam)
 		{
 			int buff = player.FindBuffIndex(ModContent.BuffType<GuardianThoriumBronzeShieldBuff>());
 			if (buff != -1) player.DelBuff(buff);

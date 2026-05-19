@@ -344,6 +344,38 @@ namespace OrchidMod.Content.Guardian
 							projectile.localAI[0] = (int)(ParryDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianParryDuration); // for UI display
 							katar.OnChangeSelectedItem(player);
 						}
+
+						if (Main.myPlayer != player.whoAmI && katar.LinkedKatarAnchor == null)
+						{ // sync LinkedKatarAnchor and swap their Main.Projectile[] order on remote clients
+
+							int[] indexes = [-1, -1];
+							foreach (Projectile projectile2 in Main.projectile)
+							{ // I don't like this loop, but I can't find a way of avoiding it without creating the indexes[] array every frame. At least it only runs once?
+								if (projectile2.type == projectileType && projectile2.active && projectile2.owner == player.whoAmI && projectile2.ModProjectile is GuardianKatarAnchor katar2)
+								{
+									if (indexes[0] == -1)
+									{
+										indexes[0] = projectile2.whoAmI;
+									}
+									else
+									{
+										indexes[1] = projectile2.whoAmI;
+										break;
+									}
+								}
+							}
+
+							if (indexes[1] < indexes[0])
+							{ // Swap order if necessary in Main.projectile[] so the front katar is drawn first
+								(Main.projectile[indexes[0]], Main.projectile[indexes[1]]) = (Main.projectile[indexes[1]], Main.projectile[indexes[0]]);
+								Main.projectile[indexes[0]].whoAmI = indexes[1];
+								Main.projectile[indexes[1]].whoAmI = indexes[0];
+							}
+
+							// Katars need a pointer to their linked weapon, they aren't asynchronous like gauntlets and use this to sync animations
+							(Main.projectile[indexes[0]].ModProjectile as GuardianKatarAnchor).LinkedKatarAnchor = (Main.projectile[indexes[1]].ModProjectile as GuardianKatarAnchor);
+							(Main.projectile[indexes[1]].ModProjectile as GuardianKatarAnchor).LinkedKatarAnchor = (Main.projectile[indexes[0]].ModProjectile as GuardianKatarAnchor);
+						}
 					}
 				}
 			}

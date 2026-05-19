@@ -197,7 +197,7 @@ namespace OrchidMod
 					npc = Main.npc[reader.ReadInt32()];
 					GuardianGlobalNPC globalNPCGuardian = npc.GetGlobalNPC<GuardianGlobalNPC>();
 					potency = reader.ReadInt32();
-					globalNPCGuardian.KatarBleed = potency;
+					globalNPCGuardian.KatarBleed += potency;
 					SoundEngine.PlaySound(SoundID.NPCHit18.WithPitchOffset(Main.rand.NextFloat(0.2f, 0.5f)), npc.Center);
 
 					if (Main.netMode == NetmodeID.Server)

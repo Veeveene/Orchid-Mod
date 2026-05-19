@@ -305,7 +305,7 @@ namespace OrchidMod.Content.Guardian
 								}
 
 								int projectileType = ModContent.ProjectileType<KatarJabProjectile>();
-								float strikeVelocity = guardianItem.JabVelocity * (charged ? 1f : 0.75f) * guardianItem.Item.GetGlobalItem<GuardianPrefixItem>().GetSlamDistance() * owner.GetTotalAttackSpeed(DamageClass.Melee);
+								float strikeVelocity = guardianItem.JabVelocity * (charged ? 1.25f : 1f) * guardianItem.Item.GetGlobalItem<GuardianPrefixItem>().GetSlamDistance() * owner.GetTotalAttackSpeed(DamageClass.Melee);
 								Vector2 velocity = Vector2.UnitY.RotatedBy((Main.MouseWorld - owner.MountedCenter).ToRotation() - MathHelper.PiOver2) * strikeVelocity * 0.25f;
 								Projectile jabProj = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, velocity, projectileType, 1, 1f, owner.whoAmI, charged ? 1f : 0f, guardianItem.ChargedAttackDoT);
 								if (jabProj.ModProjectile is KatarJabProjectile jab)
@@ -387,12 +387,12 @@ namespace OrchidMod.Content.Guardian
 								{
 									Projectile.ai[0] = -2f; // fully charged
 									Projectile.ai[1] = Vector2.Normalize(Main.MouseWorld - owner.MountedCenter).ToRotation() - MathHelper.PiOver2;
-									Projectile.netUpdate = true;
 									guardian.GuardianBadgeHopliteLevel = 0; // reset hoplite badge charges after an attack
 								}
 
 								Projectile.ai[2] = 0f;
 								guardian.GuardianItemCharge = 0;
+								Projectile.netUpdate = true;
 							}
 						}
 
@@ -402,6 +402,7 @@ namespace OrchidMod.Content.Guardian
 					}
 					else
 					{
+						guardian.GuardianItemCharge = 0;
 						Projectile.Center = owner.MountedCenter.Floor() + new Vector2(0f, 10f);
 						if (OffHandKatar) Projectile.position.X += 4 * owner.direction;
 

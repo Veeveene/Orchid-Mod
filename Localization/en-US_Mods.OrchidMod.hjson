@@ -3254,7 +3254,7 @@ Items: {
 		Tooltip:
 			'''
 			Affected by gravity when thrown
-			Right click after throwing to make the hammer crash down to earth, costing 3 slams
+			Left click after throwing to make the hammer crash down to earth, costing 3 slams
 			Damage will sunder enemies, increasing the damage they take by 10%
 			'''
 	}
@@ -3844,7 +3844,7 @@ Projectiles: {
 	GuardianKatarAnchor.DisplayName: Katar
 	HellstoneKatarProjectile.DisplayName: Trailblaze
 	ThoriumGraniteKatarProjectile.DisplayName: Ion Deluge
-	ToyWarhammerProjectile.DisplayName: Toy Warhammer Projectile
+	ToyWarhammerProjectile.DisplayName: The Big Honker
 	ThoriumVoidQuarterstaffProjectile.DisplayName: Thorium Void Quarterstaff Projectile
 	ThoriumDemonBloodGauntletProjectile.DisplayName: Thorium Demon Blood Gauntlet Projectile
 	ThoriumNagaQuarterstaffProjectile.DisplayName: Thorium Naga Quarterstaff Projectile

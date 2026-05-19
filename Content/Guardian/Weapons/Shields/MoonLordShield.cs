@@ -31,22 +31,26 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			distance = 26f;
 			slamDistance = 150f;
 			blockDuration = 600;
+			parryRotation = 0f;
 		}
 
-		public override void Slam(Player player, Projectile shield)
+		public override void Slam(Player player, Projectile shield, bool WeakSlam)
 		{
-			playerVelocity = 0;
-			originalHeight = 0;
-			Player owner = Main.player[shield.owner];
-			if (shield.ModProjectile is GuardianShieldAnchor anchor)
+			if (!WeakSlam)
 			{
-				if (owner.mount.Type == MountID.None)
+				playerVelocity = 0;
+				originalHeight = 0;
+				Player owner = Main.player[shield.owner];
+				if (shield.ModProjectile is GuardianShieldAnchor anchor)
 				{
-					OrchidPlayer orchidPlayer = player.GetModPlayer<OrchidPlayer>();
-					Vector2 playerDashVelocity = Vector2.UnitY.RotatedBy((player.Center - Main.MouseWorld).ToRotation() - MathHelper.PiOver2) * 20f;
-					orchidPlayer.ForcedVelocityVector = playerDashVelocity;
-					orchidPlayer.ForcedVelocityTimer = 5;
-					orchidPlayer.ForcedVelocityUpkeep = 1f;
+					if (owner.mount.Type == MountID.None)
+					{
+						OrchidPlayer orchidPlayer = player.GetModPlayer<OrchidPlayer>();
+						Vector2 playerDashVelocity = Vector2.UnitY.RotatedBy((player.Center - Main.MouseWorld).ToRotation() - MathHelper.PiOver2) * 20f;
+						orchidPlayer.ForcedVelocityVector = playerDashVelocity;
+						orchidPlayer.ForcedVelocityTimer = 5;
+						orchidPlayer.ForcedVelocityUpkeep = 1f;
+					}
 				}
 			}
 		}
