@@ -387,12 +387,12 @@ namespace OrchidMod.Content.Guardian
 								{
 									Projectile.ai[0] = -2f; // fully charged
 									Projectile.ai[1] = Vector2.Normalize(Main.MouseWorld - owner.MountedCenter).ToRotation() - MathHelper.PiOver2;
-									Projectile.netUpdate = true;
 									guardian.GuardianBadgeHopliteLevel = 0; // reset hoplite badge charges after an attack
 								}
 
 								Projectile.ai[2] = 0f;
 								guardian.GuardianItemCharge = 0;
+								Projectile.netUpdate = true;
 							}
 						}
 
@@ -402,6 +402,7 @@ namespace OrchidMod.Content.Guardian
 					}
 					else
 					{
+						guardian.GuardianItemCharge = 0;
 						Projectile.Center = owner.MountedCenter.Floor() + new Vector2(0f, 10f);
 						if (OffHandKatar) Projectile.position.X += 4 * owner.direction;
 
