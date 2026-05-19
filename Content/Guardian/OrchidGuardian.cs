@@ -84,6 +84,12 @@ namespace OrchidMod
 		public bool GuardianHammerMagnet = false; // Standards
 		public bool GuardianHammerDetonator = false; // Standards
 
+		// Debug bonus resources that do not get updated (for use with DragonLens)
+		
+		public int GuardianDebugBonusGuards = 0;
+		public int GuardianDebugBonusSlams = 0;
+		public int GuardianDebugBonusRunes = 0;
+
 		// Dynamic gameplay and UI fields
 
 		public GuardianStandardStats GuardianStandardStats = new GuardianStandardStats(); // Used to receive stats from standards
@@ -291,7 +297,7 @@ namespace OrchidMod
 					?? (Entity)Main.npc?.FirstOrDefault(npc => npc.active && (!npc.friendly && npc.damage > 0) && Collision.CheckAABBvAABBCollision(Player.Center, Player.Hitbox.Size(), npc.Center, npc.Hitbox.Size()));
 
 					if (entity != null) DoParryItemParry(entity);
-					}
+				}
 
 				// Condition for parrying an Aggro Dummy or Boss Dummy from Thorium 
 				// (only if the player is either in godmode, or if there aren't any enemies/bosses within 45 tiles)
@@ -481,6 +487,10 @@ namespace OrchidMod
 			GuardianBadgeHoplite = false;
 			GuardianHammerMagnet = false;
 			GuardianHammerDetonator = false;
+
+			GuardianGuardMax += GuardianDebugBonusGuards;
+			GuardianSlamMax += GuardianDebugBonusSlams;
+			GuardianBonusRune += GuardianDebugBonusRunes;
 		}
 
 		public override void PreUpdateMovement()

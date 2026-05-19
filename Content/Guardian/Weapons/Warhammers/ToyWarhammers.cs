@@ -102,7 +102,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 				}
                 if (projAlt != null && projAlt.ModProjectile is ToyWarhammerProjectile warhammerAlt)
                 { 
-                    if (projMain == null || (projMain != null && projMain.ModProjectile is GuardianHammerAnchor main && main.BlockDuration == 0)) {
+                    if (projMain == null || projMain is { ModProjectile: GuardianHammerAnchor { BlockDuration: 0 } }) {
                         warhammerAlt.BlockDuration = -30; // -30 instead of -1 so they return faster
                         projAlt.netUpdate = true;
                     }

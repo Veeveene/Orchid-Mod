@@ -3215,7 +3215,7 @@ Items: {
 		// DisplayName: Ion Deluge
 		/* Tooltip:
 			'''
-			Parry hits generate energy orbs
+			Parries and slam hits generate energy orbs
 			Fully charged attacks release energy orbs
 			''' */
 	}
@@ -3243,6 +3243,7 @@ Items: {
 		// DisplayName: Thorium Valadium Warhammer
 		/* Tooltip:
 			'''
+			[c/FF0000:Test Item]
 			Right click after throwing to make the hammer pull nearby enemies towards its center, costing a slam
 			Blocking will periodically gravitate nearby enemies towards the center
 			Damage will blast enemies with inter-dimensional energy
@@ -3283,6 +3284,7 @@ Items: {
 		// DisplayName: Serpent's Riptide
 		/* Tooltip:
 			'''
+			[c/FF0000:Test Item]
 			Jab is replaced by a powerful sweep
 			Fully charge while underwater to propel yourself to your cursor, ending in a massive full sweep attack
 			''' */
@@ -3290,12 +3292,21 @@ Items: {
 
 	ThoriumConcentratedThoriumQuarterstaff: {
 		// DisplayName: Leyline
-		// Tooltip: Fully charging creates a damage-sharing link between enemies
+		/* Tooltip:
+			'''
+			[c/FF0000:Test Item]
+			Fully charging creates a damage-sharing link between enemies
+			''' */
 	}
 
 	ThoriumBoreanStriderQuarterstaff: {
 		// DisplayName: Frost Walker
-		// Tooltip: ""
+		/* Tooltip:
+			'''
+			[c/FF0000:Test Item]
+			Jabs grant a stack of Cold Energy
+			At 10 stacks, your next slam will release a giant snowflake
+			''' */
 	}
 
 	ThoriumDreadGauntlet: {
@@ -3320,6 +3331,7 @@ Items: {
 		// DisplayName: Void Sentinel Greaves
 		/* Tooltip:
 			'''
+			[c/FF0000:Test Item]
 			Regenerates slams over time
 			Increases maximum slams by 1
 			Increases movement speed by 20% and increases jump and fall speed
@@ -3331,6 +3343,7 @@ Items: {
 		// DisplayName: Thorium Guardian Void Head
 		/* Tooltip:
 			'''
+			[c/FF0000:Test Item]
 			Regenerates guards over time
 			Increases maximum guards by 1
 			10% increased opposing damage
@@ -3348,6 +3361,7 @@ Items: {
 		// DisplayName: Void Sentinel Carapace
 		/* Tooltip:
 			'''
+			[c/FF0000:Test Item]
 			Regenerates guards and slams over time
 			Increases maximum guards and slams by 1
 			15% increased melee speed and 6% increased opposing critical strike chance 
@@ -3372,49 +3386,10 @@ Items: {
 
 	ThoriumTerrariumWarhammer: {
 		// DisplayName: Terrarium Warhammer
-		// Tooltip: Calls down piercing afterimages on hit
-	}
-
-	GoblinKatar: {
-		// Tooltip: test item
-		// DisplayName: Goblin Katar
-	}
-
-	ThoriumIcyShardKatar: {
-		// Tooltip: Significantly hinder the hit enemies movement
-		// DisplayName: Icy Katar
-	}
-
-	GoldChestKatar: {
-		// DisplayName: Serrated Katar
-		// Tooltip: Fully charged attacks bleeds deal additional damage
-	}
-
-	CrimtaneKatar: {
-		// DisplayName: Scoliosis
-		// Tooltip: Parries recover up to half a guard on hit
-	}
-
-	HellstoneKatar: {
-		// DisplayName: Trailblaze
-		// Tooltip: Parries leave a trail of fire
-	}
-
-	ThoriumGraniteKatar: {
-		// DisplayName: Ion Deluge
 		/* Tooltip:
 			'''
-			Parries and slam hits generate energy orbs
-			Fully charged attacks release energy orbs
-			''' */
-	}
-
-	BadgeHoplite: {
-		// DisplayName: Legion Insigna
-		/* Tooltip:
-			'''
-			25% increased katar speed for one attack after a katar parry
-			Stackable twice
+			[c/FF0000:Test Item]
+			Calls down piercing afterimages on hit
 			''' */
 	}
 }
@@ -3864,14 +3839,19 @@ Projectiles: {
 	PumpkingWarhammerProjectile.DisplayName: Коса жатвы
 	SurfaceFireShamanWeaponAnchor.DisplayName: Ивовый огонёк
 	SurfaceFireShamanProjectile.DisplayName: Ивовый огонёк
-	// IceGauntletProjectile.DisplayName: Ice Gauntlet Projectile
-	// IceGauntletProjectileShard.DisplayName: Ice Gauntlet Projectile Shard
+	// IceGauntletProjectile.DisplayName: Ice Shard
+	// IceGauntletProjectileShard.DisplayName: Ice Shard
+	// KatarJabProjectile.DisplayName: Katar Jab
+	// GuardianKatarAnchor.DisplayName: Katar
+	// HellstoneKatarProjectile.DisplayName: Trailblaze
+	// ThoriumGraniteKatarProjectile.DisplayName: Ion Deluge
 	// ToyWarhammerProjectile.DisplayName: Toy Warhammer Projectile
 	// ThoriumVoidQuarterstaffProjectile.DisplayName: Thorium Void Quarterstaff Projectile
 	// ThoriumDemonBloodGauntletProjectile.DisplayName: Thorium Demon Blood Gauntlet Projectile
 	// ThoriumNagaQuarterstaffProjectile.DisplayName: Thorium Naga Quarterstaff Projectile
 	// ThoriumConcentratedThoriumQuarterstaffProjectile.DisplayName: Thorium Concentrated Thorium Quarterstaff Projectile
 	// ThoriumTerrariumWarhammerProjectile.DisplayName: Thorium Terrarium Warhammer Projectile
+	// GuardianDoubleHammerAnchor.DisplayName: Guardian Double Hammer Anchor
 }
 
 Configs: {
