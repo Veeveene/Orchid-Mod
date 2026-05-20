@@ -31,7 +31,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             Item.damage = 198;
             Item.useTime = 30;
             Range = 300; // really high so that hammer can potentially hit the ground if you do something silly like launch it from 200ft in the air
-            SlamStacks = 3;
+            SlamStacks = 2;
             ReturnSpeed = 0.5f;
             BlockDuration = 240;
             HoldOffset = -2;
