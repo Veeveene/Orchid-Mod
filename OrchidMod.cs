@@ -196,8 +196,8 @@ namespace OrchidMod
 				case OrchidModMessageType.GUARDIANKATARAPPLYBLEEDTONPC:
 					npc = Main.npc[reader.ReadInt32()];
 					GuardianGlobalNPC globalNPCGuardian = npc.GetGlobalNPC<GuardianGlobalNPC>();
-					potency = reader.ReadInt32();
-					globalNPCGuardian.KatarBleed += potency;
+					int bleedAmount = reader.ReadInt32();
+					globalNPCGuardian.KatarBleed += bleedAmount;
 					SoundEngine.PlaySound(SoundID.NPCHit18.WithPitchOffset(Main.rand.NextFloat(0.2f, 0.5f)), npc.Center);
 
 					if (Main.netMode == NetmodeID.Server)
@@ -205,7 +205,7 @@ namespace OrchidMod
 						var packet = GetPacket();
 						packet.Write((byte)OrchidModMessageType.GUARDIANKATARAPPLYBLEEDTONPC);
 						packet.Write(npc.whoAmI);
-						packet.Write(potency);
+						packet.Write(bleedAmount);
 						packet.Send();
 					}
 
