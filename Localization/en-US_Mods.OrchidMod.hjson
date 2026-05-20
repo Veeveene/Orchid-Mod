@@ -3253,8 +3253,7 @@ Items: {
 		DisplayName: Lodestone Crusher
 		Tooltip:
 			'''
-			Affected by gravity when thrown
-			Left click after throwing to make the hammer crash down to earth, costing 3 slams
+			Left click after throwing to make the hammer crash down, costing 3 slams
 			Damage will sunder enemies, increasing the damage they take by 10%
 			'''
 	}
