@@ -24,6 +24,7 @@ namespace OrchidMod.Content.Guardian
 		public bool NeedNetUpdate = false;
 		public bool Ding = false;
 		public bool WeakSlam = false;
+		public bool RemoteClientResetBlock = false;
 
 		public byte isSlamming = 0;
 		public Vector2 aimedLocation = Vector2.Zero;
@@ -173,10 +174,11 @@ namespace OrchidMod.Content.Guardian
 					}
 				}
 
-				if (Projectile.ai[0] > 0f)
-				{ // blocking
+				if (Projectile.ai[0] != 0f)
+				{ // blocking & charging
 					if (Projectile.ai[0] >= (int)(guardianItem.blockDuration * item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianBlockDuration))
-					{
+					{ // first frame of blocking
+						Projectile.localAI[1] = 0f;
 						Vector2 oldDimensions = new Vector2(Projectile.width, Projectile.height);
 						var texture = ModContent.Request<Texture2D>(guardianItem.ShieldTexture).Value;
 						Projectile.width = (int)(texture.Height * guardian.GuardianWeaponScale / guardianItem.ShieldFrames);
@@ -216,158 +218,86 @@ namespace OrchidMod.Content.Guardian
 						}
 					}
 
-					Point p1 = new Point((int)hitboxOrigin.X, (int)hitboxOrigin.Y);
-					Point p2 = new Point((int)(hitboxOrigin.X + hitbox.X), (int)(hitboxOrigin.Y + hitbox.Y));
-
-					//guardian.GuardianSlamRechargeTime = (int)(OrchidGuardian.GuardianRechargeTime * guardian.GuardianSlamRecharge);
-
-					for (int l = 0; l < Main.projectile.Length; l++)
+					if (Projectile.ai[0] > 0f)
 					{
-						Projectile proj = Main.projectile[l];
-						if (proj.active && proj.hostile && proj.damage > 0 && !OrchidGuardian.ProjectilesBlockBlacklist.Contains(proj.type))
+						Point p1 = new Point((int)hitboxOrigin.X, (int)hitboxOrigin.Y);
+						Point p2 = new Point((int)(hitboxOrigin.X + hitbox.X), (int)(hitboxOrigin.Y + hitbox.Y));
+
+						//guardian.GuardianSlamRechargeTime = (int)(OrchidGuardian.GuardianRechargeTime * guardian.GuardianSlamRecharge);
+
+						for (int l = 0; l < Main.projectile.Length; l++)
 						{
-							if (LineIntersectsRect(p1, p2, proj.Hitbox) || proj.Hitbox.Intersects(Projectile.Hitbox))
+							Projectile proj = Main.projectile[l];
+							if (proj.active && proj.hostile && proj.damage > 0 && !OrchidGuardian.ProjectilesBlockBlacklist.Contains(proj.type))
 							{
-								bool killProj = guardianItem.Block(owner, Projectile, proj);
-								guardian.OnBlockProjectile(Projectile, proj);
-								if (shieldEffectReady)
+								if (LineIntersectsRect(p1, p2, proj.Hitbox) || proj.Hitbox.Intersects(Projectile.Hitbox))
 								{
-									guardian.OnBlockProjectileFirst(Projectile, proj);
+									bool killProj = guardianItem.Block(owner, Projectile, proj);
+									guardian.OnBlockProjectile(Projectile, proj);
+									if (shieldEffectReady)
+									{
+										guardian.OnBlockProjectileFirst(Projectile, proj);
+										guardianItem.Protect(owner, Projectile);
+										shieldEffectReady = false;
+										SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), owner.MountedCenter);
+									}
+									if (killProj) proj.Kill();
+									SoundEngine.PlaySound(SoundID.Dig, owner.MountedCenter);
+								}
+							}
+						}
+
+						for (int k = 0; k < Main.maxNPCs; k++)
+						{
+							NPC target = Main.npc[k];
+							if (target.active && !target.dontTakeDamage && !target.friendly && LineIntersectsRect(p2, p1, target.Hitbox))
+							{
+								bool contained = false;
+								foreach (BlockedEnemy blockedEnemy in guardian.GuardianBlockedEnemies)
+								{
+									if (blockedEnemy.npc == target)
+									{ // Enemy already blocked, reset the timer
+										blockedEnemy.time = (int)Projectile.ai[0] + 60;
+										contained = true;
+										break;
+									}
+								}
+
+								if (!contained)
+								{ // First time blocking an enemy
+									guardian.OnBlockNPCNew(Projectile, target);
+									guardian.GuardianBlockedEnemies.Add(new BlockedEnemy(target, (int)Projectile.ai[0] + 60));
+									SoundEngine.PlaySound(SoundID.Dig, owner.MountedCenter);
+								}
+
+								if (target.knockBackResist > 0f)
+								{ // Push enemy if possible
+									Vector2 push = Projectile.Center - owner.MountedCenter;
+									push.Normalize();
+									push += owner.MountedCenter - oldOwnerPos;
+									target.velocity = push;
+								}
+
+								guardianItem.Push(owner, Projectile, target);
+								guardian.OnBlockNPC(Projectile, target);
+								if (shieldEffectReady)
+								{ // First parry stuff
+									guardian.OnBlockNPCFirst(Projectile, target);
 									guardianItem.Protect(owner, Projectile);
 									shieldEffectReady = false;
 									SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), owner.MountedCenter);
 								}
-								if (killProj) proj.Kill();
-								SoundEngine.PlaySound(SoundID.Dig, owner.MountedCenter);
 							}
 						}
-					}
 
-					for (int k = 0; k < Main.maxNPCs; k++)
-					{
-						NPC target = Main.npc[k];
-						if (target.active && !target.dontTakeDamage && !target.friendly && LineIntersectsRect(p2, p1, target.Hitbox))
+						Projectile.ai[0]--;
+						if (Projectile.ai[0] <= 0f)
 						{
-							bool contained = false;
-							foreach (BlockedEnemy blockedEnemy in guardian.GuardianBlockedEnemies)
+							if (guardianItem.BlockEnd(owner, Projectile))
 							{
-								if (blockedEnemy.npc == target)
-								{ // Enemy already blocked, reset the timer
-									blockedEnemy.time = (int)Projectile.ai[0] + 60;
-									contained = true;
-									break;
-								}
+								spawnDusts();
 							}
-
-							if (!contained)
-							{ // First time blocking an enemy
-								guardian.OnBlockNPCNew(Projectile, target);
-								guardian.GuardianBlockedEnemies.Add(new BlockedEnemy(target, (int)Projectile.ai[0] + 60));
-								SoundEngine.PlaySound(SoundID.Dig, owner.MountedCenter);
-							}
-
-							if (target.knockBackResist > 0f)
-							{ // Push enemy if possible
-								Vector2 push = Projectile.Center - owner.MountedCenter;
-								push.Normalize();
-								push += owner.MountedCenter - oldOwnerPos;
-								target.velocity = push;
-							}
-
-							guardianItem.Push(owner, Projectile, target);
-							guardian.OnBlockNPC(Projectile, target);
-							if (shieldEffectReady)
-							{ // First parry stuff
-								guardian.OnBlockNPCFirst(Projectile, target);
-								guardianItem.Protect(owner, Projectile);
-								shieldEffectReady = false;
-								SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), owner.MountedCenter);
-							}
-						}
-					}
-
-					Projectile.ai[0]--;
-					if (Projectile.ai[0] <= 0f)
-					{
-						if (guardianItem.BlockEnd(owner, Projectile))
-						{
-							spawnDusts();
-						}
-						Projectile.ai[0] = 0f;
-					}
-				}
-				else if (Projectile.ai[0] < 0)
-				{ // Charging
-					aimedLocation += owner.MountedCenter.Floor() - oldOwnerPos.Floor();
-					guardian.GuardianItemCharge += 45f / guardianItem.Item.useTime * (owner.GetTotalAttackSpeed(DamageClass.Melee) * 2f - 1f) * guardianItem.ChargeSpeedMultiplier;
-
-					if (IsLocalOwner)
-					{ // pavise rotation while blocking
-						Vector2 toPavise = Vector2.Normalize(Projectile.Center - owner.MountedCenter.Floor());
-						Vector2 toPaviseClock = toPavise.RotatedBy(0.001f * guardianItem.parryRotation);
-						Vector2 toPaviseCClock = toPavise.RotatedBy(-0.001f * guardianItem.parryRotation);
-						Vector2 toCursor = Vector2.Normalize(Main.MouseWorld - owner.MountedCenter.Floor());
-						double angle = Math.Acos(Vector2.Dot(toPavise, toCursor));
-						double angleClock = Math.Acos(Vector2.Dot(toPaviseClock, toCursor));
-						double angleCClock = Math.Acos(Vector2.Dot(toPaviseCClock, toCursor));
-
-						if (angle < guardianItem.parryRotation * 0.0015f || (angle < angleClock && angle < angleCClock))
-						{
-							if (blockRotation != 0)
-							{
-								blockRotation = 0;
-								Projectile.netUpdate = true;
-							}
-						}
-						else if (angleClock < angle && angleClock < angleCClock && blockRotation != 1)
-						{
-							blockRotation = 1;
-							Projectile.netUpdate = true;
-						}
-						else if (angleCClock < angle && angleCClock < angleClock && blockRotation != 2)
-						{
-							blockRotation = 2;
-							Projectile.netUpdate = true;
-						}
-
-						if (guardian.GuardianItemCharge > 180f)
-						{
-							if (!Ding)
-							{
-								if (ModContent.GetInstance<OrchidClientConfig>().GuardianAltChargeSounds) SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, owner.Center);
-								else SoundEngine.PlaySound(SoundID.MaxMana, owner.Center);
-								Ding = true;
-							}
-							guardian.GuardianItemCharge = 180f;
-						}
-						else guardian.GuardCostUI = 1;
-
-						bool input = ModContent.GetInstance<OrchidClientConfig>().GuardianSwapPaviseImputs ? Main.mouseLeft : Main.mouseRight;
-						if (!input)
-						{
-							if (guardian.UseGuard(1, true) || guardian.GuardianItemCharge >= 180f)
-							{
-								if (guardian.GuardianItemCharge < 180f)
-								{ // Consume a guard to fully charge if the player has one
-									guardian.UseGuard();
-								}
-
-								// Starts a block
-								Projectile.ai[2] = Projectile.rotation; // networked rotation
-								blockRotation = 0;
-
-								shieldEffectReady = true;
-								Projectile.ai[0] = (int)(guardianItem.blockDuration * guardianItem.Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianBlockDuration);
-								guardianItem.BlockStart(owner, Projectile);
-								guardianItem.PlayGuardSound(owner, guardian, Projectile);
-							}
-							else
-							{
-								Projectile.ai[0] = 0f;
-							}
-
-							guardian.GuardianItemCharge = 0f;
-							Projectile.netUpdate = true;
+							Projectile.ai[0] = 0f;
 						}
 					}
 				}
@@ -412,6 +342,19 @@ namespace OrchidMod.Content.Guardian
 				{
 					Projectile.Center = owner.MountedCenter.Floor() - networkedRotation.ToRotationVector2() * (guardianItem.distance + addedDistance);
 					Projectile.rotation = networkedRotation;
+
+					if (Projectile.ai[0] > 0)
+					{
+						if (!RemoteClientResetBlock)
+						{
+							RemoteClientResetBlock = true;
+							Projectile.localAI[1] = 0;
+						}
+					}
+					else
+					{
+						RemoteClientResetBlock = false;
+					}
 				}
 
 				// Projectile rotation offset while parrying
@@ -420,6 +363,52 @@ namespace OrchidMod.Content.Guardian
 				toPlayer = toPlayer.RotatedBy(Projectile.localAI[1]);
 				Projectile.position += toPlayer;
 				Projectile.rotation = (toPlayer * -1f).ToRotation();
+
+				if (Projectile.ai[0] < 0 && IsLocalOwner)
+				{ // Charging input
+					guardian.GuardianItemCharge += 45f / guardianItem.Item.useTime * (owner.GetTotalAttackSpeed(DamageClass.Melee) * 2f - 1f) * guardianItem.ChargeSpeedMultiplier;
+
+					if (guardian.GuardianItemCharge > 180f)
+					{
+						if (!Ding)
+						{
+							if (ModContent.GetInstance<OrchidClientConfig>().GuardianAltChargeSounds) SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, owner.Center);
+							else SoundEngine.PlaySound(SoundID.MaxMana, owner.Center);
+							Ding = true;
+						}
+						guardian.GuardianItemCharge = 180f;
+					}
+					else guardian.GuardCostUI = 1;
+
+					bool input = ModContent.GetInstance<OrchidClientConfig>().GuardianSwapPaviseImputs ? Main.mouseLeft : Main.mouseRight;
+					if (!input)
+					{
+						if (guardian.UseGuard(1, true) || guardian.GuardianItemCharge >= 180f)
+						{
+							if (guardian.GuardianItemCharge < 180f)
+							{ // Consume a guard to fully charge if the player has one
+								guardian.UseGuard();
+							}
+
+							// Starts a block
+							Projectile.ai[2] = Projectile.rotation; // networked rotation
+							aimedLocation = Projectile.position;
+							blockRotation = 0;
+
+							shieldEffectReady = true;
+							Projectile.ai[0] = (int)(guardianItem.blockDuration * guardianItem.Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianBlockDuration);
+							guardianItem.BlockStart(owner, Projectile);
+							guardianItem.PlayGuardSound(owner, guardian, Projectile);
+						}
+						else
+						{
+							Projectile.ai[0] = 0f;
+						}
+
+						guardian.GuardianItemCharge = 0f;
+						Projectile.netUpdate = true;
+					}
+				}
 
 				if (blockRotation > 0)
 				{
