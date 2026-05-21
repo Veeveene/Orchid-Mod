@@ -20,7 +20,7 @@ namespace OrchidMod.Content.Guardian
 	{
 		public virtual string ShieldTexture => Texture + "_Shield";
 		public int ShieldFrames = 1;
-		
+
 		public virtual void ExtraAIShield(Projectile projectile) { }
 		public virtual void PostDrawShield(SpriteBatch spriteBatch, Projectile projectile, Player player, Color lightColor) { }
 		public virtual bool PreDrawShield(SpriteBatch spriteBatch, Projectile projectile, Player player, ref Color lightColor) { return true; }
@@ -42,7 +42,7 @@ namespace OrchidMod.Content.Guardian
 		/// <returns>Whether to destroy the projectile.</returns>
 		public virtual bool Block(Player player, Projectile shield, Projectile projectile) { return true; }
 		/// <summary>Called when a projectile collides with the shield during a block, this should be use to spawn projectiles created by reflecting projectiles.
-		public virtual void Reflect(Player player, Projectile shield, Projectile projectile, ref int GuardianShieldSpikeReflect) {}
+		public virtual void Reflect(Player player, Projectile shield, Projectile projectile, ref int GuardianShieldSpikeReflect) { }
 		/// <summary>Called on the first frame of a block.</summary>
 		public virtual void BlockStart(Player player, Projectile shield) { }
 		/// <summary>Called on the last frame of a block. Will spawn dust at the end of a block if it returns true</summary>
@@ -112,13 +112,14 @@ namespace OrchidMod.Content.Guardian
 		{
 			return true;
 		}
-		
+
 		public override bool CanUseItem(Player player)
-		{			
+		{
 			if (player.whoAmI == Main.myPlayer && !player.cursed)
 			{
 				var projectileType = ModContent.ProjectileType<GuardianShieldAnchor>();
-				if (player.ownedProjectileCounts[projectileType] > 0) {
+				if (player.ownedProjectileCounts[projectileType] > 0)
+				{
 					var guardian = player.GetModPlayer<OrchidGuardian>();
 					var projectile = Main.projectile.First(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
 
@@ -132,8 +133,9 @@ namespace OrchidMod.Content.Guardian
 
 					if (projectile != null && projectile.ModProjectile is GuardianShieldAnchor shield)
 					{
-						if (shouldSlam) { // Slam
-							if (projectile.ai[1] == 0f) 
+						if (shouldSlam)
+						{ // Slam
+							if (projectile.ai[1] == 0f)
 							{
 								if (guardian.UseSlam(1, true))
 								{
@@ -162,7 +164,7 @@ namespace OrchidMod.Content.Guardian
 								projectile.ResetLocalNPCHitImmunity();
 								shield.NeedNetUpdate = true;
 							}
-						} 
+						}
 						else if (shouldBlock && projectile.ai[1] == 0f)
 						{ // Block
 							projectile.ai[0] = -1f;
@@ -191,14 +193,15 @@ namespace OrchidMod.Content.Guardian
 			return null;
 		}
 
-		public void resetBlockedEnemiesDuration(OrchidGuardian modPlayer) {
+		public void resetBlockedEnemiesDuration(OrchidGuardian modPlayer)
+		{
 			for (int i = modPlayer.GuardianBlockedEnemies.Count - 1; i >= 0; i--)
 			{
 				BlockedEnemy blockedEnemy = modPlayer.GuardianBlockedEnemies[i];
 				blockedEnemy.time = blockedEnemy.time < 60 ? blockedEnemy.time : 60;
 			}
 		}
-		
+
 		public sealed override void HoldItem(Player player)
 		{
 			var projectileType = ModContent.ProjectileType<GuardianShieldAnchor>();
@@ -258,7 +261,7 @@ namespace OrchidMod.Content.Guardian
 				OverrideColor = new Color(175, 255, 175)
 			});
 		}
-		
+
 		public static float GetSnappedAngle(OrchidModGuardianShield shield, Player player, float originalAngle)
 		{
 			if (!shield.useDiscreteAim) return originalAngle;

@@ -341,7 +341,7 @@ namespace OrchidMod.Content.Guardian
 					else if (OffHandKatar && projectile.localAI[1] == 0f) Projectile.rotation += MathHelper.Pi;
 
 
-					if ((ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs ? !Main.mouseRight : !Main.mouseLeft) && owner.whoAmI == Main.myPlayer && guardian.GuardianItemCharge >= 180f && ! OffHandKatar)
+					if ((ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs ? !Main.mouseRight : !Main.mouseLeft) && owner.whoAmI == Main.myPlayer && guardian.GuardianItemCharge >= 180f && !OffHandKatar)
 					{
 						Projectile.ai[0] = -2f; // fully charged
 						Projectile.ai[1] = Vector2.Normalize(Main.MouseWorld - owner.MountedCenter).ToRotation() - MathHelper.PiOver2;
