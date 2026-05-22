@@ -5,7 +5,6 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 {
 	public class GoldWarhammer : OrchidModGuardianHammer
 	{
-
 		public override void SafeSetDefaults()
 		{
 			Item.width = 38;

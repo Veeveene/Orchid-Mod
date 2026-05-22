@@ -251,7 +251,7 @@ namespace OrchidMod.Content.Guardian
 					}
 
 					OldPosition.Add(new Vector2(Projectile.Center.X, Projectile.Center.Y));
-					OldRotation.Add(Projectile.rotation + MathHelper.PiOver2);
+					OldRotation.Add(Projectile.rotation);
 					if (OldPosition.Count > 10)
 						OldPosition.RemoveAt(0);
 					if (OldRotation.Count > 10)
@@ -442,7 +442,7 @@ namespace OrchidMod.Content.Guardian
 							if (!HammerItem.Penetrate) Projectile.localNPCHitCooldown = -1;
 						}
 
-
+						/* needs rewrite with proper sync
 						if (guardian.GuardianHammerMagnet && !HammerItem.CannotMagnet && Projectile.timeLeft < 598 && range > 0 && BlockDuration == 0) {
 							if (owner == Main.LocalPlayer && !Main.dedServ) 
 							{
@@ -450,6 +450,7 @@ namespace OrchidMod.Content.Guardian
 								Projectile.netUpdate = true;
 							}
 						}
+						*/
 
 						if (guardian.GuardianHammerDetonator && !HammerItem.CannotExplode && Projectile.timeLeft < 598 && range > 0 && BlockDuration == 0) {
 							if (range <= HammerItem.Range - 15)
@@ -755,8 +756,7 @@ namespace OrchidMod.Content.Guardian
 				{
 					rotationBonus += guardian.GuardianItemCharge * 0.0065f * player.gravDir * Projectile.spriteDirection;
 				}
-
-				if (Projectile.ai[1] < 0)
+				else if (Projectile.ai[1] < 0)
 				{
 					float SwingOffset = (float)Math.Sin(MathHelper.Pi / 60f * Projectile.ai[1]);
 					rotationBonus += (guardian.GuardianItemCharge * 0.0065f + SwingOffset * (3.5f + guardian.GuardianItemCharge * 0.006f)) * player.gravDir * Projectile.spriteDirection;
@@ -770,7 +770,7 @@ namespace OrchidMod.Content.Guardian
 					for (int i = 0; i < OldPosition.Count; i++)
 					{
 						Vector2 drawPositionTrail = OldPosition[i] - Main.screenPosition + Vector2.UnitY * player.gfxOffY;
-						spriteBatch.Draw(HammerTexture, drawPositionTrail, drawRectangle, lightColor * 0.04f * (i + 1), OldRotation[i], drawRectangle.Size() * 0.5f, Projectile.scale, effect, 0f);
+						spriteBatch.Draw(HammerTexture, drawPositionTrail, drawRectangle, lightColor * 0.04f * (i + 1), OldRotation[i] + rotationBonus, drawRectangle.Size() * 0.5f, Projectile.scale, effect, 0f);
 					}
 
 					spriteBatch.End();

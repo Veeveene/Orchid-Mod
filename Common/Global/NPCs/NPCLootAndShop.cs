@@ -370,6 +370,11 @@ namespace OrchidMod.Common.Global.NPCs
 						npcLoot.Add(ItemDropRule.NormalvsExpert(ItemType<BadgeHoplite>(), 40, 20));
 						break;
 					}
+				case NPCID.UndeadViking:
+					{
+						npcLoot.Add(ItemDropRule.Common(ItemType<IceAxeHammer>(), 40));
+					}
+					break;
 				default:
 					break;
 			}

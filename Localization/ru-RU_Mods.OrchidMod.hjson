@@ -3391,6 +3391,11 @@ Items: {
 			Calls down piercing afterimages on hit
 			''' */
 	}
+
+	IceAxeHammer: {
+		// DisplayName: Viking Piolet
+		// Tooltip: Pierces foes when hurled
+	}
 }
 
 NPCs: {
