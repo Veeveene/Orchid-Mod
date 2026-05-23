@@ -440,6 +440,7 @@ namespace OrchidMod.Content.Guardian
 							HammerItem.OnThrow(owner, guardian, Projectile, WeakThrow);
 							Projectile.ResetLocalNPCHitImmunity();
 							if (!HammerItem.Penetrate) Projectile.localNPCHitCooldown = -1;
+							else Projectile.localNPCHitCooldown = HammerItem.HitCooldown;
 						}
 
 						/* needs rewrite with proper sync
