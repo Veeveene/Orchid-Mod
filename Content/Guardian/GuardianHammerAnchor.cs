@@ -450,13 +450,13 @@ namespace OrchidMod.Content.Guardian
 
 						if (guardian.GuardianHammerMagnet > 0f && !HammerItem.CannotMagnet && Projectile.timeLeft < 598 && range > 0 && BlockDuration == 0 && owner == Main.LocalPlayer && !Main.dedServ)
 						{ // hammer rotates towards cursor
-							Vector2 toHammer = Vector2.Normalize(Projectile.Center - owner.MountedCenter.Floor());
-							Vector2 toHammerClock = toHammer.RotatedBy(0.001f * guardian.GuardianHammerMagnet);
-							Vector2 toHammerCClock = toHammer.RotatedBy(-0.001f * guardian.GuardianHammerMagnet);
-							Vector2 toCursor = Vector2.Normalize(Main.MouseWorld - owner.MountedCenter.Floor());
-							double angle = Math.Acos(Vector2.Dot(toHammer, toCursor));
-							double angleClock = Math.Acos(Vector2.Dot(toHammerClock, toCursor));
-							double angleCClock = Math.Acos(Vector2.Dot(toHammerCClock, toCursor));
+							Vector2 directionStraight = Vector2.Normalize(Projectile.velocity);
+							Vector2 directionClock = directionStraight.RotatedBy(0.001f * guardian.GuardianHammerMagnet);
+							Vector2 directionCClock = directionStraight.RotatedBy(-0.001f * guardian.GuardianHammerMagnet);
+							Vector2 toCursor = Vector2.Normalize(Main.MouseWorld - Projectile.Center);
+							double angle = Math.Acos(Vector2.Dot(directionStraight, toCursor));
+							double angleClock = Math.Acos(Vector2.Dot(directionClock, toCursor));
+							double angleCClock = Math.Acos(Vector2.Dot(directionCClock, toCursor));
 
 							if (angle < guardian.GuardianHammerMagnet * 0.0015f || (angle < angleClock && angle < angleCClock))
 							{
