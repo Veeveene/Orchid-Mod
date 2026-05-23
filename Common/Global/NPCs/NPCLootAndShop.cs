@@ -35,6 +35,7 @@ using OrchidMod.Content.Gambler.Decks;
 using OrchidMod.Content.Shapeshifter.Weapons.Predator;
 using OrchidMod.Content.Guardian.Weapons.Misc;
 using OrchidMod.Content.Guardian.Weapons.Katars;
+using OrchidMod.Content.Guardian;
 
 namespace OrchidMod.Common.Global.NPCs
 {
@@ -57,6 +58,11 @@ namespace OrchidMod.Common.Global.NPCs
 				case NPCID.Dryad:
 					{
 						shop.Add(ItemType<ShapeshifterBlankEffigy>(), OrchidConditions.EnableContentShapeshifter);
+					}
+					break;
+				case NPCID.Mechanic:
+					{
+						shop.Add(ItemType<HammerMagnet>());
 					}
 					break;
 				case NPCID.Merchant:
