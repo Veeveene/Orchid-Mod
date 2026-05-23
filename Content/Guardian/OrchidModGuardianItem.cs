@@ -13,6 +13,9 @@ namespace OrchidMod.Content.Guardian
 	{
 		public bool IsLocalPlayer(Player player) => player.whoAmI == Main.myPlayer;
 
+		/// <summary>The relevant anchor type this item spawns, if not null.</summary>
+		public virtual int? AnchorType => null;
+
 		public virtual void SafeSetDefaults() { }
 
 		public override void SetDefaults()

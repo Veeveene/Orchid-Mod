@@ -65,6 +65,10 @@ namespace OrchidMod.Common
 		[BackgroundColor(151, 120, 79)]
 		public bool GuardianThoriumThorsHammerConversion { get; set; }
 
+		[DefaultValue(false)]
+		[BackgroundColor(151, 120, 79)]
+		public bool GuardianThoriumBoreanStriderColorUI { get; set; }
+
 		[Header("Shapeshifter")]
 		[DefaultValue(false)]
 		[BackgroundColor(100, 175, 150)]

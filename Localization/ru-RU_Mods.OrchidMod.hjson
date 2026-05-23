@@ -3972,6 +3972,11 @@ Configs: {
 			// Label: Fancy Guardian UI
 			// Tooltip: Use 'fancy' textures for Guardian UI elements
 		}
+
+		GuardianThoriumBoreanStriderColorUI: {
+			// Label: Frost Walker UI uses colored icon
+			// Tooltip: The Frost Walker's special 'snowflake charge' UI will use a colored icon (the Ice Gauntlet's crystal projectile) instead of a monochrome variant
+		}
 	}
 
 	OrchidServerConfig: {

@@ -90,8 +90,10 @@ namespace OrchidMod.Content.Guardian.Weapons.Misc
 		public virtual void SafeHoldItem(Player player) { }
         
         public virtual void SafeModifyTooltips(List<TooltipLine> tooltips) { } // Called at the end of ModifyTooltips
+        
+        public virtual void WarhammerPostDrawUI(SpriteBatch spriteBatch, Player player, ref Color lightColor, Projectile main, Projectile alt) { }
 
-
+        public override int? AnchorType => ModContent.ProjectileType<GuardianDoubleHammerAnchor>();
 		public sealed override void SetDefaults()
 		{
 			Item.DamageType = ModContent.GetInstance<GuardianDamageClass>();

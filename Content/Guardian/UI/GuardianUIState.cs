@@ -278,9 +278,9 @@ namespace OrchidMod.Content.Guardian.UI
 					}
 				}
 
-				if (player.HeldItem.ModItem is OrchidModGuardianItem)
+				if (player.HeldItem.ModItem is OrchidModGuardianItem guardianItem)
 				{
-					if ((maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f)) && player.HeldItem.ModItem is OrchidModGuardianHammer)
+					if ((maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f)) && guardianItem is OrchidModGuardianHammer)
 					{
 						if (ModContent.GetInstance<OrchidClientConfig>().GuardianUseOldHammerUi)
 						{
@@ -324,35 +324,35 @@ namespace OrchidMod.Content.Guardian.UI
 						}
 					}
 
-					if ((maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f)) && player.HeldItem.ModItem is OrchidModGuardianStandard)
+					if ((maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f)) && guardianItem is OrchidModGuardianStandard)
 					{
 						chargeTextureOff = textureStandardOff;
 						chargeTextureOn = textureStandardOn;
 						chargeTextureReady = textureStandardReady;
 					}
 
-					if ((maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f)) && player.HeldItem.ModItem is HorizonLance)
+					if ((maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f)) && guardianItem is HorizonLance)
 					{
 						chargeTextureOn = textureHorizonLanceOn;
 						chargeTextureOff = textureHorizonLanceOff;
 						chargeTextureReady = textureHorizonLanceReady;
 					}
 
-					if ((maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f)) && player.HeldItem.ModItem is GuardianNeedle)
+					if ((maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f)) && guardianItem is GuardianNeedle)
 					{
 						chargeTextureOn = textureGuardianNeedleOn;
 						chargeTextureOff = textureGuardianNeedleOff;
 						chargeTextureReady = textureGuardianNeedleReady;
 					}
 
-					if ((maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (23 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f)) && player.HeldItem.ModItem is OrchidModGuardianRune)
+					if ((maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (23 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f)) && guardianItem is OrchidModGuardianRune)
 					{
 						chargeTextureOn = textureRuneOn;
 						chargeTextureOff = textureRuneOff;
 						chargeTextureReady = textureRuneReady;
 					}
 
-					if (player.HeldItem.ModItem is OrchidModGuardianQuarterstaff)
+					if (guardianItem is OrchidModGuardianQuarterstaff)
 					{
 						if (maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f))
 						{
@@ -389,21 +389,21 @@ namespace OrchidMod.Content.Guardian.UI
 						}
 					}
 
-					if (player.HeldItem.ModItem is OrchidModGuardianKatar katar && (maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - (player.HeldItem.useTime * katar.ChargeSpeedMultiplier)) / 2.5f)))
+					if (guardianItem is OrchidModGuardianKatar katar && (maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - (player.HeldItem.useTime * katar.ChargeSpeedMultiplier)) / 2.5f)))
 					{
 						chargeTextureOn = textureKatarOn;
 						chargeTextureOff = textureKatarOff;
 						chargeTextureReady = textureKatarReady;
 					}
 
-					if (player.HeldItem.ModItem is OrchidModGuardianGauntlet gauntlet && (maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - (player.HeldItem.useTime * gauntlet.ChargeSpeedMultiplier)) / 2.5f)))
+					if (guardianItem is OrchidModGuardianGauntlet gauntlet && (maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - (player.HeldItem.useTime * gauntlet.ChargeSpeedMultiplier)) / 2.5f)))
 					{
 						chargeTextureOn = textureGauntletOn;
 						chargeTextureOff = textureGauntletOff;
 						chargeTextureReady = textureGauntletReady;
 					}
 
-					if (player.HeldItem.ModItem is OrchidModGuardianShield shield && (maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - (player.HeldItem.useTime * shield.ChargeSpeedMultiplier)) / 2.5f)))
+					if (guardianItem is OrchidModGuardianShield shield && (maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - (player.HeldItem.useTime * shield.ChargeSpeedMultiplier)) / 2.5f)))
 					{
 						chargeTextureOn = textureBlockOn;
 						chargeTextureOff = textureBlockOff;
@@ -419,7 +419,7 @@ namespace OrchidMod.Content.Guardian.UI
 					Projectile charging = Main.projectile.FirstOrDefault(proj => proj.whoAmI < Main.maxProjectiles && proj.active && proj.owner == player.whoAmI && proj.type == gauntletType && proj.ai[2] > 0);
 					Projectile blockAnchor = Main.projectile.FirstOrDefault(proj => proj.whoAmI < Main.maxProjectiles && proj.active && proj.owner == player.whoAmI && (proj.type == shieldType || proj.type == gauntletType || proj.type == lanceType || proj.type == katarType) && proj.ai[0] > 0f && proj.localAI[0] > 0f && (proj.type != gauntletType || proj.ai[2] <= 0));
 
-					bool gauntletMinCharge = player.HeldItem.ModItem is OrchidModGuardianGauntlet gauntletItem && (maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - (player.HeldItem.useTime * gauntletItem.ChargeSpeedMultiplier)) / 2.5f));
+					bool gauntletMinCharge = guardianItem is OrchidModGuardianGauntlet gauntletItem && (maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - (player.HeldItem.useTime * gauntletItem.ChargeSpeedMultiplier)) / 2.5f));
 					if (blockAnchor != null)
 					{
 						int val = 22;
@@ -499,6 +499,43 @@ namespace OrchidMod.Content.Guardian.UI
 							drawpos.Y += chargeTextureOn.Height - val;
 							if (player.gravDir < 0) drawpos.Y -= (chargeTextureOn.Height - rectangle.Height);
 							spriteBatch.Draw(chargeTextureOn, drawpos, rectangle, Color.White, 0f, Vector2.Zero, 1f, effect, 0f);
+						}
+
+
+						if (guardianItem.AnchorType != null)
+						{
+							Projectile mainAnchor = Main.projectile.FirstOrDefault(proj => proj.whoAmI < Main.maxProjectiles && proj.active && proj.owner == player.whoAmI && proj.type == guardianItem.AnchorType.Value);
+							Color color = Color.White;
+							switch (guardianItem)
+							{
+								case OrchidModGuardianHammer hammer:
+									hammer.WarhammerPostDrawUI(spriteBatch, player, ref color, mainAnchor);
+									break;
+								case OrchidModGuardianShield pavise:
+									pavise.PavisePostDrawUI(spriteBatch, player, ref color, mainAnchor);
+									break;
+								case OrchidModGuardianQuarterstaff quarterstaff:
+									quarterstaff.QuarterstaffPostDrawUI(spriteBatch, player, ref color, mainAnchor);
+									break;
+								case OrchidModGuardianStandard standard:
+									standard.StandardPostDrawUI(spriteBatch, player, ref color, mainAnchor);
+									break;
+								case OrchidModGuardianGauntlet or OrchidModGuardianKatar or GuardianDoubleHammer:
+									Projectile altAnchor = Main.projectile.FirstOrDefault(proj => proj.whoAmI < Main.maxProjectiles && proj.active && proj.owner == player.whoAmI && proj.ModProjectile is GuardianGauntletAnchor {OffHandGauntlet: true} or GuardianKatarAnchor {OffHandKatar: true} or GuardianDoubleHammerAnchor {OffHandHammer: true});
+									switch (guardianItem)
+									{
+										case OrchidModGuardianGauntlet gauntlets:
+											gauntlets.GauntletPostDrawUI(spriteBatch, player, ref color, mainAnchor, altAnchor);
+											break;
+										case OrchidModGuardianKatar katars:
+										katars.KatarPostDrawUI(spriteBatch, player, ref color, mainAnchor, altAnchor);
+											break;
+										case GuardianDoubleHammer doubleHammers:
+											doubleHammers.WarhammerPostDrawUI(spriteBatch, player, ref color, mainAnchor, altAnchor);
+											break;
+									} 
+									break;
+							}
 						}
 					}
 				}
