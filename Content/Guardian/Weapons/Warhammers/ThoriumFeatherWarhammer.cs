@@ -47,6 +47,8 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 				GuardianHammerAnchor anchor = projectile.ModProjectile as GuardianHammerAnchor;
 				anchor.range = 30;
 			}
+
+			CannotMagnet = false;
 		}
 
 		public override bool ThrowAI(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak)
@@ -80,9 +82,10 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 				}
 			}
 			else anchor.range = -100;
-			projectile.velocity *= -1;
+			projectile.velocity = anchor.InitialVelocity * -1f * projectile.velocity.Length();
 			projectile.rotation = projectile.ai[1] - MathHelper.PiOver2;
 			SoundEngine.PlaySound(SoundID.NPCHit46.WithPitchOffset(0.1f).WithVolumeScale(0.5f), projectile.Center);
+			CannotMagnet = true;
 		}
 
 		public override void OnThrowTileCollide(Player player, OrchidGuardian guardian, Projectile projectile, Vector2 oldVelocity)

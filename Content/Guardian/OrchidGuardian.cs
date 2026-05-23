@@ -81,8 +81,11 @@ namespace OrchidMod
 		public float GuardianChain = 0f; // Increases the swing range on Warhammers (additive, 16f = 1 tile)
 		public string GuardianChainTexture = null; // Used to draw the warhammer chain
 		public int GuardianStaffRocket = 0; // If > 0, the player can dash by spending slams with a quarterstaff (1,2,3,4 = red,green,blue,yellow)
-		public bool GuardianHammerMagnet = false; // Standards
-		public bool GuardianHammerDetonator = false; // Standards
+		/// <summary> Throw warhammers will bend in the direction of the cursor when thrown if this is >0f. For reference, the basic Hammer magnet sets this value to 50f. Defaults to 0f.</summary>
+		public float GuardianHammerMagnet = 0f;
+		public bool GuardianHammerDetonator = false;
+		/// <summary> Multiplier applied to the velocity of all warhammer throws. Defaults to 1f.</summary>
+		public float GuardianHammerThrowVelocity = 1f;
 
 		// Debug bonus resources that do not get updated (for use with DragonLens)
 		
@@ -467,6 +470,8 @@ namespace OrchidMod
 			GuardianChain = 0f;
 			GuardianStaffRocket = 0;
 			GuardianChainTexture = null;
+			GuardianHammerMagnet = 0f;
+			GuardianHammerThrowVelocity = 1f;
 			if (!GuardianBronzeShieldBuff) GuardianBronzeShieldDamage = 0;
 
 			GuardianMeteorite = false;
@@ -489,7 +494,6 @@ namespace OrchidMod
 			GuardianBronzeShieldBuff = false;
 			GuardianBronzeShieldProtection = false;
 			GuardianBadgeHoplite = false;
-			GuardianHammerMagnet = false;
 			GuardianHammerDetonator = false;
 
 			GuardianGuardMax += GuardianDebugBonusGuards;

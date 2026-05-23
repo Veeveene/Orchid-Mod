@@ -59,11 +59,12 @@ namespace OrchidMod.Content.Guardian
 		public int GuardBlockCost;
 		/// <summary>Amount of frames drawn on the HammerTexture. Used occasionally for special hammers. See PumpkingWarhammer for an example. Defaults to 1.</summary>
 		public int HammerFrames = 1;
-
 		/// <summary>If true, the warhammer will be unaffected by the Hammer Magnet accessory.</summary>
 		public bool CannotMagnet;
 		/// <summary>If true, the warhammer will be unaffected by the Remote Detonator accessory.</summary>
 		public bool CannotExplode;
+		/// <summary>If true, the OrchidGuardian.GuardianHammerThrowVelocity multiplier will not affect throw velocity.</summary>
+		public bool IgnoreHammerThrowVelocity = false;
 		public virtual string HammerTexture => Texture + "_Hammer";
 
 		/// <summary>Called upon pushing an enemy with a throw (can happen repeatedly).</summary>
