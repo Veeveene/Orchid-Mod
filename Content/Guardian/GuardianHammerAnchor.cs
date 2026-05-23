@@ -27,6 +27,7 @@ namespace OrchidMod.Content.Guardian
 		public OrchidModGuardianHammer HammerItem;
 		public Texture2D HammerTexture;
 		public Texture2D HammerTextureGlow;
+		public Vector2 InitialVelocity;
 
 		public int range = 0;
 		public int HitCount = 0;
@@ -64,6 +65,7 @@ namespace OrchidMod.Content.Guardian
 
 			HammerAnimFrame = 0;
 
+			InitialVelocity = Vector2.Zero;
 			OldPosition = new List<Vector2>();
 			OldRotation = new List<float>();
 			BlockedNPCs = new List<int>();
@@ -135,6 +137,7 @@ namespace OrchidMod.Content.Guardian
 						{
 							Projectile.spriteDirection = -Projectile.spriteDirection;
 							Projectile.direction = Projectile.spriteDirection;
+							InitialVelocity = Projectile.velocity;
 						}
 					}
 
@@ -442,6 +445,7 @@ namespace OrchidMod.Content.Guardian
 							Projectile.ResetLocalNPCHitImmunity();
 							if (!HammerItem.Penetrate) Projectile.localNPCHitCooldown = -1;
 							else Projectile.localNPCHitCooldown = HammerItem.HitCooldown;
+							InitialVelocity = Projectile.velocity;
 						}
 
 						if (guardian.GuardianHammerMagnet > 0f && !HammerItem.CannotMagnet && Projectile.timeLeft < 598 && range > 0 && BlockDuration == 0 && owner == Main.LocalPlayer && !Main.dedServ)
@@ -529,7 +533,7 @@ namespace OrchidMod.Content.Guardian
 								Projectile.netUpdate = true;
 							}
 						}
-						else if (MagnetRotation != 0)
+						else if (MagnetRotation != 0 && !HammerItem.CannotMagnet)
 						{ // magnet rotation stuff
 							Projectile.velocity = Projectile.velocity.RotatedBy(guardian.GuardianHammerMagnet * 0.001f * (MagnetRotation == 1 ? 1f : -1f));
 						}
