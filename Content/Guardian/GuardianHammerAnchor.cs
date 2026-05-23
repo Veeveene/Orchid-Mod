@@ -35,6 +35,7 @@ namespace OrchidMod.Content.Guardian
 		public bool NeedNetUpdate = false;
 		public bool FirstBlock = false;
 		public int hitboxOffset;
+		public byte MagnetRotation = 0; // 0 = straight, 1 = clockwise, 2 = counterclockwise
 
 		public int BlockDuration = 0;
 
@@ -328,7 +329,7 @@ namespace OrchidMod.Content.Guardian
 									{ // Hammer is charged enough to be thrown (or can't be thrown)
 										Projectile.ai[1] = 1;
 
-										Vector2 dir = Vector2.Normalize(Main.MouseWorld - owner.Center) * HammerItem.Item.shootSpeed;
+										Vector2 dir = Vector2.Normalize(Main.MouseWorld - owner.Center) * HammerItem.Item.shootSpeed * (HammerItem.IgnoreHammerThrowVelocity ? 1f : guardian.GuardianHammerThrowVelocity);
 
 										if (guardian.ThrowLevel() < 4)
 										{
@@ -443,15 +444,35 @@ namespace OrchidMod.Content.Guardian
 							else Projectile.localNPCHitCooldown = HammerItem.HitCooldown;
 						}
 
-						/* needs rewrite with proper sync
-						if (guardian.GuardianHammerMagnet && !HammerItem.CannotMagnet && Projectile.timeLeft < 598 && range > 0 && BlockDuration == 0) {
-							if (owner == Main.LocalPlayer && !Main.dedServ) 
+						if (guardian.GuardianHammerMagnet > 0f && !HammerItem.CannotMagnet && Projectile.timeLeft < 598 && range > 0 && BlockDuration == 0 && owner == Main.LocalPlayer && !Main.dedServ)
+						{ // hammer rotates towards cursor
+							Vector2 toHammer = Vector2.Normalize(Projectile.Center - owner.MountedCenter.Floor());
+							Vector2 toHammerClock = toHammer.RotatedBy(0.001f * guardian.GuardianHammerMagnet);
+							Vector2 toHammerCClock = toHammer.RotatedBy(-0.001f * guardian.GuardianHammerMagnet);
+							Vector2 toCursor = Vector2.Normalize(Main.MouseWorld - owner.MountedCenter.Floor());
+							double angle = Math.Acos(Vector2.Dot(toHammer, toCursor));
+							double angleClock = Math.Acos(Vector2.Dot(toHammerClock, toCursor));
+							double angleCClock = Math.Acos(Vector2.Dot(toHammerCClock, toCursor));
+
+							if (angle < guardian.GuardianHammerMagnet * 0.0015f || (angle < angleClock && angle < angleCClock))
 							{
-								Projectile.velocity = Vector2.UnitX.RotatedBy(Projectile.velocity.ToRotation().AngleTowards(Projectile.AngleTo(Main.MouseWorld), MathHelper.Pi/40)) * Projectile.velocity.Length();
+								if (MagnetRotation != 0)
+								{
+									MagnetRotation = 0;
+									Projectile.netUpdate = true;
+								}
+							}
+							else if (angleClock < angle && angleClock < angleCClock && MagnetRotation != 1)
+							{
+								MagnetRotation = 1;
+								Projectile.netUpdate = true;
+							}
+							else if (angleCClock < angle && angleCClock < angleClock && MagnetRotation != 2)
+							{
+								MagnetRotation = 2;
 								Projectile.netUpdate = true;
 							}
 						}
-						*/
 
 						if (guardian.GuardianHammerDetonator && !HammerItem.CannotExplode && Projectile.timeLeft < 598 && range > 0 && BlockDuration == 0) {
 							if (range <= HammerItem.Range - 15)
@@ -507,6 +528,10 @@ namespace OrchidMod.Content.Guardian
 								Projectile.friendly = false;
 								Projectile.netUpdate = true;
 							}
+						}
+						else if (MagnetRotation != 0)
+						{ // magnet rotation stuff
+							Projectile.velocity = Projectile.velocity.RotatedBy(guardian.GuardianHammerMagnet * 0.001f * (MagnetRotation == 1 ? 1f : -1f));
 						}
 
 						if (WeakThrow)
@@ -673,6 +698,7 @@ namespace OrchidMod.Content.Guardian
 			writer.Write(HammerItem.Item.type);
 			writer.Write(range);
 			writer.Write(BlockDuration);
+			writer.Write(MagnetRotation);
 		}
 
 		public override void ReceiveExtraAI(BinaryReader reader)
@@ -680,6 +706,7 @@ namespace OrchidMod.Content.Guardian
 			int itemtype = reader.ReadInt32();
 			range = reader.ReadInt32();
 			BlockDuration = reader.ReadInt32();
+			MagnetRotation = reader.ReadByte();
 
 			if (HammerItem == null)
 			{

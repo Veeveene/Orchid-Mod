@@ -3369,7 +3369,11 @@ Items: {
 
 	HammerMagnet: {
 		DisplayName: Hammer Magnet
-		Tooltip: Allows most warhammers to bend toward the cursor when thrown
+		Tooltip:
+			'''
+			Allows most warhammers to bend toward the cursor when thrown
+			20% increased warhammer thrown velocity
+			'''
 	}
 
 	RemoteDetonator: {
