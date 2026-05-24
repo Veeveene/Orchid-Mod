@@ -91,6 +91,56 @@ namespace OrchidMod.Content.Guardian.Projectiles.Misc
 			}
 		}
 
+		public Color GetColor(Player player, bool firstColor)
+		{
+			switch(player.name)
+			{
+				default:
+					return firstColor ? new Color(216, 61, 5) : new Color(112, 161, 255);
+				case "Verveine":
+					return firstColor ? new Color(0, 140, 116) : new Color(255, 255, 255);
+				case "Orchid":
+					return firstColor ? new Color(255, 0, 60) : new Color(255, 213, 223);
+				case "CreepZoneTNT":
+					return firstColor ? new Color(79, 121, 66) : new Color(253, 238, 0);
+				case "IceSpider":
+					return firstColor ? new Color(22, 156, 156) : new Color(169, 254, 255);
+				case "Xrylene":
+					return firstColor ? new Color(247, 67, 85) : new Color(88, 255, 46);
+				case "direwolf420":
+					return firstColor ? new Color(0, 221, 221) : new Color(44, 36, 133);
+				case "Feutor":
+					return firstColor ? new Color(255, 106, 0) : new Color(133, 4, 4);
+				case "L. Mack":
+					return firstColor ? new Color(121, 101, 90) : new Color(102, 50, 19);
+				case "Beefeus":
+					return firstColor ? new Color(255, 0, 60) : new Color(160, 0, 196);
+				case "Slime":
+					return firstColor ? new Color(0, 255, 255) : new Color(255, 252, 85);
+				case "Amber":
+					return firstColor ? new Color(200, 130, 100) : new Color(180, 50, 200);
+			}
+		}
+
+		public void DoColorGradient(Player player, ref Color color)
+		{
+			Color firstColor = GetColor(player, true);
+			Color secondColor = GetColor(player, false);
+
+			byte unitR = (byte)(Math.Abs(firstColor.R - secondColor.R) / 50);
+			byte unitG = (byte)(Math.Abs(firstColor.G - secondColor.G) / 50);
+			byte unitB = (byte)(Math.Abs(firstColor.B - secondColor.B) / 50);
+
+			if (firstColor.R < secondColor.R) color.R += unitR;
+			else color.R -= unitR;
+
+			if (firstColor.G < secondColor.G) color.G += unitG;
+			else color.G -= unitG;
+
+			if (firstColor.B < secondColor.B) color.B += unitB;
+			else color.B -= unitB;
+		}
+
 		public override bool OrchidPreDraw(SpriteBatch spriteBatch, ref Color lightColor)
 		{
 			spriteBatch.End(out SpriteBatchSnapshot spriteBatchSnapshot);
@@ -103,14 +153,13 @@ namespace OrchidMod.Content.Guardian.Projectiles.Misc
 
 			float colorMult = 1f;
 			if (Projectile.timeLeft < 20) colorMult *= Projectile.timeLeft / 20f;
-			Color color = new Color(216, 61, 5); // to (112, 152, 255);
+			Player owner = Owner;
+			Color color = GetColor(owner, true);
 			for (int i = 0; i < Positions.Count; i++)
 			{
 				if (i > 5 && i < 55)
 				{
-					color.R -= 2;
-					color.G += 2;
-					color.B += 5;
+					DoColorGradient(owner, ref color);
 				}
 
 				Rectangle rectangle = TextureMain.Bounds;

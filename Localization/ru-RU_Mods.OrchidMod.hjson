@@ -3303,8 +3303,8 @@ Items: {
 		/* Tooltip:
 			'''
 			[c/FF0000:Test Item]
-			Jabs grant a stack of Cold Energy
-			At 10 stacks, your next slam will release a giant snowflake
+			Attacks grant Cold Energy charge
+			At full Cold Energy charge, your next slam will release a giant snowflake
 			''' */
 	}
 
