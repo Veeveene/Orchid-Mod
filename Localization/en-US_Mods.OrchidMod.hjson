@@ -3302,8 +3302,8 @@ Items: {
 		Tooltip:
 			'''
 			[c/FF0000:Test Item]
-			Jabs grant a stack of Cold Energy
-			At 10 stacks, your next slam will release a giant snowflake
+			Attacks grant Cold Energy charge
+			At full Cold Energy charge, your next slam will release a giant snowflake
 			'''
 	}
 
@@ -3954,6 +3954,11 @@ Configs: {
 		GuardianUseFancyUI: {
 			Label: Fancy Guardian UI
 			Tooltip: Use 'fancy' textures for Guardian UI elements
+		}
+
+		GuardianThoriumBoreanStriderColorUI: {
+			Label: Frost Walker UI uses colored icon
+			Tooltip: The Frost Walker's special 'snowflake charge' UI will use a colored icon (the Ice Gauntlet's crystal projectile) instead of a monochrome variant
 		}
 	}
 

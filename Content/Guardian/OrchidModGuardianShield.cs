@@ -79,7 +79,11 @@ namespace OrchidMod.Content.Guardian
 		public float parryRotation;
 		/// <summary>Charge speed multiplier for this item. Defaults to 1f.</summary>
 		public float ChargeSpeedMultiplier;
+		
+		/// <summary>Draws extra UI elements on the GuardianUIState while held.</summary>
+		public virtual void PavisePostDrawUI(SpriteBatch spriteBatch, Player player, ref Color lightColor, Projectile projectile) { }
 
+		public override int? AnchorType => ModContent.ProjectileType<GuardianShieldAnchor>();
 		public sealed override void SetDefaults()
 		{
 			Item.DamageType = ModContent.GetInstance<GuardianDamageClass>();

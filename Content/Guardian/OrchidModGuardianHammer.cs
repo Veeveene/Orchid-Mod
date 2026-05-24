@@ -25,7 +25,7 @@ namespace OrchidMod.Content.Guardian
 		public int BlockDuration;
 		/// <summary>Will the warhammer pierce enemies when thrown? Defaults to false.</summary>
 		public bool Penetrate;
-		/// <summary>Will the warhammer phase through tiles when thrown? Defaults to false.</summary>
+		/// <summary>Will the warhammer phase through tiles when thrown? Defaults to true.</summary>
 		public bool TileCollide;
 		/// <summary>Will the warhammer bounce off tiles when thrown? Defaults to false.</summary>
 		public bool TileBounce;
@@ -111,7 +111,11 @@ namespace OrchidMod.Content.Guardian
 		public virtual void PostDrawHammer(Player player, OrchidGuardian guardian, Projectile projectile, SpriteBatch spriteBatch, Color lightColor, Texture2D hammerTexture, Rectangle drawRectangle) { }
 		/// <summary>Color applied to the hammer's glowmask when drawn. To automatically draw a glowmask for the hammer, add a HammerName_Glow texture file where the hammer texture is located.</summary>
 		public virtual Color GetHammerGlowmaskColor(Player player, OrchidGuardian guardian, Projectile projectile, Color lightColor) => Color.White;
+		
+		/// <summary>Draws extra UI elements on the GuardianUIState while held.</summary>
+		public virtual void WarhammerPostDrawUI(SpriteBatch spriteBatch, Player player, ref Color lightColor, Projectile projectile) { }
 
+		public override int? AnchorType => ModContent.ProjectileType<GuardianHammerAnchor>();
 		public sealed override void SetDefaults()
 		{
 			Item.DamageType = GetInstance<GuardianDamageClass>();

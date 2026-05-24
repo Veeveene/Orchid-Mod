@@ -51,6 +51,10 @@ namespace OrchidMod.Content.Guardian
 
 		public virtual void SafeHoldItem(Player player) { }
 		public virtual Color GetGauntletGlowmaskColor(Player player, OrchidGuardian guardian, Projectile projectile, Color lightColor) => Color.White;
+		
+		/// <summary>Draws extra UI elements on the GuardianUIState while held.</summary>
+		public virtual void GauntletPostDrawUI(SpriteBatch spriteBatch, Player player, ref Color lightColor, Projectile main, Projectile alt) { }
+
 
 		public int GauntletFrames = 1;
 
@@ -62,6 +66,8 @@ namespace OrchidMod.Content.Guardian
 		public int ParryDashDuration = 0; // Duration in frames of the parry dash
 		public float ParryDashSpeed = 0f; // Velocity of the parry dash
 		public float ChargeSpeedMultiplier = 1f; // Multiplies charge speed while holding left click
+
+		public override int? AnchorType => ModContent.ProjectileType<GuardianGauntletAnchor>();
 
 		public sealed override void SetDefaults()
 		{

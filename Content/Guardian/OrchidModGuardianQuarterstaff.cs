@@ -75,7 +75,11 @@ namespace OrchidMod.Content.Guardian
 		/// <br/> The animation frame must be set manually using <c>GuardianQuarterstaffAnchor.QuarterstaffAnimFrame</c>.
 		/// </summary>
 		public int QuarterstaffFrames = 1;
+		
+		/// <summary>Draws extra UI elements on the GuardianUIState while held.</summary>
+		public virtual void QuarterstaffPostDrawUI(SpriteBatch spriteBatch, Player player, ref Color lightColor, Projectile projectile) { }
 
+		public override int? AnchorType => ModContent.ProjectileType<GuardianQuarterstaffAnchor>();
 		public sealed override void SetDefaults()
 		{
 			Item.DamageType = ModContent.GetInstance<GuardianDamageClass>();
