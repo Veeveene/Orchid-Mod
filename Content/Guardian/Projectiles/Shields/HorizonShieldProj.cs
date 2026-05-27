@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using OrchidMod.Content.Guardian.Projectiles.Misc;
 using OrchidMod.Utilities;
 using System.Collections.Generic;
 using System.IO;
@@ -110,16 +111,20 @@ namespace OrchidMod.Content.Guardian.Projectiles.Shields
 
 			float colorMult = 1f;
 			if (Projectile.timeLeft < 10) colorMult *= Projectile.timeLeft / 10f;
-			//Color color = new Color(112, 152, 255);
-			Color color = new Color(216, 61, 30);
+			Color color = GuardianHorizonLanceProj.GetColor(Owner, true);
+			//Color color = new Color(216, 61, 30);
 
 			for (int i = 0; i < OldPosition.Count; i++)
 			{
 				if (i > 8 + ( Reinforced ? 4 : 0) && i <= 12 + (Reinforced ? 4 : 0))
 				{
+					/*
 					color.R -= 26;
 					color.G += 23;
 					color.B += 56;
+					*/
+
+					GuardianHorizonLanceProj.DoColorGradient(Owner, ref color, 4);
 				}
 
 				Vector2 drawPosition = OldPosition[i] - Main.screenPosition;

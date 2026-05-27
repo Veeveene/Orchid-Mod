@@ -24,7 +24,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Misc
 			Projectile.friendly = false;
 			Projectile.tileCollide = false;
 			Projectile.aiStyle = -1;
-			Projectile.timeLeft = 900;
+			Projectile.timeLeft = 90000;
 			Projectile.scale = 1f;
 			Projectile.penetrate = 1;
 			Projectile.alpha = 255;
@@ -91,7 +91,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Misc
 			}
 		}
 
-		public Color GetColor(Player player, bool firstColor)
+		public static Color GetColor(Player player, bool firstColor)
 		{
 			switch(player.name)
 			{
@@ -101,6 +101,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Misc
 					return firstColor ? new Color(100, 150, 0) : new Color(0, 150, 150);
 				case "Orchid":
 					return firstColor ? new Color(255, 0, 60) : new Color(255, 213, 223);
+					//return firstColor ? new Color(140, 0, 7) : new Color(40, 100, 157);
 				case "Orchud":
 					return firstColor ? new Color(255, 0, 60) : new Color(255, 213, 223);
 				case "Orchad":
@@ -137,17 +138,27 @@ namespace OrchidMod.Content.Guardian.Projectiles.Misc
 					return firstColor ? new Color(200, 0, 200) : new Color(0, 200, 200);
 				case "LucidLizard":
 					return firstColor ? new Color(255, 200, 0) : new Color(255, 0, 100);
+				case "KindP4nda":
+					return firstColor ? new Color(150, 0, 17) : new Color(0, 150, 17);
+				case "GitGudWO":
+					return firstColor ? new Color(150, 150, 150) : new Color(200, 0, 0);
+				case "Kibl":
+					return firstColor ? new Color(0, 50, 200) : new Color(0, 150, 50);
+				case "mcgen":
+					return firstColor ? new Color(135, 80, 135) : new Color(135, 135, 80);
+				case "Laeyrr":
+					return firstColor ? new Color(60, 120, 100) : new Color(110, 70, 200);
 			}
 		}
 
-		public void DoColorGradient(Player player, ref Color color)
+		public static void DoColorGradient(Player player, ref Color color, int gradientFactor)
 		{
 			Color firstColor = GetColor(player, true);
 			Color secondColor = GetColor(player, false);
 
-			byte unitR = (byte)(Math.Abs(firstColor.R - secondColor.R) / 50);
-			byte unitG = (byte)(Math.Abs(firstColor.G - secondColor.G) / 50);
-			byte unitB = (byte)(Math.Abs(firstColor.B - secondColor.B) / 50);
+			byte unitR = (byte)(Math.Abs(firstColor.R - secondColor.R) / gradientFactor);
+			byte unitG = (byte)(Math.Abs(firstColor.G - secondColor.G) / gradientFactor);
+			byte unitB = (byte)(Math.Abs(firstColor.B - secondColor.B) / gradientFactor);
 
 			if (firstColor.R < secondColor.R) color.R += unitR;
 			else color.R -= unitR;
@@ -177,7 +188,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Misc
 			{
 				if (i > 5 && i < 55)
 				{
-					DoColorGradient(owner, ref color);
+					DoColorGradient(owner, ref color, 50);
 				}
 
 				Rectangle rectangle = TextureMain.Bounds;

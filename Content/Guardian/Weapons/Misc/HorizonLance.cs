@@ -6,7 +6,6 @@ using OrchidMod.Content.General.Prefixes;
 using OrchidMod.Content.Guardian.Misc;
 using OrchidMod.Content.Guardian.Projectiles.Misc;
 using OrchidMod.Utilities;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;

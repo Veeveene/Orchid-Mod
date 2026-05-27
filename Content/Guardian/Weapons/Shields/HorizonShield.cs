@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using OrchidMod.Utilities;
 using Terraria.Audio;
+using OrchidMod.Content.Guardian.Projectiles.Misc;
 
 namespace OrchidMod.Content.Guardian.Weapons.Shields
 {
@@ -16,8 +17,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 	{
 		public int TimeHeld;
 		public bool StoredBlock;
-		public Texture2D TextureGlowH;
-		public Texture2D TextureGlowHAlt;
+		public Texture2D TextureFlame;
 		public float ColorMult;
 		public List<Vector2> OldPosition;
 		public List<float> OldRotation;
@@ -35,8 +35,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			distance = 70f;
 			slamDistance = 150f;
 			blockDuration = 300;
-			TextureGlowH ??= ModContent.Request<Texture2D>(Texture + "_GlowH", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-			TextureGlowHAlt ??= ModContent.Request<Texture2D>(Texture + "_GlowHAlt", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+			TextureFlame ??= ModContent.Request<Texture2D>(Texture + "_Flame", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 			OldPosition = new List<Vector2>();
 			OldRotation = new List<float>();
 			TimeHeld = 0;
@@ -142,7 +141,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			spriteBatch.End(out SpriteBatchSnapshot spriteBatchSnapshot);
 			spriteBatch.Begin(spriteBatchSnapshot with { BlendState = BlendState.Additive });
 
-			spriteBatch.Draw(TextureGlowH, drawPosition, null, Color.White * ColorMult, projectile.rotation, TextureGlowH.Size() * 0.5f, projectile.scale, effect, 0f);
+			//spriteBatch.Draw(TextureGlowH, drawPosition, null, Color.White * ColorMult, projectile.rotation, TextureGlowH.Size() * 0.5f, projectile.scale, effect, 0f);
 
 			Vector2 slamoffset = Vector2.Zero;
 			for (int i = 0; i < OldPosition.Count - 1; i++)
@@ -152,11 +151,13 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 					slamoffset.X += i * 0.2f;
 				}
 				Vector2 drawPositionGlow = projectile.Center - (Vector2.UnitY * 6f + OldPosition[i] + slamoffset).RotatedBy(projectile.rotation) - Main.screenPosition;
-				spriteBatch.Draw(TextureGlowHAlt, drawPositionGlow, null, new Color(216, 61, 30), OldRotation[i], TextureGlowHAlt.Size() * 0.5f, projectile.scale * (i + 1) * 0.08f, effect, 0f);
+				spriteBatch.Draw(TextureFlame, drawPositionGlow, null, GuardianHorizonLanceProj.GetColor(player, true), OldRotation[i], TextureFlame.Size() * 0.5f, projectile.scale * (i + 1) * 0.08f, effect, 0f);
+				// new Color(216, 61, 30)
 
 				SpriteEffects effectFlip = projectile.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 				drawPositionGlow = projectile.Center + (Vector2.UnitY * 6f + OldPosition[i] - slamoffset).RotatedBy(projectile.rotation) - Main.screenPosition;
-				spriteBatch.Draw(TextureGlowHAlt, drawPositionGlow, null, new Color(59, 88, 204), OldRotation[i] + MathHelper.Pi, TextureGlowHAlt.Size() * 0.5f, projectile.scale * (i + 1) * 0.08f, effectFlip, 0f);
+				spriteBatch.Draw(TextureFlame, drawPositionGlow, null, GuardianHorizonLanceProj.GetColor(player, false), OldRotation[i] + MathHelper.Pi, TextureFlame.Size() * 0.5f, projectile.scale * (i + 1) * 0.08f, effectFlip, 0f);
+				// new Color(59, 88, 204)
 			}
 
 			spriteBatch.End();
