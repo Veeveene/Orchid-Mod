@@ -1,0 +1,66 @@
+﻿using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.DataStructures;
+
+
+namespace OrchidMod.Content.Guardian.Projectiles.Quarterstaves
+{
+	internal class ThoriumPharaohQuarterstaffProjectile : OrchidModGuardianProjectile
+	{
+		public override string Texture => $"Terraria/Images/Projectile_27";
+
+		public override void SafeSetDefaults()
+		{
+			Projectile.width = 20;
+			Projectile.height = 20;
+			Projectile.friendly = true;
+			Projectile.aiStyle = -1;
+			Projectile.timeLeft = 240;
+			Projectile.alpha = 96;
+			Projectile.penetrate = -1;
+			Projectile.scale = 1f;
+			Projectile.alpha = 255;
+			Projectile.rotation = Main.rand.Next(1, 360);
+			Projectile.usesLocalNPCImmunity = true;
+			Projectile.localNPCHitCooldown = 30;
+		}
+
+		public override void OnSpawn(IEntitySource source)
+		{
+			Projectile.Resize((int)(20 * Projectile.scale), (int)(20 * Projectile.scale));
+		}
+
+		public override void AI()
+		{
+			Projectile.velocity /= 1.1f;
+
+			//Dust glitter = Dust.NewDustDirect(Projectile.position, 20, 20, DustID.Sandnado);
+			Gore sand = Gore.NewGoreDirect(Projectile.GetSource_FromThis(), Projectile.position, new Vector2(0, 0), Main.rand.Next(220, 223));
+			sand.rotation = Projectile.rotation;
+			sand.alpha = 200;
+			sand.velocity *= 0;
+			sand.scale = Projectile.scale * Main.rand.NextFloat(0.5f, 1.2f);
+		}
+		
+		/*
+		public override bool OnTileCollide(Vector2 oldVelocity)
+		{
+			Collision.HitTiles(Projectile.position, Projectile.velocity, Projectile.width, Projectile.height);
+
+			// If the projectile hits the left or right side of the tile, reverse the X velocity
+			if (Math.Abs(Projectile.velocity.X - oldVelocity.X) > float.Epsilon)
+			{
+				Projectile.velocity.X = -oldVelocity.X;
+			}
+
+			// If the projectile hits the top or bottom side of the tile, reverse the Y velocity
+			if (Math.Abs(Projectile.velocity.Y - oldVelocity.Y) > float.Epsilon)
+			{
+				Projectile.velocity.Y = -oldVelocity.Y;
+			}
+
+			return false;
+		}
+		*/
+	}
+}

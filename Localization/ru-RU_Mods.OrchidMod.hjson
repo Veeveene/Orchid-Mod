@@ -3400,6 +3400,11 @@ Items: {
 		// DisplayName: Viking Piolet
 		// Tooltip: Pierces foes when hurled
 	}
+
+	ThoriumPharaohQuarterstaff: {
+		// DisplayName: Shuwt
+		// Tooltip: Fully charge to release a burst of sand
+	}
 }
 
 NPCs: {
@@ -3854,12 +3859,13 @@ Projectiles: {
 	// HellstoneKatarProjectile.DisplayName: Trailblaze
 	// ThoriumGraniteKatarProjectile.DisplayName: Ion Deluge
 	// ToyWarhammerProjectile.DisplayName: The Big Honker
-	// ThoriumVoidQuarterstaffProjectile.DisplayName: Thorium Void Quarterstaff Projectile
+	// ThoriumVoidQuarterstaffProjectile.DisplayName: Void
 	// ThoriumDemonBloodGauntletProjectile.DisplayName: Thorium Demon Blood Gauntlet Projectile
 	// ThoriumNagaQuarterstaffProjectile.DisplayName: Thorium Naga Quarterstaff Projectile
 	// ThoriumConcentratedThoriumQuarterstaffProjectile.DisplayName: Thorium Concentrated Thorium Quarterstaff Projectile
 	// ThoriumTerrariumWarhammerProjectile.DisplayName: Thorium Terrarium Warhammer Projectile
-	// GuardianDoubleHammerAnchor.DisplayName: Guardian Double Hammer Anchor
+	// GuardianDoubleHammerAnchor.DisplayName: Dual Warhammers
+	// ThoriumPharaohQuarterstaffProjectile.DisplayName: Pharaoh Sand
 }
 
 Configs: {
