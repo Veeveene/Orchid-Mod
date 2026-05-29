@@ -101,9 +101,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Misc
 					return firstColor ? new Color(100, 150, 0) : new Color(0, 150, 150);
 				case "Orchid":
 					return firstColor ? new Color(255, 0, 60) : new Color(255, 213, 223);
-				case "Orchud":
-					return Main.legendaryModeColor;
-				case "Orchad":
+				case "Haidex":
 					return Main.DiscoColor;
 				case "CreepZoneTNT":
 					return firstColor ? new Color(79, 121, 66) : new Color(253, 238, 0);
@@ -159,6 +157,8 @@ namespace OrchidMod.Content.Guardian.Projectiles.Misc
 					return firstColor ? new Color(255, 15, 150) : new Color(0, 175, 200);
 				case "Chest0":
 					return firstColor ? new Color(50, 85, 255) : new Color(150, 135, 55);
+				case "Beebo Greebo":
+					return firstColor ? new Color(130, 190, 30) : new Color(230, 40, 80);
 			}
 		}
 
