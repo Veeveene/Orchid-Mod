@@ -29,11 +29,10 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 		{
 			if (!jabAttack && !counterAttack && IsLocalPlayer(player))
 			{ // Charged attack
-				float numberProjectiles = 4;
 				int projectileType = ModContent.ProjectileType<ThoriumPharaohQuarterstaffProjectile>();
 				SoundEngine.PlaySound(SoundID.Item34.WithPitchOffset(Main.rand.NextFloat(0.1f, 0.3f)), projectile.Center);
 
-				for (int i = -4; i < numberProjectiles; i++)
+				for (int i = -4; i < 5; i++)
 				{
 					int damage = guardian.GetGuardianDamage(Item.damage);
 					Vector2 velocity = -Vector2.UnitX.RotatedBy((player.Center - Main.MouseWorld).ToRotation() + MathHelper.ToRadians(i * 10)) * Item.shootSpeed;

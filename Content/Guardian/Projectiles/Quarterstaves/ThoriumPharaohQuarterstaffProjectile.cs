@@ -1,5 +1,8 @@
+using Microsoft.Build.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Graphics.PackedVector;
+using OrchidMod.Utilities;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -10,6 +13,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Quarterstaves
 	public class ThoriumPharaohQuarterstaffProjectile : OrchidModGuardianProjectile
 	{
 		public List<QuarterstaffProjectileSand> Sand;
+		public List<QuarterstaffProjectileSandGore> SandGore;
 		public List<int> HitNPCs;
 		public int TimeSpent = 0;
 
@@ -80,13 +84,13 @@ namespace OrchidMod.Content.Guardian.Projectiles.Quarterstaves
 			HitNPCs.Add(target.whoAmI);
 		}
 
-		/*
 		public override bool OnTileCollide(Vector2 oldVelocity)
 		{
 			Projectile.velocity *= 0f;
+			Projectile.ai[0] = 1;
+			Projectile.netUpdate = true;
 			return false;
 		}
-		*/
 
 		public override void AI()
 		{
@@ -96,6 +100,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Quarterstaves
 				Initialized = true;
 
 				Sand = new List<QuarterstaffProjectileSand>();
+				SandGore = new List<QuarterstaffProjectileSandGore>();
 
 				for (int i = 0; i < 12; i++)
 				{
@@ -121,8 +126,10 @@ namespace OrchidMod.Content.Guardian.Projectiles.Quarterstaves
 				Sand[Main.rand.Next(Sand.Count)].Kill = true;
 				Vector2 sporeOffset = Vector2.UnitY.RotatedBy(Main.rand.NextFloat(MathHelper.TwoPi));
 				Vector2 sporeVelocity = Vector2.Normalize(sporeOffset) * Main.rand.NextFloat(0f, 1f);
-
-				Sand.Add(new QuarterstaffProjectileSand(sporeOffset, sporeVelocity));
+				if (Projectile.ai[0] == 0)
+				{
+					Sand.Add(new QuarterstaffProjectileSand(sporeOffset, sporeVelocity));
+				}
 			}
 
 			for (int i = Sand.Count - 1; i >= 0; i --)
@@ -136,27 +143,34 @@ namespace OrchidMod.Content.Guardian.Projectiles.Quarterstaves
 				}
 			}
 
+			for (int i = SandGore.Count - 1; i >= 0; i --)
+			{
+				QuarterstaffProjectileSandGore gore = SandGore[i];
+
+				gore.Update();
+				if (gore.Alpha < 0f)
+				{
+					SandGore.Remove(gore);
+				}
+			}
+
 			Projectile.ai[1]++;
 			if (Projectile.ai[1] > 15)
 			{
 				Projectile.velocity *= 0.8f;
 			}
 
-			if (Projectile.ai[1] < 25)
+			if (Projectile.ai[1] < 25 && Projectile.ai[0] == 0)
 			{
-				Gore sand = Gore.NewGoreDirect(Projectile.GetSource_FromThis(), Projectile.position, new Vector2(0, 0), Main.rand.Next(220, 223));
-				sand.rotation = Projectile.rotation;
-				sand.alpha = 200;
-				sand.velocity *= 0;
-				sand.scale = Projectile.scale * Main.rand.NextFloat(0.5f, 1.2f);
+				SandGore.Add(new QuarterstaffProjectileSandGore(Projectile.Center));
 			}
 		}
 
 		public override bool OrchidPreDraw(SpriteBatch spriteBatch, ref Color lightColor)
 		{
 			if (!Initialized) return false;
-			//spriteBatch.End(out SpriteBatchSnapshot spriteBatchSnapshot);
-			//spriteBatch.Begin(spriteBatchSnapshot with { BlendState = BlendState.Additive });
+			spriteBatch.End(out SpriteBatchSnapshot spriteBatchSnapshot);
+			spriteBatch.Begin(spriteBatchSnapshot with { BlendState = BlendState.Additive });
 
 			// Draw code here
 
@@ -179,6 +193,19 @@ namespace OrchidMod.Content.Guardian.Projectiles.Quarterstaves
 
 			Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
+			foreach (QuarterstaffProjectileSandGore sandGore in SandGore)
+			{
+				Rectangle drawRectangle = projTexture.Bounds;
+				drawRectangle.Height /= 3;
+				drawRectangle.Y = sandGore.Frame * drawRectangle.Height;
+
+				Vector2 sporeDrawPosition = sandGore.Position - Main.screenPosition;
+				Color colorGlow = Color.White * sandGore.Alpha;
+
+				SpriteEffects spriteEffects = sandGore.Flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+				spriteBatch.Draw(projTexture, sporeDrawPosition, drawRectangle, colorGlow, sandGore.Rotation, drawRectangle.Size() * 0.5f, sandGore.Scale, spriteEffects, 0f);
+			}
+
 			foreach (QuarterstaffProjectileSand sand in Sand)
 			{
 				Rectangle drawRectangle = projTexture.Bounds;
@@ -193,10 +220,39 @@ namespace OrchidMod.Content.Guardian.Projectiles.Quarterstaves
 				spriteBatch.Draw(projTexture, sporeDrawPosition, drawRectangle, colorGlow, sand.Rotation, drawRectangle.Size() * 0.5f, sand.Scale, spriteEffects, 0f);
 			}
 
-			//spriteBatch.End();
-			//spriteBatch.Begin(spriteBatchSnapshot);
+			spriteBatch.End();
+			spriteBatch.Begin(spriteBatchSnapshot);
 
 			return false;
+		}
+
+		public class QuarterstaffProjectileSandGore
+		{
+			public Vector2 Position;
+			public float Rotation;
+			public float RotationAdditive;
+			public float Scale;
+			public int Frame;
+			public bool Flip;
+			public float Alpha;
+
+			public QuarterstaffProjectileSandGore(Vector2 position)
+			{
+				Alpha = 0.75f;
+				Flip = Main.rand.NextBool();
+				Rotation = Main.rand.NextFloat(MathHelper.Pi);
+				Scale = Main.rand.NextFloat(0.5f, 1.2f);
+				Frame = Main.rand.Next(3);
+				Position = position;
+				RotationAdditive = Main.rand.NextFloat(-0.025f, 0.025f);
+			}
+
+			public void Update()
+			{
+				Alpha -= 0.035f;
+				Scale -= 0.01f;
+				Rotation += RotationAdditive;
+			}
 		}
 
 		public class QuarterstaffProjectileSand

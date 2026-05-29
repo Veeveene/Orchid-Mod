@@ -101,11 +101,10 @@ namespace OrchidMod.Content.Guardian.Projectiles.Misc
 					return firstColor ? new Color(100, 150, 0) : new Color(0, 150, 150);
 				case "Orchid":
 					return firstColor ? new Color(255, 0, 60) : new Color(255, 213, 223);
-					//return firstColor ? new Color(140, 0, 7) : new Color(40, 100, 157);
 				case "Orchud":
-					return firstColor ? new Color(255, 0, 60) : new Color(255, 213, 223);
+					return Main.legendaryModeColor;
 				case "Orchad":
-					return firstColor ? new Color(255, 255, 555) : new Color(255, 255, 255);
+					return Main.DiscoColor;
 				case "CreepZoneTNT":
 					return firstColor ? new Color(79, 121, 66) : new Color(253, 238, 0);
 				case "IceSpider":
@@ -119,7 +118,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Misc
 				case "L. Mack":
 					return firstColor ? new Color(121, 101, 90) : new Color(102, 50, 19);
 				case "Beefeus":
-					return firstColor ? new Color(255, 0, 60) : new Color(255, 0, 60);
+					return new Color(255, 0, 60);
 				case "Slime":
 					return firstColor ? new Color(0, 255, 255) : new Color(255, 252, 85);
 				case "Amber":
@@ -149,9 +148,17 @@ namespace OrchidMod.Content.Guardian.Projectiles.Misc
 				case "Laeyrr":
 					return firstColor ? new Color(60, 120, 100) : new Color(110, 70, 200);
 				case "Alino4kaHvoshch":
-					return firstColor ? new Color(107, 157, 254) : new Color(107, 157, 254);
+					return new Color(107, 157, 254);
+				case "Mio":
+					return new Color(237, 76, 76);
 				case "Macron":
 					return firstColor ? new Color(227, 250, 0) : new Color(127, 0, 255);
+				case "Spear McGee":
+					return firstColor ? new Color(55, 17, 150) : new Color(255, 167, 50);
+				case "Wember":
+					return firstColor ? new Color(255, 15, 150) : new Color(0, 175, 200);
+				case "Chest0":
+					return firstColor ? new Color(50, 85, 255) : new Color(150, 135, 55);
 			}
 		}
 
