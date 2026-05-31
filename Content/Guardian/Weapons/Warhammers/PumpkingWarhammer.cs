@@ -54,7 +54,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 
 			if (projectile.ModProjectile is GuardianHammerAnchor anchor) {
 				
-				anchor.HammerAnimFrame = 1;
+				anchor.Frame = 1;
 
 				int projType = ModContent.ProjectileType<PumpkingWarhammerProjectile>();
 				if (ScytheProjectile != null && ScytheProjectile.active && ScytheProjectile.type == projType && ScytheProjectile.owner == player.whoAmI)
@@ -71,7 +71,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 				}
 				
 
-				anchor.HammerAnimFrame = 0;
+				anchor.Frame = 0;
 				EmbeddedScythe = false;
 				if (Main.rand.NextBool())
 				{

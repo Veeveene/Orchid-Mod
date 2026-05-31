@@ -3388,11 +3388,7 @@ Items: {
 
 	ThoriumTerrariumWarhammer: {
 		DisplayName: Terrarium Warhammer
-		Tooltip:
-			'''
-			[c/FF0000:Test Item]
-			Calls down piercing afterimages on hit
-			'''
+		Tooltip: ""
 	}
 
 	IceAxeHammer: {
