@@ -25,7 +25,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			BlockDuration = 270;
 		}
 
-		public override void OnMeleeHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool FullyCharged)
+		public override void OnMeleeHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool FullyCharged, bool OffHand)
 		{
 			if (!((GuardianHammerAnchor)projectile.ModProjectile).WeakHit && !FullyCharged)
 			{
@@ -49,7 +49,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			}
 		}
 
-		public override void OnMeleeHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool FullyCharged)
+		public override void OnMeleeHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool FullyCharged, bool OffHand)
 		{
 			target.AddBuff(BuffID.Midas, 300);
 		}

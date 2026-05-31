@@ -24,7 +24,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			BlockDuration = 225;
 		}
 
-		public override bool ThrowAI(Player player, OrchidGuardian guardian, Projectile projectile, bool weak)
+		public override bool ThrowAI(Player player, OrchidGuardian guardian, Projectile projectile, bool weak, bool OffHand)
 		{
 
 			if (Main.rand.NextBool(5))
@@ -37,12 +37,12 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			return true;
 		}
 
-		public override void OnThrowHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak)
+		public override void OnThrowHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak, bool OffHand)
 		{
 			if (!Weak) guardian.modPlayer.TryHeal(5);
 		}
 
-		public override void OnMeleeHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool FullyCharged)
+		public override void OnMeleeHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool FullyCharged, bool OffHand)
 		{
 			guardian.modPlayer.TryHeal(2);
 		}

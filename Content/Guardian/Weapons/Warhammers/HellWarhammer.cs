@@ -23,7 +23,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			BlockDuration = 180;
 		}
 
-		public override bool ThrowAI(Player player, OrchidGuardian guardian, Projectile projectile, bool weak)
+		public override bool ThrowAI(Player player, OrchidGuardian guardian, Projectile projectile, bool weak, bool OffHand)
 		{
 			if (Main.rand.NextBool(3))
 			{
@@ -35,7 +35,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 		}
 
 
-		public override void OnThrowHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak)
+		public override void OnThrowHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak, bool OffHand)
 		{
 			if (!Weak && IsLocalPlayer(player)) OrchidModProjectile.spawnGenericExplosion(projectile, (int)(projectile.damage), 10f, 250, 0, true, true);
 			target.AddBuff(BuffID.OnFire, 180);

@@ -34,7 +34,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			BlockDuration = 180;
 		}
 
-		public override void OnThrow(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak)
+		public override void OnThrow(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak, bool OffHand)
 		{
 			if (!Weak)
 			{
@@ -51,7 +51,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			CannotMagnet = false;
 		}
 
-		public override bool ThrowAI(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak)
+		public override bool ThrowAI(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak, bool OffHand)
 		{
 			GuardianHammerAnchor anchor = projectile.ModProjectile as GuardianHammerAnchor;
 			if (Weak)
@@ -68,7 +68,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			return true;
 		}
 
-		public override void OnThrowHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak)
+		public override void OnThrowHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak, bool OffHand)
 		{
 			GuardianHammerAnchor anchor = projectile.ModProjectile as GuardianHammerAnchor;
 			if (!Weak && anchor.range >= 20)
@@ -88,7 +88,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			CannotMagnet = true;
 		}
 
-		public override void OnThrowTileCollide(Player player, OrchidGuardian guardian, Projectile projectile, Vector2 oldVelocity)
+		public override void OnThrowTileCollide(Player player, OrchidGuardian guardian, Projectile projectile, Vector2 oldVelocity, bool OffHand)
 		{
 			GuardianHammerAnchor anchor = projectile.ModProjectile as GuardianHammerAnchor;
 			if (projectile.ai[0] != 1)

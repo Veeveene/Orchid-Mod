@@ -45,7 +45,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			}
 		}
 
-		public override void OnThrow(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak)
+		public override void OnThrow(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak, bool OffHand)
 		{
 			projectile.extraUpdates = 1;
 		}
@@ -63,7 +63,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			return true;
 		}*/
 
-		public override void ExtraAI(Player player, OrchidGuardian guardian, Projectile projectile)
+		public override void ExtraAI(Player player, OrchidGuardian guardian, Projectile projectile, bool OffHand)
 		{
 			Dust dust = Dust.NewDustPerfect(projectile.Center, DustID.MagicMirror, Alpha: 100, Scale: 0.8f);
 			Vector2 offs = Main.rand.NextVector2Circular(10, 10);

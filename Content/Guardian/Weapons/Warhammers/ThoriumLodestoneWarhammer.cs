@@ -41,7 +41,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
 		}
         
 
-        public override void ExtraAI(Player player, OrchidGuardian guardian, Projectile projectile)
+        public override void ExtraAI(Player player, OrchidGuardian guardian, Projectile projectile, bool OffHand)
         {
             
             // Generic dust particles
@@ -97,7 +97,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             }
         }
 
-        public override void OnSwing(Player player, OrchidGuardian guardian, Projectile projectile, bool FullyCharged)
+        public override void OnSwing(Player player, OrchidGuardian guardian, Projectile projectile, bool FullyCharged, bool OffHand)
         {
             for (int i = 0; i < 2; i++)
             {
@@ -106,7 +106,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             }
         }
 
-        public override void OnThrowHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak)
+        public override void OnThrowHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak, bool OffHand)
         {
             if (OrchidMod.ThoriumMod != null) {
                 int debuffType = OrchidMod.ThoriumMod.Find<ModBuff>("Sundered").Type;
@@ -114,7 +114,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             }
         }
 
-        public override void OnMeleeHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool FullyCharged)
+        public override void OnMeleeHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool FullyCharged, bool OffHand)
         {
             if (OrchidMod.ThoriumMod != null) {
                 int debuffType = OrchidMod.ThoriumMod.Find<ModBuff>("Sundered").Type;
@@ -130,7 +130,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             }
         }
 
-        public override void OnThrowTileCollide(Player player, OrchidGuardian guardian, Projectile projectile, Vector2 oldVelocity)
+        public override void OnThrowTileCollide(Player player, OrchidGuardian guardian, Projectile projectile, Vector2 oldVelocity, bool OffHand)
         {
             SoundEngine.PlaySound(SoundID.NPCDeath43);
 

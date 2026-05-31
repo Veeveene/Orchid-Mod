@@ -34,13 +34,13 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             HoldOffset = -1f;
         }
 
-        public override void OnThrow(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak)
+        public override void OnThrow(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak, bool OffHand)
         {
             // Attempt to reset the throw pull cooldown
             projectile.ai[2] = 0;
         }
 
-        public override void ExtraAI(Player player, OrchidGuardian guardian, Projectile projectile)
+        public override void ExtraAI(Player player, OrchidGuardian guardian, Projectile projectile, bool OffHand)
         {
             if (projectile.ModProjectile is GuardianHammerAnchor anchor)
             {
@@ -89,7 +89,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             }
         }
 
-        public override void OnSwing(Player player, OrchidGuardian guardian, Projectile projectile, bool FullyCharged)
+        public override void OnSwing(Player player, OrchidGuardian guardian, Projectile projectile, bool FullyCharged, bool OffHand)
         {
             for (int i = 0; i < 2; i++)
             {
@@ -98,7 +98,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             }
         }
 
-        public override void OnThrowHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak)
+        public override void OnThrowHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak, bool OffHand)
         {
             if (OrchidMod.ThoriumMod != null) {
                 int debuffType = OrchidMod.ThoriumMod.Find<ModBuff>("LightCurse").Type;
@@ -106,7 +106,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             }
         }
 
-        public override void OnMeleeHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool FullyCharged)
+        public override void OnMeleeHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool FullyCharged, bool OffHand)
         {
             if (OrchidMod.ThoriumMod != null) {
                 int debuffType = OrchidMod.ThoriumMod.Find<ModBuff>("LightCurse").Type;

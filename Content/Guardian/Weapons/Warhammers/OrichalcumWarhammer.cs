@@ -29,12 +29,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			BlockDuration = 240;
 		}
 
-		public override void OnSwing(Player player, OrchidGuardian guardian, Projectile projectile, bool FullyCharged)
-		{
-			base.OnSwing(player, guardian, projectile, FullyCharged);
-		}
-
-		public override bool ThrowAI(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak)
+		public override bool ThrowAI(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak, bool OffHand)
 		{
 			projectile.velocity *= 0.95f;
 			if (!Weak && projectile.velocity.Length() < 4)
@@ -45,7 +40,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			return true;
 		}
 
-		public override void OnThrowTileCollide(Player player, OrchidGuardian guardian, Projectile projectile, Vector2 oldVelocity)
+		public override void OnThrowTileCollide(Player player, OrchidGuardian guardian, Projectile projectile, Vector2 oldVelocity, bool OffHand)
 		{
 			float speed = projectile.velocity.Length();
 			if (speed > 2)

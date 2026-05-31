@@ -28,12 +28,12 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			BlockDuration = 180;
 		}
 
-		public override void OnMeleeHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool FullyCharged)
+		public override void OnMeleeHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool FullyCharged, bool OffHand)
 		{
 			BoneBurst(player, guardian, target, projectile, new Vector2(player.direction * 4, 0), true);
 		}
 
-		public override void OnThrowHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak)
+		public override void OnThrowHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak, bool OffHand)
 		{
 			BoneBurst(player, guardian, target, projectile, projectile.velocity, Weak);
 		}

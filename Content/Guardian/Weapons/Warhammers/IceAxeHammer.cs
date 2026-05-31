@@ -26,7 +26,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			CannotBlock = true;
 		}
 
-		public override bool ThrowAI(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak)
+		public override bool ThrowAI(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak, bool OffHand)
 		{
 			if (projectile.ModProjectile is GuardianHammerAnchor anchor && anchor.range > 0)
 			{
@@ -37,7 +37,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 				}
 			}
 
-			return base.ThrowAI(player, guardian, projectile, Weak);
+			return base.ThrowAI(player, guardian, projectile, Weak, OffHand);
 		}
 	}
 }

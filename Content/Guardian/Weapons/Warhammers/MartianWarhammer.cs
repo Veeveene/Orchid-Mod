@@ -30,7 +30,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			BlockDuration = 360;
 		}
 
-		public override void ExtraAI(Player player, OrchidGuardian guardian, Projectile projectile)
+		public override void ExtraAI(Player player, OrchidGuardian guardian, Projectile projectile, bool OffHand)
 		{
 			if (projectile.ai[1] <= -1)
 			{
@@ -38,7 +38,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			}
 		}
 
-		public override bool ThrowAI(Player player, OrchidGuardian guardian, Projectile projectile, bool weak)
+		public override bool ThrowAI(Player player, OrchidGuardian guardian, Projectile projectile, bool weak, bool OffHand)
 		{
 			GuardianHammerAnchor anchor = projectile.ModProjectile as GuardianHammerAnchor;
 			NPC target = null;
@@ -155,7 +155,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			}
 		}
 
-		public override void OnThrowHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak)
+		public override void OnThrowHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak, bool OffHand)
 		{
 			GuardianHammerAnchor anchor = projectile.ModProjectile as GuardianHammerAnchor;
 			if (!anchor.Ding)
@@ -165,7 +165,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			}
 		}
 
-		public override void OnMeleeHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool FullyCharged)
+		public override void OnMeleeHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool FullyCharged, bool OffHand)
 		{
 
 			if (!((GuardianHammerAnchor)projectile.ModProjectile).WeakHit && !FullyCharged)

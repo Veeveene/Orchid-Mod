@@ -520,8 +520,8 @@ namespace OrchidMod.Content.Guardian.UI
 								case OrchidModGuardianStandard standard:
 									standard.StandardPostDrawUI(spriteBatch, player, ref color, mainAnchor);
 									break;
-								case OrchidModGuardianGauntlet or OrchidModGuardianKatar or GuardianDoubleHammer:
-									Projectile altAnchor = Main.projectile.FirstOrDefault(proj => proj.whoAmI < Main.maxProjectiles && proj.active && proj.owner == player.whoAmI && proj.ModProjectile is GuardianGauntletAnchor {OffHandGauntlet: true} or GuardianKatarAnchor {OffHandKatar: true} or GuardianDoubleHammerAnchor {OffHandHammer: true});
+								case OrchidModGuardianGauntlet or OrchidModGuardianKatar:
+									Projectile altAnchor = Main.projectile.FirstOrDefault(proj => proj.whoAmI < Main.maxProjectiles && proj.active && proj.owner == player.whoAmI && proj.ModProjectile is GuardianGauntletAnchor {OffHandGauntlet: true} or GuardianKatarAnchor {OffHandKatar: true});
 									switch (guardianItem)
 									{
 										case OrchidModGuardianGauntlet gauntlets:
@@ -529,9 +529,6 @@ namespace OrchidMod.Content.Guardian.UI
 											break;
 										case OrchidModGuardianKatar katars:
 										katars.KatarPostDrawUI(spriteBatch, player, ref color, mainAnchor, altAnchor);
-											break;
-										case GuardianDoubleHammer doubleHammers:
-											doubleHammers.WarhammerPostDrawUI(spriteBatch, player, ref color, mainAnchor, altAnchor);
 											break;
 									} 
 									break;

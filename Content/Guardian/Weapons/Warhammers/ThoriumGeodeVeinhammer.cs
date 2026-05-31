@@ -40,7 +40,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             
         }
 
-        public override void OnSwing(Player player, OrchidGuardian guardian, Projectile projectile, bool FullyCharged)
+        public override void OnSwing(Player player, OrchidGuardian guardian, Projectile projectile, bool FullyCharged, bool OffHand)
         {
             for (int i = 0; i < 3; i++)
             {
@@ -50,7 +50,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             }
         }
 
-        public override void ExtraAI(Player player, OrchidGuardian guardian, Projectile projectile)
+        public override void ExtraAI(Player player, OrchidGuardian guardian, Projectile projectile, bool OffHand)
         {
             // guardian.SlamCostUI = 1;
             
@@ -76,7 +76,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             }
         }
 
-        public override void OnThrow(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak)
+        public override void OnThrow(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak, bool OffHand)
         {
             if (!Weak && projectile.ModProjectile is GuardianHammerAnchor anchor) 
             {
@@ -85,7 +85,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             }
         }
         
-        public override void OnThrowTileCollide(Player player, OrchidGuardian guardian, Projectile projectile, Vector2 oldVelocity)
+        public override void OnThrowTileCollide(Player player, OrchidGuardian guardian, Projectile projectile, Vector2 oldVelocity, bool OffHand)
         {
             if (projectile.ModProjectile is GuardianHammerAnchor anchor && !anchor.WeakThrow && anchor.BlockDuration == 0)
             {

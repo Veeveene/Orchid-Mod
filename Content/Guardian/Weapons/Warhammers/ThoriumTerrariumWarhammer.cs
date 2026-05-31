@@ -1,13 +1,10 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
-using OrchidMod.Content.Guardian.Weapons.Misc;
-using OrchidMod.Content.Guardian.Projectiles.Warhammers;
 
 namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 {
-	public class ThoriumTerrariumWarhammer : GuardianDoubleHammer
+	public class ThoriumTerrariumWarhammer : OrchidModGuardianHammer
 	{
 
 		public static readonly int[] PotentialDusts =

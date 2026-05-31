@@ -46,7 +46,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 		List<int> Targets;
 		SlotId soundSlot;
 
-		public override void ExtraAI(Player player, OrchidGuardian guardian, Projectile projectile)
+		public override void ExtraAI(Player player, OrchidGuardian guardian, Projectile projectile, bool OffHand)
 		{
 			Vector2 pos = projectile.ai[1] > 0 ? projectile.Center : player.Center; 
 			Targets = new List<int>();
@@ -156,7 +156,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			}
 		}
 
-		public override void OnSwing(Player player, OrchidGuardian guardian, Projectile projectile, bool FullyCharged)
+		public override void OnSwing(Player player, OrchidGuardian guardian, Projectile projectile, bool FullyCharged, bool OffHand)
 		{
 			if (Targets.Count > 0)
 			{
@@ -215,7 +215,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			return killedTargets;
 		}
 
-		public override void OnThrowHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak)
+		public override void OnThrowHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak, bool OffHand)
 		{
 			target.AddBuff(ModContent.BuffType<ThoriumGrandThunderBirdWarhammerDebuff>(), Weak ? 300 : 600);
 			if (!Weak) ShockTargets(projectile, player);
@@ -226,7 +226,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			}
 		}
 
-		public override void OnThrowHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak)
+		public override void OnThrowHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak, bool OffHand)
 		{
 			target.AddBuff(ModContent.BuffType<ThoriumGrandThunderBirdWarhammerDebuff>(), 300);
 			if (OrchidMod.ThoriumMod != null)
@@ -235,7 +235,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			}
 		}
 
-		public override void OnMeleeHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool FullyCharged)
+		public override void OnMeleeHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool FullyCharged, bool OffHand)
 		{
 			target.AddBuff(ModContent.BuffType<ThoriumGrandThunderBirdWarhammerDebuff>(), 300);
 			if (OrchidMod.ThoriumMod != null)
@@ -244,7 +244,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			}
 		}
 
-		public override void OnThrow(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak)
+		public override void OnThrow(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak, bool OffHand)
 		{
 			if (Weak && OrchidMod.ThoriumMod != null) SoundEngine.PlaySound(ThoriumParalyzeSound.WithPitchOffset(-0.6f).WithVolumeScale(0.1f * Targets.Count), projectile.Center);
 		}

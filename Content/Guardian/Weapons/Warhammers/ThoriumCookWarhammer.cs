@@ -27,7 +27,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			BlockDuration = 220;
 		}
 
-		public override void OnThrowHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak)
+		public override void OnThrowHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak, bool OffHand)
 		{
 			GuardianHammerAnchor anchor = projectile.ModProjectile as GuardianHammerAnchor;
 			var thoriumMod = OrchidMod.ThoriumMod;

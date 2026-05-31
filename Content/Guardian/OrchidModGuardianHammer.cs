@@ -35,6 +35,8 @@ namespace OrchidMod.Content.Guardian
 		public float SwingSpeed;
 		/// <summary>Multiplier for the amount of bonus charge gained from hitting with a melee swing. Defaults to 1f.</summary>
 		public float SwingChargeGain;
+		/// <summary>Multiplier for the baseline charge speed of the weapon. Defaults to 1f.</summary>
+		public float WaitChargeGain;
 		/// <summary>Multiplier for the item damage dealt to enemies hit by a swing. Defaults to 0.5f</summary>
 		public float SwingDamage;
 		/// <summary>Multiplier for the item damage dealt to enemies hit by a throw. Defaults to 1f</summary>
@@ -52,7 +54,7 @@ namespace OrchidMod.Content.Guardian
 		/// <summary>Multiplier for the initial velocity of the hammer when blocking.</summary>
 		public float BlockVelocityMult;
 		/// <summary>If true, the anchor will load and use ItemName_Hammer.png as its texture.</summary>
-		public bool hasSpecialHammerTexture = false;
+		public bool hasSpecialHammerTexture;
 		/// <summary>Amount of slams (resource) required to initiate a block. Defaults to 0.</summary>
 		public int SlamBlockCost;
 		/// <summary>Amount of guards (resource) required to initiate a block. Defaults to 1.</summary>
@@ -63,8 +65,10 @@ namespace OrchidMod.Content.Guardian
 		public bool CannotMagnet;
 		/// <summary>If true, the warhammer will be unaffected by the Remote Detonator accessory.</summary>
 		public bool CannotExplode;
-		/// <summary>If true, the OrchidGuardian.GuardianHammerThrowVelocity multiplier will not affect throw velocity.</summary>
-		public bool IgnoreHammerThrowVelocity = false;
+		/// <summary>If true, the OrchidGuardian.GuardianHammerThrowVelocity multiplier will not affect throw velocity. Defaults to false.</summary>
+		public bool IgnoreHammerThrowVelocity;
+		/// <summary>If true, this item will have the player dual wield warhammers. Defaults to false.</summary>
+		public bool DualWarhammers;
 		public virtual string HammerTexture => Texture + "_Hammer";
 
 		/// <summary>Called upon pushing an enemy with a throw (can happen repeatedly).</summary>
@@ -78,39 +82,39 @@ namespace OrchidMod.Content.Guardian
 		/// <summary>Called upon blocking the first projectile of a blocking throw</summary>
 		public virtual void OnBlockFirstProjectile(Player player, OrchidGuardian guardian, Projectile projectileHammer, Projectile projectileBlocked) { }
 		/// <summary>Called upon landing any melee swing hit</summary>
-		public virtual void OnMeleeHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool FullyCharged) { }
+		public virtual void OnMeleeHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool FullyCharged, bool OffHand) { }
 		/// <summary>Called upon landing the first hit of a melee swing</summary>
-		public virtual void OnMeleeHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool FullyCharged) { }
+		public virtual void OnMeleeHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool FullyCharged, bool OffHand) { }
 		/// <summary>Called upon landing any throw hit</summary>
-		public virtual void OnThrowHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak) { }
+		public virtual void OnThrowHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak, bool OffHand) { }
 		/// <summary>Called upon landing the first hit of a throw</summary>
-		public virtual void OnThrowHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak) { }
+		public virtual void OnThrowHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit, bool Weak, bool OffHand) { }
 		/// <summary>Called upon landing any block hit</summary>
 		public virtual void OnBlockHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit) { }
 		/// <summary>Called upon landing the first hit of a block</summary>
 		public virtual void OnBlockHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit) { }
 		/// <summary>Called at the end of the anchor's WarhammerModifyHitNPC() whenever it hits a target, after applying normal warhammer damage multipliers.</summary>
-		public virtual void WarhammerModifyHitNPC(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, ref HitModifiers modifiers, bool FullyCharged, bool Melee, bool Block, bool firstHit) { }
+		public virtual void WarhammerModifyHitNPC(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, ref HitModifiers modifiers, bool FullyCharged, bool Melee, bool Block, bool firstHit, bool OffHand) { }
 		/// <summary>Called at the end of the anchor's TileCollide(), after applying normal warhammer tilecollide behavior.</summary>
-		public virtual void OnThrowTileCollide(Player player, OrchidGuardian guardian, Projectile projectile, Vector2 oldVelocity) { }
+		public virtual void OnThrowTileCollide(Player player, OrchidGuardian guardian, Projectile projectile, Vector2 oldVelocity, bool OffHand) { }
 		/// <summary>Called on the first frame of a swing, FullyCharged is true if the guardian's hammer charge is full, FullyCharged is true if the guardian's hammer charge is full</summary>
-		public virtual void OnSwing(Player player, OrchidGuardian guardian, Projectile projectile, bool FullyCharged) { }
+		public virtual void OnSwing(Player player, OrchidGuardian guardian, Projectile projectile, bool FullyCharged, bool OffHand) { }
 		/// <summary>Called on the first frame of a throw</summary>
-		public virtual void OnThrow(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak) { }
+		public virtual void OnThrow(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak, bool OffHand) { }
 		/// <summary>Called on the first frame of a block</summary>
 		public virtual void OnBlockThrow(Player player, OrchidGuardian guardian, Projectile projectile) { }
 		/// <summary>Called at the end of the anchor's Projectile AI()</summary>
-		public virtual void ExtraAI(Player player, OrchidGuardian guardian, Projectile projectile) { }
+		public virtual void ExtraAI(Player player, OrchidGuardian guardian, Projectile projectile, bool OffHand) { }
 		/// <summary>Called before default throw AI. Return false to prevent the default AI from running.</summary>
 		/// <remarks>Remember to set <c>Projectile.friendly</c> and <c>OrchidModGuardianProjectile.ResetHitStatus()</c> if overriding default behavior.</remarks>
-		public virtual bool ThrowAI(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak) => true;
+		public virtual bool ThrowAI(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak, bool OffHand) => true;
 		/// <summary>Called before drawing the hammer. Return false to prevent the default draw code from running.</summary>
 		/// <remarks>The default draw code will use hammerTexture and drawRectangle (which defaults to null)</remarks>
-		public virtual bool PreDrawHammer(Player player, OrchidGuardian guardian, Projectile projectile, SpriteBatch spriteBatch, ref Color lightColor, ref Texture2D hammerTexture, ref Rectangle drawRectangle) => true;
+		public virtual bool PreDrawHammer(Player player, OrchidGuardian guardian, Projectile projectile, SpriteBatch spriteBatch, ref Color lightColor, ref Texture2D hammerTexture, ref Rectangle drawRectangle, bool OffHand) => true;
 		/// <summary>Called after drawing the hammer.</summary>
-		public virtual void PostDrawHammer(Player player, OrchidGuardian guardian, Projectile projectile, SpriteBatch spriteBatch, Color lightColor, Texture2D hammerTexture, Rectangle drawRectangle) { }
+		public virtual void PostDrawHammer(Player player, OrchidGuardian guardian, Projectile projectile, SpriteBatch spriteBatch, Color lightColor, Texture2D hammerTexture, Rectangle drawRectangle, bool OffHand) { }
 		/// <summary>Color applied to the hammer's glowmask when drawn. To automatically draw a glowmask for the hammer, add a HammerName_Glow texture file where the hammer texture is located.</summary>
-		public virtual Color GetHammerGlowmaskColor(Player player, OrchidGuardian guardian, Projectile projectile, Color lightColor) => Color.White;
+		public virtual Color GetHammerGlowmaskColor(Player player, OrchidGuardian guardian, Projectile projectile, Color lightColor, bool OffHand) => Color.White;
 		
 		/// <summary>Draws extra UI elements on the GuardianUIState while held.</summary>
 		public virtual void WarhammerPostDrawUI(SpriteBatch spriteBatch, Player player, ref Color lightColor, Projectile projectile) { }
@@ -139,10 +143,14 @@ namespace OrchidMod.Content.Guardian
 			SwingSpeed = 1f;
 			SwingDamage = 0.5f;
 			SwingChargeGain = 1f;
+			WaitChargeGain = 1f;
 			BlockDamage = 0.33f;
 			BlockDuration = 180;
 			BlockVelocityMult = 1f;
 			CannotBlock = false;
+			hasSpecialHammerTexture = false;
+			DualWarhammers = false;
+			IgnoreHammerThrowVelocity = false;
 
 			SlamBlockCost = 0;
 			GuardBlockCost = 1;
@@ -182,7 +190,25 @@ namespace OrchidMod.Content.Guardian
 				Projectile projectile = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, projType, damage, Item.knockBack, player.whoAmI);
 				projectile.CritChance = (int)(player.GetCritChance<GuardianDamageClass>() + player.GetCritChance<GenericDamageClass>() + Item.crit);
 
-				if (projectile.ModProjectile is GuardianHammerAnchor anchor && validRMBInput)
+				if (DualWarhammers && !validRMBInput)
+				{ // Creates another Anchor on use, and flags it as the offhand warhammer, before making sure they are drawn in the correct order
+					Projectile projectileOffHand = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, projType, damage, Item.knockBack, player.whoAmI);
+					projectileOffHand.CritChance = (int)(player.GetCritChance<GuardianDamageClass>() + player.GetCritChance<GenericDamageClass>() + Item.crit);
+
+					if (projectile.whoAmI < projectileOffHand.whoAmI)
+					{ // Swap order if necessary in Main.projectile[] so the front hammer is drawn first
+						(Main.projectile[projectile.whoAmI], Main.projectile[projectileOffHand.whoAmI]) = (Main.projectile[projectileOffHand.whoAmI], Main.projectile[projectile.whoAmI]);
+						projectile.whoAmI = projectileOffHand.whoAmI;
+						projectileOffHand.whoAmI = projectile.whoAmI;
+					}
+
+					if (projectileOffHand.ModProjectile is GuardianHammerAnchor anchorOffHand)
+					{
+						anchorOffHand.OffHand = true;
+					}
+				}
+
+				if (projectile.ModProjectile is GuardianHammerAnchor anchor && validRMBInput && GetAnchors(player)[1] == -1)
 				{ // starts a block
 					if (SlamBlockCost > 0) guardian.UseSlam(SlamBlockCost);
 					if (GuardBlockCost > 0) guardian.UseGuard(GuardBlockCost);
@@ -206,26 +232,69 @@ namespace OrchidMod.Content.Guardian
 		{
 			int projType = ProjectileType<GuardianHammerAnchor>();
 
-			if (Main.mouseRight && Main.mouseRightRelease)
+			var proj = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == projType && i.ModProjectile is GuardianHammerAnchor warhammer && warhammer.BlockDuration > 0);
+			if (Main.mouseRight && Main.mouseRightRelease && proj != null && proj.ModProjectile is GuardianHammerAnchor warhammer)
+			{ // recalls existing blocking warhammers when right clicking
+				warhammer.BlockDuration = -30; // -30 instead of -1 so they return faster
+				proj.netUpdate = true;
+				return false;
+			}
+
+			bool offHandCheck = true; // set to false if a one of the 2 warhammers is ready (when dual wielding)
+			int[] anchors = GetAnchors(player);
+			if (DualWarhammers && anchors != null)
 			{
-				var proj = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == projType && i.ModProjectile is GuardianHammerAnchor warhammer && warhammer.BlockDuration > 0);
-				if (proj != null && proj.ModProjectile is GuardianHammerAnchor warhammer)
-				{ // recalls existing blocking warhammers when right clicking
-					warhammer.BlockDuration = -30; // -30 instead of -1 so they return faster
-					proj.netUpdate = true;
+				Projectile mainHand = Main.projectile[anchors[0]];
+				Projectile offHand = Main.projectile[anchors[1]];
+
+				if (mainHand.ai[1] == 0f || offHand.ai[1] == 0f)
+				{ // at least one of the warhammers is idle
+					offHandCheck = false;
 				}
 			}
 
-			if (player.ownedProjectileCounts[projType] > 0 || (!(Main.mouseRight && Main.mouseRightRelease && player.GetModPlayer<OrchidGuardian>().UseGuard(1, true)) && !Main.mouseLeft)) return false;
-
 			var guardian = player.GetModPlayer<OrchidGuardian>();
-			bool validRMBInput = !CannotBlock && Main.mouseRight && Main.mouseRightRelease && ((SlamBlockCost > 0 && guardian.UseSlam(SlamBlockCost, true)) || (GuardBlockCost > 0 && guardian.UseGuard(GuardBlockCost, true)));
+			bool validRMBInput = anchors == null && !CannotBlock && Main.mouseRight && Main.mouseRightRelease && ((SlamBlockCost > 0 && guardian.UseSlam(SlamBlockCost, true)) || (GuardBlockCost > 0 && guardian.UseGuard(GuardBlockCost, true)));
+
+			if ((player.ownedProjectileCounts[projType] > 0 && (offHandCheck || !validRMBInput)) || (!(Main.mouseRight && Main.mouseRightRelease && player.GetModPlayer<OrchidGuardian>().UseGuard(1, true)) && !Main.mouseLeft)) return false;
+
 			if (validRMBInput || Main.mouseLeft)
 			{
 				return base.CanUseItem(player);
 			}
 
 			return false;
+		}
+
+
+		/// <summary>Returns the whoamI of the warhammer anchors used by this item. When dual wielding, the 2nd value of the array will the the whoam of the offhand warhammer, else, it will be -1. Returns null if no hammers exist.</summary>
+		public int[] GetAnchors(Player player)
+		{
+			var projectileType = ModContent.ProjectileType<GuardianHammerAnchor>();
+			int[] anchors = [-1, -1];
+			foreach (Projectile proj in Main.projectile)
+			{
+				if (proj.active && proj.owner == player.whoAmI && proj.type == projectileType)
+				{
+					if (anchors[0] == -1)
+					{
+						anchors[0] = proj.whoAmI;
+						if (!DualWarhammers)
+						{
+							return anchors;
+						}
+					}
+					else
+					{
+						anchors[1] = anchors[0];
+						anchors[0] = proj.whoAmI;
+
+						return anchors;
+					}
+				}
+			}
+
+			return null;
 		}
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips)
