@@ -12,12 +12,12 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 
         public override void SafeSetDefaults()
         {
-            Item.width = 42;
+            Item.width = 44;
             Item.height = 42;
-            Item.value = Item.sellPrice(0, 7, 50);
-            Item.rare = ItemRarityID.Pink;
+            Item.value = Item.sellPrice(0, 3, 50, 0);
+            Item.rare = ItemRarityID.LightRed;
             Item.UseSound = SoundID.DD2_MonkStaffSwing;
-            Item.knockBack = 3;
+            Item.knockBack = 2;
             Item.shootSpeed = 15f;
             Item.damage = 60;
             Item.useTime = 30;
@@ -28,7 +28,6 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
             ReturnSpeed = 1.8f;
             HoldOffset = -2f;
 			SwingChargeGain = 0.25f;
-
 			DualWarhammers = true;
 			hasSpecialHammerTexture = true;
 			CannotBlock = true;

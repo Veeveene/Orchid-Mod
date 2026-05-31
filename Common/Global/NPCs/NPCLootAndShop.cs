@@ -381,6 +381,11 @@ namespace OrchidMod.Common.Global.NPCs
 						npcLoot.Add(ItemDropRule.Common(ItemType<IceAxeHammer>(), 40));
 					}
 					break;
+				case NPCID.Clown:
+					{
+						npcLoot.Add(ItemDropRule.Common(ItemType<ToyWarhammers>(), 5));
+					}
+					break;
 				default:
 					break;
 			}
