@@ -3388,7 +3388,7 @@ Items: {
 
 	ThoriumTerrariumWarhammer: {
 		DisplayName: Terrarium Warhammer
-		Tooltip: ""
+		Tooltip: Melee swings deal increased damage
 	}
 
 	IceAxeHammer: {

@@ -23,20 +23,21 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 		{
 			Item.width = 44;
 			Item.height = 44;
-			Item.value = Item.sellPrice(0, 12);
+			Item.value = Item.sellPrice(0, 13, 50, 0);
 			Item.rare = OrchidMod.ThoriumMod != null ? OrchidMod.ThoriumMod.Find<ModRarity>("TerrariumRarity").Type : ItemRarityID.Expert;
 			Item.UseSound = SoundID.Item1;
 			Item.knockBack = 4f;
 			Item.useTime = 15;
 			Item.shootSpeed = 12f;
 			Item.damage = 359;
+			SwingDamage = 0.75f;
 			Range = 30;
 			GuardStacks = 1;
 			SlamStacks = 1;
 			ReturnSpeed = 1.6f;
 			SwingChargeGain = 1.5f;
 			WaitChargeGain = 2f;
-			SwingSpeed = 1.75f;
+			SwingSpeed = 1.5f;
 			HitCooldown = 15;
 			BlockDamage = 0.2f;
 			Penetrate = true;
@@ -112,6 +113,19 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 				dust.velocity = projectile.velocity * 0.5f;
 				dust.scale *= Main.rand.NextFloat(0.6f, 1f);
 				dust.fadeIn = Main.rand.NextFloat(0.6f, 1f);
+			}
+		}
+
+		public override void AddRecipes()
+		{
+			var thoriumMod = OrchidMod.ThoriumMod;
+			if (thoriumMod != null)
+			{
+				Recipe recipe = CreateRecipe();
+				recipe.AddTile(TileID.LunarCraftingStation);
+				recipe.AddIngredient(thoriumMod, "TerrariumCore", 9);
+				recipe.AddIngredient(ItemID.Wood, 10);
+				recipe.Register();
 			}
 		}
 	}

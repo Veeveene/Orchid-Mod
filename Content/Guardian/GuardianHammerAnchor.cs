@@ -331,6 +331,11 @@ namespace OrchidMod.Content.Guardian
 								if (guardian.GuardianItemCharge > 210f) guardian.GuardianItemCharge = 210f;
 							}
 
+							if (HammerItem.DualWarhammers && hammerItem.GetAnchors(owner)[1] == -1f)
+							{ // the paired hammer was somehow killed without this one, kill it for parity.
+								Projectile.Kill();
+							}
+
 							if (owner.whoAmI == Main.myPlayer)
 							{
 								if (!Main.mouseLeft && !OffHand)
