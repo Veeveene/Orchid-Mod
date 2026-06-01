@@ -162,7 +162,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Quarterstaves
 
 			if (Projectile.ai[1] < 25 && Projectile.ai[0] == 0)
 			{
-				SandGore.Add(new QuarterstaffProjectileSandGore(Projectile.Center));
+				SandGore.Add(new QuarterstaffProjectileSandGore(Projectile));
 			}
 		}
 
@@ -236,15 +236,20 @@ namespace OrchidMod.Content.Guardian.Projectiles.Quarterstaves
 			public bool Flip;
 			public float Alpha;
 
-			public QuarterstaffProjectileSandGore(Vector2 position)
+			public QuarterstaffProjectileSandGore(Projectile projectile)
 			{
 				Alpha = 0.75f;
 				Flip = Main.rand.NextBool();
 				Rotation = Main.rand.NextFloat(MathHelper.Pi);
 				Scale = Main.rand.NextFloat(0.5f, 1.2f);
 				Frame = Main.rand.Next(3);
-				Position = position;
+				Position = projectile.Center;
 				RotationAdditive = Main.rand.NextFloat(-0.025f, 0.025f);
+
+				if (projectile.ai[1] < 4)
+				{
+					Scale /= 4 - projectile.ai[1];
+				}
 			}
 
 			public void Update()

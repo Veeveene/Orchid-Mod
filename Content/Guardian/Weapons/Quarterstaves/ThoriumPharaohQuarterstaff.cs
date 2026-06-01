@@ -36,7 +36,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 				{
 					int damage = guardian.GetGuardianDamage(Item.damage);
 					Vector2 velocity = -Vector2.UnitX.RotatedBy((player.Center - Main.MouseWorld).ToRotation() + MathHelper.ToRadians(i * 10)) * Item.shootSpeed;
-					Projectile newProjectile = Projectile.NewProjectileDirect(Item.GetSource_FromAI(), player.Center, velocity, projectileType, damage, Item.knockBack, projectile.owner);
+					Projectile newProjectile = Projectile.NewProjectileDirect(Item.GetSource_FromAI(), player.Center + velocity * 2f, velocity, projectileType, damage, Item.knockBack, projectile.owner);
 					newProjectile.CritChance = (int)(player.GetCritChance<GuardianDamageClass>() + player.GetCritChance<GenericDamageClass>() + Item.crit);
 					newProjectile.ai[1] = Main.rand.Next(2);
 				}
