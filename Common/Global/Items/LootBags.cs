@@ -237,10 +237,12 @@ namespace OrchidMod.Common.Global.Items
 				case ItemID.CorruptFishingCrate:
 				case ItemID.CorruptFishingCrateHard:
 					if (EnableContentAlchemist) QuickSpawnItem<DemoniteCatalyst>(player, 1, 5);
+					QuickSpawnItem<CrimsonQuarterstaff>(player, 1, 5);
 					break;
 				case ItemID.CrimsonFishingCrate:
 				case ItemID.CrimsonFishingCrateHard:
 					if (EnableContentAlchemist) QuickSpawnItem<CrimtaneCatalyst>(player, 1, 5);
+					QuickSpawnItem<CorruptionQuarterstaff>(player, 1, 5);
 					break;
 				case ItemID.JungleFishingCrate:
 				case ItemID.JungleFishingCrateHard:
