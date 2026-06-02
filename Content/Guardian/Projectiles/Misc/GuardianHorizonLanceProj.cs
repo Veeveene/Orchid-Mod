@@ -159,6 +159,8 @@ namespace OrchidMod.Content.Guardian.Projectiles.Misc
 					return firstColor ? new Color(50, 85, 255) : new Color(150, 135, 55);
 				case "Beebo Greebo":
 					return firstColor ? new Color(130, 190, 30) : new Color(230, 40, 80);
+				case "KiarArt":
+					return firstColor ? new Color(123, 68, 223) : new Color(73, 218, 177);
 			}
 		}
 
