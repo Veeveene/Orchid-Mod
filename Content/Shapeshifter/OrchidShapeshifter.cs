@@ -285,6 +285,7 @@ namespace OrchidMod
 				Player.accRunSpeed = 3f; // clears hermes boots smoke
 				Player.ExtraJumps.Clear(); // clears double jump visuals
 				Player.dashDelay = 30; // clears dash visuals
+				Player.spikedBoots = 0;
 
 				if (Player.wingTime > 0)
 				{
