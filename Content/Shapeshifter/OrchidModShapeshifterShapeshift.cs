@@ -16,55 +16,102 @@ namespace OrchidMod.Content.Shapeshifter
 {
 	public abstract class OrchidModShapeshifterShapeshift : OrchidModShapeshifterItem
 	{
+		/// <summary>XXXXX</summary>
 		private static int AllowGFXOffY; // used to prevent visual issues with slopes
 
-		public int ShapeshiftWidth; // Hitbox Width
-		public int ShapeshiftHeight; // Hitbox Height
-		public bool AutoReuseLeft; // Whether left ability click casts repeatedly hy holding the input
-		public bool AutoReuseRight; // Whether right ability click casts repeatedly hy holding the input
-		public bool MeleeSpeedLeft; // Whether melee speed makes left click recover faster
-		public bool MeleeSpeedRight; // Whether melee speed makes right click recover faster
-		public bool GroundedWildshape; // Is the shapeshift supposedly a grounded creature? (affects the movement speed given by some items like magiluminescense)
-		public bool WebImmunity; // Movement is not affected by webs
-		public float GravityMult; // Fall speed multiplier
-		public ShapeshifterShapeshiftType ShapeshiftType; // Sage, Predator, Warden, Symbiote
-		public ShapeshifterShapeshiftTypeUI ShapeshiftTypeUI; // None, Count, Fill. Will attempt to draw an UI if this is != none
-		public List<int> ShapeshiftImmunities; // List of Buff IDs this specific wildshape is immune to
+		/// <summary>Wildshape hitbox Width. Defaults to 10.</summary>
+		public int ShapeshiftWidth;
+		/// <summary>Wildshape hitbox Height. Defaults to 10.</summary>
+		public int ShapeshiftHeight;
+		/// <summary>Whether the left click ability click casts repeatedly hy holding the input. Defaults to true.</summary>
+		public bool AutoReuseLeft;
+		/// <summary>Whether the right click ability click casts repeatedly hy holding the input. Defaults to false.</summary>
+		public bool AutoReuseRight;
+		/// <summary>Whether melee speed makes the left click ability recover faster. Defaults to true.</summary>
+		public bool MeleeSpeedLeft;
+		/// <summary>Whether melee speed makes the right click ability recover faster. Defaults to true.</summary>
+		public bool MeleeSpeedRight;
+		/// <summary>Is the shapeshift supposedly a grounded creature? (affects the movement speed given by some items like magiluminescense). Defaults to false.</summary>
+		public bool GroundedWildshape;
+		/// <summary>If true, movement is not affected by webs. Defaults to false.</summary>
+		public bool WebImmunity;
+		/// <summary>Fall speed multiplier for the wildshape. defaults to 1f.</summary>
+		public float GravityMult;
+		/// <summary>Which type is this wildshape (Sage, Predator, Warden, Symbiote)? Defaults to ShapeshifterShapeshiftType.None (don't use that)!</summary>
+		public ShapeshifterShapeshiftType ShapeshiftType;
+		/// <summary>Will attempt to draw a simple UI for the wildshape if this is != None. Defaults to ShapeshifterShapeshiftTypeUI.None. (None, Count, Fill).</summary>
+		public ShapeshifterShapeshiftTypeUI ShapeshiftTypeUI;
+		/// <summary>A list of Buff IDs this specific wildshape is immune to.</summary>
+		public List<int> ShapeshiftImmunities;
 
+		/// <summary>Can be overriden to replace the text on the left click tooltip line. Probably shouldn't be.</summary>
 		public virtual string LeftClickTooltip => Language.GetTextValue(Mod.GetLocalizationKey("Misc.ShapeshifterLeftClick")) + Language.GetTextValue(Mod.GetLocalizationKey("Items." + GetType().Name + ".LeftClick"));
+		/// <summary>Can be overriden to replace the text on the right click tooltip line. Probably shouldn't be.</summary>
 		public virtual string RightClickTooltip => Language.GetTextValue(Mod.GetLocalizationKey("Misc.ShapeshifterRightClick")) + Language.GetTextValue(Mod.GetLocalizationKey("Items." + GetType().Name + ".RightClick"));
+		/// <summary>Can be overriden to replace the text on the jump tooltip line. Probably shouldn't be.</summary>
 		public virtual string JumpTooltip => Language.GetTextValue(Mod.GetLocalizationKey("Misc.ShapeshifterJump")) + Language.GetTextValue(Mod.GetLocalizationKey("Items." + GetType().Name + ".Jump"));
+		/// <summary>Can be overriden to replace the text on the passive tooltip line. Probably shouldn't be.</summary>
 		public virtual string PassiveTooltip => Language.GetTextValue(Mod.GetLocalizationKey("Misc.ShapeshifterPassive")) + Language.GetTextValue(Mod.GetLocalizationKey("Items." + GetType().Name + ".Passive"));
+		/// <summary>Can be overriden to replace the text on wildshape type tooltip line. Probably shouldn't be.</summary>
 		public virtual string TypeTooltip => Language.GetTextValue(Mod.GetLocalizationKey("Misc.Shapeshifter" + ShapeshiftType.ToString()));
+		/// <summary>Path to this wildshape's textures. Probably shouldn't be overriden.</summary>
 		public virtual string TextureShapeshift => Texture + "_Shapeshift";
+		/// <summary>Path to this wildshape's icon texture. Probably shouldn't be overriden.</summary>
 		public virtual string TextureIcon => Texture + "_Icon";
+		/// <summary>Path to this wildshape's UI front texture. Probably shouldn't be overriden.</summary>
 		public virtual string TextureUI => Texture + "_UI";
+		/// <summary>Path to this wildshape's UI back texture. Probably shouldn't be overriden.</summary>
 		public virtual string TextureUIBack => Texture + "_UI_Back";
-		public virtual void ShapeshiftPreDraw(SpriteBatch spriteBatch, Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Vector2 drawPosition, Rectangle drawRectangle, SpriteEffects effect, Player player, Color lightColor) { } // Called before drawing the shapeshift anchor if it is going to be drawn
-		public virtual void ShapeshiftPostDraw(SpriteBatch spriteBatch, Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Vector2 drawPosition, Rectangle drawRectangle, SpriteEffects effect, Player player, Color lightColor) { } // Called after drawing the shapeshift anchor
-		public virtual bool ShapeshiftShouldDraw(Projectile projectile, Player player, ref Color lightColor) { return true; } // Called before drawing the shapeshift anchor, return false to prevent it
-		public virtual void ShapeshiftAnchorAI(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { } // Very important, this is the AI of the shapeshift
-		public virtual void ShapeshiftBuffs(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { } // Called after PostUpdateEquips, change player stats here if necessary
-		public virtual void ShapeshiftOnLeftClick(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { } // What happens after a successful left click input (only called on the shifter client)
-		public virtual void ShapeshiftOnRightClick(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { } // What happens after a successful right click input (only called on the shifter client)
-		public virtual void ShapeshiftOnJump(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { } // What happens after a successful jump input (only called on the shifter client)
-		public virtual void ShapeshiftAnchorOnShapeshift(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { } // Makes stuff happen when the player just transformed
-		public virtual void ShapeshiftAnchorOnShapeshiftFast(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { } // Called when the player "fast transforms", which happens if they haven't changed shapes in a few seconds. Override fields here for faster gameplay
-		public virtual void OnKillAnchor(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { } // Makes stuff happen when the anchor disappears (player leaves shapeshift form)
-		public virtual bool ShapeshiftCanLeftClick(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) => anchor.IsLeftClick && (Main.mouseLeftRelease || AutoReuseLeft) && anchor.CanLeftClick; // left click has priority over right click
+		/// <summary>Called before drawing the shapeshift anchor if it is going to be drawn.</summary>
+		public virtual void ShapeshiftPreDraw(SpriteBatch spriteBatch, Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Vector2 drawPosition, Rectangle drawRectangle, SpriteEffects effect, Player player, Color lightColor) { }
+		/// <summary>Called after drawing the shapeshift anchor</summary>
+		public virtual void ShapeshiftPostDraw(SpriteBatch spriteBatch, Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Vector2 drawPosition, Rectangle drawRectangle, SpriteEffects effect, Player player, Color lightColor) { }
+		/// <summary>Called before drawing the shapeshift anchor, return false to prevent it. Defaults to true;</summary>
+		public virtual bool ShapeshiftShouldDraw(Projectile projectile, Player player, ref Color lightColor) { return true; }
+		/// <summary>Called every frame as the main AI for this wildshape's Anchor projectile.</summary>
+		public virtual void ShapeshiftAnchorAI(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { }
+		/// <summary>Called after PostUpdateEquips, change player stats here if necessary.</summary>
+		public virtual void ShapeshiftBuffs(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { }
+		/// <summary>What happens after a successful left click input (only called on the owner's client).</summary>
+		public virtual void ShapeshiftOnLeftClick(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { }
+		/// <summary>What happens after a successful right click input (only called on the owner's client)</summary>
+		public virtual void ShapeshiftOnRightClick(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { }
+		/// <summary>What happens after a successful jump input (only called on the owner's client).</summary>
+		public virtual void ShapeshiftOnJump(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { }
+		/// <summary>Called right after the player transforms.</summary>
+		public virtual void ShapeshiftAnchorOnShapeshift(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { }
+		/// <summary>Called when the player "fast transforms", which happens if they haven't changed shapes in a few seconds. Override fields here for faster gameplay (eg: make the player starts with a double jump ready).</summary>
+		public virtual void ShapeshiftAnchorOnShapeshiftFast(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { }
+		/// <summary>Makes stuff happen when the anchor disappears (player leaves shapeshift form).</summary>
+		public virtual void OnKillAnchor(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { }
+		/// <summary>If true, will use this wildshape's left click ability (calls ShapeshiftOnRightClick).</summary>
+		public virtual bool ShapeshiftCanLeftClick(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) => anchor.IsLeftClick && (Main.mouseLeftRelease || AutoReuseLeft) && anchor.CanLeftClick;
+		/// <summary>If true, will use this wildshape's right click ability (calls ShapeshiftOnRightClick).</summary>
 		public virtual bool ShapeshiftCanRightClick(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) => anchor.IsRightClick && (Main.mouseRightRelease || AutoReuseRight) && anchor.CanRightClick && anchor.CanLeftClick && !Main.mouseLeft;
+		/// <summary>If true, will use this wildshape's jump ability (calls ShapeshiftOnJump). Defaults to a simple player.controlJump.</summary>
 		public virtual bool ShapeshiftCanJump(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) => player.controlJump;
-		public virtual bool ShapeshiftFreeDodge(Player.HurtInfo info, Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) => false; // Called when the player takes damage, return true to not take the hit (used for some effects like the tortoise block)
-		public virtual void ShapeshiftModifyHurt(ref Player.HurtModifiers modifiers, Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { } // Allows modifying damage taken while shapeshifted
-		public virtual void ShapeshiftOnHitByProjectile(Projectile damagingProjectile, Player.HurtInfo hurtInfo, Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { } // Called after taking a hit from a Projectile
-		public virtual void ShapeshiftOnHitByNPC(NPC damagingNPC, Player.HurtInfo hurtInfo, Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { } // Called after taking a hit from a NPC
-		public virtual void ShapeshiftOnHitByAnything(Player.HurtInfo hurtInfo, Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { } // Called after taking a hit from a Anything
-		public virtual void ShapeshiftOnHitNPC(NPC target, NPC.HitInfo hit, int damageDone, Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { } // Called upon dealing "contact" damage to a NPC with the shapeshift anchor
-		public virtual void ShapeshiftOnApplyBleed(NPC target, Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter, ShapeshifterBleed bleed) { } // Called after a bleed has been applied to a NPC
-		public virtual void ShapeshiftGetUIInfo(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter, ref int uiCount, ref int uiCountMax) { } // Called locally when drawing the UI. Will draw nbSymbols "clear" symbols on top of "nbSymbolsBack"
-		public virtual void SafeHoldItem(Player player) { } // ModItem.HoldItem(Player player)
-		public virtual Color GetColor(Color inputColor, Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter, bool isHairColor = false) => player.GetImmuneAlphaPure(inputColor, 0f); // used to draw the shapeshift anchor
-		public virtual Color GetColorGlow(Color lightColor, Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) => player.GetImmuneAlphaPure(Color.White, 0f); // used to draw the shapeshift anchor glowmask
+		/// <summary>Called when the player takes damage, return true to not take the hit (used for some effects like the tortoise block).</summary>
+		public virtual bool ShapeshiftFreeDodge(Player.HurtInfo info, Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) => false;
+		/// <summary>Allows modifying damage taken while shapeshifted.</summary>
+		public virtual void ShapeshiftModifyHurt(ref Player.HurtModifiers modifiers, Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { }
+		/// <summary>Called after taking a hit from a Projectile.</summary>
+		public virtual void ShapeshiftOnHitByProjectile(Projectile damagingProjectile, Player.HurtInfo hurtInfo, Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { }
+		/// <summary>Called after taking a hit from a NPC.</summary>
+		public virtual void ShapeshiftOnHitByNPC(NPC damagingNPC, Player.HurtInfo hurtInfo, Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { }
+		/// <summary>Called after taking a hit from a Anything.</summary>
+		public virtual void ShapeshiftOnHitByAnything(Player.HurtInfo hurtInfo, Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { }
+		/// <summary>Called upon dealing "contact" damage to a NPC with the shapeshift anchor.</summary>
+		public virtual void ShapeshiftOnHitNPC(NPC target, NPC.HitInfo hit, int damageDone, Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) { }
+		/// <summary>Called after a bleed has been applied to a NPC.</summary>
+		public virtual void ShapeshiftOnApplyBleed(NPC target, Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter, ShapeshifterBleed bleed) { }
+		/// <summary>Called locally when drawing the UI. Will draw uiCount "clear" symbols on top of uiCountMax "background" symbols.</summary>
+		public virtual void ShapeshiftGetUIInfo(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter, ref int uiCount, ref int uiCountMax) { }
+		/// <summary>ModItem.HoldItem(Player player).</summary>
+		public virtual void SafeHoldItem(Player player) { }
+		/// <summary>Color used to draw the shapeshift anchor. Defaults to player.GetImmuneAlphaPure(inputColor, 0f);</summary>
+		public virtual Color GetColor(Color inputColor, Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter, bool isHairColor = false) => player.GetImmuneAlphaPure(inputColor, 0f);
+		/// <summary>Color used to draw the shapeshift anchor glowmask. Defaults to player.GetImmuneAlphaPure(Color.White, 0f);</summary>
+		public virtual Color GetColorGlow(Color lightColor, Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter) => player.GetImmuneAlphaPure(Color.White, 0f);
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) => false;
 

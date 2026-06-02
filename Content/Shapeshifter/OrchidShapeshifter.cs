@@ -24,58 +24,103 @@ namespace OrchidMod
 		public int GetShapeshifterCrit(int additionalCritChance = 0) => (int)(Player.GetCritChance<ShapeshifterDamageClass>() + Player.GetCritChance<GenericDamageClass>() + additionalCritChance);
 		public float GetShapeshifterMeleeSpeed(float additionalMeleeSpeed = 0) => Player.GetTotalAttackSpeed(DamageClass.Melee) + ShapeshifterMeleeSpeedBonus + additionalMeleeSpeed;
 		public int GetShapeshifterHealing(float healing) => (int)Math.Ceiling(healing * ShapeshifterHealingBonus);
-		public static List<int> ShapeshifterIncompatibleProjectiles; // These projectile IDs will kill the wildshape anchor if they are owned by the local player 
-		public static List<int> ShapeshifterIncompatibleBuffs; // These buff IDs will kill the wildshape anchor if they affect the local player 
-		public static List<string> ShapeshifterAuthorizedDrawLayers; // Internal Names of DrawLayers that remain visibled when shapeshifted
+		/// <summary>These projectile IDs will kill the wildshape anchor if they are owned by the local player </summary>
+		public static List<int> ShapeshifterIncompatibleProjectiles;
+		/// <summary>These buff IDs will kill the wildshape anchor if they affect the local player </summary>
+		public static List<int> ShapeshifterIncompatibleBuffs;
+		/// <summary>Internal Names of DrawLayers that remain visible when shapeshifted. Should be considered when handling cross-mod compatiblity.</summary>
+		public static List<string> ShapeshifterAuthorizedDrawLayers;
 
 		// Can be edited by gear (Set effects, accessories, misc)
 
-		public int ShapeshifterPredatorBleedPotency = 0; // Damage per stack of the predator attack bleed
-		public int ShapeshifterPredatorBleedMaxStacks = 0; // Maximum stacks of the predator attack bleed 
+		/// <summary>Damage per stack of the predator attack bleed (applied by all attacks while shapeshifted into a predator). Be careful not to override this with a lower value. Defaults to 0.</summary>
+		public int ShapeshifterPredatorBleedPotency = 0;
+		/// <summary>Maximum stacks of the predator attack bleed (applied by all attacks while shapeshifted into a predator). Be careful not to override this with a lower value. Defaults to 0.</summary>
+		public int ShapeshifterPredatorBleedMaxStacks = 0;
+		/// <summary>Added to shapeshifter melee speed multipliers. Defaults to 0f.</summary>
 		public float ShapeshifterMeleeSpeedBonus = 0f;
-		public float ShapeshifterMoveSpeedBonus = 0f; // Additive, Scales logarithmically, can be used as shapeshifter-only alternative to player.movespeed, should be preferred
-		public float ShapeshifterMoveSpeedBonusFlat = 0f; // Additive, added to the final movespeed
-		public float ShapeshifterMoveSpeedBonusFinal = 1f; // Multiplicative, used before adding ShapeshifterMoveSpeedBonusFlat
-		public float ShapeshifterMoveSpeedBonusGrounded = 1f; // Multiplicative, used for effects that increase grounded speed like magiluminescence
-		public float ShapeshifterMoveSpeedBonusNotGrounded = 1f; // Multiplicative, used for effects that increase the movespeed of "flying" wildshapes, at all times
-		public float ShapeshifterMoveSpeedMiscOverride = 1f; // Multiplies other means of movement, like dashes. Should generally not be edited as dashes that should be affected by movespeed already are.
-		public float ShapeshifterMoveSpeedDecelerate = 1f; // Deceleration multiplier for shapeshifter movement. Allows making slippery surfaces, or dashes
-		public float ShapeshifterMoveSpeedAccelerate = 1f; // Acceleration multiplier for shapeshifter movement, does not modify top speed and should be used for stuff like slippery surfaces
-		public float ShapeshifterHealingBonus = 1f; // Multiplicative, affects the direct healing provided by shapeshifter effects
-		public float ShapeshifterJumpSpeed = 1f; // Multiplicative, affects most jumps for various wildshapes
-		public float ShapeshifterGravity = 1f; // Multiplicative, mostly used for movement in liquids
-		public float ShapeshifterMaxFallSpeed = 1f; // Multiplicative, mostly used for movement in liquids
+		/// <summary>Additive, scales logarithmically. Can be used as shapeshifter-only alternative to player.movespeed, should be preferred. Defaults to 0f.</summary>
+		public float ShapeshifterMoveSpeedBonus = 0f;
+		/// <summary>Additive, added to the final shapeshifter movespeed. Defaults to 0f.</summary>
+		public float ShapeshifterMoveSpeedBonusFlat = 0f;
+		/// <summary>Multiplicative, used before adding ShapeshifterMoveSpeedBonusFlat. Defaults to 1f.</summary>
+		public float ShapeshifterMoveSpeedBonusFinal = 1f;
+		/// <summary>Multiplicative, used for effects that increase grounded speed like magiluminescence. Defaults to 1f.</summary>
+		public float ShapeshifterMoveSpeedBonusGrounded = 1f;
+		/// <summary>Multiplicative, used for effects that increase the movespeed of "flying" wildshapes, at all times. Defaults to 1f.</summary>
+		public float ShapeshifterMoveSpeedBonusNotGrounded = 1f;
+		/// <summary>Multiplies the speed of other means of movement, like dashes. Should generally not be edited as dashes that should be affected by movespeed already are. Defaults to 1f.</summary>
+		public float ShapeshifterMoveSpeedMiscOverride = 1f;
+		/// <summary>Deceleration multiplier for shapeshifter movement. Allows making slippery surfaces, or dashes. Defaults to 1f.</summary>
+		public float ShapeshifterMoveSpeedDecelerate = 1f;
+		/// <summary>Acceleration multiplier for shapeshifter movement, does not modify top speed and should be used for stuff like slippery surfaces. Defaults to 1f.</summary>
+		public float ShapeshifterMoveSpeedAccelerate = 1f;
+		/// <summary>Multiplicative, affects the direct healing provided by shapeshifter effects (generally possesed by Warden wildshapes). Defaults to 1f.</summary>
+		public float ShapeshifterHealingBonus = 1f;
+		/// <summary>Multiplicative, affects most jumps for various wildshapes. Defaults to 1f.</summary>
+		public float ShapeshifterJumpSpeed = 1f;
+		/// <summary>Multiplicative, mostly used for movement in liquids. Defaults to 1f.</summary>
+		public float ShapeshifterGravity = 1f;
+		/// <summary>Multiplicative, mostly used for movement in liquids. Defaults to 1f.</summary>
+		public float ShapeshifterMaxFallSpeed = 1f;
 
-		public bool ShapeshifterSetHarpy = false; // Harpy armor set bonus (causes feathers to fall when attacking from above)
-		public bool ShapeshifterSetPyre = false; // Pyre  armor set bonus (creates flames around thep layer when dealing damage)
-		public bool ShapeshifterSageDamageOnHit = false; // if true, hitting new targets increase feral damage
-		public bool ShapeshifterSurvival = false; // survival potion bool
-		public bool ShapeshifterHairpin = false; // if true, uses the player hair color on some wildshapes
+		/// <summary>Harpy armor set bonus (causes feathers to fall when attacking from above)</summary>
+		public bool ShapeshifterSetHarpy = false;
+		/// <summary>Pyre armor set bonus (creates flames around thep layer when dealing damage)</summary>
+		public bool ShapeshifterSetPyre = false;
+		/// <summary>If true, hitting new targets while shapeshifted into a Sage increase feral damage (Deepwater Locket locket effect).</summary>
+		public bool ShapeshifterSageDamageOnHit = false;
+		/// <summary>Used by the survival potion.</summary>
+		public bool ShapeshifterSurvival = false;
+		/// <summary>If true, uses the player hair color on compatible wildshapes.</summary>
+		public bool ShapeshifterHairpin = false;
 
-		public bool ShapeshifterShawlFeather = false; // Used only for dash visuals
-		public bool ShapeshifterShawlWind = false; // Used only for dash visuals
-		public bool ShapeshifterShawlPhoenix = false; // Used only for dash visuals
+		/// <summary>Used only for dash visuals</summary>
+		public bool ShapeshifterShawlFeather = false;
+		/// <summary>Used only for dash visuals</summary>
+		public bool ShapeshifterShawlWind = false;
+		/// <summary>Used only for dash visuals</summary>
+		public bool ShapeshifterShawlPhoenix = false;
 
-		public float ShapeshifterHookDash = 0f; // Shawl accessories tree effect : provides a burst of velocity speed when shapeshifting
-		public int ShapeshifterHarness = 0; // Youxia Harness effect, this is the base damage of the projectile fired
+		/// <summary>Shawl accessories tree effect. If >0f, the player gains the ability to dash while shapeshifted.
+		/// This is the base speed at which the player will be launched. Be careful not to override this with a lower value. Defaults to 0f.</summary>
+		public float ShapeshifterHookDash = 0f;
+		/// <summary>Youxia Harness effect, this is the base damage of the projectile fired.</summary>
+		public int ShapeshifterHarness = 0;
 
 		// Dynamic gameplay and UI fields
 
-		public int ShapeshifterFastShapeshiftTimer = 300; // Shapeshifting sets this to 0. If >300, then transforming becomes "fast", reducing cooldowns to make gameplay more fluid
-		public int ShapeshifterSageFoxSpeed = 0;
+		/// <summary>Goes up by 1 every frame, up to 300. Shapeshifting removes 300 from this value. If equal to 300 when shapeshifter, reduces cooldowns for a more smooth gameplay.
+		/// If below 0 while shapeshifted, applied the Shapeshifting Sickness debuff, reducing various stats.</summary>
+		public int ShapeshifterFastShapeshiftTimer = 300;
+		/// <summary>Used by the Ice Fox wildshape to increase speed upon transforming.</summary>
+		public int ShapeshifterPredatorFoxSpeed = 0;
+		/// <summary>Used by the Deepwater Locket effect (ShapeshifterSageDamageOnHit)</summary>
 		public int ShapeshifterSageDamageOnHitCount = 0;
+		/// <summary>Used by the Deepwater Locket effect (ShapeshifterSageDamageOnHit)</summary>
 		public int ShapeshifterSageDamageOnHitTimer = 0;
+		/// <summary>Used by the Deepwater Locket effect (ShapeshifterSageDamageOnHit)</summary>
 		public int[] ShapeshifterSageDamageOnHitTargets;
+		/// <summary>Used to spawn the Harpy set feathers (ShapeshifterShawlFeather)</summary>
 		public int ShapeshifterSetHarpyDamagePool = 0;
+		/// <summary>Used as a time by various shapeshifter armor sets.</summary>
 		public int ShapeshifterSetTimer = 0;
+		/// <summary>Used to spawn the Pyre set flames (ShapeshifterSetPyre)</summary>
 		public int ShapeshifterSetPyreDamagePool = 0;
-		public int ShapeshifterShawlCooldown = 0; // cooldown for the shawl accessory dashes
-		public int ShapeshifterHookInputTimer = 0; // how long has the player been holding the dash key?
-		public int ShapeshifterNoDecelerationTimer = 0; // lowers deceleration while >0
-		public bool ShapeshifterHookDashSync = false; // synced so other clients can display what happens at the start of a hook dash
-		public int ShapeshifterUIDashTimer = 0; // should be set to 30, used to display an arrow when the dash is available
-		public int ShapeshifterUITransformationTimer = 0; // should be set to 30, used to display a fox icon when a transformation is ready or the player transforms too much
-		public int ShapeshifterScrollTransformationBuffer = 0; // prevents transforming while the player is scrolling
+		/// <summary>Cooldown for the shawl accessory dashes</summary>
+		public int ShapeshifterShawlCooldown = 0;
+		/// <summary>How long has the player been holding the dash key?</summary>
+		public int ShapeshifterHookInputTimer = 0;
+		/// <summary>Lowers deceleration while >0. Used by dashes.</summary>
+		public int ShapeshifterNoDecelerationTimer = 0;
+		/// <summary>Synced so other clients can display what happens at the start of a hook dash</summary>
+		public bool ShapeshifterHookDashSync = false;
+		/// <summary>Should be set to 30, used to display an arrow when the dash is available</summary>
+		public int ShapeshifterUIDashTimer = 0;
+		/// <summary>Should be set to 30, used to display a fox icon when a transformation is ready or the player transforms too much</summary>
+		public int ShapeshifterUITransformationTimer = 0;
+		/// <summary>Prevents transforming while the player is scrolling</summary>
+		public int ShapeshifterScrollTransformationBuffer = 0;
 		/// <summary>Used to quickly transform while no mount is equipped. Resets to false every frame is Player.controlMount is not true.</summary>
 		public bool ShapeshifterControlMountRelease = false;
 
@@ -335,10 +380,10 @@ namespace OrchidMod
 
 			// Misc Effects that should be called before Shapeshifter Core mechanics (eg : stat changes that should affect the shapeshifted player)
 
-			if (ShapeshifterSageFoxSpeed > 0)
+			if (ShapeshifterPredatorFoxSpeed > 0)
 			{
-				ShapeshifterSageFoxSpeed--;
-				Player.moveSpeed += ShapeshifterSageFoxSpeed * 0.003f;
+				ShapeshifterPredatorFoxSpeed--;
+				Player.moveSpeed += ShapeshifterPredatorFoxSpeed * 0.003f;
 			}
 
 			if (ShapeshifterSageDamageOnHitTimer > 0)
@@ -601,9 +646,9 @@ namespace OrchidMod
 
 			// Misc Effects that should be called after shapeshifter core mechanics (eg: that depend of the player width and height to be correct)
 
-			if (ShapeshifterSageFoxSpeed > 0)
+			if (ShapeshifterPredatorFoxSpeed > 0)
 			{
-				if (Main.rand.NextBool((int)(30 - ShapeshifterSageFoxSpeed / 6f) + 1))
+				if (Main.rand.NextBool((int)(30 - ShapeshifterPredatorFoxSpeed / 6f) + 1))
 				{
 					Dust dust = Dust.NewDustDirect(Player.position, Player.width, Player.height, DustID.IceTorch, Scale: Main.rand.NextFloat(1f, 1.4f));
 					dust.noGravity = true;

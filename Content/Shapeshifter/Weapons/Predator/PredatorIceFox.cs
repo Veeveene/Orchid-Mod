@@ -80,7 +80,7 @@ namespace OrchidMod.Content.Shapeshifter.Weapons.Predator
 
 		public override void ShapeshiftAnchorOnShapeshift(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter)
 		{
-			shapeshifter.ShapeshifterSageFoxSpeed = 180;
+			shapeshifter.ShapeshifterPredatorFoxSpeed = 180;
 
 			anchor.Frame = 1;
 			anchor.Timespent = 0;
@@ -98,7 +98,7 @@ namespace OrchidMod.Content.Shapeshifter.Weapons.Predator
 
 		public override void OnKillAnchor(Projectile projectile, ShapeshifterShapeshiftAnchor anchor, Player player, OrchidShapeshifter shapeshifter)
 		{
-			shapeshifter.ShapeshifterSageFoxSpeed = 180;
+			shapeshifter.ShapeshifterPredatorFoxSpeed = 180;
 
 			for (int i = 0; i < 5; i++)
 			{
