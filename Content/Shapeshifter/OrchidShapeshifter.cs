@@ -76,6 +76,8 @@ namespace OrchidMod
 		public int ShapeshifterUIDashTimer = 0; // should be set to 30, used to display an arrow when the dash is available
 		public int ShapeshifterUITransformationTimer = 0; // should be set to 30, used to display a fox icon when a transformation is ready or the player transforms too much
 		public int ShapeshifterScrollTransformationBuffer = 0; // prevents transforming while the player is scrolling
+		/// <summary>Used to quickly transform while no mount is equipped. Resets to false every frame is Player.controlMount is not true.</summary>
+		public bool ShapeshifterControlMountRelease = false;
 
 		public override void HideDrawLayers(PlayerDrawSet drawInfo)
 		{
@@ -240,6 +242,11 @@ namespace OrchidMod
 					soundStyle.Pitch += 1f;
 					SoundEngine.PlaySound(soundStyle, Player.Center);
 				}
+			}
+
+			if (!Player.controlMount)
+			{
+				ShapeshifterControlMountRelease = true;
 			}
 
 			// Reset gameplay fields
@@ -567,6 +574,29 @@ namespace OrchidMod
 				Player.height = Player.defaultHeight;
 				Shapeshift = null;
 				ShapeshiftAnchor = null;
+			}
+
+			if (Player.controlMount && ShapeshifterControlMountRelease && Player.QuickMount_GetItemToUse() == null)
+			{ // attempts to shapeshift the player into the first wildshape in their hotbar (by using it normally) if they press the mount key while not having a mount equipped.
+				if (IsShapeshifted)
+				{ // unshifts the player
+					ShapeshifterControlMountRelease = false;
+					ShapeshiftAnchor.NeedKill = true;
+				}
+				else if (Player.ItemTimeIsZero)
+				{
+					for (int i = 0 ; i < 9; i++)
+					{
+						Item item = Player.inventory[i];
+						if (item.type != ItemID.None && item.ModItem != null && item.ModItem is OrchidModShapeshifterShapeshift)
+						{
+							ShapeshifterControlMountRelease = false;
+							Player.selectedItem = i;
+							Player.controlUseItem = true;
+							Player.ItemCheck();
+						}
+					}
+				}
 			}
 
 			// Misc Effects that should be called after shapeshifter core mechanics (eg: that depend of the player width and height to be correct)
