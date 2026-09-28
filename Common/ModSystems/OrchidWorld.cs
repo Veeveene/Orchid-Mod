@@ -36,6 +36,7 @@ using OrchidMod.Content.Shapeshifter.Weapons.Symbiote;
 using OrchidMod.Content.Shapeshifter.Accessories;
 using OrchidMod.Content.Shapeshifter.Misc;
 using OrchidMod.Content.Guardian.Weapons.Katars;
+using Microsoft.Xna.Framework;
 
 namespace OrchidMod.Common.ModSystems
 {
@@ -125,32 +126,129 @@ namespace OrchidMod.Common.ModSystems
 			}
 		}
 
-		private void placeVerbena()
+		private void PlaceVerbena()
 		{
-			int amount = (int)(Main.maxTilesX * Main.maxTilesY * 0.0000004f);
-			int failsafe = 0;
-			while(failsafe < 40000 && amount > 0)
+			int amount = (int)(Main.maxTilesX * Main.maxTilesY * 0.0000004);
+			int attempts = 0;
+			int maxAttempts = 40000;
+			if (WorldGen.noTrapsWorldGen)
 			{
-				failsafe++;
-				int x = WorldGen.genRand.Next(0, Main.maxTilesX);
-				int y = WorldGen.genRand.Next((int)GenVars.rockLayer, Main.maxTilesY);
+				amount *= 4;
+				maxAttempts *= 4;
+			}
 
-				if (!Framing.GetTileSafely(x, y).HasTile && !Framing.GetTileSafely(x + 1, y).HasTile &&
-				!Framing.GetTileSafely(x, y - 1).HasTile && !Framing.GetTileSafely(x + 1, y - 1).HasTile)
+			bool altEnabled = WorldGen.drunkWorldGen || WorldGen.remixWorldGen;
+			bool altOnly = altEnabled && !WorldGen.notTheBees && !WorldGen.noTrapsWorldGen;
+
+			Rectangle range = new(0, (int)GenVars.rockLayer, (int)(Main.maxTilesX * 0.4f), (int)(Main.UnderworldLayer - GenVars.rockLayer));
+			if (altEnabled || WorldGen.notTheBees)
+			{
+				range.X = (int)(Main.maxTilesX * 0.05f);
+				range.Width = (int)(Main.maxTilesX * 0.9f);
+				maxAttempts *= 16;
+
+				if (WorldGen.notTheBees)
 				{
-					if (Framing.GetTileSafely(x, y + 1).TileType == 60 && Framing.GetTileSafely(x + 1, y + 1).TileType == 60)
-					{
+					range.Y -= (int)(Main.maxTilesY * 0.2f);
+					amount *= 4;
+				}
+			}
+			else if (GenVars.JungleX < Main.maxTilesX / 2)
+				range.X = (int)(Main.maxTilesX * 0.1f);
+			else
+				range.X = (int)(Main.maxTilesX * 0.6f);
 
-						for (int w = 0; w < 2; w++)
+			while(attempts < maxAttempts && amount > 0)
+			{
+				retry:
+				attempts++;
+				int x = WorldGen.genRand.Next(range.Left, range.Right);
+				int y = WorldGen.genRand.Next(range.Top, range.Bottom);
+				while (Main.tile[x, y].TileType == TileID.Mud)
+				{
+					y--;
+					if (y < range.Top) goto retry;
+				}
+
+				Tile tile = Framing.GetTileSafely(x, y);
+				if (tile.HasTile)
+				{
+					if (!altOnly && tile.TileType == TileID.PlantDetritus)
+					{
+						if (tile.LiquidAmount >= 255 && attempts < 10000) goto retry;
+						if (tile.TileFrameY % 36 == 0) y += 1;
+						if (tile.TileFrameY >= 36)
 						{
-							for (int q = 0; q < 2; q++)
+							if (tile.TileFrameX % 36 == 0) x += 1;
+						}
+						else
+						{
+							if (tile.TileFrameX % 54 == 0) x += 1;
+							else if (tile.TileFrameX % 54 == 18) x += WorldGen.genRand.Next(2);
+						}
+					}
+					else if (!altEnabled && attempts < 20000) goto retry;
+					else if (!altOnly && tile.TileType == TileID.JungleGrass)
+					{
+						y--;
+					}
+					else if (tile.TileType != TileID.JunglePlants && tile.TileType != TileID.JunglePlants2)
+					{
+						if (altEnabled)
+						{
+							if (tile.TileType == TileID.MushroomGrass)
 							{
-								Tile tile = Framing.GetTileSafely(x + w, y - q);
-								tile.ClearTile();
+								y--;
+							}
+							else if (tile.TileType != TileID.MushroomPlants) goto retry;
+							tile = Framing.GetTileSafely(x - 1, y + 1);
+							if (!tile.HasTile || tile.TileType != TileID.MushroomGrass) goto retry;
+							for (int i = 0; i < 6; i++)
+							{
+								tile = Framing.GetTileSafely(x - i % 2, y - i / 2);
+								if (tile.HasTile && !TileID.Sets.BreakableWhenPlacing[tile.TileType])
+									goto retry;
+							}
+							WorldGen.SlopeTile(x, y + 1);
+							WorldGen.SlopeTile(x - 1, y + 1);
+							WorldGen.PlaceTile(x, y, TileType<VerveineAltQuarterstaffTile>());
+							WorldGen.SquareTileFrame(x, y);
+							tile = Framing.GetTileSafely(x, y);
+							if (tile.TileType == TileType<VerveineAltQuarterstaffTile>())
+							{
+								amount--;
+								if (WorldGen.tenthAnniversaryWorldGen)
+								{
+									byte color = (byte)WorldGen.genRand.Next(1, 13);
+									for (int i = 0; i < 6; i++)
+									{
+										tile = Framing.GetTileSafely(x - i % 2, y - i / 2);
+										tile.TileColor = color;
+									}
+								}
+								//debug
+								//WorldGen.PlaceTile(50 + amount, 50, TileID.ShroomitePlating);
 							}
 						}
-						WorldGen.PlaceTile(x, y, TileType<VerveineQuarterstaffTile>());
+						goto retry;
+					}
+					if (altOnly) goto retry;
+					tile = Framing.GetTileSafely(x - 1, y + 1);
+					if (!tile.HasTile || tile.TileType != TileID.JungleGrass) goto retry;
+					for (int i = 0; i < 6; i++)
+					{
+						tile = Framing.GetTileSafely(x - i % 2, y - i / 2);
+						if (tile.HasTile && !TileID.Sets.BreakableWhenPlacing[tile.TileType])
+							goto retry;
+					}
+					WorldGen.SlopeTile(x, y + 1);
+					WorldGen.SlopeTile(x - 1, y + 1);
+					WorldGen.PlaceTile(x, y, TileType<VerveineQuarterstaffTile>());
+					if (tile.TileType == TileType<VerveineQuarterstaffTile>())
+					{
 						amount--;
+						//debug
+						//WorldGen.PlaceTile(50 + amount, 50, TileID.ChlorophyteBrick);
 					}
 				}
 			}
@@ -163,26 +261,26 @@ namespace OrchidMod.Common.ModSystems
 			// tasks.Insert(ShiniesIndex + 1, new PassLegacy("Static Quartz", placeQuartz));
 			// }
 
-			int LivingTreesIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Living Trees"));
-			if (LivingTreesIndex != -1)
+			int JunglePlantsIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Jungle Plants"));
+			if (JunglePlantsIndex != -1)
 			{
-				tasks.Insert(LivingTreesIndex + 1, new PassLegacy("Post Terrain", delegate (GenerationProgress progress, GameConfiguration gameConfiguration)
+				tasks.Insert(JunglePlantsIndex + 1, new PassLegacy("Orchid Mod: More Jungle Plants", delegate (GenerationProgress progress, GameConfiguration gameConfiguration)
 				{
 					if (ModContent.GetInstance<OrchidServerConfig>().EnableContentAlchemist)
 					{
-						progress.Message = "Generating Jungle Lilies";
+						progress.Message = "Orchid Mod: Generating Jungle Lilies";
 						placeLilies();
 					}
 
-					progress.Message = "Generating Farterstaves";
-					placeVerbena();
+					progress.Message = "Orchid Mod: Generating Farterstaves";
+					PlaceVerbena();
 				}));
 			}
 
 			int ChestsIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Surface Chests"));
 			if (ChestsIndex != -1)
 			{
-				tasks.Insert(ChestsIndex + 1, new PassLegacy("Post Terrain", delegate (GenerationProgress progress, GameConfiguration gameConfiguration)
+				tasks.Insert(ChestsIndex + 1, new PassLegacy("Orchid Mod: Biome Chests", delegate (GenerationProgress progress, GameConfiguration gameConfiguration)
 				{
 					// Get dungeon size field infos. These fields are private for some reason
 					int MinX = GenVars.dMinX + 25;

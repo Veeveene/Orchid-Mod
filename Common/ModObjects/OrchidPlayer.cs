@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework;
 using OrchidMod.Content.General.Projectiles;
 using OrchidMod.Content.Guardian;
+using OrchidMod.Content.Guardian.Projectiles.Quarterstaves;
+using OrchidMod.Content.Guardian.Weapons.Quarterstaves;
 using OrchidMod.Content.Guardian.Weapons.Shields;
 using Terraria;
 using Terraria.Audio;
@@ -166,6 +168,27 @@ namespace OrchidMod.Common.ModObjects
 
 					SmartCursorCheck = false;
 					SmartCursorTrigger = false;
+				}
+			}
+
+			if (Main.myPlayer == Player.whoAmI)
+			{
+				Point pos = new((int)(Player.Center.X / 16f), (int)(Player.position.Y + Player.height) / 16 - 1);
+				if (Main.tile[pos].TileType == ModContent.TileType<VerveineQuarterstaffTile>() && !Player.HasBuff(BuffID.Stinky) && Main.rand.NextBool(30))
+				{
+					Tile tile = Main.tile[pos];
+					Vector2 origin = new(pos.X * 16 + 16 - tile.TileFrameX, pos.Y * 16 + 16 - tile.TileFrameY);
+					Projectile proj = Projectile.NewProjectileDirect(Player.GetSource_TileInteraction(pos.X, pos.Y), origin, Vector2.Zero, ModContent.ProjectileType<VerveineFart>(), 40, 2, Main.myPlayer, 0, Main.getGoodWorld && Main.rand.NextBool(2) ? 1 : 0);
+					proj.hostile = true;
+					proj.trap = true;
+				}
+				if (Main.tile[pos].TileType == ModContent.TileType<VerveineAltQuarterstaffTile>() && !Player.HasBuff(BuffID.Slimed) && Main.rand.NextBool(30))
+				{
+					Tile tile = Main.tile[pos];
+					Vector2 origin = new(pos.X * 16 + 16 - tile.TileFrameX, pos.Y * 16 + 16 - tile.TileFrameY);
+					Projectile proj = Projectile.NewProjectileDirect(Player.GetSource_TileInteraction(pos.X, pos.Y), origin, Vector2.Zero, ModContent.ProjectileType<VerveineFart>(), 40, 2, Main.myPlayer, 1, Main.getGoodWorld && Main.rand.NextBool(2) ? 1 : 0);
+					proj.hostile = true;
+					proj.trap = true;
 				}
 			}
 		}
