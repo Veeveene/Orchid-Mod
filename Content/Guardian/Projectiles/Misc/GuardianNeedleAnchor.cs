@@ -554,13 +554,10 @@ namespace OrchidMod.Content.Guardian.Projectiles.Misc
 			}
 		}
 
-		public override void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+		public override void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers, Player player, OrchidGuardian guardian)
 		{
 			if (GuardianItem.ModItem is GuardianNeedle guardianItem)
 			{
-				Player player = Owner;
-				OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
-
 				if (target.position.Y > player.Center.Y && Math.Abs(player.velocity.Y) != 0f)
 				{
 					player.velocity.Y = -7f * player.moveSpeed + (target.velocity.Y < 0 ? target.velocity.Y : 0);

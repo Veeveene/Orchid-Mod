@@ -592,9 +592,8 @@ namespace OrchidMod.Content.Guardian
 			hitbox.Height += hitboxOffset * 2;
 		}
 
-		public override void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+		public override void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers, Player player, OrchidGuardian guardian)
 		{
-			OrchidGuardian guardian = Main.LocalPlayer.GetModPlayer<OrchidGuardian>();
 			bool block = BlockDuration != 0;
 			bool swing = Projectile.ai[1] < 0;
 			if (HammerItem != null && HammerItem.ModifyHit(Owner, guardian, Projectile, target, ref modifiers, Projectile.ai[1] < 0 ? guardian.GuardianItemCharge >= 180f : WeakThrow, swing, block, FirstHit))

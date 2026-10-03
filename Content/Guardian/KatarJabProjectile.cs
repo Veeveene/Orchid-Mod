@@ -90,9 +90,8 @@ namespace OrchidMod.Content.Guardian
 			}
 		}
 
-		public override void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+		public override void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers, Player owner, OrchidGuardian guardian)
 		{
-			var owner = Main.player[Projectile.owner];
 			KatarItem.KatarModifyHitNPC(owner, owner.GetModPlayer<OrchidGuardian>(), target, Projectile, ref modifiers, ChargedHit);
 			if (ChargedHit) 
 			{

@@ -37,7 +37,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Katars
 			return false;
 		}
 
-		public override void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+		public override void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers, Player player, OrchidGuardian guardian)
 		{
 			if (!HitNPCs.Contains(target.whoAmI))
 			{

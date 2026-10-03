@@ -59,7 +59,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Quarterstaves
 			return base.CanHitNPC(target);
 		}
 
-		public override void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+		public override void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers, Player player, OrchidGuardian guardian)
 		{
 			// Damage dealt is divided by the amount of hits the enemy has already taken from the same attack, (100% -> 50% -> 25% -> 25%) Can nonly hit up to 4 times for 200% total damage
 

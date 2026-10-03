@@ -10,7 +10,7 @@ namespace OrchidMod.Content.Guardian
 	public abstract class OrchidModGuardianProjectile : OrchidModProjectile
 	{
 		public virtual void SafeOnHitNPC(NPC target, NPC.HitInfo hit, int damageDone, Player player, OrchidGuardian guardian) { }
-		public virtual void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) { }
+		public virtual void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers, Player player, OrchidGuardian guardian) { }
 		/// <summary>Set to false in ModifyHitNPC when this projectile or specific anchor attack hits an enemy a second time. Flagged before most hit functions.</summary>
 		/// <remarks>As the name suggests, this will be true on only the first time hit functions are called. Useful for effects that are only supposed to trigger once per projectile, such as resource generation.</remarks>
 		public bool FirstHit;
@@ -49,7 +49,9 @@ namespace OrchidMod.Content.Guardian
 		{
 			FirstHit = NotHitYet;
 			NotHitYet = false;
-			SafeModifyHitNPC(target, ref modifiers);
+			Player player = Main.player[Projectile.owner];
+			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			SafeModifyHitNPC(target, ref modifiers, player, guardian);
 			OrchidGlobalNPC modTarget = target.GetGlobalNPC<OrchidGlobalNPC>();
 			if (!modTarget.GuardianHit)
 			{

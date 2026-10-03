@@ -694,12 +694,10 @@ namespace OrchidMod.Content.Guardian
 			}
 		}
 
-		public override void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+		public override void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers, Player player, OrchidGuardian guardian)
 		{
 			if (QuarterstaffItem.ModItem is OrchidModGuardianQuarterstaff guardianItem)
 			{
-				Player player = Owner;
-				OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
 				if ((Projectile.ai[0] > 1f && guardianItem.SwingStyle == 1 && DamageReset == 0) || (Projectile.ai[0] < 0f && guardianItem.JabStyle == 1 && DamageReset == 0))
 					modifiers.Knockback *= 0.1f; //90% reduced kb on initial hit of double swing
 				if (Projectile.ai[2] < 0f && DamageReset < guardianItem.CounterHits)

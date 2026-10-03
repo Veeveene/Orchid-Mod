@@ -27,7 +27,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Quarterstaves
 			Projectile.alpha = 255;
 		}
 
-		public override void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+		public override void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers, Player player, OrchidGuardian guardian)
 		{
 			modifiers.HitDirectionOverride = target.velocity.X > 0 ? -1 : 1;
 		}
