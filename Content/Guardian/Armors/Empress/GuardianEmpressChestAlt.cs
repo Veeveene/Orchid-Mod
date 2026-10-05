@@ -1,3 +1,4 @@
+using OrchidMod.Content.General.Armor.Vanity;
 using OrchidMod.Content.Guardian.Misc;
 using Terraria;
 using Terraria.ID;
@@ -15,6 +16,7 @@ namespace OrchidMod.Content.Guardian.Armors.Empress
 		public override void SetStaticDefaults()
 		{
 			SetBonusText = this.GetLocalization("SetBonus");
+			ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<EmpressPlateChest>();
 		}
 
 		public override void SafeSetDefaults()

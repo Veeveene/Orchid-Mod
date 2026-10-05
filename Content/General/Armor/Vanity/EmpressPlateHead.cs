@@ -1,3 +1,4 @@
+using OrchidMod.Content.Guardian.Misc;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -15,6 +16,15 @@ namespace OrchidMod.Content.General.Armor.Vanity
 			Item.rare = ItemRarityID.Blue;
 			Item.vanity = true;
 			ArmorIDs.Head.Sets.DrawHead[Item.headSlot] = false;
+		}
+
+		public override void AddRecipes()
+		{
+			var recipe = CreateRecipe();
+			recipe.AddIngredient<GuardianEmpressMaterial>(8);
+			recipe.AddTile(TileID.MythrilAnvil);
+			recipe.AddCondition(Condition.InGraveyard);
+			recipe.Register();
 		}
 	}
 }

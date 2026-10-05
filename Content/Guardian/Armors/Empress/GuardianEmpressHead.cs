@@ -1,3 +1,4 @@
+using OrchidMod.Content.General.Armor.Vanity;
 using OrchidMod.Content.Guardian.Misc;
 using Terraria;
 using Terraria.ID;
@@ -9,6 +10,12 @@ namespace OrchidMod.Content.Guardian.Armors.Empress
 	[AutoloadEquip(EquipType.Head)]
 	public class GuardianEmpressHead : OrchidModGuardianEquipable
 	{
+		public override void SetStaticDefaults()
+		{
+			ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<EmpressPlateHead>();
+			ArmorIDs.Head.Sets.DrawFullHair[Item.headSlot] = true;
+		}
+
 		public override void SafeSetDefaults()
 		{
 			Item.width = 26;
@@ -16,7 +23,6 @@ namespace OrchidMod.Content.Guardian.Armors.Empress
 			Item.value = Item.sellPrice(0, 4, 30, 0);
 			Item.rare = ItemRarityID.Yellow;
 			Item.defense = 24;
-			ArmorIDs.Head.Sets.DrawFullHair[Item.headSlot] = true;
 		}
 
 		public override void UpdateEquip(Player player)

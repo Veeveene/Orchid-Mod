@@ -1,3 +1,4 @@
+using OrchidMod.Content.General.Armor.Vanity;
 using OrchidMod.Content.Guardian.Misc;
 using Terraria;
 using Terraria.ID;
@@ -8,6 +9,11 @@ namespace OrchidMod.Content.Guardian.Armors.Empress
 	[AutoloadEquip(EquipType.Legs)]
 	public class GuardianEmpressLegs : OrchidModGuardianEquipable
 	{
+		public override void SetStaticDefaults()
+		{
+			ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<EmpressPlateLegs>();
+		}
+
 		public override void SafeSetDefaults()
 		{
 			Item.width = 24;

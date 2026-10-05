@@ -77,13 +77,6 @@ namespace OrchidMod.Common.Global.NPCs
 						shop.Add(ItemType<GuideTorches>(), OrchidConditions.EnableContentShapeshifter);
 					}
 					break;
-				case NPCID.Clothier:
-					{
-						shop.Add(ItemType<EmpressPlateHead>(), [Condition.DownedEmpressOfLight, Condition.InHallow]);
-						shop.Add(ItemType<EmpressPlateChest>(), [Condition.DownedEmpressOfLight, Condition.InHallow]);
-						shop.Add(ItemType<EmpressPlateLegs>(), [Condition.DownedEmpressOfLight, Condition.InHallow]);
-					}
-					break;
 				case NPCID.BestiaryGirl:
 					{
 						shop.Add(ItemType<ShapeshifterShampoo>(), [Condition.BestiaryFilledPercent(30), OrchidConditions.EnableContentShapeshifter]);
