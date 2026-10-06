@@ -379,6 +379,12 @@ namespace OrchidMod.Common.Global.NPCs
 						npcLoot.Add(ItemDropRule.Common(ItemType<ToyWarhammers>(), 5));
 					}
 					break;
+				case NPCID.Vampire:
+				case NPCID.VampireBat:
+					{
+						npcLoot.Add(ItemDropRule.NormalvsExpert(ItemType<VampireWarhammer>(), 30, 15));
+						break;
+					}
 				default:
 					break;
 			}

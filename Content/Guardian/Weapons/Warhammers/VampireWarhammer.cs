@@ -15,7 +15,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			Item.height = 38;
 			Item.value = Item.sellPrice(0, 5, 0, 0);
 			Item.rare = ItemRarityID.Pink;
-			Item.UseSound = SoundID.DD2_MonkStaffSwing;
+			Item.UseSound = SoundID.DD2_DarkMageHealImpact;
 			Item.knockBack = 6f;
 			Item.shootSpeed = 10f;
 			Item.damage = 190;
@@ -23,8 +23,9 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			Range = 20;
 			GuardStacks = 1;
 			ReturnSpeed = 0.75f;
+			SwingSpeed = 1.5f;
 			SwingChargeGain = 1.5f;
-			BlockDuration = 45;
+			BlockDuration = 40;
 			BlockDamage = 1;
 			HitCooldown = 20;
 		}
@@ -36,8 +37,13 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			{
 				int dir = projectile.velocity.X > 0 ? 1 : -1;
 
-				if (dur < BlockDuration - 1 && dur > 0)
-					projectile.velocity = Vector2.Lerp(projectile.velocity, projectile.oldVelocity, dur / 40f);
+				if (dur > 0)
+				{
+					if (dur < BlockDuration)
+						projectile.velocity = Vector2.Lerp(projectile.velocity, projectile.oldVelocity, dur / 40f);
+					else if (dur < (int)(BlockDuration * guardian.GuardianBlockDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration()) - 1)
+						projectile.velocity = projectile.oldVelocity;
+				}
 
 				for (int i = 0; i < 4; i++)
 				{
@@ -69,6 +75,12 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 					dust = Dust.NewDustPerfect(interPos - dustOffs, DustID.BlueFairy, Scale: 0.25f + speed * 0.02f, Alpha: 255);
 					dust.velocity = interVel * 0.05f;
 				}
+
+				if (projectile.soundDelay <= 0)
+				{
+					SoundEngine.PlaySound(SoundID.Item7.WithVolumeScale(0.6f), projectile.Center);
+					projectile.soundDelay = 10;
+				}
 			}
 		}
 
@@ -88,6 +100,8 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 				anchor.ResetHitStatus(true);
 				projectile.ResetLocalNPCHitImmunity();
 				projectile.localNPCHitCooldown = HitCooldown;
+				SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact, projectile.Center);
+				SoundEngine.PlaySound(SoundID.Item105.WithVolumeScale(0.6f), projectile.Center);
 				giveResource = true;
 				return false;
 			}
@@ -96,9 +110,10 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 
 		public override void OnBlockThrow(Player player, OrchidGuardian guardian, Projectile projectile)
 		{
-			giveResource = false;
 			//one frame shorter after onblockthrow is triggered to sync up with normal throws
 			((GuardianHammerAnchor)projectile.ModProjectile).BlockDuration--;
+			SoundEngine.PlaySound(SoundID.Item105.WithVolumeScale(0.6f), projectile.Center);
+			giveResource = false;
 		}
 
 		public override void OnBlockHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit)
