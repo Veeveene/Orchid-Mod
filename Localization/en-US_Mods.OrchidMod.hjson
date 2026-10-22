@@ -3464,6 +3464,11 @@ Items: {
 		DisplayName: Mahogany Greathammer
 		Tooltip: ""
 	}
+
+	CoznixGreathammer: {
+		Tooltip: ""
+		DisplayName: Coznix Greathammer
+	}
 }
 
 NPCs: {

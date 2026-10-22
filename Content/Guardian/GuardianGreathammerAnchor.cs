@@ -318,15 +318,7 @@ namespace OrchidMod.Content.Guardian
 						{
 							if (guardian.UseSlam())
 							{
-								Item item = HammerItem.Item;
-								Projectile.damage = guardian.GetGuardianDamage(item.damage * HammerItem.SlamDamage);
-								Projectile.CritChance = guardian.GetGuardianCrit(item.crit);
-								Projectile.knockBack = item.knockBack;
-								//not set to friendly until animation reaches the attack
-								ChangeState(Slamming, 40);
-								Projectile.ResetLocalNPCHitImmunity();
-								ResetHitStatus(true);
-								guardian.OnAttack(AttackID.GreathammerSlam);
+								DoSlam(guardian);
 							}
 						}
 						else
@@ -405,6 +397,7 @@ namespace OrchidMod.Content.Guardian
 						break;
 						case <= 0:
 							ChangeState(Charging, guardian.GuardianItemCharge < 210 ? 20 : 5, guardian.GuardianItemCharge, quiet: true);
+							HammerItem.OnSlamEnd(player, guardian, Projectile, this, guardian.GuardianItemCharge >= 180f);
 						break;
 					}
 				}
@@ -439,6 +432,20 @@ namespace OrchidMod.Content.Guardian
 					player.compositeBackArm = GetArmData(player.MountedCenter.Floor() + new Vector2(player.direction * 8, 0), 10 * offset);
 			}
 			HammerItem?.ExtraAI(player, guardian, Projectile, this);
+		}
+
+		public void DoSlam(OrchidGuardian guardian)
+		{
+			Item item = HammerItem.Item;
+			Projectile.damage = guardian.GetGuardianDamage(item.damage * HammerItem.SlamDamage);
+			Projectile.CritChance = guardian.GetGuardianCrit(item.crit);
+			Projectile.knockBack = item.knockBack;
+			//not set to friendly until animation reaches the attack
+			ChangeState(Slamming, 40);
+			Projectile.ResetLocalNPCHitImmunity();
+			ResetHitStatus(true);
+			guardian.OnAttack(AttackID.GreathammerSlam);
+			HammerItem.OnSlam(guardian.Player, guardian, Projectile, this, guardian.GuardianItemCharge >= 180f);
 		}
 
 		static float Progress(float value, float start, float end) => (value - start) / (end - start);
@@ -673,14 +680,22 @@ namespace OrchidMod.Content.Guardian
 				spriteBatch.Draw(HammerAuraTexture, pos, new Rectangle(0, w + 2, w, w), HammerItem.AuraSecondary * AuraIntensity, auraRot, new Vector2(w * 0.5f), scale, auraEffect, 0);
 				spriteBatch.Draw(HammerAuraTexture, pos, new Rectangle(0, 0, w, w), HammerItem.AuraPrimary * AuraIntensity, auraRot, new Vector2(w * 0.5f), scale, auraEffect, 0);
 			}
+
 			Rectangle? frame = null;
 			if (HammerItem.HammerFrames > 1)
 			{
 				int height = HammerTexture.Height / HammerItem.HammerFrames - 2;
 				frame = new Rectangle(0, height * Projectile.frame, HammerTexture.Width, height);
 			}
+
 			Vector2 drawOffs = HammerTexture.Size() * 0.5f + new Vector2(HammerItem.DrawOffset.X * Projectile.spriteDirection, HammerItem.DrawOffset.Y);
 			spriteBatch.Draw(HammerTexture, pos, frame, lightColor, rot, drawOffs, 1, effect, 0);
+
+			if (HammerGlowTexture != null)
+			{
+				spriteBatch.Draw(HammerTexture, pos, frame, HammerItem.GetHammerGlowmaskColor(player, Projectile, lightColor), rot, drawOffs, 1, effect, 0);
+			}
+
 			return false;
 		}
 	}

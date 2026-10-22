@@ -58,14 +58,18 @@ namespace OrchidMod.Content.Guardian
 		public Color AuraSecondary;
 		public virtual string HammerTexture => Texture + "_Hammer";
 
+
+		/// <summary>Called on the first frame of a swing, FullyCharged is true if the guardian's weapon charge is full</summary>
+		public virtual void OnSlam(Player player, OrchidGuardian guardian, Projectile projectile, GuardianGreathammerAnchor anchor, bool FullyCharged) { } // implemented
+		/// <summary>Called at the end of a slam, right after switching back to a charging state.</summary>
+		public virtual void OnSlamEnd(Player player, OrchidGuardian guardian, Projectile projectile, GuardianGreathammerAnchor anchor, bool FullyCharged) { } // implemented
+
 		//GRRRAAAA THESE HOOKS ARE USELESS I STILL NEED TO IMPLEMENT THEM!!! GRRRAAAAAA
 
 		/// <summary>Called before default ModifyHit functionality. Return false to prevent normal multipliers like SwingDamage or reduced damage after penetration from applying.</summary>
 		public virtual bool ModifyHit(Player player, OrchidGuardian guardian, Projectile projectile, GuardianGreathammerAnchor anchor, NPC target, ref HitModifiers modifiers) => true;
 		/// <summary>Called at the end of the anchor's TileCollide(), after applying normal warhammer tilecollide behavior.</summary>
 		public virtual void OnThrowTileCollide(Player player, OrchidGuardian guardian, Projectile projectile, Vector2 oldVelocity) { }
-		/// <summary>Called on the first frame of a swing, FullyCharged is true if the guardian's hammer charge is full, FullyCharged is true if the guardian's hammer charge is full</summary>
-		public virtual void OnSwing(Player player, OrchidGuardian guardian, Projectile projectile, bool FullyCharged) { }
 		/// <summary>Called on the first frame of a throw</summary>
 		public virtual void OnThrow(Player player, OrchidGuardian guardian, Projectile projectile) { }
 		/// <summary>Called at the end of the anchor's Projectile AI()</summary>
@@ -79,7 +83,7 @@ namespace OrchidMod.Content.Guardian
 		/// <summary>Called after drawing the hammer.</summary>
 		public virtual void PostDrawHammer(Player player, OrchidGuardian guardian, Projectile projectile, SpriteBatch spriteBatch, Color lightColor, Texture2D hammerTexture, Rectangle drawRectangle) { }
 		/// <summary>Color applied to the hammer's glowmask when drawn. To automatically draw a glowmask for the hammer, add a HammerName_Glow texture file where the hammer texture is located.</summary>
-		public virtual Color GetHammerGlowmaskColor(Player player, OrchidGuardian guardian, Projectile projectile, Color lightColor, bool OffHand) => Color.White;
+		public virtual Color GetHammerGlowmaskColor(Player player, Projectile projectile, Color lightColor) => Color.White;
 		/// <summary>Called before the base Greathammer anchor plays any sound other than the full charge ding. Return false to prevent the sound, if playing your own.</summary>
 		/// <remarks>Use <c>projectile.ai[0]</c> to determine the context of the sound. <c>2</c> is slamming, <c>3</c> and <c>4</c> are successful and failed deflects, <c>5</c> is throwing or after being thrown, and <c>-1</c> is catching. <c>justThrown</c> will be flagged for the hammer's initial throw sound.</remarks>
 		public virtual bool PreSound(Player player, OrchidGuardian guardian, Projectile projectile, bool justThrown) => true;
@@ -88,6 +92,8 @@ namespace OrchidMod.Content.Guardian
 		
 		/// <summary>Draws extra UI elements on the GuardianUIState while held.</summary>
 		public virtual void WarhammerPostDrawUI(SpriteBatch spriteBatch, Player player, ref Color lightColor, Projectile projectile) { }
+		/// <summary>Called at the end of HoldItem if an anchor exists.</summary>
+		public virtual void SafeHoldItem(Player player, OrchidGuardian guardian, Projectile anchor) { }
 
 		public override int? AnchorType => ModContent.ProjectileType<GuardianHammerAnchor>();
 		public sealed override void SetDefaults()
@@ -144,9 +150,14 @@ namespace OrchidMod.Content.Guardian
 			if (player.ownedProjectileCounts[greathammerID] == 0)
 				projectile = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, greathammerID, 0, 0f, player.whoAmI);
 			else projectile = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == greathammerID);
-			if (projectile.ModProjectile is GuardianGreathammerAnchor anchor && anchor.Projectile.ai[0] != 4 && anchor.HammerItem != this)
+			if (projectile.ModProjectile is GuardianGreathammerAnchor anchor)
 			{
-				anchor.ResetHammerItem();
+				if (anchor.Projectile.ai[0] != 4 && anchor.HammerItem != this)
+				{
+					anchor.ResetHammerItem();
+				}
+
+				SafeHoldItem(player, guardian, projectile);
 			}
 		}
 
