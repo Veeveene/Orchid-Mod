@@ -15,7 +15,6 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			ParryDuration = 48;
 			Item.knockBack = 8f;
 			Item.damage = 26;
-			GuardStacks = 1;
 		}
 
 		public override void AddRecipes()

@@ -428,9 +428,9 @@ namespace OrchidMod.Content.Guardian
 				{ // Swinging (charged attack)
 					if (Projectile.ai[0] == 41f)
 					{ // First frame of the swing
-						Projectile.damage = guardian.GetGuardianDamage(QuarterstaffItem.damage * guardianItem.SwingDamage);
+						Projectile.damage = guardian.GetGuardianDamage(QuarterstaffItem.damage * guardianItem.ChargedDamage);
 						Projectile.CritChance = guardian.GetGuardianCrit(QuarterstaffItem.crit);
-						Projectile.knockBack = QuarterstaffItem.knockBack * guardianItem.SwingKnockback;
+						Projectile.knockBack = QuarterstaffItem.knockBack * guardianItem.ChargedKnockback;
 						Projectile.friendly = true;
 						DamageReset = 0;
 						Projectile.ResetLocalNPCHitImmunity();

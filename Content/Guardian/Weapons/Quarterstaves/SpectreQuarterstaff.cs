@@ -21,8 +21,6 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			ParryDuration = 100;
 			Item.knockBack = 8f;
 			Item.damage = 261;
-			GuardStacks = 1;
-			SlamStacks = 2;
 			CounterHits = 5;
 			CounterDamage = 0.6f;
 		}

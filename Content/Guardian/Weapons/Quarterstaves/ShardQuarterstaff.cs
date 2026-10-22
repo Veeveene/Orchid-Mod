@@ -19,8 +19,6 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			ParryDuration = 90;
 			Item.knockBack = 8f;
 			Item.damage = 192;
-			GuardStacks = 1;
-			SlamStacks = 1;
 		}
 
 		public override void OnAttack(Player player, OrchidGuardian guardian, Projectile projectile, bool jabAttack, bool counterAttack)

@@ -30,8 +30,6 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			CounterSpeed = 1.8f;
 			CounterKnockback = 0.25f;
 			CounterHits = 0;
-			GuardStacks = 1;
-			SlamStacks = 1;
 		}
 
 		public override void OnAttack(Player player, OrchidGuardian guardian, Projectile projectile, bool jabAttack, bool counterAttack)

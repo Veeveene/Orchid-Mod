@@ -45,36 +45,49 @@ namespace OrchidMod.Content.Guardian
 
 		public virtual void SafeHoldItem(Player player) { }
 
-		public int ParryDuration = 60; // Parry duration in ticks
-		public int SlamStacks; // Stam Stacks given by the item
-		public int GuardStacks; // Block Stacks given by the item
-		public float JabSpeed = 1f; // Jab speed multiplier
-		public float SwingSpeed = 1f; // swing speed multiplier
-		public float CounterSpeed = 1f; // spin speed multiplier
-		public float JabDamage = 0.5f; // Jab damage multiplier
-		public float SwingDamage = 1.5f; // swing damage multiplier
-		public float CounterDamage = 1f; // spin damage multiplier
-		public float CounterHits = 3; // number of local iframe resets during a counterattack - use scarsely
-		public float SwingKnockback = 1.5f; // swing knockback multiplier
-		public float JabKnockback = 1f; // spin knockback multiplier
-		public float CounterKnockback = 1f; // counter knockback multiplier
-		/// <summary>Indexes into <c>GuardianQuarterstaffAnchor.DoAnimStyle</c> to get jab animation AI.</summary>
+		/// <summary>Item parry duration. Defaults to 60.</summary>
+		public int ParryDuration;
+		/// <summary>Slams granted by a Charged Attack hit. Should generally not be modified unless part of a specific weapon gimmick. Defaults to 0.</summary>
+		public int SlamStacks;
+		/// <summary>Guards granted by a Charged Attack hit. Should generally not be modified unless part of a specific weapon gimmick. Defaults to 2.</summary>
+		public int GuardStacks;
+		/// <summary>Jab speed multiplier. Defaults to 1f.</summary>
+		public float JabSpeed;
+		/// <summary>Charged attack speed multiplier. Defaults to 1f.</summary>
+		public float SwingSpeed;
+		/// <summary>Counter speed multiplier. Defaults to 1f.</summary>
+		public float CounterSpeed;
+		/// <summary>Jab damage multiplier. Defaults to 0.5f.</summary>
+		public float JabDamage;
+		/// <summary>Charged attack damage multiplier. Defaults to 1f.</summary>
+		public float ChargedDamage;
+		/// <summary>Counter damage multiplier. Defaults to 0.67f.</summary>
+		public float CounterDamage;
+		/// <summary>Number of local iframe resets during a counterattack, use scarsely. Defaults to 3.</summary>
+		public float CounterHits;
+		/// <summary>Charged attack knockback multiplier. Defaults to 1.5f.</summary>
+		public float ChargedKnockback;
+		/// <summary>Jab knockback multiplier. Defaults to 1f.</summary>
+		public float JabKnockback;
+		/// <summary>Counter knockback multiplier. Defaults to 1f.</summary>
+		public float CounterKnockback;
+		/// <summary>Indexes into <c>GuardianQuarterstaffAnchor.DoAnimStyle</c> to get jab animation AI. Defaults to 0.</summary>
 		/// <inheritdoc cref="GuardianQuarterstaffAnchor.DoAnimStyle(int, float, SoundStyle, bool)" select="remarks" />
-		public int JabStyle = 0;
-		/// <summary>Indexes into <c>GuardianQuarterstaffAnchor.DoAnimStyle</c> to get swing animation AI.</summary>
+		public int JabStyle;
+		/// <summary>Indexes into <c>GuardianQuarterstaffAnchor.DoAnimStyle</c> to get swing animation AI. Defaults to 1.</summary>
 		/// <inheritdoc cref="GuardianQuarterstaffAnchor.DoAnimStyle(int, float, SoundStyle, bool)" select="remarks" />
-		public int SwingStyle = 1;
-		/// <summary>Indexes into <c>GuardianQuarterstaffAnchor.DoAnimStyle</c> to get counterattack animation AI.</summary>
+		public int SwingStyle;
+		/// <summary>Indexes into <c>GuardianQuarterstaffAnchor.DoAnimStyle</c> to get counterattack animation AI. Defaults to 4.</summary>
 		/// <inheritdoc cref="GuardianQuarterstaffAnchor.DoAnimStyle(int, float, SoundStyle, bool)" select="remarks" />
-		public int CounterStyle = 4;
+		public int CounterStyle;
 		//public bool SingleSwing = false; // allows a special swing behaviour
 		/// <summary>Multiplier for the amount of bonus charge gained from hitting with a jab.</summary>
-		public float JabChargeGain = 1;
+		public float JabChargeGain;
 		/// <summary>
 		/// The amount of animation frames of the quarterstaff texture.
 		/// <br/> The animation frame must be set manually using <c>GuardianQuarterstaffAnchor.QuarterstaffAnimFrame</c>.
 		/// </summary>
-		public int QuarterstaffFrames = 1;
+		public int QuarterstaffFrames;
 		
 		/// <summary>Draws extra UI elements on the GuardianUIState while held.</summary>
 		public virtual void QuarterstaffPostDrawUI(SpriteBatch spriteBatch, Player player, ref Color lightColor, Projectile projectile) { }
@@ -91,7 +104,25 @@ namespace OrchidMod.Content.Guardian
 			Item.useStyle = ItemUseStyleID.Thrust;
 			Item.useTime = 30;
 			Item.knockBack = 5f;
-			
+			CounterKnockback = 1f;
+			JabKnockback = 1f;
+			ChargedKnockback = 1.5f;
+			CounterHits = 3;
+			CounterDamage = 0.67f;
+			ChargedDamage = 1f;
+			JabDamage = 0.5f;
+			CounterSpeed = 1f;
+			SwingSpeed = 1f;
+			JabSpeed = 1f;
+			ParryDuration = 60;
+			SlamStacks = 0;
+			GuardStacks = 2;
+
+			JabStyle = 0;
+			SwingStyle = 1;
+			CounterStyle = 4;
+			JabChargeGain = 1;
+
 			QuarterstaffFrames = 1;
 
 			OrchidGlobalItemPerEntity orchidItem = Item.GetGlobalItem<OrchidGlobalItemPerEntity>();

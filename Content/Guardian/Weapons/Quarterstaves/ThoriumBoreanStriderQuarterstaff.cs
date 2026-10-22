@@ -29,8 +29,6 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
             Item.knockBack = 4f;
             Item.shootSpeed = 8f;
             Item.damage = 140;
-            GuardStacks = 1;
-            SlamStacks = 1;
         }
 
         public override void NetSend(BinaryWriter writer)

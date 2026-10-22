@@ -38,8 +38,6 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
             JabChargeGain = 1.5f;
             SwingStyle = 0;
             SwingSpeed = 1.4f;
-            GuardStacks = 1;
-            SlamStacks = 1;
 
             waterAttack = 0;
         }

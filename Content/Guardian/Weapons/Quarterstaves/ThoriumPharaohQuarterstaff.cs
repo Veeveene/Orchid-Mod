@@ -21,7 +21,6 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			Item.damage = 131;
 			Item.shootSpeed = 15;
 			JabChargeGain = 2f;
-			GuardStacks = 1;
 			SwingStyle = 2;
 		}
 

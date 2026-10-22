@@ -29,13 +29,11 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			Item.shootSpeed = 26f;
 			JabStyle = 1;
 			JabSpeed = 0.9f;
-			JabDamage = 0.75f;
 			JabChargeGain = 1.5f;
+			ChargedDamage = 0.5f;
 			SwingStyle = 0;
 			SwingSpeed = 1.4f;
 			CounterSpeed = 1.5f;
-			GuardStacks = 1;
-			SlamStacks = 1;
 		}
 
 		public override void OnHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, NPC.HitInfo hit, bool jabAttack, bool counterAttack)

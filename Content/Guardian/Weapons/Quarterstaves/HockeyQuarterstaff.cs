@@ -19,11 +19,10 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			ParryDuration = 60;
 			Item.knockBack = 24f;
 			Item.damage = 114;
-			GuardStacks = 1;
 			SwingStyle = 2;
 			SwingSpeed = 1.5f;
 			JabSpeed = 1.3f;
-			SwingDamage = 3f;
+			ChargedDamage = 2f;
 			JabChargeGain = 1.5f;
 		}
 
