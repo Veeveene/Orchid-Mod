@@ -374,15 +374,6 @@ namespace OrchidMod.Content.Guardian
 
 					if (guardianItem.PreJabAI(owner, guardian, Projectile)) DoAnimStyle(guardianItem.JabStyle, -Projectile.ai[0], SoundID.DD2_MonkStaffSwing, false);
 					
-					if (guardianItem.JabStyle == 1 && guardian.GuardianItemCharge < 180 && guardian.GuardianItemCharge > 0)
-					{
-						if (DamageReset == 1)
-						{
-							guardian.GuardianItemCharge += 90 * owner.GetTotalAttackSpeed(DamageClass.Melee);
-							if (guardian.GuardianItemCharge > 180) guardian.GuardianItemCharge = 180;
-						}	
-					}
-
 					// Trail
 					OldPosition.Add(Projectile.Center);
 					OldRotation.Add(Projectile.rotation);
