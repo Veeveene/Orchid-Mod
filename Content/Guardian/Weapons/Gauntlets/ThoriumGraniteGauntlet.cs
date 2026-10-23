@@ -38,14 +38,14 @@ namespace OrchidMod.Content.Guardian.Weapons.Gauntlets
 			if (charged && guardian.UseGuard(1, true))
 			{
 				Vector2 strikeVelocity = Vector2.UnitX.RotatedBy((Main.MouseWorld - player.MountedCenter).ToRotation()) * 8;
-				Vector2 strikeEndPosition = projectile.Center + strikeVelocity * 10;
+				Vector2 strikeEndPosition = projectile.Center + strikeVelocity * 8;
 				Rectangle area = new((int)projectile.Center.X, (int)projectile.Center.Y, (int)strikeEndPosition.X, (int)strikeEndPosition.Y);
 				if (area.Width < area.X) (area.X, area.Width) = (area.Width, area.X);
 				if (area.Height < area.Y) (area.Y, area.Height) = (area.Height, area.Y);
 				area.Width -= area.X;
 				area.Height -= area.Y;
-				area.Inflate(10, 10);
-				if (guardian.DoDeflect(area, out bool caughtProjectile, out bool killedNPC, anchor: projectile.ModProjectile, EnemyPredicate: new Predicate<NPC>(T => !T.friendly && (T.lifeMax < 2 || (T.velocity - player.velocity).Length() > 6f)), lenience: 1f))
+				area.Inflate(24, 24);
+				if (guardian.DoDeflect(area, out bool caughtProjectile, out bool killedNPC, anchor: projectile.ModProjectile, EnemyPredicate: new Predicate<NPC>(T => !T.friendly && !T.CountsAsACritter && (T.lifeMax < 2 || (T.velocity - player.velocity).Length() > 6f)), lenience: 5f))
 				{
 					guardian.UseGuard(1);
 					guardian.DoParryItemParry(null);
