@@ -3469,6 +3469,15 @@ Items: {
 		Tooltip: ""
 		DisplayName: Coznix Greathammer
 	}
+
+	ArmMotor: {
+		DisplayName: Arm Motor
+		Tooltip:
+			'''
+			After a greathammer throw hit, your next slam does an extra weak swing
+			Extra swings deal half damage and grant less charge on hit
+			'''
+	}
 }
 
 NPCs: {

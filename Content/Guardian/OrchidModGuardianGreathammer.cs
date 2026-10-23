@@ -59,10 +59,10 @@ namespace OrchidMod.Content.Guardian
 		public virtual string HammerTexture => Texture + "_Hammer";
 
 
-		/// <summary>Called on the first frame of a swing, FullyCharged is true if the guardian's weapon charge is full</summary>
-		public virtual void OnSlam(Player player, OrchidGuardian guardian, Projectile projectile, GuardianGreathammerAnchor anchor, bool FullyCharged) { } // implemented
+		/// <summary>Called on the first frame of a swing, FullyCharged is true if the guardian's weapon charge is full.</summary>
+		public virtual void OnSlam(Player player, OrchidGuardian guardian, Projectile projectile, GuardianGreathammerAnchor anchor, bool FullyCharged, ref bool Weak) { } // implemented
 		/// <summary>Called at the end of a slam, right after switching back to a charging state.</summary>
-		public virtual void OnSlamEnd(Player player, OrchidGuardian guardian, Projectile projectile, GuardianGreathammerAnchor anchor, bool FullyCharged) { } // implemented
+		public virtual void OnSlamEnd(Player player, OrchidGuardian guardian, Projectile projectile, GuardianGreathammerAnchor anchor, bool FullyCharged, bool Weak) { } // implemented
 
 		//GRRRAAAA THESE HOOKS ARE USELESS I STILL NEED TO IMPLEMENT THEM!!! GRRRAAAAAA
 

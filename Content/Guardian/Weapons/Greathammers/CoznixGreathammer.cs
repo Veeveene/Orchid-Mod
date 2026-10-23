@@ -27,16 +27,17 @@ namespace OrchidMod.Content.Guardian.Weapons.Greathammers
 			AuraSecondary = new(107, 36, 27, 60);
 		}
 
-		public override void OnSlam(Player player, OrchidGuardian guardian, Projectile projectile, GuardianGreathammerAnchor anchor, bool FullyCharged)
+		public override void OnSlam(Player player, OrchidGuardian guardian, Projectile projectile, GuardianGreathammerAnchor anchor, bool FullyCharged, ref bool Weak)
 		{
 			// Stupid windfury proc effect https://www.youtube.com/watch?v=yFB-pQ65-Kk
 			// yes, we will remove it later
 			// i am sorry
 			// :(
 
-			if (Main.rand.Next(6) != 0)
+			if (Main.rand.Next(6) != 0 || Weak)
 			{
 				SlamSpeed += 0.8f;
+				Weak = false;
 			}
 			else
 			{
@@ -44,7 +45,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Greathammers
 			}
 		}
 
-		public override void OnSlamEnd(Player player, OrchidGuardian guardian, Projectile projectile, GuardianGreathammerAnchor anchor, bool FullyCharged)
+		public override void OnSlamEnd(Player player, OrchidGuardian guardian, Projectile projectile, GuardianGreathammerAnchor anchor, bool FullyCharged, bool Weak)
 		{
 			if (SlamSpeed > 0.8f)
 			{

@@ -17,7 +17,6 @@ using Terraria.ModLoader;
 using System.Linq;
 using OrchidMod.Content.Guardian.Accessories;
 using OrchidMod.Common;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace OrchidMod
 {
@@ -99,6 +98,7 @@ namespace OrchidMod
 		/// <summary> Multiplier applied to the velocity of all warhammer throws. Defaults to 1f.</summary>
 		public float GuardianHammerThrowVelocity = 1f;
 		public bool GuardianThoriumCenser = false; // Life Quartz Censer
+		public bool GuardianArmMotor = false; // Greathammer Arm Motor
 
 		// Debug bonus resources that do not get updated (for use with DragonLens)
 		
@@ -151,6 +151,7 @@ namespace OrchidMod
 		public float GauntletSlamPool = 0f; // How much slam charge will be granted by hitting the next punch
 		public int GuardianStaffRocketCooldown = 0; // Cooldown between rocket dashes
 		public int GuardianBadgeHopliteLevel = 0; // goes up to 2 for bonus katar charge speed
+		public int GuardianArmMotorCount = 0; // set to 2 after a charged attack hit, greathammers do additional slams if this is >1.
 
 		public const int GuardianRechargeTime = 600;
 
@@ -506,6 +507,7 @@ namespace OrchidMod
 			GuardianHammerMagnet = 0f;
 			GuardianHammerThrowVelocity = 1f;
 			GuardianThoriumCenser = false;
+			GuardianArmMotor = false;
 			if (!GuardianBronzeShieldBuff) GuardianBronzeShieldDamage = 0;
 
 			GuardianMeteorite = false;

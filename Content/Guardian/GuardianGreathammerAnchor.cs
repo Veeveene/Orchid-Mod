@@ -27,6 +27,7 @@ namespace OrchidMod.Content.Guardian
 
 		public bool Ding = false;
 		public bool NeedNetUpdate = false;
+		public bool WeakSlam = false;
 
 		public const int IdleAnim = -1;
 		public const int Idle = 0;
@@ -374,7 +375,7 @@ namespace OrchidMod.Content.Guardian
 						else SoundEngine.PlaySound(SoundID.MaxMana, player.Center);
 					}
 
-					Anim -= HammerItem.SlamSpeed * player.GetTotalAttackSpeed(DamageClass.Melee);
+					Anim -= HammerItem.SlamSpeed * player.GetTotalAttackSpeed(DamageClass.Melee) * (guardian.GuardianArmMotorCount > 0 ? 2 : 1);
 					switch (Anim)
 					{
 						case > 35:
@@ -397,7 +398,16 @@ namespace OrchidMod.Content.Guardian
 						break;
 						case <= 0:
 							ChangeState(Charging, guardian.GuardianItemCharge < 210 ? 20 : 5, guardian.GuardianItemCharge, quiet: true);
-							HammerItem.OnSlamEnd(player, guardian, Projectile, this, guardian.GuardianItemCharge >= 180f);
+							HammerItem.OnSlamEnd(player, guardian, Projectile, this, guardian.GuardianItemCharge >= 180f, WeakSlam);
+
+							if (guardian.GuardianArmMotorCount > 0)
+							{ // Arm Motor accessory
+								guardian.GuardianArmMotorCount --;
+								if (guardian.GuardianArmMotorCount > 0 && IsCharging && guardian.GuardianArmMotor)
+								{
+									DoSlam(guardian, true);
+								}
+							}
 						break;
 					}
 				}
@@ -434,8 +444,10 @@ namespace OrchidMod.Content.Guardian
 			HammerItem?.ExtraAI(player, guardian, Projectile, this);
 		}
 
-		public void DoSlam(OrchidGuardian guardian)
+		/// <summary>The Greathammer will initiate a slam. If "weak" is set to true, the slam will deal half damage and grant half charge.</summary>
+		public void DoSlam(OrchidGuardian guardian, bool weak = false)
 		{
+			WeakSlam = weak;
 			Item item = HammerItem.Item;
 			Projectile.damage = guardian.GetGuardianDamage(item.damage * HammerItem.SlamDamage);
 			Projectile.CritChance = guardian.GetGuardianCrit(item.crit);
@@ -444,8 +456,8 @@ namespace OrchidMod.Content.Guardian
 			ChangeState(Slamming, 40);
 			Projectile.ResetLocalNPCHitImmunity();
 			ResetHitStatus(true);
-			guardian.OnAttack(AttackID.GreathammerSlam);
-			HammerItem.OnSlam(guardian.Player, guardian, Projectile, this, guardian.GuardianItemCharge >= 180f);
+			guardian.OnAttack(WeakSlam ? AttackID.GreathammerSlamWeak : AttackID.GreathammerSlam);
+			HammerItem.OnSlam(guardian.Player, guardian, Projectile, this, guardian.GuardianItemCharge >= 180f, ref WeakSlam);
 		}
 
 		static float Progress(float value, float start, float end) => (value - start) / (end - start);
@@ -633,6 +645,11 @@ namespace OrchidMod.Content.Guardian
 				}
 				else if (FirstHit && IsSlamming)
 				{
+					if (WeakSlam)
+					{
+						modifiers.SourceDamage /= 2f;
+					}
+
 					float charge = guardian.GuardianItemCharge / 180f;
 					float chargeToGain = 0.5f * HammerItem.SlamChargeGain;
 					if (charge + chargeToGain > 1)
@@ -647,7 +664,7 @@ namespace OrchidMod.Content.Guardian
 			{
 				if (IsSlamming && guardian.GuardianItemCharge < 210f)
 				{
-					guardian.GuardianItemCharge += 60f * HammerItem.SlamChargeGain;
+					guardian.GuardianItemCharge += 60f * HammerItem.SlamChargeGain * (WeakSlam ? 0.5f : 1f);
 
 					if (guardian.GuardianItemCharge > 180f) guardian.GuardianItemCharge = 210f;
 					guardian.SyncGuardianItemCharge();
@@ -656,6 +673,11 @@ namespace OrchidMod.Content.Guardian
 				{
 					guardian.AddGuard(HammerItem.GuardStacks);
 					guardian.AddSlam(HammerItem.SlamStacks);
+
+					if (guardian.GuardianArmMotor && guardian.GuardianArmMotorCount < 2)
+					{
+						guardian.GuardianArmMotorCount = 2;
+					}
 				}
 			}
 			if (IsThrown && HitCount < 8)
