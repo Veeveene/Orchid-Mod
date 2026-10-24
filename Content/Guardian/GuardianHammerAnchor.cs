@@ -606,11 +606,11 @@ namespace OrchidMod.Content.Guardian
 				{
 					if (guardian.GuardianItemCharge >= 180f)
 					{
-						modifiers.FinalDamage *= HammerItem.SwingDamage;
+						modifiers.FinalDamage *= HammerItem.SwingDamage * 1.5f;
 					}
 					else
 					{
-						modifiers.FinalDamage *= HammerItem.SwingDamage * 1.5f;
+						modifiers.FinalDamage *= HammerItem.SwingDamage;
 					}
 				}
 				else // Throw hit

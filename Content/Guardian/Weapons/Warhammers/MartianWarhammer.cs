@@ -59,6 +59,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 					projectile.friendly = true;
 					projectile.localNPCHitCooldown = 10;
 					projectile.ai[2] = -1;
+					guardian.OnAttack(AttackID.HammerCharge);
 					anchor.range--;
 					teleportFrom = projectile.Center;
 					float distanceClosest = 240f;

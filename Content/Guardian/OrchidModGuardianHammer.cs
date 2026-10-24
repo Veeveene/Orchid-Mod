@@ -219,6 +219,8 @@ namespace OrchidMod.Content.Guardian
 
 					anchor.BlockDuration = (int)(BlockDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianBlockDuration + 10);
 					anchor.NeedNetUpdate = true;
+
+					player.ChangeDir(projectile.velocity.X > 0 ? 1 : -1);
 				}
 
 				guardian.GuardianItemCharge = 0f;
