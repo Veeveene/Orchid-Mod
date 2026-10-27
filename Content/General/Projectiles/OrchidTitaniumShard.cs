@@ -23,6 +23,7 @@ namespace OrchidMod.Content.General.Projectiles
 
 		ref float myIndex => ref Projectile.ai[0];
 		ref float ringPos => ref Projectile.localAI[0];
+		ref float ringCount => ref Projectile.localAI[1];
 
 		public override void AI()
 		{
@@ -39,7 +40,8 @@ namespace OrchidMod.Content.General.Projectiles
 			Projectile.rotation += MathHelper.PiOver2 * 0.01f;
 			Projectile.position += player.position - player.oldPosition;
 			ringPos = (orchidPlayer.Timer % 50 / 50f + myIndex) * MathHelper.TwoPi;
-			Projectile.Center = Vector2.Lerp(Projectile.Center, player.Center + new Vector2((float)Math.Sin(ringPos), (float)Math.Cos(ringPos + player.miscCounterNormalized * MathHelper.TwoPi)) * (24 + orchidPlayer.TitaniumShards.Count * 6), 0.3f);
+			ringCount = orchidPlayer.TitaniumShards.Count;
+			Projectile.Center = Vector2.Lerp(Projectile.Center, player.Center + new Vector2((float)Math.Sin(ringPos), (float)Math.Cos(ringPos + player.miscCounterNormalized * MathHelper.TwoPi)) * (24 + ringCount * 6), 0.3f);
 		}
 
 		public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
@@ -53,7 +55,10 @@ namespace OrchidMod.Content.General.Projectiles
 			PlayerTitaniumStormBuffTextureContent playerTitaniumStormBuff = TextureAssets.RenderTargets.PlayerTitaniumStormBuff;
 			playerTitaniumStormBuff.Request();
 			if (playerTitaniumStormBuff.IsReady)
-				Main.EntitySpriteDraw(playerTitaniumStormBuff.GetTarget(), Projectile.Center - Main.screenPosition + (Main.GlobalTimeWrappedHourly * 8f + (float)Projectile.whoAmI).ToRotationVector2() * 4f, new Rectangle(24 * Projectile.frame, 0, 22, 26), lightColor, Projectile.rotation, new Vector2(11, 13), Projectile.scale, SpriteEffects.None);
+			{
+				float scale = 1 + (float)(Math.Cos(ringPos) * Math.Sin(Main.player[Projectile.owner].miscCounterNormalized * MathHelper.TwoPi) * (0.15 + ringCount * 0.015));
+				Main.EntitySpriteDraw(playerTitaniumStormBuff.GetTarget(), Projectile.Center - Main.screenPosition + (Main.GlobalTimeWrappedHourly * 8f + (float)Projectile.whoAmI).ToRotationVector2() * 4f, new Rectangle(24 * Projectile.frame, 0, 22, 26), lightColor, Projectile.rotation, new Vector2(11, 13), scale, SpriteEffects.None);
+			}
 			return false;
 		}
 

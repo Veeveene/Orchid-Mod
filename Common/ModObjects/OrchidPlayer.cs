@@ -375,6 +375,7 @@ namespace OrchidMod.Common.ModObjects
 		public void SpawnTitaniumShards(IEntitySource source, int count = 1, int maxCount = 8)
 		{
 			Player.AddBuff(BuffID.TitaniumStorm, 600);
+			Player.hasTitaniumStormBuff = true; //fixes a vanilla bug lol
 			if (TitaniumShards.Count + count > maxCount) count = maxCount - TitaniumShards.Count;
 			if (count < 1) return;
 			for (int i = 0; i < count; i++)
