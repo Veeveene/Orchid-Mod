@@ -21,7 +21,7 @@ namespace OrchidMod.Content.Guardian
 		public int SlamStacks;
 		/// <summary>Amount of guards (resource) to grand the owner on a fully charged throw hit. GuardStacks or SlamStacks should always be >0. Defaults to 0</summary>
 		public int GuardStacks;
-		/// <summary>Time in frame the warhammer will remain in the air before returning to the player when blocking. Defaults to 180, as warhammers tend to have long block durations.</summary>
+		/// <summary>Time in frame the warhammer will remain in the air before returning to the player when blocking. Defaults to 180, as warhammers tend to have long block durations. If set to -1, the block duration line will not be displayed.</summary>
 		public int BlockDuration;
 		/// <summary>Will the warhammer pierce enemies when thrown? Defaults to false.</summary>
 		public bool Penetrate;
@@ -47,6 +47,8 @@ namespace OrchidMod.Content.Guardian
 		public int HitCooldown;
 		/// <summary>If true, the warhammer cannot block. Defaults to false.</summary>
 		public bool CannotBlock;
+		/// <summary>If false, the warhammer's blocking attack will not block enemies or projectiles, and the tooltip will display <c>ToSlam</c> instead. Can be manually overridden in <c>BlockAI</c>.</summary>
+		public bool ShouldBlock;
 		/// <summary>If true, the warhammer will never be swung.</summary>
 		public bool CannotSwing;
 		/// <summary>offsets the drawing of the warhammer while being held (in pixels). Negative values draw it closer, while positive further.</summary>
@@ -69,6 +71,16 @@ namespace OrchidMod.Content.Guardian
 		public bool IgnoreHammerThrowVelocity;
 		/// <summary>If true, this item will have the player dual wield warhammers. Defaults to false.</summary>
 		public bool DualWarhammers;
+		/// <summary>Shorthand helper for <c>GuardBlockCost = 0; ShouldBlock = false; SlamBlockCost = value;</c></summary>
+		public int Warslammer
+		{
+			set
+			{
+				GuardBlockCost = 0;
+				SlamBlockCost = value;
+				ShouldBlock = false;
+			}
+		}
 		public virtual string HammerTexture => Texture + "_Hammer";
 
 		/// <summary>Called upon pushing an enemy with a throw (can happen repeatedly).</summary>
@@ -108,6 +120,9 @@ namespace OrchidMod.Content.Guardian
 		/// <summary>Called before default throw AI. Return false to prevent the default AI from running.</summary>
 		/// <remarks>Remember to set <c>Projectile.friendly</c> and <c>OrchidModGuardianProjectile.ResetHitStatus()</c> if overriding default behavior.</remarks>
 		public virtual bool ThrowAI(Player player, OrchidGuardian guardian, Projectile projectile, bool Weak, bool OffHand) => true;
+		/// <summary>Called before default block AI. Return false to prevent the default AI from running. Set ShouldBlock to true or false to override this item's ShouldBlock for this frame.</summary>
+		/// <remarks>Remember to set <c>Projectile.friendly</c> and <c>OrchidModGuardianProjectile.ResetHitStatus()</c> if overriding default behavior.</remarks>
+		public virtual bool BlockAI(Player player, OrchidGuardian guardian, Projectile projectile, GuardianHammerAnchor anchor, ref bool shouldBlock) => true;
 		/// <summary>Called before drawing the hammer. Return false to prevent the default draw code from running.</summary>
 		/// <remarks>The default draw code will use hammerTexture and drawRectangle (which defaults to null)</remarks>
 		public virtual bool PreDrawHammer(Player player, OrchidGuardian guardian, Projectile projectile, SpriteBatch spriteBatch, ref Color lightColor, ref Texture2D hammerTexture, ref Rectangle drawRectangle, bool OffHand) => true;
@@ -148,6 +163,7 @@ namespace OrchidMod.Content.Guardian
 			BlockDuration = 180;
 			BlockVelocityMult = 1f;
 			CannotBlock = false;
+			ShouldBlock = true;
 			hasSpecialHammerTexture = false;
 			DualWarhammers = false;
 			IgnoreHammerThrowVelocity = false;
@@ -320,32 +336,7 @@ namespace OrchidMod.Content.Guardian
 				tt.Text = damageValue + " " + Language.GetTextValue(ModContent.GetInstance<OrchidMod>().GetLocalizationKey("DamageClasses.GuardianDamageClass.DisplayName"));
 			}
 
-			int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Knockback"));
-
-			if (!CannotBlock)
-			{
-				tooltips.Insert(index + 1, new TooltipLine(Mod, "BlockDuration", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.BlockDuration", OrchidUtils.FramesToSeconds((int)(BlockDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianBlockDuration)))));
-
-				string click = Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.RightClick");
-				string block = "Mods.OrchidMod.UI.GuardianItem.Block";
-				if (!(GuardBlockCost == 1 && SlamBlockCost == 0))
-				{
-					if (GuardBlockCost > 0) block += "Guard";
-					if (SlamBlockCost > 0) block += "Slam";
-					if (GuardBlockCost == SlamBlockCost) block += "Same";
-				}
-				tooltips.Insert(index + 2, new TooltipLine(Mod, "ClickInfo", Language.GetText(block).Format(click, GuardBlockCost, SlamBlockCost))
-				{
-					OverrideColor = new Color(175, 255, 175)
-				});
-			}
-
-			string ChargeToThrow = Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.ChargeToThrow");
-			if (!CannotSwing) ChargeToThrow = Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.SwingWhileCharging");
-			tooltips.Insert(index + (!CannotBlock ? 3 : 1), new TooltipLine(Mod, "Swing", ChargeToThrow)
-			{
-				OverrideColor = new Color(175, 255, 175)
-			});
+			int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Knockback")) + 1;
 
 			if (GuardStacks > 0 || SlamStacks > 0)
 			{
@@ -360,11 +351,43 @@ namespace OrchidMod.Content.Guardian
 				}
 				if (GuardStacks == SlamStacks) TooltipToGet += "Same";
 
-				tooltips.Insert(index + 1, new TooltipLine(Mod, "GuardianGrants", Language.GetText(TooltipToGet).Format(GuardStacks, SlamStacks))
+				tooltips.Insert(index, new TooltipLine(Mod, "GuardianGrants", Language.GetText(TooltipToGet).Format(GuardStacks, SlamStacks))
 				{
 					OverrideColor = new Color(175, 255, 175)
 				});
+				index++;
 			}
+
+			if (!CannotBlock)
+			{
+				string click = Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.RightClick");
+				string block = Language.GetText(ShouldBlock ? "Mods.OrchidMod.UI.GuardianItem.ToBlock" : "Mods.OrchidMod.UI.GuardianItem.ToSlam").Format(click);
+				string line = "Mods.OrchidMod.UI.GuardianItem.HammerBlock";
+				if (ShouldBlock ? (GuardBlockCost != 1 || SlamBlockCost != 0) : (GuardBlockCost != 0 || SlamBlockCost != 1))
+				{
+					if (GuardBlockCost > 0) line += "Guard";
+					if (SlamBlockCost > 0) line += "Slam";
+					if (GuardBlockCost == SlamBlockCost) line += "Same";
+				}
+				tooltips.Insert(index, new TooltipLine(Mod, "ClickInfo", Language.GetText(line).Format(click, block, GuardBlockCost, SlamBlockCost))
+				{
+					OverrideColor = new Color(175, 255, 175)
+				});
+
+				if (BlockDuration > 0)
+				{
+					tooltips.Insert(index + 1, new TooltipLine(Mod, "BlockDuration", Language.GetTextValue(ShouldBlock ? "Mods.OrchidMod.UI.GuardianItem.BlockDuration" : "Mods.OrchidMod.UI.GuardianItem.SlamDuration", OrchidUtils.FramesToSeconds((int)(BlockDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianBlockDuration)))));
+					index += 2;
+				}
+				else index++;
+			}
+
+			string ChargeToThrow = Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.ChargeToThrow");
+			if (!CannotSwing) ChargeToThrow = Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.SwingWhileCharging");
+			tooltips.Insert(index, new TooltipLine(Mod, "Swing", ChargeToThrow)
+			{
+				OverrideColor = new Color(175, 255, 175)
+			});
 		}
 	}
 }

@@ -4179,6 +4179,7 @@ UI: {
 			'''
 		ParryDuration: Длительность парирования: {0} сек.
 		BlockDuration: Длительность блока: {0} сек.
+		// SlamDuration: "{0} second slam duration"
 		Interrupted: Прервано
 		Charged: Заряжено
 		Reinforced: Усилено
@@ -4195,11 +4196,14 @@ UI: {
 			'''
 		UsesUpTo: Использует до {0} оч. нападения
 		RuneDuration: Время действия руны: {0} сек.
-		Block: Нажмите {0}, чтобы сделать блок
-		BlockGuard: Нажмите {0}, чтобы сделать блок за {1} оч. обороны
-		BlockSlam: Нажмите {0}, чтобы сделать блок за {1} оч. нападения
-		BlockGuardSlamSame: Нажмите {0}, чтобы сделать блок за {1} оч. обороны и нападения
-		BlockGuardSlam: Нажмите {0}, чтобы сделать блок за {1} оч. обороны и {2} оч. нападения
+		// Block: "{0} click to block"
+		// ToBlock: to block
+		// ToSlam: to slam
+		// HammerBlock: "{0} click {1}"
+		// HammerBlockGuard: "{0} click {1}, costing {2} {^2:guard;guards}"
+		// HammerBlockSlam: "{0} click {1}, costing {3} {^3:slam;slams}"
+		// HammerBlockGuardSlamSame: "{0} click {1}, costing {2} {^2:guard;guards} and {^2:slam;slams}"
+		// HammerBlockGuardSlam: "{0} click {1}, costing {2} {^2:guard;guards} and {3} {^3:slam;slams}"
 		BuffDuration: Длительность эффекта: {0} сек.
 		HorizonLaceShieldStacks: Даёт 3 оч. обороны при полном заряде
 		DamageOfDefense: Наносит противостоящий урон, равный {0}% от вашей защиты

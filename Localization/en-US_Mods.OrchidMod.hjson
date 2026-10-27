@@ -1827,8 +1827,12 @@ Items: {
 	}
 
 	DesertWarhammer: {
-		DisplayName: Fossil Warhammer
-		Tooltip: Scatters bone fragments on impact
+		DisplayName: Bonehammer
+		Tooltip:
+			'''
+			Scatters bone fragments on impact
+			Bone fragments are stronger after bouncing
+			'''
 	}
 
 	CrimsonWarhammer: {
@@ -4168,6 +4172,7 @@ UI: {
 		ChargeToDash: Charge to dash, {0} click to jab while charging
 		ParryDuration: "{0} second parry duration"
 		BlockDuration: "{0} second block duration"
+		SlamDuration: "{0} second slam duration"
 		Interrupted: Interrupted
 		Charged: Charged
 		Reinforced: Reinforced
@@ -4181,10 +4186,13 @@ UI: {
 		UsesUpTo: Uses up to {0} slams
 		RuneDuration: "{0} second rune duration"
 		Block: "{0} click to block"
-		BlockGuard: "{0} click to block, costing {1} {^1:guard;guards}"
-		BlockSlam: "{0} click to block, costing {2} {^2:slam;slams}"
-		BlockGuardSlamSame: "{0} click to block, costing {1} {^1:guard;guards} and {^1:slam;slams}"
-		BlockGuardSlam: "{0} click to block, costing {1} {^1:guard;guards} and {2} {^2:slam;slams}"
+		ToBlock: to block
+		ToSlam: to slam
+		HammerBlock: "{0} click {1}"
+		HammerBlockGuard: "{0} click {1}, costing {2} {^2:guard;guards}"
+		HammerBlockSlam: "{0} click {1}, costing {3} {^3:slam;slams}"
+		HammerBlockGuardSlamSame: "{0} click {1}, costing {2} {^2:guard;guards} and {^2:slam;slams}"
+		HammerBlockGuardSlam: "{0} click {1}, costing {2} {^2:guard;guards} and {3} {^3:slam;slams}"
 		BuffDuration: "{0} second buff duration"
 		HorizonLaceShieldStacks: Grants 3 guards when fully charged
 		DamageOfDefense: Deals {0}% of defense as opposing damage

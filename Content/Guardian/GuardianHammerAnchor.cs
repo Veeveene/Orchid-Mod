@@ -43,6 +43,8 @@ namespace OrchidMod.Content.Guardian
 		public int BlockDuration = 0;
 
 		public bool Ding = false;
+		/// <summary>Whether this spawned anchor will grant resources when it hits with a fully charged attack. Defaults to true, and is not modified by the default anchor.</summary>
+		public bool GrantResources = true;
 		
 		public int Frame = 0;
 
@@ -136,144 +138,151 @@ namespace OrchidMod.Content.Guardian
 
 				if (BlockDuration != 0)
 				{ // Blocking
-					if (BlockDuration == (int)(HammerItem.BlockDuration * HammerItem.Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianBlockDuration + 10))
-					{ // first frame of the block throw
-						HammerItem.OnBlockThrow(owner, guardian, Projectile);
-						if (Projectile.velocity.X > 0)
-						{
-							Projectile.spriteDirection = -Projectile.spriteDirection;
-							Projectile.direction = Projectile.spriteDirection;
-							InitialVelocity = Projectile.velocity;
-						}
-
-						guardian.OnAttack(AttackID.HammerBlock, HammerItem);
-					}
-
-					Projectile.rotation += Projectile.velocity.Length() / 45f * (Projectile.velocity.X > 0 ? 1 : -1);
-
-					if (BlockDuration <= HammerItem.BlockDuration * HammerItem.Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianBlockDuration)
-					{ // hammers only starts to slow down 10 frames after being thrown
-						Projectile.rotation += 0.25f * (Projectile.velocity.X > 0 ? 1 : -1);
-
-						if (BlockDuration > 0)
-						{
-							Projectile.velocity *= 0.9f;
-							Projectile.timeLeft++;
-						}
-						else
-						{
-							Projectile.tileCollide = false;
-							float dist = Projectile.Center.Distance(owner.Center);
-							Vector2 vel = Vector2.Normalize(owner.Center - Projectile.Center) * HammerItem.ReturnSpeed * BlockDuration * 0.2f;
-							if (vel.Length() > 48f)
-							{
-								vel = Vector2.Normalize(vel) * 48f;
-							}
-
-							Projectile.velocity = -vel;
-
-							if (dist < 30f && owner.whoAmI == Main.myPlayer)
-							{
-								Projectile.Kill();
-							}
-						}
-					}
-
-					Rectangle hitBox = Projectile.Hitbox; // larger hitbox for projectiles
-					hitBox.X -= (int)(HammerTexture.Width / 2f) - 4;
-					hitBox.Y -= (int)(HammerTexture.Width / 2f) - 4;
-					hitBox.Width += HammerTexture.Width + 8;
-					hitBox.Height += HammerTexture.Width + 8;
-
-					for (int l = 0; l < Main.projectile.Length; l++)
+					bool shouldBlock = HammerItem.ShouldBlock;
+					if(HammerItem.BlockAI(owner, guardian, Projectile, this, ref shouldBlock))
 					{
-						Projectile proj = Main.projectile[l];
-						if (proj.active && proj.hostile && proj.damage > 0 && !OrchidGuardian.ProjectilesBlockBlacklist.Contains(proj.type))
-						{
-							if (proj.Hitbox.Intersects(Projectile.Hitbox))
+						if (BlockDuration == (int)(HammerItem.BlockDuration * HammerItem.Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianBlockDuration + 10))
+						{ // first frame of the block throw
+							HammerItem.OnBlockThrow(owner, guardian, Projectile);
+							if (Projectile.velocity.X > 0)
 							{
-								bool killProj = HammerItem.OnBlockProjectile(owner, guardian, Projectile, proj);
-								guardian.OnBlockProjectile(Projectile, proj);
-								if (!FirstBlock)
+								Projectile.spriteDirection = -Projectile.spriteDirection;
+								Projectile.direction = Projectile.spriteDirection;
+								InitialVelocity = Projectile.velocity;
+							}
+
+							guardian.OnAttack(AttackID.HammerBlock, HammerItem);
+						}
+
+						Projectile.rotation += Projectile.velocity.Length() / 45f * (Projectile.velocity.X > 0 ? 1 : -1);
+
+						if (BlockDuration <= HammerItem.BlockDuration * HammerItem.Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianBlockDuration)
+						{ // hammers only starts to slow down 10 frames after being thrown
+							Projectile.rotation += 0.25f * (Projectile.velocity.X > 0 ? 1 : -1);
+
+							if (BlockDuration > 0)
+							{
+								Projectile.velocity *= 0.9f;
+								Projectile.timeLeft++;
+							}
+							else
+							{
+								Projectile.tileCollide = false;
+								float dist = Projectile.Center.Distance(owner.Center);
+								Vector2 vel = Vector2.Normalize(owner.Center - Projectile.Center) * HammerItem.ReturnSpeed * BlockDuration * 0.2f;
+								if (vel.Length() > 48f)
 								{
+									vel = Vector2.Normalize(vel) * 48f;
+								}
+
+								Projectile.velocity = -vel;
+
+								if (dist < 30f && owner.whoAmI == Main.myPlayer)
+								{
+									Projectile.Kill();
+								}
+							}
+						}
+
+						OldPosition.Add(new Vector2(Projectile.Center.X, Projectile.Center.Y));
+						OldRotation.Add(Projectile.rotation);
+						if (OldPosition.Count > 10)
+							OldPosition.RemoveAt(0);
+						if (OldRotation.Count > 10)
+							OldRotation.RemoveAt(0);
+
+						BlockDuration--;
+
+						if (BlockDuration == 0)
+						{
+							BlockDuration = -1;
+						}
+					}
+
+					if (shouldBlock)
+					{
+						Rectangle hitBox = Projectile.Hitbox; // larger hitbox for projectiles
+						hitBox.X -= (int)(HammerTexture.Width / 2f) - 4;
+						hitBox.Y -= (int)(HammerTexture.Width / 2f) - 4;
+						hitBox.Width += HammerTexture.Width + 8;
+						hitBox.Height += HammerTexture.Width + 8;
+
+						for (int l = 0; l < Main.projectile.Length; l++)
+						{
+							Projectile proj = Main.projectile[l];
+							if (proj.active && proj.hostile && proj.damage > 0 && !OrchidGuardian.ProjectilesBlockBlacklist.Contains(proj.type))
+							{
+								if (proj.Hitbox.Intersects(Projectile.Hitbox))
+								{
+									bool killProj = HammerItem.OnBlockProjectile(owner, guardian, Projectile, proj);
+									guardian.OnBlockProjectile(Projectile, proj);
+									if (!FirstBlock)
+									{
+										FirstBlock = true;
+										guardian.OnBlockProjectileFirst(Projectile, proj);
+										HammerItem.OnBlockFirstProjectile(owner, guardian, Projectile, proj);
+										SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), owner.Center);
+									}
+									if (killProj) proj.Kill();
+									SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
+								}
+							}
+						}
+
+						hitBox = Projectile.Hitbox;
+						hitBox.X -= 2;
+						hitBox.Y -= 2;
+						hitBox.Width += 4;
+						hitBox.Height += 4;
+
+						for (int k = 0; k < Main.maxNPCs; k++)
+						{
+							NPC target = Main.npc[k];
+							if (target.active && !target.dontTakeDamage && !target.friendly && target.Hitbox.Intersects(hitBox))
+							{
+								HammerItem.OnBlockContact(owner, guardian, target, Projectile);
+
+								bool contained = false;
+								foreach (BlockedEnemy blockedEnemy in guardian.GuardianBlockedEnemies)
+								{
+									if (blockedEnemy.npc == target)
+									{ // Enemy already blocked, reset the timer
+										blockedEnemy.time = 120;
+										contained = true;
+										break;
+									}
+								}
+
+								if (!contained)
+								{ // First time blocking an enemy
+									guardian.GuardianBlockedEnemies.Add(new BlockedEnemy(target, 120));
+									guardian.OnBlockNPCNew(Projectile, target);
+									SoundEngine.PlaySound(SoundID.Dig, owner.Center);
+
+									if (!BlockedNPCs.Contains(target.whoAmI))
+									{
+										HammerItem.OnBlockNPC(owner, guardian, target, Projectile);
+										BlockedNPCs.Add(target.whoAmI);
+									}
+								}
+
+								if (target.knockBackResist > 0f && BlockDuration > 0)
+								{ // Push enemy if possible
+									Vector2 push = target.Center - Projectile.Center;
+									push.Normalize();
+									target.velocity = push + Projectile.velocity;
+								}
+
+								guardian.OnBlockNPC(Projectile, target);
+								if (!FirstBlock)
+								{ // First block stuff
 									FirstBlock = true;
-									guardian.OnBlockProjectileFirst(Projectile, proj);
-									HammerItem.OnBlockFirstProjectile(owner, guardian, Projectile, proj);
+									guardian.OnBlockNPCFirst(Projectile, target);
+									HammerItem.OnBlockFirstNPC(owner, guardian, target, Projectile);
 									SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), owner.Center);
 								}
-								if (killProj) proj.Kill();
-								SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
 							}
 						}
-					}
-
-					hitBox = Projectile.Hitbox;
-					hitBox.X -= 2;
-					hitBox.Y -= 2;
-					hitBox.Width += 4;
-					hitBox.Height += 4;
-
-					for (int k = 0; k < Main.maxNPCs; k++)
-					{
-						NPC target = Main.npc[k];
-						if (target.active && !target.dontTakeDamage && !target.friendly && target.Hitbox.Intersects(hitBox))
-						{
-							HammerItem.OnBlockContact(owner, guardian, target, Projectile);
-
-							bool contained = false;
-							foreach (BlockedEnemy blockedEnemy in guardian.GuardianBlockedEnemies)
-							{
-								if (blockedEnemy.npc == target)
-								{ // Enemy already blocked, reset the timer
-									blockedEnemy.time = 120;
-									contained = true;
-									break;
-								}
-							}
-
-							if (!contained)
-							{ // First time blocking an enemy
-								guardian.GuardianBlockedEnemies.Add(new BlockedEnemy(target, 120));
-								guardian.OnBlockNPCNew(Projectile, target);
-								SoundEngine.PlaySound(SoundID.Dig, owner.Center);
-
-								if (!BlockedNPCs.Contains(target.whoAmI))
-								{
-									HammerItem.OnBlockNPC(owner, guardian, target, Projectile);
-									BlockedNPCs.Add(target.whoAmI);
-								}
-							}
-
-							if (target.knockBackResist > 0f && BlockDuration > 0)
-							{ // Push enemy if possible
-								Vector2 push = target.Center - Projectile.Center;
-								push.Normalize();
-								target.velocity = push + Projectile.velocity;
-							}
-
-							guardian.OnBlockNPC(Projectile, target);
-							if (!FirstBlock)
-							{ // First block stuff
-								FirstBlock = true;
-								guardian.OnBlockNPCFirst(Projectile, target);
-								HammerItem.OnBlockFirstNPC(owner, guardian, target, Projectile);
-								SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), owner.Center);
-							}
-						}
-					}
-
-					OldPosition.Add(new Vector2(Projectile.Center.X, Projectile.Center.Y));
-					OldRotation.Add(Projectile.rotation);
-					if (OldPosition.Count > 10)
-						OldPosition.RemoveAt(0);
-					if (OldRotation.Count > 10)
-						OldRotation.RemoveAt(0);
-
-					BlockDuration--;
-
-					if (BlockDuration == 0)
-					{
-						BlockDuration = -1;
 					}
 				}
 				else if (Projectile.ai[1] <= 0) // Held
@@ -698,7 +707,7 @@ namespace OrchidMod.Content.Guardian
 				bool weak = WeakThrow;
 				if (FirstHit)
 				{
-					if (!weak)
+					if (!weak && GrantResources)
 					{
 						guardian.AddSlam(HammerItem.SlamStacks);
 						guardian.AddGuard(HammerItem.GuardStacks);

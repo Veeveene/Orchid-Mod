@@ -18,26 +18,29 @@ namespace OrchidMod.Content.Guardian.Projectiles.Warhammers
 
 		public override void SafeSetDefaults()
 		{
-			Projectile.width = 14;
-			Projectile.height = 14;
+			Projectile.width = 10;
+			Projectile.height = 10;
 			Projectile.friendly = true;
 			Projectile.aiStyle = -1;
 			Projectile.timeLeft = 240;
 			Projectile.penetrate = 2;
             Main.projFrames[Projectile.type] = 6;
 			Projectile.usesIDStaticNPCImmunity = true;
-			Projectile.idStaticNPCHitCooldown = 5;
+			Projectile.idStaticNPCHitCooldown = 8;
 			OldPosition = new List<Vector2>();
 			OldRotation = new List<float>();
 		}
 
-		public override void OnSpawn(IEntitySource source)
-		{
-			Projectile.frame = Math.Abs(Main.rand.Next(6) - Main.rand.Next(6));
-		}
-
 		public override void AI()
 		{
+			if (Projectile.frameCounter == 0) //first frame
+			{
+				Projectile.frameCounter = 1;
+				if (Projectile.ai[0] != 1)
+					Projectile.frame = Math.Abs(Main.rand.Next(5) - Main.rand.Next(5));
+				else
+					Projectile.frame = 5;
+			}
 			Projectile.rotation += Projectile.velocity.X * 0.15f;
 			Projectile.velocity.X *= 0.99f;
 			if (Projectile.velocity.Y < 10) Projectile.velocity.Y += 0.2f;
@@ -75,8 +78,16 @@ namespace OrchidMod.Content.Guardian.Projectiles.Warhammers
 
 		public override bool OnTileCollide(Vector2 oldVelocity)
 		{
-			if (Projectile.penetrate < 2) return true;
-			Projectile.penetrate--;
+			if (Projectile.penetrate < 2)
+			{
+				if (Projectile.timeLeft < 210) return true;
+			}
+			else
+			{
+				Projectile.penetrate--;
+				Projectile.usesIDStaticNPCImmunity = false;
+				Projectile.damage = Projectile.damage * 2;
+			}
 			if (Projectile.velocity.X != oldVelocity.X)
 				Projectile.velocity.X = -oldVelocity.X;
 			if (Projectile.velocity.Y != oldVelocity.Y)
@@ -85,16 +96,25 @@ namespace OrchidMod.Content.Guardian.Projectiles.Warhammers
 			return false;
 		}
 
+		public override void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers, Player player, OrchidGuardian guardian)
+		{
+			if (Projectile.frame == 5)
+				modifiers.SetCrit();
+			else
+				modifiers.DisableCrit();
+		}
+
 		public override bool OrchidPreDraw(SpriteBatch spriteBatch, ref Color lightColor)
 		{
 			for (int i = 0; i < OldPosition.Count; i++)
-				{
-					var color = Lighting.GetColor((int)(OldPosition[i].X / 16f), (int)(OldPosition[i].Y / 16f), Color.White) * Math.Min(Projectile.velocity.Length() * 0.05f, 0.2f) * i;
-					var position = OldPosition[i] - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY;
+			{
+				var color = Lighting.GetColor((int)(OldPosition[i].X / 16f), (int)(OldPosition[i].Y / 16f), Color.White) * Math.Min(Projectile.velocity.Length() * 0.05f, 0.2f) * i;
+				var position = OldPosition[i] - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY;
 
-					spriteBatch.Draw(ModContent.Request<Texture2D>(Texture).Value, position, new Rectangle(0, Projectile.frame * 16, 14, 14), color, OldRotation[i], new Vector2(7), Projectile.scale, SpriteEffects.None, 0f);
-				}
-			return true;
+				spriteBatch.Draw(ModContent.Request<Texture2D>(Texture).Value, position, new Rectangle(0, Projectile.frame * 16, 14, 14), color, OldRotation[i], new Vector2(7), Projectile.scale, SpriteEffects.None, 0f);
+			}
+			spriteBatch.Draw(ModContent.Request<Texture2D>(Texture).Value, Projectile.Center - Main.screenPosition, new Rectangle(0, Projectile.frame * 16, 14, 14), lightColor, Projectile.rotation, new Vector2(7), Projectile.scale, SpriteEffects.None, 0f);
+			return false;
 		}
 	}
 }
