@@ -257,6 +257,8 @@ namespace OrchidMod.Content.Guardian
 						ResetSize();
 						Projectile.friendly = false;
 
+						guardianItem.OnAttackEnd(owner, guardian, Projectile, false, true);
+
 						if (IsLocalOwner)
 						{
 							bool blockInput = guardian.GetGauntletBlockInput(false);
@@ -390,6 +392,8 @@ namespace OrchidMod.Content.Guardian
 						Projectile.ai[1] = 0f;
 						Projectile.friendly = false;
 
+						guardianItem.OnAttackEnd(owner, guardian, Projectile, true, false);
+						
 						if (Main.mouseLeft && Main.mouseRight)
 						{ // Perfect jab loop while holding the attack
 							Projectile.ai[0] = -40f;
@@ -484,6 +488,7 @@ namespace OrchidMod.Content.Guardian
 						Projectile.ai[1] = 0f;
 						Projectile.friendly = false;
 						
+						guardianItem.OnAttackEnd(owner, guardian, Projectile, false, false);
 						Ding = false;
 						Projectile.netUpdate = true;
 					}

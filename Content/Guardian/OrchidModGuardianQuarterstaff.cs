@@ -22,6 +22,8 @@ namespace OrchidMod.Content.Guardian
 		public virtual void OnHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, HitInfo hit, bool jabAttack, bool counterAttack) { } // Called when hitting the first target for the first time during an attack
 		public virtual void QuarterstaffModifyHitNPC(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, ref NPC.HitModifiers modifiers, bool jabAttack, bool counterAttack, bool firstHit) { } // anchor's modifyhitNPC
 		public virtual void OnAttack(Player player, OrchidGuardian guardian, Projectile projectile, bool jabAttack, bool counterAttack) { } // Called on the first frame of an attack
+		public virtual void OnAttackEnd(Player player, OrchidGuardian guardian, Projectile projectile, bool jabAttack, bool counterAttack) { } // Called on the final frame of an attack
+		public virtual void OnBlock(Player player, OrchidGuardian guardian, Projectile projectile) { } // Called on the first frame of a block
 		/// <summary>Called before uncharged jab or mid-charging jab AI is executed, including repositioning the quarterstaff and the player's arms for its attack animation. Return false to prevent normal AI from running, effectively overriding <c>JabStyle</c>.</summary>
 		/// <remarks>During a jab, <c>Projectile.ai[0]</c> is set to -40 as an animation timer and incremented by <c>JabSpeed</c> every frame until it reaches 0. Use <c>Projectile.ResetLocalNPCHitImmunity()</c> for multi-swing animations to allow them to hit multiple times. See <c>GuardianQuarterstaffAnchor</c> for examples of default <c>JabStyle</c> behavior.</remarks>
 		public virtual bool PreJabAI(Player player, OrchidGuardian guardian, Projectile anchor) { return true; }
@@ -31,19 +33,24 @@ namespace OrchidMod.Content.Guardian
 		public virtual bool PreCounterAI(Player player, OrchidGuardian guardian, Projectile anchor) { return true; }
 		public virtual void OnParryQuarterstaff(Player player, OrchidGuardian guardian, Entity aggressor, Projectile anchor) { } // Called on parrying anything
 		/// <summary>Called during the anchor's <c>CanHitNPC</c> check. Defaults to true, which results in <c>base.CanHitNPC()</c> being called.</summary>
-		public virtual bool SafeCanHitNPC(Player player, Projectile anchor, NPC target) => true;
+		public virtual bool SafeCanHitNPC(Player player, Projectile anchor, NPC target) => Collision.CanHit(player, target);
 		public virtual void ExtraAIQuarterstaff(Player player, OrchidGuardian guardian, Projectile projectile) { } // Called at the end of the Anchor Projectile AI
 		public virtual void ExtraAIQuarterstaffJabbing(Player player, OrchidGuardian guardian, Projectile projectile) { } // Called while jabbing
 		public virtual void ExtraAIQuarterstaffBlocking(Player player, OrchidGuardian guardian, Projectile projectile) { } // Called while blocking
 		public virtual void ExtraAIQuarterstaffSwinging(Player player, OrchidGuardian guardian, Projectile projectile) { } // Called while swinging
 		public virtual void ExtraAIQuarterstaffParrying(Player player, OrchidGuardian guardian, Projectile projectile) { } // Called while parrying
-		public virtual void ExtraAIQuarterstaffCharging(Player player, OrchidGuardian guardian, Projectile projectile) { } // Called while chargins
+		public virtual void ExtraAIQuarterstaffCharging(Player player, OrchidGuardian guardian, Projectile projectile) { } // Called while charging
 		public virtual void ExtraAIQuarterstaffCounterattacking(Player player, OrchidGuardian guardian, Projectile projectile) { } // Called while counterattacking
 		public virtual void ExtraAIQuarterstaffIdle(Player player, OrchidGuardian guardian, Projectile projectile) { } // Called while idle
 		public virtual void PostDrawQuarterstaff(SpriteBatch spriteBatch, Projectile projectile, Player player, Color lightColor, SpriteEffects effects) { } // Called after the item is done being drawn
 		public virtual bool PreDrawQuarterstaff(SpriteBatch spriteBatch, Projectile projectile, Player player, ref Color lightColor, SpriteEffects effects) { return true; } // Return false to prevent normal draw code
 		public virtual Color GetQuarterstaffGlowmaskColor(Player player, OrchidGuardian guardian, Projectile projectile, Color lightColor) => Color.White;
 		public virtual Color GetColor(bool offHand) => Color.White;
+
+		/// <summary>Indexes into <see cref="GetTipPosition"/></summary>
+		protected virtual float TipOffset => 0.5f;
+		/// <summary></summary>
+		public virtual Vector2 GetTipPosition(Projectile projectile) => projectile.Center - Vector2.UnitY.RotatedBy(projectile.rotation + MathHelper.PiOver4) * projectile.width * projectile.scale * TipOffset;
 
 		public virtual void SafeHoldItem(Player player) { }
 

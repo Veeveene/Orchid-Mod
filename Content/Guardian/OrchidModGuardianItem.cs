@@ -1,4 +1,5 @@
-﻿using OrchidMod.Common;
+﻿using System;
+using OrchidMod.Common;
 using OrchidMod.Common.Attributes;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,12 +49,19 @@ namespace OrchidMod.Content.Guardian
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips)
 		{
-			TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
-			if (tt != null)
+			// TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
+			// if (tt != null)
+			// {
+			// 	string[] splitText = tt.Text.Split(' ');
+			// 	string damageValue = splitText.First();
+			// 	tt.Text = damageValue + " " + Language.GetTextValue(ModContent.GetInstance<OrchidMod>().GetLocalizationKey("DamageClasses.GuardianDamageClass.DisplayName"));
+			// }
+
+			int index = tooltips.FindIndex(x => x.Name == "Speed" && x.Mod == "Terraria");
+			if (index != -1 && Math.Abs(1 - BonusChargeRateMultiplier) > 0.01f)
 			{
-				string[] splitText = tt.Text.Split(' ');
-				string damageValue = splitText.First();
-				tt.Text = damageValue + " " + Language.GetTextValue(ModContent.GetInstance<OrchidMod>().GetLocalizationKey("DamageClasses.GuardianDamageClass.DisplayName"));
+				string key = Mod.GetLocalizationKey("UI.GuardianItem.") + (BonusChargeRateMultiplier <= 0 ? "No" : "Special") + "ChargeScaling";
+				tooltips.Insert(index + 1, new TooltipLine(Mod, "ChargeSpeedScaling", Language.GetTextValue(key, 100 *  BonusChargeRateMultiplier)));
 			}
 		}
 	}

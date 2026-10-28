@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using OrchidMod.Assets;
+using OrchidMod.Content.Guardian.Weapons.Quarterstaves;
 using OrchidMod.Utilities;
 using ReLogic.Content;
 using Terraria;
@@ -16,16 +18,19 @@ public class ThoriumVoidQuarterstaffProjectile : OrchidModGuardianProjectile
 	private static Texture2D TextureGlow;
 	
 	public Vector2 OriginalVelocity;
+	public Vector2 OriginalPosition;
 	public List<Vector2> OldPosition;
 	public List<float> OldRotation;
 	public int TimeSpent = 0;
+
+	public Vector2 Destination;
+
+	public Projectile Quarterstaff;
 
 	public override string Texture => OrchidAssets.MiscPath + "Extra_8";
 
 	public override void SetStaticDefaults()
 	{
-		TextureMain ??= OrchidAssets.GetExtraTexture(8, AssetRequestMode.ImmediateLoad).Value;
-		TextureGlow ??= OrchidAssets.GetExtraTexture(11, AssetRequestMode.ImmediateLoad).Value;
 	}
 
 	public override void SafeSetDefaults()
@@ -41,6 +46,9 @@ public class ThoriumVoidQuarterstaffProjectile : OrchidModGuardianProjectile
 		Projectile.stopsDealingDamageAfterPenetrateHits = true;
 		Projectile.usesLocalNPCImmunity = true;
 		Projectile.localNPCHitCooldown = 10;
+		
+		TextureMain ??= OrchidAssets.GetExtraTexture(8, AssetRequestMode.ImmediateLoad).Value;
+		TextureGlow ??= OrchidAssets.GetExtraTexture(11, AssetRequestMode.ImmediateLoad).Value;
 
 		OldPosition = [];
 		OldRotation = [];
@@ -59,13 +67,38 @@ public class ThoriumVoidQuarterstaffProjectile : OrchidModGuardianProjectile
 		{
 			if (Projectile.timeLeft > 20)
 			{
-				NPC target = Projectile.ai[1] > 0 ? Main.npc[(int)Projectile.ai[1]] : null;
-				if (target != null && IsValidTarget(target) && target.DistanceSQ(Projectile.Center) <= 57600f)
+				if (Projectile.ai[1] > 0)
 				{
-					Vector2 newVelocity = Vector2.Normalize(target.Center - Projectile.Center) * 0.5f;
-					Projectile.velocity += newVelocity;
+					NPC target = Main.npc[(int)Projectile.ai[1]];
+					if (target != null && IsValidTarget(target) && target.DistanceSQ(Projectile.Center) <= 102400f)
+					{
+						Vector2 newVelocity = Vector2.Normalize(target.Center - Projectile.Center) * 0.5f;
+						Projectile.velocity += newVelocity;
+					}
+					else Projectile.ai[1] = -1;
 				}
-				else Projectile.ai[1] = -1;
+				else
+				{
+					float maxDistance = 57600f;
+					NPC target = null;
+					foreach (NPC npc in Main.ActiveNPCs)
+					{
+						float distance = npc.DistanceSQ(Projectile.Center);
+						if (npc.type == NPCID.TargetDummy) distance *= 1.5f;
+						else if (npc.boss) distance *= 0.5f;
+					
+						if (IsValidTarget(npc) && distance <= maxDistance)
+						{
+							target = npc;
+							maxDistance = npc.DistanceSQ(Projectile.Center);
+						}
+					}
+				
+					if (target != null)
+					{
+						Projectile.ai[1] = target.whoAmI;
+					}
+				}
 			}
 			else
 			{
@@ -108,7 +141,7 @@ public class ThoriumVoidQuarterstaffProjectile : OrchidModGuardianProjectile
 			
 			if (Projectile.ai[1] < 0 || !IsValidTarget(Main.npc[(int)Projectile.ai[1]]))
 			{
-				float maxDistance = 230400f;
+				float maxDistance = 518400f;
 				NPC target = null;
 				foreach (NPC npc in Main.ActiveNPCs)
 				{
@@ -194,6 +227,22 @@ public class ThoriumVoidQuarterstaffProjectile : OrchidModGuardianProjectile
 				dust.fadeIn = 1f;
 			}
 		}
+	}
+
+	public override void SendExtraAI(BinaryWriter writer)
+	{
+		writer.WriteVector2(OriginalVelocity);
+		writer.WriteVector2(OriginalPosition);
+		writer.WriteVector2(Destination);
+		writer.Write(TimeSpent);
+	}
+
+	public override void ReceiveExtraAI(BinaryReader reader)
+	{
+		OriginalVelocity = reader.ReadVector2();
+		OriginalPosition = reader.ReadVector2();
+		Destination = reader.ReadVector2();
+		TimeSpent = reader.ReadInt32();
 	}
 
 	public override bool OrchidPreDraw(SpriteBatch spriteBatch, ref Color lightColor)

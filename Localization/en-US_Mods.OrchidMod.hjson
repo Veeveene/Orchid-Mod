@@ -3301,9 +3301,9 @@ Items: {
 		DisplayName: Flux Ripper
 		Tooltip:
 			'''
-			Slam to warp to an enemy in line of sight, increasing melee speed dramatically
-			Hold UP or DOWN to control knockback trajectory
-			Releases seeking void blobs on charged hits and counterattacks
+			Slam to warp to an enemy in line of sight, empowering the staff on hit
+			While empowered, charge speed is massively increased and hits store up to 15 void energy
+			Counterattacks release void energy as seeking blobs
 			'''
 	}
 
@@ -3379,13 +3379,13 @@ Items: {
 		Death: {
 			Common1: "{0} could not control the Void energy any longer"
 			Common2: "{0} was forced to use alternative payment"
-			Common3: "{0}'s soul got transmuted into Guards to shield their now-lifeless body"
-			Common4: "{0} experienced instant death"
-			Common5: "{0} was sent to Coznix's House by Void Sentinel"
+			Common3: "{0}'s soul got transmuted into Guards to shield their corpse"
+			Common4: "{0} was consumed by darkness..."
+			Common5: "{0} was sent to Coznix's House by Void Sentinel Armor"
 			Common6: "{0} was digested by their armor"
 			Common7: "{0} was used up"
 			Common8: "{0} could no longer hold up their end of the deal"
-			Rare1: "{0} experienced [c:960000/instant death]"
+			Rare1: "{0} experienced instant death"
 			Rare2: "{0} had a skill issue"
 		}
 	}
@@ -4299,8 +4299,10 @@ UI: {
 		BuffDuration: "{0} second buff duration"
 		HorizonLaceShieldStacks: Grants 3 guards when fully charged
 		DamageOfDefense: Deals {0}% of defense as opposing damage
-		Deflect: "{0} click to deflect enemies and projectiles"
-		GreathammerDeflect: "{0} click to deflect, stunning enemies and reflecting projectiles"
+		NoChargeScaling: Does not scale with charge speed
+		SpecialChargeScaling: "{0}% benefit from charge speed boosts"
+		Deflect: "{0} to deflect enemies and projectiles"
+		GreathammerDeflect: "{0} to deflect, stunning enemies and reflecting projectiles"
 		DeflectGrants: Successful deflects cost {0} {^0:guard;guards} and grant {0} {^0:slam;slams}
 		SlamChargeToThrow: Charge to throw, {0} to slam while charging
 		MissingGuards: Not enough guards!
