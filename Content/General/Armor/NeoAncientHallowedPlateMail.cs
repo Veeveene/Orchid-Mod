@@ -2,6 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using OrchidMod.Common;
 using OrchidMod.Common.ModObjects;
+using OrchidMod.Content.Guardian;
 using OrchidMod.Content.Guardian.Armors.OreHelms;
 using Terraria;
 using Terraria.DataStructures;

@@ -9,7 +9,14 @@ using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Humanizer;
+using JetBrains.Annotations;
+using log4net;
+using OrchidMod.Content.Guardian.Misc;
+using ReLogic.Graphics;
 using Terraria;
+using Terraria.GameContent;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
 
@@ -18,6 +25,13 @@ namespace OrchidMod.Content.Guardian.UI
 	public class GuardianUIState : OrchidUIState
 	{
 		public static bool NeedTextureReload;
+
+		[CanBeNull]
+		public static IGuardianCustomUIItem LastUsedCustomUIItem = null;
+
+		public static Dictionary<Type, Texture2D> TextureCustomOffCache = new();
+		public static Dictionary<Type, Texture2D> TextureCustomOnCache = new();
+		public static Dictionary<Type, Texture2D> TextureCustomReadyCache = new();
 
 		public static Texture2D textureBlockBarOn;
 		public static Texture2D textureBlockBarOff;
@@ -70,6 +84,13 @@ namespace OrchidMod.Content.Guardian.UI
 		public static Texture2D textureGuardianNeedleOff;
 		public static Texture2D textureGuardianNeedleReady;
 
+		public static Texture2D textureCustomOn;
+		public static Texture2D textureCustomOff;
+		public static Texture2D textureCustomReady;
+		public static Texture2D textureFallbackOn;
+		public static Texture2D textureFallbackOff;
+		public static Texture2D textureFallbackReady;
+
 		public static Texture2D textureBlockOn;
 		public static Texture2D textureBlockOff;
 
@@ -83,6 +104,10 @@ namespace OrchidMod.Content.Guardian.UI
 			=> layers.FindIndex(layer => layer.Name.Equals("Vanilla: Resource Bars"));
 		public override void OnInitialize()
 		{
+			TextureCustomReadyCache = new();
+			TextureCustomOffCache = new();
+			TextureCustomOnCache = new();
+
 			ReloadTextures();
 
 			Width.Set(0f, 0f);
@@ -102,7 +127,8 @@ namespace OrchidMod.Content.Guardian.UI
 			textureBlockBarOffVoid = ModContent.Request<Texture2D>(path + "BlockBarOffVoid", AssetRequestMode.ImmediateLoad).Value;
 
 			// Chance textures file path if the fancy config option is enabled
-			if (ModContent.GetInstance<OrchidClientConfig>().GuardianUseFancyUI) path += "Fancy/";
+			bool fancy = ModContent.GetInstance<OrchidClientConfig>().GuardianUseFancyUI;
+			if (fancy) path += "Fancy/";
 
 			textureBlockBarOn = ModContent.Request<Texture2D>(path + "BlockBarOn", AssetRequestMode.ImmediateLoad).Value;
 			textureBlockBarOff = ModContent.Request<Texture2D>(path + "BlockBarOff", AssetRequestMode.ImmediateLoad).Value;
@@ -161,6 +187,92 @@ namespace OrchidMod.Content.Guardian.UI
 			textureIconStandardHighlight = ModContent.Request<Texture2D>(path + "IconStandardHighlight", AssetRequestMode.ImmediateLoad).Value;
 			textureIconRuneOn = ModContent.Request<Texture2D>(path + "IconRuneOn", AssetRequestMode.ImmediateLoad).Value;
 			textureIconRuneOff = ModContent.Request<Texture2D>(path + "IconRuneOff", AssetRequestMode.ImmediateLoad).Value;
+			
+			textureFallbackOn = ModContent.Request<Texture2D>(path + "FallbackOn", AssetRequestMode.ImmediateLoad).Value;
+			textureFallbackOn.Name = "FallbackOn";
+			textureFallbackOff = ModContent.Request<Texture2D>(path + "FallbackOff", AssetRequestMode.ImmediateLoad).Value;
+			textureFallbackOff.Name = "FallbackOff";
+			textureFallbackReady = ModContent.Request<Texture2D>(path + "FallbackReady", AssetRequestMode.ImmediateLoad).Value;
+			textureFallbackReady.Name = "FallbackReady";
+
+			TextureCustomOnCache.Clear();
+			TextureCustomOffCache.Clear();
+			TextureCustomReadyCache.Clear();
+			LastUsedCustomUIItem = null;
+			
+			ILog logger = OrchidMod.Instance.Logger;
+			foreach (var modItem in ModContent.GetContent<ModItem>())
+			{
+				if (modItem is OrchidModGuardianItem and IGuardianCustomUIItem customUIItem)
+				{
+					string typeName = modItem.Name;
+					string textureName = customUIItem.TextureName;
+					string myPath = path + textureName;
+
+					if (textureName is null)
+					{
+						logger.DebugFormat("IGuardianCustomUIItem \"{0}\" has its \"TextureName\" property set to null; skipping", myPath);
+						continue;
+					}
+					
+					logger.DebugFormat("Considering path {0}", myPath);
+					
+					Texture2D textureOn;
+					Texture2D textureOff;
+					Texture2D textureReady;
+				
+					if (ModContent.RequestIfExists(customUIItem.TextureOnPath(fancy) ?? myPath + "On", out Asset<Texture2D> textOn, AssetRequestMode.ImmediateLoad))
+					{
+						textureOn = textOn.Value;
+						textureOn.Name = textureName + "On";
+						logger.InfoFormat("Found \"On\" texture for {0} at {1}", typeName, myPath + "On");
+					}
+					else
+					{
+						textureOn = textureFallbackOn;
+						textureOn.Name = "FallbackOn";
+						logger.WarnFormat("{0} has no \"On\" texture defined at {1}, using fallback", typeName, myPath + "On");
+					}
+					
+					if (ModContent.RequestIfExists(customUIItem.TextureOffPath(fancy) ?? myPath + "Off", out Asset<Texture2D> textOff, AssetRequestMode.ImmediateLoad))
+					{
+						textureOff = textOff.Value;
+						textureOff.Name = textureName + "Off";
+						logger.InfoFormat("Found \"Off\" texture for {0} at {1}", typeName, myPath + "Off");
+					}
+					else
+					{
+						textureOff = textureFallbackOff;
+						textureOff.Name = "FallbackOff";
+						logger.WarnFormat("{0} has no \"Off\" texture defined at {1}, using fallback", typeName, myPath + "Off");
+					}
+						
+					if (ModContent.RequestIfExists(customUIItem.TextureReadyPath(fancy) ?? myPath + "Ready", out Asset<Texture2D> textReady, AssetRequestMode.ImmediateLoad))
+					{
+						textureReady = textReady.Value;
+						textureReady.Name = textureName + "Ready";
+						logger.InfoFormat("Found \"Ready\" texture for {0} at {1}", typeName, myPath + "Ready");
+					}
+					else
+					{
+						textureReady = textureFallbackReady;
+						textureReady.Name = "FallbackReady";
+						logger.WarnFormat("{0} has no \"Ready\" texture defined at {1}, using fallback", typeName, myPath + "Ready");
+					}
+					
+					logger.DebugFormat("Cached textures {0}, {1}, and {2} for IGuardianCustomUIItem \"{3}\"", textureOn.Name, textureOff.Name, textureReady.Name, typeName);
+					
+					TextureCustomOnCache.Add(customUIItem.GetType(), textureOn);
+					TextureCustomOffCache.Add(customUIItem.GetType(), textureOff);
+					TextureCustomReadyCache.Add(customUIItem.GetType(), textureReady);
+				}
+			}
+			textureCustomOn = textureFallbackOn;
+			textureCustomOff = textureFallbackOff;
+			textureCustomReady = textureFallbackReady;
+			logger.DebugFormat("Current entries for TextureCustomOnCache: {0}", TextureCustomOnCache.Values.Humanize());
+			logger.DebugFormat("Current entries for TextureCustomOffCache: {0}", TextureCustomOffCache.Values.Humanize());
+			logger.DebugFormat("Current entries for TextureCustomReadyCache: {0}", TextureCustomReadyCache.Values.Humanize());
 		}
 
 		public override void Draw(SpriteBatch spriteBatch)
@@ -181,7 +293,7 @@ namespace OrchidMod.Content.Guardian.UI
 				Vector2 position = (player.position + new Vector2(player.width * 0.5f, player.height + player.gfxOffY + 12)).Floor();
 				if (player.gravDir < 0) position.Y -= 81;
 				Vector2 drawpos = position;
-				position = position - Main.screenPosition;
+				position -= Main.screenPosition;
 				SpriteEffects effect = player.gravDir > 0 ? SpriteEffects.None : SpriteEffects.FlipVertically;
 
 				Texture2D chargeTextureOn = null;
@@ -332,6 +444,38 @@ namespace OrchidMod.Content.Guardian.UI
 
 				if (player.HeldItem.ModItem is OrchidModGuardianItem guardianItem)
 				{
+					if (guardianItem is IGuardianCustomUIItem customUIItem)
+					{ 
+						if (LastUsedCustomUIItem == null || customUIItem.GetType() != LastUsedCustomUIItem.GetType())
+						{
+							Mod.Logger.DebugFormat("Equipped IGuardianCustomUIItem \"{0}\" of type {1}, trying to load custom textures from cache", guardianItem.Name, guardianItem.GetType());
+							LastUsedCustomUIItem = customUIItem;
+							textureCustomOff = TextureCustomOffCache.GetValueOrDefault(guardianItem.GetType(), textureFallbackOff);
+							textureCustomOn = TextureCustomOnCache.GetValueOrDefault(guardianItem.GetType(), textureFallbackOn);
+							textureCustomReady = TextureCustomReadyCache.GetValueOrDefault(guardianItem.GetType(), textureFallbackReady);
+
+							Mod.Logger.DebugFormat("Loaded textures {0}, {1}, and {2} for IGuardianCustomUIItem \"{3}\"", textureCustomOff.Name, textureCustomOn.Name, textureCustomReady.Name, guardianItem.Name);
+						}
+					}
+					else if (LastUsedCustomUIItem != null)
+					{
+						LastUsedCustomUIItem = null;
+						textureCustomOff = textureFallbackOff;
+						textureCustomOn = textureFallbackOn;
+						textureCustomReady = textureFallbackReady;
+						Mod.Logger.Debug("Unloaded custom textures to fallback values");
+					}
+					
+					
+					if (guardianItem is IGuardianCustomUIItem miscItem && (maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > miscItem.ChargeThreshold(player))))
+					{
+						chargeTextureOn = textureCustomOn;
+						chargeTextureOff = textureCustomOff;
+						chargeTextureReady = textureCustomReady;
+						
+						goto IconDrawing;
+					}
+					
 					if ((maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f)) && guardianItem is OrchidModGuardianHammer)
 					{
 						if (ModContent.GetInstance<OrchidClientConfig>().GuardianUseOldHammerUi)
@@ -383,19 +527,19 @@ namespace OrchidMod.Content.Guardian.UI
 						chargeTextureReady = textureStandardReady;
 					}
 
-					if ((maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f)) && guardianItem is HorizonLance)
-					{
-						chargeTextureOn = textureHorizonLanceOn;
-						chargeTextureOff = textureHorizonLanceOff;
-						chargeTextureReady = textureHorizonLanceReady;
-					}
+					// if ((maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f)) && guardianItem is HorizonLance)
+					// {
+					// 	chargeTextureOn = textureHorizonLanceOn;
+					// 	chargeTextureOff = textureHorizonLanceOff;
+					// 	chargeTextureReady = textureHorizonLanceReady;
+					// }
 
-					if ((maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f)) && guardianItem is GuardianNeedle)
-					{
-						chargeTextureOn = textureGuardianNeedleOn;
-						chargeTextureOff = textureGuardianNeedleOff;
-						chargeTextureReady = textureGuardianNeedleReady;
-					}
+					// if ((maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f)) && guardianItem is GuardianNeedle)
+					// {
+					// 	chargeTextureOn = textureGuardianNeedleOn;
+					// 	chargeTextureOff = textureGuardianNeedleOff;
+					// 	chargeTextureReady = textureGuardianNeedleReady;
+					// }
 
 					if ((maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (23 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f)) && guardianItem is OrchidModGuardianRune)
 					{
@@ -421,7 +565,7 @@ namespace OrchidMod.Content.Guardian.UI
 							{
 								int val = 22;
 								float block = staffAnchor.ai[2];
-								float step = (player.HeldItem.ModItem as OrchidModGuardianQuarterstaff).ParryDuration;
+								float step = modPlayer.GetParryDuration(player.HeldItem, (player.HeldItem.ModItem as OrchidModGuardianQuarterstaff).ParryDuration);
 								while (block < step)
 								{
 									block += step / 20f;
@@ -469,6 +613,7 @@ namespace OrchidMod.Content.Guardian.UI
 						chargeTextureReady = textureGreathammerReady;
 					}
 
+					IconDrawing:
 					// Parry duration display on standard weapons
 					int shieldType = ModContent.ProjectileType<GuardianShieldAnchor>();
 					int gauntletType = ModContent.ProjectileType<GuardianGauntletAnchor>();
@@ -594,6 +739,10 @@ namespace OrchidMod.Content.Guardian.UI
 							}
 						}
 					}
+				}
+				else
+				{
+					LastUsedCustomUIItem = null;
 				}
 
 				spriteBatch.End();

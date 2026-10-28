@@ -16,12 +16,15 @@ using Terraria.ModLoader;
 
 namespace OrchidMod.Content.Guardian.Weapons.Misc
 {
-	public class HorizonLance : OrchidModGuardianParryItem
+	public class HorizonLance : OrchidModGuardianParryItem, IGuardianCustomUIItem
 	{
 		public int StandardDuration; // Effect duration in ticks
 		public int ParryDuration;
 		public virtual string LanceTexture => Texture;
 		public virtual string LanceTextureGlow => Texture + "_Glow";
+
+		public override int AnchorType => ModContent.ProjectileType<GuardianHorizonLanceAnchor>();
+		string IGuardianCustomUIItem.TextureName => "HorizonLance";
 
 		public virtual void SafeHoldItem(Player player) { }
 

@@ -16,8 +16,11 @@ using OrchidMod.Common.Attributes;
 namespace OrchidMod.Content.Guardian.Weapons.Misc
 {
 	[CrossmodContent("ThoriumMod")]
-	public class GuardianNeedle : OrchidModGuardianParryItem
+	public class GuardianNeedle : OrchidModGuardianParryItem, IGuardianCustomUIItem
 	{
+		string IGuardianCustomUIItem.TextureName => "GuardianNeedle";
+		public override int AnchorType => ModContent.ProjectileType<GuardianNeedleAnchor>();
+
 		public int ParryDuration;
 
 		public virtual void SafeHoldItem(Player player) { }

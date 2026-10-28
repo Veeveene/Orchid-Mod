@@ -5,8 +5,10 @@ using Terraria.ModLoader;
 
 namespace OrchidMod.Content.Guardian.Weapons.Misc
 {
-	public class ConsolariaLepusEggNest : OrchidModGuardianHammer
+	public class ConsolariaLepusEggNest : OrchidModGuardianHammer, IGuardianCustomUIItem
 	{
+		string IGuardianCustomUIItem.TextureName => "EggBasket";
+		
 		public override void SafeSetDefaults()
 		{
 			Item.width = 34;
