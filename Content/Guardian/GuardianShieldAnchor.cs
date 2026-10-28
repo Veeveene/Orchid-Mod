@@ -16,7 +16,7 @@ namespace OrchidMod.Content.Guardian
 	public class GuardianShieldAnchor : OrchidModGuardianAnchor
 	{
 		public int SelectedItem { get; set; } = -1;
-		public Item ShieldItem => Main.player[Projectile.owner].inventory[this.SelectedItem];
+		public Item ShieldItem => Main.player[Projectile.owner].inventory[SelectedItem];
 		public Texture2D ShieldTexture;
 		public Texture2D ShieldTextureGlow;
 
