@@ -187,10 +187,7 @@ namespace OrchidMod.Content.Guardian
 			Item.useAnimation = Item.useTime;
 		}
 
-		public override bool AltFunctionUse(Player player)
-		{
-			return true;
-		}
+		public override bool AltFunctionUse(Player player) => true;
 
 		public override bool WeaponPrefix() => true;
 
@@ -207,14 +204,13 @@ namespace OrchidMod.Content.Guardian
 
 			if (validRMBInput || Main.mouseLeft)
 			{ // If the player does a valid RMB input (the weapon can block) or a mouseleft input - so we don't create a proejctile for nothing in edge cases
-				int projType = ProjectileType<GuardianHammerAnchor>();
 				int damage = guardian.GetGuardianDamage(Item.damage);
-				Projectile projectile = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, projType, damage, Item.knockBack, player.whoAmI);
+				Projectile projectile = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, AnchorType, damage, Item.knockBack, player.whoAmI);
 				projectile.CritChance = (int)(player.GetCritChance<GuardianDamageClass>() + player.GetCritChance<GenericDamageClass>() + Item.crit);
 
 				if (DualWarhammers && !validRMBInput)
 				{ // Creates another Anchor on use, and flags it as the offhand warhammer, before making sure they are drawn in the correct order
-					Projectile projectileOffHand = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, projType, damage, Item.knockBack, player.whoAmI);
+					Projectile projectileOffHand = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, AnchorType, damage, Item.knockBack, player.whoAmI);
 					projectileOffHand.CritChance = (int)(player.GetCritChance<GuardianDamageClass>() + player.GetCritChance<GenericDamageClass>() + Item.crit);
 
 					if (projectile.whoAmI < projectileOffHand.whoAmI)
@@ -254,9 +250,7 @@ namespace OrchidMod.Content.Guardian
 		
 		public override bool CanUseItem(Player player)
 		{
-			int projType = ProjectileType<GuardianHammerAnchor>();
-
-			var proj = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == projType && i.ModProjectile is GuardianHammerAnchor warhammer && warhammer.BlockDuration > 0);
+			var proj = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == AnchorType && i.ModProjectile is GuardianHammerAnchor warhammer && warhammer.BlockDuration > 0);
 			if (Main.mouseRight && Main.mouseRightRelease && proj != null && proj.ModProjectile is GuardianHammerAnchor warhammer)
 			{ // recalls existing blocking warhammers when right clicking
 				warhammer.BlockDuration = -30; // -30 instead of -1 so they return faster
@@ -290,7 +284,7 @@ namespace OrchidMod.Content.Guardian
 				}
 			}
 
-			if ((player.ownedProjectileCounts[projType] > 0 && (offHandCheck || !validRMBInput)) || (!(Main.mouseRight && Main.mouseRightRelease && player.GetModPlayer<OrchidGuardian>().UseGuard(1, true)) && !Main.mouseLeft)) return false;
+			if ((player.ownedProjectileCounts[AnchorType] > 0 && (offHandCheck || !validRMBInput)) || (!(Main.mouseRight && Main.mouseRightRelease && player.GetModPlayer<OrchidGuardian>().UseGuard(1, true)) && !Main.mouseLeft)) return false;
 
 			if (validRMBInput || Main.mouseLeft)
 			{
@@ -334,15 +328,16 @@ namespace OrchidMod.Content.Guardian
 		public override void ModifyTooltips(List<TooltipLine> tooltips)
 		{
 			var guardian = Main.LocalPlayer.GetModPlayer<OrchidGuardian>();
-			TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
-			if (tt != null)
-			{
-				string[] splitText = tt.Text.Split(' ');
-				string damageValue = splitText.First();
-				tt.Text = damageValue + " " + Language.GetTextValue(ModContent.GetInstance<OrchidMod>().GetLocalizationKey("DamageClasses.GuardianDamageClass.DisplayName"));
-			}
+			// TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
+			// if (tt != null)
+			// {
+			// 	string[] splitText = tt.Text.Split(' ');
+			// 	string damageValue = splitText.First();
+			// 	tt.Text = damageValue + " " + Language.GetTextValue(ModContent.GetInstance<OrchidMod>().GetLocalizationKey("DamageClasses.GuardianDamageClass.DisplayName"));
+			// }
 
 			int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Knockback")) + 1;
+			string click = OrchidUtils.GetClickInfoTooltip();
 
 			if (GuardStacks > 0 || SlamStacks > 0)
 			{
@@ -366,7 +361,6 @@ namespace OrchidMod.Content.Guardian
 
 			if (!CannotBlock)
 			{
-				string click = Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.RightClick");
 				string block = Language.GetText(ShouldBlock ? "Mods.OrchidMod.UI.GuardianItem.ToBlock" : "Mods.OrchidMod.UI.GuardianItem.ToSlam").Format(click);
 				string line = "Mods.OrchidMod.UI.GuardianItem.HammerBlock";
 				if (ShouldBlock ? (GuardBlockCost != 1 || SlamBlockCost != 0) : (GuardBlockCost != 0 || SlamBlockCost != 1))

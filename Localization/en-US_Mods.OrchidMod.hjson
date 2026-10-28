@@ -4213,6 +4213,7 @@ Misc: {
 	EntryAdded: Entry {0} added to the hidden reaction codex!
 	CurrentСard: "Current card: "
 	PlayingСard: Playing Card :
+	MiscInput: press "{0}"
 	Crossmod: "This is a crossmod item: "
 	ThoriumMagicThorHammer: Right click within your inventory to activate Opposing Mode
 }
@@ -4301,7 +4302,7 @@ UI: {
 		Deflect: "{0} click to deflect enemies and projectiles"
 		GreathammerDeflect: "{0} click to deflect, stunning enemies and reflecting projectiles"
 		DeflectGrants: Successful deflects cost {0} {^0:guard;guards} and grant {0} {^0:slam;slams}
-		SlamChargeToThrow: Charge to throw, {0} click to slam while charging
+		SlamChargeToThrow: Charge to throw, {0} to slam while charging
 		MissingGuards: Not enough guards!
 		MissingSlams: Not enough slams!
 		MissingGuardsAndSlams: Not enough guards or slams!

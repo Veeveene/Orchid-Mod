@@ -31,13 +31,31 @@ namespace OrchidMod.Content.Guardian.Accessories
 		{
 			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
 			modPlayer.GuardianInfiniteResources = true;
-			if (!hideVisual) modPlayer.GuardianDebugVisuals = 1;
+			if (!hideVisual)
+			{
+				int mode = 6;
+				for (int i = 3; i < 8; i++)
+				{
+					if (player.armor[i].type == Type)
+						mode = i - 2;
+				}
+				modPlayer.GuardianDebugVisuals = mode;
+			}
 		}
 
 		public override void UpdateVanity(Player player)
 		{
 			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
-			modPlayer.GuardianDebugVisuals = 1;
+			int mode = 6;
+			for (int i = 13; i < 18; i++)
+			{
+				if (player.armor[i].type == Type)
+				{
+					mode = i - 12;
+					break;
+				}
+			}
+			modPlayer.GuardianDebugVisuals = mode;
 		}
 
 		public static string AttackTypeString(GuardianAttackInfo info)

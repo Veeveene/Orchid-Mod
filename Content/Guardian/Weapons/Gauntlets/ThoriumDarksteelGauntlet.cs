@@ -34,7 +34,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Gauntlets
 			return new Color(255, 200, 200);
 		}
 
-		public override void ModifyTooltips(List<TooltipLine> tooltips)
+		public override void SafeModifyTooltips(List<TooltipLine> tooltips)
 		{
 			TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
 			if (tt != null)
@@ -43,15 +43,6 @@ namespace OrchidMod.Content.Guardian.Weapons.Gauntlets
 				string damageValue = splitText.First();
 				tt.Text = Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.DamageOfDefense", damageValue);
 			}
-
-			int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Knockback"));
-			tooltips.Insert(index + 1, new TooltipLine(Mod, "ParryDuration", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.ParryDuration", OrchidUtils.FramesToSeconds((int)(ParryDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration())))));
-
-			string click = ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletInputs ? Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.LeftClick") : Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.RightClick");
-			tooltips.Insert(index + 2, new TooltipLine(Mod, "ClickInfo", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.Parry", click))
-			{
-				OverrideColor = new Color(175, 255, 175)
-			});
 		}
 
 		public override void ExtraAIGauntlet(Player player, OrchidGuardian guardian, Projectile projectile, bool offHandGauntlet)

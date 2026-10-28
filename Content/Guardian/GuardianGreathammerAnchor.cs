@@ -266,13 +266,9 @@ namespace OrchidMod.Content.Guardian
 				{
 					if (IsLocalOwner)
 					{
-						bool swingInput = Main.mouseRight;
-						bool chargeInput = Main.mouseLeft;
-						if (ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletInputs)
-						{
-							swingInput = Main.mouseLeft;
-							chargeInput = Main.mouseRight;
-						}
+						bool swingInput = guardian.GetGauntletBlockInput(false);
+						bool chargeInput = guardian.GetGauntletPunchInput(false);
+						
 						if (guardian.GuardianItemCharge < 210f)
 						{
 							guardian.GuardianItemCharge += 30f / HammerItem.Item.useTime * HammerItem.WaitChargeGain * player.GetTotalAttackSpeed(DamageClass.Melee);

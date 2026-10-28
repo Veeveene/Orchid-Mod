@@ -195,8 +195,8 @@ namespace OrchidMod.Content.Guardian
 		{
 			if (player.ownedProjectileCounts[AnchorType] > 0)
 			{
-				Projectile proj = Main.projectile.First(i => i.active && i.owner == player.whoAmI && i.type == AnchorType);
-				if (proj.ModProjectile is GuardianShieldAnchor shield)
+				Projectile proj = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == AnchorType);
+				if (proj?.ModProjectile is GuardianShieldAnchor shield)
 					return shield;
 			}
 			return null;
@@ -213,20 +213,14 @@ namespace OrchidMod.Content.Guardian
 
 		public sealed override void HoldItem(Player player)
 		{
-			int projectileType = ModContent.ProjectileType<GuardianShieldAnchor>();
 			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
 			guardian.GuardianDisplayUI = 300;
 
-			if (player.ownedProjectileCounts[projectileType] == 0)
+			if (player.ownedProjectileCounts[AnchorType] == 0)
 			{
-				int index = Projectile.NewProjectile(Item.GetSource_FromThis(), player.Center.X, player.Center.Y, 0f, 0f, projectileType, 0, 0f, player.whoAmI);
-
-				Projectile proj = Main.projectile[index];
-				if (proj.ModProjectile is not GuardianShieldAnchor shield)
-				{
-					proj.Kill();
-				}
-				else
+				Projectile proj = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, AnchorType, 0, 0f, player.whoAmI);
+				
+				if (proj.ModProjectile is GuardianShieldAnchor shield)
 				{
 					proj.damage = guardian.GetGuardianDamage(Item.damage);
 					proj.CritChance = guardian.GetGuardianCrit(Item.crit);
@@ -234,10 +228,11 @@ namespace OrchidMod.Content.Guardian
 					proj.localAI[0] = (int)guardian.GetBlockDuration(Item, blockDuration);; // Used for UI display
 					shield.OnChangeSelectedItem(player);
 				}
+				else proj.Kill();
 			}
 			else
 			{
-				Projectile proj = Main.projectile.First(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
+				Projectile proj = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == AnchorType);
 				if (proj.ModProjectile is GuardianShieldAnchor shield)
 				{
 					if (shield.SelectedItem != player.selectedItem)
@@ -264,7 +259,7 @@ namespace OrchidMod.Content.Guardian
 			int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Knockback"));
 			tooltips.Insert(index + 1, new TooltipLine(Mod, "BlockDuration", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.BlockDuration", OrchidUtils.FramesToSeconds((int)(blockDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianBlockDuration)))));
 
-			string click = ModContent.GetInstance<OrchidClientConfig>().GuardianSwapPaviseInputs ? Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.LeftClick") : Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.RightClick");
+			string click = OrchidUtils.GetClickInfoTooltip(guardian.PaviseInputSwap);
 			tooltips.Insert(index + 2, new TooltipLine(Mod, "ClickInfo", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.Block", click))
 			{
 				OverrideColor = new Color(175, 255, 175)

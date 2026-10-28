@@ -265,7 +265,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Misc
 							SoundEngine.PlaySound(guardian.DingSound, owner.Center);
 						}
 
-						if ((!owner.controlUseItem || !heldStandard) && IsLocalOwner)
+						if ((!guardian.GetGauntletPunchInput(false) || !heldStandard) && IsLocalOwner)
 						{
 							if (guardian.GuardianItemCharge >= 180f)
 							{ // Full charge

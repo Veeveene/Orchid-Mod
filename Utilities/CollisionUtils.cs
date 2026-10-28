@@ -67,6 +67,8 @@ public static partial class OrchidUtils
 	public static (double, double) XYTuple(this Vector2D vector) => (vector.X, vector.Y);
 	public static (int, int) XYTuple(this Point point) => (point.X, point.Y);
 	public static (short, short) XYTuple(this Point16 point) => (point.X, point.Y);
+
+	public static Vector4 Vector4(Vector2 vector1, Vector2 vector2) => new Vector4(vector1.X, vector1.Y, vector2.X, vector2.Y);
 	
 	public static bool HasPointInCircle(this Circle circle, Vector2 point) => Circle.HasPointInCircle(circle, point);	
 	public static Vector2 ClosestPointInCircle(this Circle circle, Vector2 point) => Circle.ClosestPointInCircle(circle, point);

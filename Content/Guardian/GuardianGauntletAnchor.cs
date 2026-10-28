@@ -255,7 +255,7 @@ namespace OrchidMod.Content.Guardian
 				{
 					if (Charging)
 					{
-						guardian.GuardianItemCharge += 30f / GauntletItem.useTime * (owner.GetTotalAttackSpeed(DamageClass.Melee) * 2f - 1f) * guardianItem.ChargeSpeedMultiplier;
+						guardian.GuardianItemCharge += 30f / GauntletItem.useTime * (owner.GetTotalAttackSpeed(DamageClass.Melee) * 2f - 1f) * guardian.GetWeaponChargeRate(guardianItem, guardianItem.ChargeSpeedMultiplier);;
 						if (guardian.GuardianItemCharge > 180f)
 						{
 							if (!Ding && IsLocalOwner)

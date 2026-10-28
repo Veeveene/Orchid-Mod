@@ -26,7 +26,7 @@
 	// Guardian - Damage, Knockback, Block Duration, Critical Strike Chance, Speed
 
 	public class HaidexPrefix() : GuardianPrefix(1.00f, 1.00f, 0.85f, 20, 0.85f); // Easter Egg
-	public class AnnoyingPrefixGuardian() : GuardianPrefix(0.8f, 1f, 1f, 0, 0.85f) // Ostensibly bad; exclusive to The Big Honkers (base Annoying isn't applicable due to speed mult restriction)
+	public class AnnoyingPrefixGuardian() : GuardianPrefix(0.8f, 1f, 1f, 0, 0.85f) // Ostensibly bad; exclusive to Toy Warhammers (base Annoying isn't applicable due to speed mult restriction)
 	{
 		public override float obnoxiousness => 4f;
 	}  

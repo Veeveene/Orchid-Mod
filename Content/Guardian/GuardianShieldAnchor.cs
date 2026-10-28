@@ -538,6 +538,10 @@ namespace OrchidMod.Content.Guardian
 			}
 			guardianItem.PostDrawShield(spriteBatch, Projectile, player, color);
 
+			if (guardian.GuardianDebugVisuals > 0)
+			{
+				Utils.DrawLine(spriteBatch, hitboxOrigin + new Vector2(4) + player.getGFXOffY(), hitboxOrigin + new Vector2(4) + hitbox + player.getGFXOffY(), Color.Goldenrod, Color.Goldenrod, 4f);
+			}
 			return false;
 		}
 

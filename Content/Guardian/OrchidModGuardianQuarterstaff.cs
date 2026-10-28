@@ -85,6 +85,8 @@ namespace OrchidMod.Content.Guardian
 		//public bool SingleSwing = false; // allows a special swing behaviour
 		/// <summary>Multiplier for the amount of bonus charge gained from hitting with a jab.</summary>
 		public float JabChargeGain;
+		/// <summary>Multiplier for the rate of charge gained.</summary>
+		public float ChargeRate = 1f;
 		/// <summary>
 		/// The amount of animation frames of the quarterstaff texture.
 		/// <br/> The animation frame must be set manually using <c>GuardianQuarterstaffAnchor.QuarterstaffAnimFrame</c>.
@@ -162,9 +164,8 @@ namespace OrchidMod.Content.Guardian
 			{
 				if (player.ownedProjectileCounts[AnchorType] > 0)
 				{
-
 					var guardian = player.GetModPlayer<OrchidGuardian>();
-					var proj = Main.projectile.First(i => i.active && i.owner == player.whoAmI && i.type == AnchorType);
+					var proj = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == AnchorType);
 					if (proj != null && proj.ModProjectile is GuardianQuarterstaffAnchor anchor)
 					{
 						bool shouldBlock = guardian.GetGauntletBlockInput(true);
@@ -204,24 +205,16 @@ namespace OrchidMod.Content.Guardian
 
 			if (player.ownedProjectileCounts[AnchorType] != 1)
 			{
-				foreach (Projectile projectile in Main.projectile)
+				foreach (Projectile projectile in Main.ActiveProjectiles)
 				{
-					if (projectile.active && projectile.owner == player.whoAmI && projectile.type == AnchorType)
-					{
-						projectile.Kill();
-					}
+					if (projectile.owner == player.whoAmI && projectile.type == AnchorType) projectile.Kill();
 				}
 
 				var proj = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, AnchorType, 0, 0f, player.whoAmI);
 
-				if (proj.ModProjectile is not GuardianQuarterstaffAnchor quarterstaff)
-				{
-					proj.Kill();
-				}
-				else
-				{
+				if (proj.ModProjectile is GuardianQuarterstaffAnchor quarterstaff)
 					quarterstaff.OnChangeSelectedItem(player);
-				}
+				else proj.Kill();
 			}
 			else
 			{
@@ -259,7 +252,7 @@ namespace OrchidMod.Content.Guardian
 			int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Knockback"));
 			tooltips.Insert(index + 1, new TooltipLine(Mod, "ParryDuration", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.ParryDuration", OrchidUtils.FramesToSeconds((int)(ParryDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianParryDuration)))));
 
-			string click = ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletInputs ? Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.LeftClick") : Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.RightClick");
+			string click = OrchidUtils.GetClickInfoTooltip(guardian.GauntletInputSwap);
 			tooltips.Insert(index + 2, new TooltipLine(Mod, "ClickInfo", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.Parry", click))
 			{
 				OverrideColor = new Color(175, 255, 175)
@@ -273,14 +266,8 @@ namespace OrchidMod.Content.Guardian
 			if (GuardStacks > 0 || SlamStacks > 0)
 			{
 				string TooltipToGet = ModContent.GetInstance<OrchidMod>().GetLocalizationKey("Misc.GuardianGrants");
-				switch(GuardStacks)
-				{
-					case > 0: TooltipToGet += "Guard"; break;
-				}
-				switch (SlamStacks)
-				{
-					case > 0: TooltipToGet += "Slam"; break;
-				}
+				if (GuardStacks > 0) TooltipToGet += "Guard";
+				if (SlamStacks > 0) TooltipToGet += "Slam"; 
 				if (GuardStacks == SlamStacks) TooltipToGet += "Same";
 
 				tooltips.Insert(index + 1, new TooltipLine(Mod, "GuardianGrants", Language.GetText(TooltipToGet).Format(GuardStacks, SlamStacks))

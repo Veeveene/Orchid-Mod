@@ -704,12 +704,7 @@ namespace OrchidMod.Content.Guardian
 			{
 				if (Main.myPlayer == Player.whoAmI)
 				{
-					/*
-					if (GuardianDebugVisuals == 1) CombatText.NewText(Player.Hitbox, new Color(1f, 0f, 1f), "Enabled shield and deflect check", true);
-					if (GuardianDebugVisuals == 1) CombatText.NewText(Player.Hitbox, new Color(1f, 0f, 1f), "Enabled attackinfo display", true);
-					if (GuardianDebugVisuals == 1) CombatText.NewText(Player.Hitbox, new Color(1f, 0f, 1f), "Enabled greathammer hand placement visual", true);
-					*/
-					if (GuardianDebugVisuals == 1)
+					if (GuardianDebugVisuals > 0)
 					{
 						Main.NewText("Enabled shield and deflect check", 175, 255, 175);
 						Main.NewText("Enabled attackinfo display", 175, 255, 175);
@@ -1579,7 +1574,7 @@ namespace OrchidMod.Content.Guardian
 			}
 
 			//DEBUG
-			if (GuardianDebugVisuals == 1)
+			if (GuardianDebugVisuals > 0)
 			{
 				CombatText.NewText(new Rectangle((int)Player.Center.X, Player.Hitbox.Y, 0, 0), Color.White, GuardianTest.AttackTypeString(info) + " (" + (byte)info + ")");
 			}
@@ -1604,7 +1599,7 @@ namespace OrchidMod.Content.Guardian
 			if (item != null && !item.PreDeflect(ref targetArea, ref success, ref caughtProjectile, ref killedNPC, anchor, ref EnemyPredicate, ref ProjPredicate, ref range, ref lenience, ref from, ref dmg))
 				return false;
 
-			if (GuardianDebugVisuals == 1)
+			if (GuardianDebugVisuals > 0)
 			{
 				Dust dust = Dust.NewDustPerfect(targetArea.TopLeft(), DustID.MagicMirror);
 				dust.velocity = Vector2.Zero;
@@ -1731,16 +1726,37 @@ namespace OrchidMod.Content.Guardian
 		public float GetWeaponChargeRate(OrchidModGuardianItem guardianItem, float baseRate = 1f) => baseRate + ((GuardianChargeSpeed - 1) * guardianItem.BonusChargeRateMultiplier);
 
 		/// <summary>Returns the primary mouse input for "gauntlet-like" weapons: <c>Main.mouseLeft</c> by default, or <c>Main.mouseRight</c> if swapped in the config.</summary>
-		/// <param name="tap">If <c>Main.mouseLeftRelease</c>/<c>Main.mouseRightRelease</c> should be considered as part of the input.</param>
-		public bool GetGauntletPunchInput(bool tap) => GauntletInputSwap ? Main.mouseRight && (!tap || Main.mouseRightRelease) : Main.mouseLeft && (!tap || Main.mouseLeftRelease);
+		/// <param name="tap">If <c>Main.mouseLeftRelease</c>/<c>Main.mouseRightRelease</c> should be considered as part of the input. Returns <c>Main.mouseLeftRelease</c>/<c>Main.mouseRightRelease</c> by itself if null.</param>
+		public bool GetGauntletPunchInput(bool? tap)
+		{
+			if (GauntletInputSwap)
+				return tap != null ? Main.mouseRight && (tap == false || Main.mouseRightRelease) : Main.mouseRightRelease;
+			return tap != null ? Main.mouseLeft && (tap == false || Main.mouseLeftRelease) : Main.mouseLeftRelease;
+		}
+
 		/// <summary>Returns the secondary mouse input for "gauntlet-like" weapons: <c>Main.mouseRight</c> by default, or <c>Main.mouseLeft</c> if swapped in the config.</summary>
-		/// <param name="tap">If <c>Main.mouseRightRelease</c>/<c>Main.mouseLeftRelease</c> should be considered as part of the input.</param>
-		public bool GetGauntletBlockInput(bool tap) => GauntletInputSwap ? Main.mouseLeft && (!tap || Main.mouseLeftRelease) : Main.mouseRight && (!tap || Main.mouseRightRelease);
+		/// <param name="tap">If <c>Main.mouseRightRelease</c>/<c>Main.mouseLeftRelease</c> should be considered as part of the input. Returns <c>Main.mouseRightRelease</c>/<c>Main.mouseLeftRelease</c> by itself if null</param>
+		public bool GetGauntletBlockInput(bool? tap)
+		{
+			if (GauntletInputSwap)
+				return tap != null ? Main.mouseLeft && (tap == false || Main.mouseLeftRelease) : Main.mouseLeftRelease;
+			return tap != null ? Main.mouseRight && (tap == false || Main.mouseRightRelease) : Main.mouseRightRelease;
+		}
 		/// <summary>Returns the primary mouse input for "pavise-like" weapons: <c>Main.mouseLeft</c> by default, or <c>Main.mouseRight</c> if swapped in the config.</summary>
-		/// <param name="tap">If <c>Main.mouseLeftRelease</c>/<c>Main.mouseRightRelease</c> should be considered as part of the input.</param>
-		public bool GetPaviseSlamInput(bool tap) => PaviseInputSwap ? Main.mouseRight && (!tap || Main.mouseRightRelease) : Main.mouseLeft && (!tap || Main.mouseLeftRelease);
+		/// <param name="tap">If <c>Main.mouseLeftRelease</c>/<c>Main.mouseRightRelease</c> should be considered as part of the input. Returns <c>Main.mouseLeftRelease</c>/<c>Main.mouseRightRelease</c> by itself if null</param>
+		public bool GetPaviseSlamInput(bool? tap)
+		{
+			if (PaviseInputSwap)
+				return tap != null ? Main.mouseRight && (tap == false || Main.mouseRightRelease) : Main.mouseRightRelease;
+			return tap != null ? Main.mouseLeft && (tap == false || Main.mouseLeftRelease) : Main.mouseLeftRelease;
+		}
 		/// <summary>Returns the secondary mouse input for "pavise-like" weapons: <c>Main.mouseRight</c> by default, or <c>Main.mouseLeft</c> if swapped in the config.</summary>
-		/// <param name="tap">If <c>Main.mouseRightRelease</c>/<c>Main.mouseLeftRelease</c> should be considered as part of the input.</param>
-		public bool GetPaviseBlockInput(bool tap) => PaviseInputSwap ? Main.mouseLeft && (!tap || Main.mouseLeftRelease) : Main.mouseRight && (!tap || Main.mouseRightRelease);
+		/// <param name="tap">If <c>Main.mouseRightRelease</c>/<c>Main.mouseLeftRelease</c> should be considered as part of the input. Returns <c>Main.mouseRightRelease</c>/<c>Main.mouseLeftRelease</c> by itself if null</param>
+		public bool GetPaviseBlockInput(bool? tap)
+		{
+			if (GauntletInputSwap)
+				return tap != null ? Main.mouseLeft && (tap == false || Main.mouseLeftRelease) : Main.mouseLeftRelease;
+			return tap != null ? Main.mouseRight && (tap == false || Main.mouseRightRelease) : Main.mouseRightRelease;
+		}
 	}
 }

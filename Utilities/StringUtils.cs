@@ -31,16 +31,23 @@ namespace OrchidMod.Utilities
 		public static string GetClickInfoTooltip(bool configSwap = false, bool rightClick = true)
 		{
 			string button = "";
-			if (PlayerInput.UsingGamepad)
-			{
-				KeyConfiguration keyConfig = PlayerInput.CurrentProfile.InputModes[InputMode.XBoxGamepad]; 
-				button = PlayerInput.BuildCommand("", true, keyConfig.KeyStatus[configSwap ^ rightClick ? "MouseRight" : "MouseLeft"]).Replace(": ", "");
-			}
-			else
-			{
-				if (configSwap ^ rightClick) button = Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.RightClick");
-				else button = Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.LeftClick");
-			}
+			
+			KeyConfiguration keyConfig = PlayerInput.CurrentProfile.InputModes[PlayerInput.UsingGamepad ? InputMode.XBoxGamepad : InputMode.Keyboard];
+			string keyStatus = PlayerInput.BuildCommand("", true, keyConfig.KeyStatus[configSwap ^ rightClick ? "MouseRight" : "MouseLeft"]).Replace(": ", "");
+			if (keyStatus == "Mouse1") button = Language.GetTextValue("Controls.LeftClick");
+			else if (keyStatus == "Mouse2") button = Language.GetTextValue("Controls.RightClick");
+			else button = Language.GetTextValue("Mods.OrchidMod.Misc.MiscInput", keyStatus);
+			
+			// if (PlayerInput.UsingGamepad)
+			// {
+			// 	KeyConfiguration keyConfig = PlayerInput.CurrentProfile.InputModes[InputMode.XBoxGamepad]
+			// 	button = PlayerInput.BuildCommand("", true, keyConfig.KeyStatus[configSwap ^ rightClick ? "MouseRight" : "MouseLeft"]).Replace(": ", "");
+			// }
+			// else
+			// {
+			// 	if (configSwap ^ rightClick) button = Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.RightClick");
+			// 	else button = Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.LeftClick");
+			// }
 			
 			return button;
 		}
