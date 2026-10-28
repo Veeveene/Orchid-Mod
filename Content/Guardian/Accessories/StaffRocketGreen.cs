@@ -3,7 +3,8 @@ using Terraria.ID;
 
 namespace OrchidMod.Content.Guardian.Accessories
 {
-	public class StaffRocketGreen : OrchidModGuardianEquipable
+	/*
+	 public class StaffRocketGreen : OrchidModGuardianEquipable
 	{
 		public override void SafeSetDefaults()
 		{
@@ -29,4 +30,5 @@ namespace OrchidMod.Content.Guardian.Accessories
 			recipe.Register();
 		}
 	}
+	*/
 }
