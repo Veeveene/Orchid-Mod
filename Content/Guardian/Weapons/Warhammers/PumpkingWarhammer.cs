@@ -43,8 +43,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			BlockVelocityMult = 2f;
 			hasSpecialHammerTexture = true;
 			HammerFrames = 2;
-			SlamBlockCost = 3;
-			GuardBlockCost = 0;
+			Warslammer = 3;
 
 			EmbeddedScythe = false;
 		}

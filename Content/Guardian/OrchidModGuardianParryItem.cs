@@ -6,7 +6,8 @@ namespace OrchidMod.Content.Guardian
 {
 	public abstract class OrchidModGuardianParryItem : OrchidModGuardianItem
 	{
-		public int InvincibilityDuration = 40; // Iframes duration after a parry
+		/// <summary>Iframes duration after a parry Defaults to 40.</summary>
+		public int InvincibilityDuration = 40;
 
 		public virtual void OnParry(Player player, OrchidGuardian guardian, Entity aggressor, Projectile anchor) { }
 		public virtual void OnParryNPC(Player player, OrchidGuardian guardian, NPC npc, Projectile anchor) { }

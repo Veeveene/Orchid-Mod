@@ -19,7 +19,6 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			ParryDuration = 60;
 			Item.knockBack = 9f;
 			Item.damage = 35;
-			GuardStacks = 1;
 		}
 
 		public override bool SafeCanHitNPC(Player player, Projectile anchor, NPC target) => Collision.CanHit(player, target);

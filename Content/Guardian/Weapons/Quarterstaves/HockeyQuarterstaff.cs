@@ -21,7 +21,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 				ParryDuration = 30;
 				Item.knockBack = 18f;
 				Item.damage = 38;
-				SwingDamage = 2f;
+				ChargedDamage = 1.5f;
 				JabChargeGain = 1f;
 			}
 			else
@@ -32,13 +32,12 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 				ParryDuration = 60;
 				Item.knockBack = 24f;
 				Item.damage = 114;
-				SwingDamage = 3f;
+				ChargedDamage = 2f;
 				JabChargeGain = 1.5f;
 			}
+			SwingStyle = 2;
 			SwingSpeed = 1.5f;
 			JabSpeed = 1.3f;
-			GuardStacks = 1;
-			SwingStyle = 2;
 		}
 
 		public override void OnHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, NPC.HitInfo hit, bool jabAttack, bool counterAttack)

@@ -26,12 +26,11 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			ParryDuration = 80;
 			Item.knockBack = 12f;
 			Item.damage = 65;
-			GuardStacks = 1;
 			CounterSpeed = 0.5f;
 			InvincibilityDuration = 80;
 			CounterKnockback = 0f;
-			CounterHits = 20; // Normal damage is 1f for 3 hits = 300% of item damage.
-			CounterDamage = 0.2f; // This is 20 hits of 0.2f = 400% of item damage.
+			CounterHits = 20; // Normal damage is 0.67f for 3 hits = 200% of item damage.
+			CounterDamage = 0.125f; // This is 20 hits of 0.125f = 250% of item damage.
 		}
 
 		public override void ExtraAIQuarterstaffCounterattacking(Player player, OrchidGuardian guardian, Projectile projectile)

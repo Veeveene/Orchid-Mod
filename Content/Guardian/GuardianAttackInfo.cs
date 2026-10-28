@@ -198,8 +198,10 @@
 		public static GuardianAttackInfo KatarDash => GuardAttack;
 		/// <inheritdoc cref="Charged"/>
 		public static GuardianAttackInfo GreathammerCharge => Charged;
-		/// <inheritdoc cref="Slam"/>
+		/// <inheritdoc cref="SlamJab"/>
 		public static GuardianAttackInfo GreathammerSlam => SlamJab;
+		/// <inheritdoc cref="Jab"/>
+		public static GuardianAttackInfo GreathammerSlamWeak => Jab;
 		/// <inheritdoc cref="BlockAttack"/>
 		public static GuardianAttackInfo GreathammerDeflect => BlockAttack;
 		/// <inheritdoc cref="Bash"/>

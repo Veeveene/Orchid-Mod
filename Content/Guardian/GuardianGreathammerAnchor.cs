@@ -27,6 +27,7 @@ namespace OrchidMod.Content.Guardian
 
 		public bool Ding = false;
 		public bool NeedNetUpdate = false;
+		public bool WeakSlam = false;
 
 		public const int IdleAnim = -1;
 		public const int Idle = 0;
@@ -318,15 +319,7 @@ namespace OrchidMod.Content.Guardian
 						{
 							if (guardian.UseSlam())
 							{
-								Item item = HammerItem.Item;
-								Projectile.damage = guardian.GetGuardianDamage(item.damage * HammerItem.SlamDamage);
-								Projectile.CritChance = guardian.GetGuardianCrit(item.crit);
-								Projectile.knockBack = item.knockBack;
-								//not set to friendly until animation reaches the attack
-								ChangeState(Slamming, 40);
-								Projectile.ResetLocalNPCHitImmunity();
-								ResetHitStatus(true);
-								guardian.OnAttack(AttackID.GreathammerSlam);
+								DoSlam(guardian);
 							}
 						}
 						else
@@ -382,7 +375,7 @@ namespace OrchidMod.Content.Guardian
 						else SoundEngine.PlaySound(SoundID.MaxMana, player.Center);
 					}
 
-					Anim -= HammerItem.SlamSpeed * player.GetTotalAttackSpeed(DamageClass.Melee);
+					Anim -= HammerItem.SlamSpeed * player.GetTotalAttackSpeed(DamageClass.Melee) * (guardian.GuardianArmMotorCount > 0 ? 2 : 1);
 					switch (Anim)
 					{
 						case > 35:
@@ -405,6 +398,16 @@ namespace OrchidMod.Content.Guardian
 						break;
 						case <= 0:
 							ChangeState(Charging, guardian.GuardianItemCharge < 210 ? 20 : 5, guardian.GuardianItemCharge, quiet: true);
+							HammerItem.OnSlamEnd(player, guardian, Projectile, this, guardian.GuardianItemCharge >= 180f, WeakSlam);
+
+							if (guardian.GuardianArmMotorCount > 0)
+							{ // Arm Motor accessory
+								guardian.GuardianArmMotorCount --;
+								if (guardian.GuardianArmMotorCount > 0 && IsCharging && guardian.GuardianArmMotor)
+								{
+									DoSlam(guardian, true);
+								}
+							}
 						break;
 					}
 				}
@@ -439,6 +442,22 @@ namespace OrchidMod.Content.Guardian
 					player.compositeBackArm = GetArmData(player.MountedCenter.Floor() + new Vector2(player.direction * 8, 0), 10 * offset);
 			}
 			HammerItem?.ExtraAI(player, guardian, Projectile, this);
+		}
+
+		/// <summary>The Greathammer will initiate a slam. If "weak" is set to true, the slam will deal half damage and grant half charge.</summary>
+		public void DoSlam(OrchidGuardian guardian, bool weak = false)
+		{
+			WeakSlam = weak;
+			Item item = HammerItem.Item;
+			Projectile.damage = guardian.GetGuardianDamage(item.damage * HammerItem.SlamDamage);
+			Projectile.CritChance = guardian.GetGuardianCrit(item.crit);
+			Projectile.knockBack = item.knockBack;
+			//not set to friendly until animation reaches the attack
+			ChangeState(Slamming, 40);
+			Projectile.ResetLocalNPCHitImmunity();
+			ResetHitStatus(true);
+			guardian.OnAttack(WeakSlam ? AttackID.GreathammerSlamWeak : AttackID.GreathammerSlam);
+			HammerItem.OnSlam(guardian.Player, guardian, Projectile, this, guardian.GuardianItemCharge >= 180f, ref WeakSlam);
 		}
 
 		static float Progress(float value, float start, float end) => (value - start) / (end - start);
@@ -626,6 +645,11 @@ namespace OrchidMod.Content.Guardian
 				}
 				else if (FirstHit && IsSlamming)
 				{
+					if (WeakSlam)
+					{
+						modifiers.SourceDamage /= 2f;
+					}
+
 					float charge = guardian.GuardianItemCharge / 180f;
 					float chargeToGain = 0.5f * HammerItem.SlamChargeGain;
 					if (charge + chargeToGain > 1)
@@ -640,7 +664,7 @@ namespace OrchidMod.Content.Guardian
 			{
 				if (IsSlamming && guardian.GuardianItemCharge < 210f)
 				{
-					guardian.GuardianItemCharge += 60f * HammerItem.SlamChargeGain;
+					guardian.GuardianItemCharge += 60f * HammerItem.SlamChargeGain * (WeakSlam ? 0.5f : 1f);
 
 					if (guardian.GuardianItemCharge > 180f) guardian.GuardianItemCharge = 210f;
 					guardian.SyncGuardianItemCharge();
@@ -649,6 +673,11 @@ namespace OrchidMod.Content.Guardian
 				{
 					guardian.AddGuard(HammerItem.GuardStacks);
 					guardian.AddSlam(HammerItem.SlamStacks);
+
+					if (guardian.GuardianArmMotor && guardian.GuardianArmMotorCount < 2)
+					{
+						guardian.GuardianArmMotorCount = 2;
+					}
 				}
 			}
 			if (IsThrown && HitCount < 8)
@@ -673,14 +702,22 @@ namespace OrchidMod.Content.Guardian
 				spriteBatch.Draw(HammerAuraTexture, pos, new Rectangle(0, w + 2, w, w), HammerItem.AuraSecondary * AuraIntensity, auraRot, new Vector2(w * 0.5f), scale, auraEffect, 0);
 				spriteBatch.Draw(HammerAuraTexture, pos, new Rectangle(0, 0, w, w), HammerItem.AuraPrimary * AuraIntensity, auraRot, new Vector2(w * 0.5f), scale, auraEffect, 0);
 			}
+
 			Rectangle? frame = null;
 			if (HammerItem.HammerFrames > 1)
 			{
 				int height = HammerTexture.Height / HammerItem.HammerFrames - 2;
 				frame = new Rectangle(0, height * Projectile.frame, HammerTexture.Width, height);
 			}
+
 			Vector2 drawOffs = HammerTexture.Size() * 0.5f + new Vector2(HammerItem.DrawOffset.X * Projectile.spriteDirection, HammerItem.DrawOffset.Y);
 			spriteBatch.Draw(HammerTexture, pos, frame, lightColor, rot, drawOffs, 1, effect, 0);
+
+			if (HammerGlowTexture != null)
+			{
+				spriteBatch.Draw(HammerTexture, pos, frame, HammerItem.GetHammerGlowmaskColor(player, Projectile, lightColor), rot, drawOffs, 1, effect, 0);
+			}
+
 			return false;
 		}
 	}

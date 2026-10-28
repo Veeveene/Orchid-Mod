@@ -134,6 +134,7 @@ namespace OrchidMod.Content.Guardian
 		/// <summary> Multiplier applied to the velocity of all warhammer throws. Defaults to 1f.</summary>
 		public float GuardianHammerThrowVelocity = 1f;
 		public bool GuardianThoriumCenser = false; // Life Quartz Censer
+		public bool GuardianArmMotor = false; // Greathammer Arm Motor
 
 		// Debug bonus resources that do not get updated (for use with DragonLens)
 		
@@ -188,6 +189,7 @@ namespace OrchidMod.Content.Guardian
 		public float GauntletSlamPool = 0f; // How much slam charge will be granted by hitting the next punch
 		public int GuardianStaffRocketCooldown = 0; // Cooldown between rocket dashes
 		public int GuardianBadgeHopliteLevel = 0; // goes up to 2 for bonus katar charge speed
+		public int GuardianArmMotorCount = 0; // set to 2 after a charged attack hit, greathammers do additional slams if this is >1.
 
 		public const int GuardianRechargeTime = 600;
 
@@ -678,6 +680,7 @@ namespace OrchidMod.Content.Guardian
 			GuardianHammerMagnet = 0f;
 			GuardianHammerThrowVelocity = 1f;
 			GuardianThoriumCenser = false;
+			GuardianArmMotor = false;
 			if (!GuardianBronzeShieldBuff) GuardianBronzeShieldDamage = 0;
 
 			GuardianMeteorite = false;
@@ -1584,9 +1587,12 @@ namespace OrchidMod.Content.Guardian
 
 		/// <summary>If <c>item</c> is null or <c>item.PreDeflect</c> returns true, performs a deflect. Any enemies or blockable projectiles that would intersect a point in <c>targetArea</c> within <c>range</c> distance of <c>origin</c> in the next <c>lenience</c> frames and match <c>EnemyPredicate</c> or <c>ProjPredicate</c> respectively will be deflected, caching enemies in the player's <c>DeflectedEnemies</c> and deleting projectiles. Returns <c>true</c> if a deflect occurred, and flags <c>caughtProjectile</c> if at least one projectile was deflected and/or <c>killedNPC</c> if at least one NPC was killed by the damage.</summary>
 		/// <remarks>Fields left default will be treated with default behavior. <c>item</c> functions will not be called if <c>null</c>. The default <c>Predicate</c>s will check only for <c>!NPC.friendly</c> or <c>Projectile.hostile</c>. <c>range</c> defaults to -1 and will be ignored if less than 0. <c>lenience</c> defaults to 0, so the target needs to already be inside of the hitbox. <c>origin</c> defaults to the <c>Center</c> of this player.</remarks>
-		public bool DoDeflect(Rectangle targetArea, out bool caughtProjectile, out bool killedNPC, OrchidModGuardianDeflectItem item = null, ModProjectile anchor = null, Predicate<NPC> EnemyPredicate = null, Predicate<Projectile> ProjPredicate = null, float range = -1, float lenience = 0, Vector2? origin = null, int? damage = null)
+		public bool DoDeflect(Rectangle targetArea, out bool caughtProjectile, out bool killedNPC, OrchidModGuardianDeflectItem item = null, ModProjectile anchor = null, Predicate<NPC> EnemyPredicate = null, Predicate<Projectile> ProjPredicate = null, float range = -1, float lenience = 0, Vector2? origin = null, Vector2? originVelocity = null, int? damage = null)
 		{
 			Vector2 from = origin ?? Player.Center; 
+			Vector2 fromVel;
+			if (origin == null) fromVel = originVelocity ?? Player.velocity;
+			else fromVel = originVelocity ?? Vector2.Zero;
 			caughtProjectile = false;
 			killedNPC = false;
 			bool success = false;
@@ -1615,8 +1621,8 @@ namespace OrchidMod.Content.Guardian
 			}
 			
 			Predicate<NPC> NPCInRange;
-			if (range < 0) NPCInRange = new Predicate<NPC>(T => T.Hitbox.Intersects(targetArea) || (lenience > 0 && Collision.CheckAABBvLineCollision(targetArea.TopLeft(), targetArea.Size(), T.Hitbox.ClosestPointInRect(from), T.Hitbox.ClosestPointInRect(from) + T.velocity * lenience)));
-			else NPCInRange = new Predicate<NPC>(T => (T.Hitbox.Intersects(targetArea) || (lenience > 0 && Collision.CheckAABBvLineCollision(targetArea.TopLeft(), targetArea.Size(), T.Hitbox.ClosestPointInRect(from), T.Hitbox.ClosestPointInRect(from) + T.velocity * lenience))) && (T.Hitbox.ClosestPointInRect(from).Distance(from) <= range || (lenience > 0 && from.ClosestPointOnLine(T.Hitbox.ClosestPointInRect(from), T.Hitbox.ClosestPointInRect(from) + T.velocity * lenience).Distance(from) <= range)));
+			if (range < 0) NPCInRange = new Predicate<NPC>(T => T.Hitbox.Intersects(targetArea) || (lenience > 0 && Collision.CheckAABBvLineCollision(targetArea.TopLeft(), targetArea.Size(), T.Hitbox.ClosestPointInRect(from), T.Hitbox.ClosestPointInRect(from) + (T.velocity - fromVel) * lenience)));
+			else NPCInRange = new Predicate<NPC>(T => (T.Hitbox.Intersects(targetArea) || (lenience > 0 && Collision.CheckAABBvLineCollision(targetArea.TopLeft(), targetArea.Size(), T.Hitbox.ClosestPointInRect(from), T.Hitbox.ClosestPointInRect(from) + (T.velocity - fromVel) * lenience))) && (T.Hitbox.ClosestPointInRect(from).Distance(from) <= range || (lenience > 0 && from.ClosestPointOnLine(T.Hitbox.ClosestPointInRect(from), T.Hitbox.ClosestPointInRect(from) + (T.velocity - fromVel) * lenience).Distance(from) <= range)));
 			foreach (NPC npc in Main.npc.Where(T => T.active && NPCInRange(T) && EnemyPredicate(T)))
 			{
 				if (item != null && !item.OnDeflectNPC(Player, this, npc, anchor)) continue;
@@ -1631,8 +1637,8 @@ namespace OrchidMod.Content.Guardian
 				success = true;
 			}
 			Predicate<Projectile> ProjInRange;
-			if (range < 0) ProjInRange = new Predicate<Projectile>(T => T.Hitbox.Intersects(targetArea) || (lenience > 0 && Collision.CheckAABBvLineCollision(targetArea.TopLeft(), targetArea.Size(), T.Hitbox.ClosestPointInRect(from), T.Hitbox.ClosestPointInRect(from) + T.velocity * lenience)));
-			else ProjInRange = new Predicate<Projectile>(T => (T.Hitbox.Intersects(targetArea) || (lenience > 0 && Collision.CheckAABBvLineCollision(targetArea.TopLeft(), targetArea.Size(), T.Hitbox.ClosestPointInRect(from), T.Hitbox.ClosestPointInRect(from) + T.velocity * lenience))) && (T.Hitbox.ClosestPointInRect(from).Distance(from) <= range || (lenience > 0 && from.ClosestPointOnLine(T.Hitbox.ClosestPointInRect(from), T.Hitbox.ClosestPointInRect(from) + T.velocity * lenience).Distance(from) <= range)));
+			if (range < 0) ProjInRange = new Predicate<Projectile>(T => T.Hitbox.Intersects(targetArea) || (lenience > 0 && Collision.CheckAABBvLineCollision(targetArea.TopLeft(), targetArea.Size(), T.Hitbox.ClosestPointInRect(from), T.Hitbox.ClosestPointInRect(from) + (T.velocity - fromVel) * lenience)));
+			else ProjInRange = new Predicate<Projectile>(T => (T.Hitbox.Intersects(targetArea) || (lenience > 0 && Collision.CheckAABBvLineCollision(targetArea.TopLeft(), targetArea.Size(), T.Hitbox.ClosestPointInRect(from), T.Hitbox.ClosestPointInRect(from) + (T.velocity - fromVel) * lenience))) && (T.Hitbox.ClosestPointInRect(from).Distance(from) <= range || (lenience > 0 && from.ClosestPointOnLine(T.Hitbox.ClosestPointInRect(from), T.Hitbox.ClosestPointInRect(from) + (T.velocity - fromVel) * lenience).Distance(from) <= range)));
 			foreach (Projectile proj in Main.projectile.Where(T => T.active && !ProjectilesBlockBlacklist.Contains(T.type) && ProjInRange(T) && ProjPredicate(T)))
 			{
 				if (anchor != null && proj.ModProjectile == anchor)

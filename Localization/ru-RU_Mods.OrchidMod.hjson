@@ -3480,6 +3480,20 @@ Items: {
 		// DisplayName: Mahogany Greathammer
 		// Tooltip: ""
 	}
+
+	CoznixGreathammer: {
+		// Tooltip: ""
+		// DisplayName: Coznix Greathammer
+	}
+
+	ArmMotor: {
+		// DisplayName: Arm Motor
+		/* Tooltip:
+			'''
+			After a greathammer throw hit, your next slam does an extra weak swing
+			Extra swings deal half damage and grant less charge on hit
+			''' */
+	}
 }
 
 NPCs: {
@@ -4264,6 +4278,7 @@ UI: {
 		// ParryDistance: "{0}{1} parry dash distance"
 		BlockDuration: Длительность блока: {0} сек.
 		// ParryAndBlockDuration: "{0} second parry duration, {1} second block duration"
+		// SlamDuration: "{0} second slam duration"
 		Interrupted: Прервано
 		Charged: Заряжено
 		Reinforced: Усилено
@@ -4282,6 +4297,14 @@ UI: {
 			'''
 		UsesUpTo: Использует до {0} оч. нападения
 		RuneDuration: Время действия руны: {0} сек.
+		// Block: "{0} click to block"
+		// ToBlock: to block
+		// ToSlam: to slam
+		// HammerBlock: "{0} click {1}"
+		// HammerBlockGuard: "{0} click {1}, costing {2} {^2:guard;guards}"
+		// HammerBlockSlam: "{0} click {1}, costing {3} {^3:slam;slams}"
+		// HammerBlockGuardSlamSame: "{0} click {1}, costing {2} {^2:guard;guards} and {^2:slam;slams}"
+		// HammerBlockGuardSlam: "{0} click {1}, costing {2} {^2:guard;guards} and {3} {^3:slam;slams}"
 		// DashDuringSwing: "{0} during reinforced attack to dash"
 		Block: Нажмите {0}, чтобы сделать блок
 		BlockGuard: Нажмите {0}, чтобы сделать блок за {1} оч. обороны

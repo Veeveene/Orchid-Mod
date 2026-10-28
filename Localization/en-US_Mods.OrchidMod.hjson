@@ -1837,8 +1837,12 @@ Items: {
 	}
 
 	DesertWarhammer: {
-		DisplayName: Fossil Warhammer
-		Tooltip: Scatters bone fragments on impact
+		DisplayName: Bonehammer
+		Tooltip:
+			'''
+			Scatters bone fragments on impact
+			Bone fragments are stronger after bouncing
+			'''
 	}
 
 	CrimsonWarhammer: {
@@ -3485,6 +3489,20 @@ Items: {
 		DisplayName: Mahogany Greathammer
 		Tooltip: ""
 	}
+
+	CoznixGreathammer: {
+		Tooltip: ""
+		DisplayName: Coznix Greathammer
+	}
+
+	ArmMotor: {
+		DisplayName: Arm Motor
+		Tooltip:
+			'''
+			After a greathammer throw hit, your next slam does an extra weak swing
+			Extra swings deal half damage and grant less charge on hit
+			'''
+	}
 }
 
 NPCs: {
@@ -4252,6 +4270,7 @@ UI: {
 		ParryDuration: "{0} second parry duration"
 		ParryDistance: "{0}{1} parry dash distance"
 		BlockDuration: "{0} second block duration"
+		SlamDuration: "{0} second slam duration"
 		ParryAndBlockDuration: "{0} second parry duration, {1} second block duration"
 		Interrupted: Interrupted
 		Charged: Charged
@@ -4267,12 +4286,15 @@ UI: {
 		SwingWhileCharging: Charge to throw, {0} to swing while charging
 		UsesUpTo: Uses up to {0} slams
 		RuneDuration: "{0} second rune duration"
-		DashDuringSwing: "{0} during reinforced attack to dash"
+        DashDuringSwing: "{0} during reinforced attack to dash"
 		Block: "{0} to block"
-		BlockGuard: "{0} to block, costing {1} {^1:guard;guards}"
-		BlockSlam: "{0} to block, costing {2} {^2:slam;slams}"
-		BlockGuardSlamSame: "{0} to block, costing {1} {^1:guard;guards} and {^1:slam;slams}"
-		BlockGuardSlam: "{0} to block, costing {1} {^1:guard;guards} and {2} {^2:slam;slams}"
+		ToBlock: to block
+		ToSlam: to slam
+		HammerBlock: "{0} {1}"
+		HammerBlockGuard: "{0} {1}, costing {2} {^2:guard;guards}"
+		HammerBlockSlam: "{0} {1}, costing {3} {^3:slam;slams}"
+		HammerBlockGuardSlamSame: "{0} {1}, costing {2} {^2:guard;guards} and {^2:slam;slams}"
+		HammerBlockGuardSlam: "{0} {1}, costing {2} {^2:guard;guards} and {3} {^3:slam;slams}"
 		BuffDuration: "{0} second buff duration"
 		HorizonLaceShieldStacks: Grants 3 guards when fully charged
 		DamageOfDefense: Deals {0}% of defense as opposing damage

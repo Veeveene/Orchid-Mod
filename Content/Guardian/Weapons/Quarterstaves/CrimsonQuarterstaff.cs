@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 
 namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
@@ -17,12 +15,12 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			ParryDuration = 60;
 			Item.knockBack = 10f;
 			Item.damage = 58;
-			GuardStacks = 1;
 			JabSpeed = 1.25f;
+			JabKnockback = 1.25f;
 			SwingStyle = 2;
 			SwingSpeed = 1.25f;
-			SwingDamage = 3f;
-			SwingKnockback = 2f;
+			ChargedDamage = 2f;
+			ChargedKnockback = 2f;
 		}
 	}
 }
