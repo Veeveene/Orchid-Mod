@@ -77,17 +77,10 @@ namespace OrchidMod.Content.Guardian
 						}
 					}
 
-					var index = Projectile.NewProjectile(Item.GetSource_FromThis(), player.Center.X, player.Center.Y, 0f, 0f, projectileType, 0, 0f, player.whoAmI);
-
-					var proj = Main.projectile[index];
-					if (proj.ModProjectile is not GuardianRuneAnchor rune)
-					{
-						proj.Kill();
-					}
-					else
-					{
+					Projectile proj = SpawnAnchor(player, out GuardianRuneAnchor rune);
+					if (rune is not null)
 						rune.OnChangeSelectedItem(player);
-					}
+					else proj.Kill();
 				}
 			}
 			else

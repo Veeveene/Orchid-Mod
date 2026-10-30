@@ -119,21 +119,14 @@ namespace OrchidMod.Content.Guardian
 					}
 				}
 
-				var index = Projectile.NewProjectile(Item.GetSource_FromThis(), player.Center.X, player.Center.Y, 0f, 0f, projectileType, 0, 0f, player.whoAmI);
-
-				var proj = Main.projectile[index];
-				if (proj.ModProjectile is not GuardianStandardAnchor standard)
-				{
-					proj.Kill();
-				}
-				else
-				{
+				var proj = SpawnAnchor(player, out GuardianStandardAnchor standard);
+				if (standard is not null)
 					standard.OnChangeSelectedItem(player);
-				}
+				else proj.Kill();
 			}
 			else
 			{
-				var proj = Main.projectile.First(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
+				var proj = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
 				if (proj != null && proj.ModProjectile is GuardianStandardAnchor standard)
 				{
 					if (standard.SelectedItem != player.selectedItem)

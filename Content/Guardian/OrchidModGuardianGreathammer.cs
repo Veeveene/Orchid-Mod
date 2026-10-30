@@ -154,7 +154,7 @@ namespace OrchidMod.Content.Guardian
 			
 			Projectile projectile;
 			if (player.ownedProjectileCounts[AnchorType] == 0)
-				projectile = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, AnchorType, 0, 0f, player.whoAmI);
+				projectile = SpawnAnchor<GuardianGreathammerAnchor>(player, out _);
 			else projectile = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == AnchorType);
 			if (projectile?.ModProjectile is GuardianGreathammerAnchor anchor && anchor.Projectile.ai[0] != 4 && anchor.HammerItem != this)
 			{

@@ -169,15 +169,12 @@ namespace OrchidMod.Content.Guardian.Weapons.Misc
 			{
 				foreach (Projectile projectile in Main.ActiveProjectiles)
 				{
-					if (projectile.owner == player.whoAmI && projectile.type == AnchorType)
-					{
-						projectile.Kill();
-					}
+					if (projectile.owner == player.whoAmI && projectile.type == AnchorType) projectile.Kill();
 				}
 
-				var proj = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, AnchorType, 0, 0f, player.whoAmI);
+				Projectile proj = SpawnAnchor(player, out GuardianHorizonLanceAnchor standard);
 
-				if (proj.ModProjectile is GuardianHorizonLanceAnchor standard)
+				if (standard is not null)
 					standard.OnChangeSelectedItem(player);
 				else proj.Kill();
 			}

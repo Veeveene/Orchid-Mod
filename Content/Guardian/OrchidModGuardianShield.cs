@@ -218,9 +218,10 @@ namespace OrchidMod.Content.Guardian
 
 			if (player.ownedProjectileCounts[AnchorType] == 0)
 			{
-				Projectile proj = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, AnchorType, 0, 0f, player.whoAmI);
+				Projectile proj = SpawnAnchor(player, out GuardianShieldAnchor shield);
+				// Projectile proj = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, AnchorType, 0, 0f, player.whoAmI);
 				
-				if (proj.ModProjectile is GuardianShieldAnchor shield)
+				if (shield is not null)
 				{
 					proj.damage = guardian.GetGuardianDamage(Item.damage);
 					proj.CritChance = guardian.GetGuardianCrit(Item.crit);

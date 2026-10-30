@@ -3,6 +3,7 @@ using OrchidMod.Common;
 using OrchidMod.Common.Attributes;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -12,6 +13,13 @@ namespace OrchidMod.Content.Guardian
 	[ClassTag(ClassTags.Guardian)]
 	public abstract class OrchidModGuardianItem : ModItem
 	{
+		protected Projectile SpawnAnchor<T>(Player player, out T anchor, int damage = 0, float knockback = 0) where T : OrchidModGuardianAnchor
+		{
+			Projectile projectile = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<T>(), damage, knockback, player.whoAmI);
+			anchor = projectile.ModProjectile as T;
+			return projectile;
+		}
+		
 		public bool IsLocalPlayer(Player player) => player.whoAmI == Main.myPlayer;
 
 		/// <summary>Determines the multiplier that applies to <see cref="OrchidGuardian.GuardianChargeSpeed"/>) for this item.</summary>

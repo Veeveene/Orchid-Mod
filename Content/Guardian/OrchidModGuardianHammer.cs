@@ -193,8 +193,9 @@ namespace OrchidMod.Content.Guardian
 
 		public sealed override void HoldItem(Player player)
 		{
-			var guardian = player.GetModPlayer<OrchidGuardian>();
+			var guardian = player.Guardian();
 			guardian.GuardianDisplayUI = 300;
+			if (player.ownedProjectileCounts[AnchorType] == 0 && guardian.GuardianItemCharge > 0) guardian.GuardianItemCharge = 0; // Failsafe
 		}
 
 		public override bool? UseItem(Player player)
@@ -205,12 +206,12 @@ namespace OrchidMod.Content.Guardian
 			if (validRMBInput || Main.mouseLeft)
 			{ // If the player does a valid RMB input (the weapon can block) or a mouseleft input - so we don't create a proejctile for nothing in edge cases
 				int damage = guardian.GetGuardianDamage(Item.damage);
-				Projectile projectile = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, AnchorType, damage, Item.knockBack, player.whoAmI);
+				Projectile projectile = SpawnAnchor<GuardianHammerAnchor>(player, out _, damage, Item.knockBack);
 				projectile.CritChance = (int)(player.GetCritChance<GuardianDamageClass>() + player.GetCritChance<GenericDamageClass>() + Item.crit);
 
 				if (DualWarhammers && !validRMBInput)
 				{ // Creates another Anchor on use, and flags it as the offhand warhammer, before making sure they are drawn in the correct order
-					Projectile projectileOffHand = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, AnchorType, damage, Item.knockBack, player.whoAmI);
+					Projectile projectileOffHand = SpawnAnchor<GuardianHammerAnchor>(player, out _, damage, Item.knockBack);
 					projectileOffHand.CritChance = (int)(player.GetCritChance<GuardianDamageClass>() + player.GetCritChance<GenericDamageClass>() + Item.crit);
 
 					if (projectile.whoAmI < projectileOffHand.whoAmI)

@@ -295,14 +295,8 @@ namespace OrchidMod.Content.Guardian
 				int[] indexes = [-1, -1];
 				for (int i = 0; i < 2; i++)
 				{
-					var index = Projectile.NewProjectile(Item.GetSource_FromThis(), player.Center.X, player.Center.Y, 0f, 0f, projectileType, 0, 0f, player.whoAmI);
-
-					var proj = Main.projectile[index];
-					if (proj.ModProjectile is not GuardianKatarAnchor katar)
-					{
-						proj.Kill();
-					}
-					else
+					Projectile proj = SpawnAnchor(player, out GuardianKatarAnchor katar);
+					if (katar is not null)
 					{
 						indexes[i] = proj.whoAmI;
 						katar.OffHandKatar = i == 0;
@@ -310,6 +304,7 @@ namespace OrchidMod.Content.Guardian
 						katar.OnChangeSelectedItem(player);
 						katar.NeedNetUpdate = true;
 					}
+					else proj.Kill();
 				}
 
 				if (indexes[1] < indexes[0])

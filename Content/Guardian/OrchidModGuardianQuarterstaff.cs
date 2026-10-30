@@ -217,9 +217,8 @@ namespace OrchidMod.Content.Guardian
 					if (projectile.owner == player.whoAmI && projectile.type == AnchorType) projectile.Kill();
 				}
 
-				var proj = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, AnchorType, 0, 0f, player.whoAmI);
-
-				if (proj.ModProjectile is GuardianQuarterstaffAnchor quarterstaff)
+				Projectile proj = SpawnAnchor(player, out GuardianQuarterstaffAnchor quarterstaff);
+				if (quarterstaff is not null)
 					quarterstaff.OnChangeSelectedItem(player);
 				else proj.Kill();
 			}

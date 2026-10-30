@@ -169,10 +169,8 @@ namespace OrchidMod.Content.Guardian.Weapons.Misc
 					}
 				}
 
-				var index = Projectile.NewProjectile(Item.GetSource_FromThis(), player.Center.X, player.Center.Y, 0f, 0f, projectileType, 0, 0f, player.whoAmI);
-
-				var proj = Main.projectile[index];
-				if (proj.ModProjectile is GuardianNeedleAnchor anchor)
+				Projectile proj = SpawnAnchor(player, out GuardianNeedleAnchor anchor);
+				if (anchor is not null)
 					anchor.OnChangeSelectedItem(player);
 				else proj.Kill();
 			}
