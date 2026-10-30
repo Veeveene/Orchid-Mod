@@ -22,6 +22,7 @@ using OrchidMod.Common;
 using Terraria.Graphics.Shaders;
 using Terraria.Utilities;
 using Microsoft.Xna.Framework.Graphics;
+using OrchidMod.Utilities;
 
 namespace OrchidMod.Content.Guardian
 {
@@ -738,9 +739,11 @@ namespace OrchidMod.Content.Guardian
 				{
 					if (GuardianDebugVisuals > 0)
 					{
+						Main.NewText("Individual test modes haven't been implemented yet; currently mode " + GuardianDebugVisuals, 175, 255, 175);
 						Main.NewText("Enabled shield and deflect check", 175, 255, 175);
 						Main.NewText("Enabled attackinfo display", 175, 255, 175);
 						Main.NewText("Enabled greathammer hand placement visual", 175, 255, 175);
+						Main.NewText("Enabled UI mouse region outlines", 175, 255, 175);
 						Main.NewText("Hide the Guardian Test accessory to disable test visuals", 255, 128, 255);
 					}
 					else
@@ -1145,7 +1148,7 @@ namespace OrchidMod.Content.Guardian
 				if (!checkOnly)
 				{
 					GuardianSlam -= nb;
-					if (GuardianBamboo) Player.AddBuff(ModContent.BuffType<BambooBuff>(), 300);
+					if (GuardianBamboo) Player.AddBuff<BambooBuff>(300);
 					if (GuardianSlamRecharging < 0) GuardianSlamRecharging = 0;
 
 					while (nb > 0)
@@ -1210,7 +1213,7 @@ namespace OrchidMod.Content.Guardian
 				if (!checkOnly)
 				{
 					GuardianGuard -= nb;
-					if (GuardianBamboo) Player.AddBuff(ModContent.BuffType<BambooBuff>(), 300);
+					if (GuardianBamboo) Player.AddBuff<BambooBuff>(300);
 					if (GuardianGuardRecharging < 0) GuardianGuardRecharging = 0;
 
 					while (nb > 0)
@@ -1319,11 +1322,11 @@ namespace OrchidMod.Content.Guardian
 		{ // Called by both BlockEffect methods to do universal block effects
 			if (GuardianGit)
 			{
-				Player.AddBuff(ModContent.BuffType<GuardianGitBuff>(), 600);
+				Player.AddBuff<GuardianGitBuff>(600);
 			}
 			if ((GuardianSharpRebuttalBlock && !parry) || (GuardianSharpRebuttalParry && parry))
 			{
-				Player.AddBuff(ModContent.BuffType<GuardianSpikeBuff>(), 600);
+				Player.AddBuff<GuardianSpikeBuff>(600);
 			}
 		}
 

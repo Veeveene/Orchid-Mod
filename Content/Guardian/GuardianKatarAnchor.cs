@@ -164,7 +164,7 @@ namespace OrchidMod.Content.Guardian
 
 				if (Charging)
 				{ // Katars never stop charging, even while jabbing
-					guardian.GuardianItemCharge += 45f / KatarItem.useTime * ((owner.GetTotalAttackSpeed(DamageClass.Melee) * 2f + guardian.GuardianBadgeHopliteLevel * 0.25f) - 1f) * guardianItem.ChargeSpeedMultiplier;
+					guardian.GuardianItemCharge += 45f / KatarItem.useTime * ((owner.GetTotalAttackSpeed(DamageClass.Melee) * 2f + guardian.GuardianBadgeHopliteLevel * 0.25f) - 1f) * guardian.GetWeaponChargeRate(guardianItem, guardianItem.ChargeSpeedMultiplier);
 					if (guardian.GuardianItemCharge > 180f)
 					{
 						if (!Ding && IsLocalOwner)
