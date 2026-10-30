@@ -24,6 +24,7 @@ namespace OrchidMod.Content.Guardian
 		public List<Vector2> OldPosition;
 		public List<float> OldRotation;
 		public List<int> BlockedNPCs;
+		public List<int> BlockedProjectiles;
 
 		public bool returning = false;
 		public OrchidModGuardianHammer HammerItem;
@@ -76,9 +77,10 @@ namespace OrchidMod.Content.Guardian
 			Frame = 0;
 
 			InitialVelocity = Vector2.Zero;
-			OldPosition = new List<Vector2>();
-			OldRotation = new List<float>();
-			BlockedNPCs = new List<int>();
+			OldPosition = [];
+			OldRotation = [];
+			BlockedNPCs = [];
+			BlockedProjectiles = [];
 		}
 
 		public override void OnSpawn(IEntitySource source)
@@ -209,24 +211,33 @@ namespace OrchidMod.Content.Guardian
 						hitBox.Width += HammerTexture.Width + 8;
 						hitBox.Height += HammerTexture.Width + 8;
 
-						for (int l = 0; l < Main.projectile.Length; l++)
-						{
-							Projectile proj = Main.projectile[l];
-							if (proj.active && proj.hostile && proj.damage > 0 && !OrchidGuardian.ProjectilesBlockBlacklist.Contains(proj.type))
+						foreach (Projectile proj in Main.projectile)
+						{							
+							bool inBlacklist = OrchidGuardian.ProjectilesBlockBlacklist.TryGetValue(proj.type, out OrchidGuardian.OnTryBlockAction action);
+							if (proj.hostile && proj.damage > 0)
 							{
-								if (proj.Hitbox.Intersects(Projectile.Hitbox))
+								if (proj.Hitbox.Intersects(Projectile.Hitbox) || proj.Colliding(proj.Hitbox, Projectile.Hitbox))
 								{
-									bool killProj = HammerItem.OnBlockProjectile(owner, guardian, Projectile, proj);
-									guardian.OnBlockProjectile(Projectile, proj);
-									if (!FirstBlock)
+									bool killProj = HammerItem.OnBlockProjectile(owner, guardian, Projectile, proj) && !inBlacklist;
+									if (!BlockedProjectiles.Contains(proj.whoAmI))
 									{
-										FirstBlock = true;
-										guardian.OnBlockProjectileFirst(Projectile, proj);
-										HammerItem.OnBlockFirstProjectile(owner, guardian, Projectile, proj);
-										SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), owner.Center);
+										guardian.OnBlockProjectile(Projectile, proj);
+										if (!FirstBlock)
+										{
+											FirstBlock = true;
+											guardian.OnBlockProjectileFirst(Projectile, proj);
+											HammerItem.OnBlockFirstProjectile(owner, guardian, Projectile, proj);
+											SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), owner.Center);
+										}
+										SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
 									}
 									if (killProj) proj.Kill();
-									SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
+									else
+									{
+										action?.Invoke(proj, Projectile);
+										if (!BlockedProjectiles.Contains(proj.whoAmI)) BlockedProjectiles.Add(proj.whoAmI);
+
+									}
 								}
 							}
 						}
@@ -237,10 +248,9 @@ namespace OrchidMod.Content.Guardian
 						hitBox.Width += 4;
 						hitBox.Height += 4;
 
-						for (int k = 0; k < Main.maxNPCs; k++)
+						foreach (NPC target in Main.ActiveNPCs)
 						{
-							NPC target = Main.npc[k];
-							if (target.active && !target.dontTakeDamage && !target.friendly && target.Hitbox.Intersects(hitBox))
+							if (!target.dontTakeDamage && !target.friendly && target.Hitbox.Intersects(hitBox))
 							{
 								HammerItem.OnBlockContact(owner, guardian, target, Projectile);
 

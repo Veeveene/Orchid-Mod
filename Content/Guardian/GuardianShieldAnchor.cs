@@ -5,7 +5,9 @@ using OrchidMod.Common.ModObjects;
 using OrchidMod.Content.General.Prefixes;
 using ReLogic.Content;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using OrchidMod.Utilities;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -20,7 +22,8 @@ namespace OrchidMod.Content.Guardian
 		public Texture2D ShieldTexture;
 		public Texture2D ShieldTextureGlow;
 
-		//public int ShieldAnimFrame { get => Projectile.frame; set { Projectile.frame = value; }}
+		// List of all projectiles this shield has blocked that have not been destroyed
+		public List<Projectile> BlockedProjectiles;
 
 		public bool shieldEffectReady = true;
 		public bool NeedNetUpdate = false;
@@ -55,6 +58,8 @@ namespace OrchidMod.Content.Guardian
 			Projectile.alpha = 255;
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = 120;
+
+			BlockedProjectiles = [];
 		}
 
 		public void OnChangeSelectedItem(Player owner)
@@ -64,6 +69,7 @@ namespace OrchidMod.Content.Guardian
 			Projectile.ai[1] = 0f;
 			Projectile.netUpdate = true;
 			Projectile.spriteDirection = 1;
+			UpdateHitbox();
 		}
 
 		public override void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers, Player owner, OrchidGuardian guardian)
@@ -117,6 +123,8 @@ namespace OrchidMod.Content.Guardian
 				OrchidGuardian guardian = owner.GetModPlayer<OrchidGuardian>();
 				Projectile.scale = guardian.GuardianWeaponScale;
 
+				if (hitboxOrigin == Vector2.Zero || hitbox == Vector2.Zero) UpdateHitbox();
+				
 				if (NeedNetUpdate)
 				{
 					NeedNetUpdate = false;
@@ -224,21 +232,30 @@ namespace OrchidMod.Content.Guardian
 
 						foreach (Projectile proj in Main.ActiveProjectiles)
 						{
-							if (proj.hostile && proj.damage > 0 && !OrchidGuardian.ProjectilesBlockBlacklist.Contains(proj.type))
+							bool inBlacklist = OrchidGuardian.ProjectilesBlockBlacklist.TryGetValue(proj.type, out OrchidGuardian.OnTryBlockAction action);
+							if (proj.hostile && proj.damage > 0)
 							{
-								if (LineIntersectsRect(p1, p2, proj.Hitbox) || proj.Hitbox.Intersects(Projectile.Hitbox))
+								if ((LineIntersectsRect(p1, p2, proj.Hitbox) || proj.Colliding(proj.Hitbox, Projectile.Hitbox)))
 								{
-									bool killProj = guardianItem.Block(owner, guardian, Projectile, proj);
-									guardian.OnBlockProjectile(Projectile, proj);
-									if (shieldEffectReady)
+									bool killProj = guardianItem.Block(owner, guardian, Projectile, proj) && !inBlacklist;
+									if (!BlockedProjectiles.Contains(proj))
 									{
-										guardian.OnBlockProjectileFirst(Projectile, proj);
-										guardianItem.Protect(owner, guardian, Projectile);
-										shieldEffectReady = false;
-										SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), owner.MountedCenter);
+										guardian.OnBlockProjectile(Projectile, proj);
+										if (shieldEffectReady)
+										{
+											guardian.OnBlockProjectileFirst(Projectile, proj);
+											guardianItem.Protect(owner, guardian, Projectile);
+											shieldEffectReady = false;
+											SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), owner.MountedCenter);
+										}
+										SoundEngine.PlaySound(SoundID.Dig, owner.MountedCenter);
 									}
 									if (killProj) proj.Kill();
-									SoundEngine.PlaySound(SoundID.Dig, owner.MountedCenter);
+									else
+									{
+										action?.Invoke(proj, Projectile);
+										if (!BlockedProjectiles.Contains(proj)) BlockedProjectiles.Add(proj);
+									}
 								}
 							}
 						}
@@ -292,6 +309,7 @@ namespace OrchidMod.Content.Guardian
 							{
 								spawnDusts();
 							}
+							BlockedProjectiles.Clear();
 							Projectile.ai[0] = 0f;
 						}
 					}
@@ -361,7 +379,7 @@ namespace OrchidMod.Content.Guardian
 
 				if (Projectile.ai[0] < 0 && IsLocalOwner)
 				{ // Charging input
-					guardian.GuardianItemCharge += 45f / guardianItem.Item.useTime * (owner.GetTotalAttackSpeed(DamageClass.Melee) * 2f - 1f) * guardianItem.ChargeSpeedMultiplier;
+					guardian.GuardianItemCharge += 45f / guardianItem.Item.useTime * (owner.GetTotalAttackSpeed(DamageClass.Melee) * 2f - 1f) * guardian.GetWeaponChargeRate(guardianItem, guardianItem.ChargeSpeedMultiplier);
 
 					if (guardian.GuardianItemCharge > 180f)
 					{
@@ -425,7 +443,7 @@ namespace OrchidMod.Content.Guardian
 				}
 
 				UpdateHitbox();
-				if (guardian.GuardianDebugVisuals == 1) SeeHitbox();
+				// if (guardian.GuardianDebugVisuals == 1) SeeHitbox();
 			}
 
 			oldOwnerPos = owner.MountedCenter;
@@ -468,20 +486,20 @@ namespace OrchidMod.Content.Guardian
 
 		public void UpdateHitbox()
 		{
-			this.hitboxOrigin = Projectile.Center + Vector2.UnitY * Projectile.gfxOffY;
-			this.hitboxOrigin -= new Vector2(0f, (Projectile.height) / 2f).RotatedBy(Projectile.rotation);
+			hitboxOrigin = Projectile.Center + Vector2.UnitY * Projectile.gfxOffY;
+			hitboxOrigin -= new Vector2(0f, (Projectile.height) / 2f).RotatedBy(Projectile.rotation);
 			hitboxOrigin -= new Vector2(4f, 4f);
 
-			this.hitbox = new Vector2(0f, Projectile.height).RotatedBy(Projectile.rotation);
+			hitbox = new Vector2(0f, Projectile.height).RotatedBy(Projectile.rotation);
 		}
 
 		public void SeeHitbox()
 		{
-			Vector2 vector = this.hitbox;
+			Vector2 vector = hitbox;
 			vector.Normalize();
-			for (int i = 0; i < this.hitbox.Length(); i++)
+			for (int i = 0; i < hitbox.Length(); i++)
 			{
-				Vector2 pos = this.hitboxOrigin + vector * i;
+				Vector2 pos = hitboxOrigin + vector * i;
 				Dust dust = Main.dust[Dust.NewDust(pos, 0, 0, DustID.Torch)];
 				dust.velocity *= 0f;
 				dust.noGravity = true;

@@ -63,7 +63,11 @@ namespace OrchidMod.Content.Guardian
 		// Misc & Static fields
 
 		/// <summary> Current timer for slam stack regen or degen. Increments slams at 1 or higher, decrements at -1 or lower.</summary>
-		public static List<int> ProjectilesBlockBlacklist;
+		// 
+		public delegate void OnTryBlockAction(Projectile projectile, Projectile anchor);
+		public static Dictionary<int, OnTryBlockAction> ProjectilesBlockBlacklist;
+		public static void AddProjectileToBlockBlacklist(int type, OnTryBlockAction onTryBlock = null) => ProjectilesBlockBlacklist.Add(type, onTryBlock);
+		
 		public OrchidPlayer modPlayer;
 
 		// Can be edited by gear
@@ -255,25 +259,33 @@ namespace OrchidMod.Content.Guardian
 		
 		public override void SetStaticDefaults()
 		{
-			ProjectilesBlockBlacklist = new List<int>
-			{
-				ProjectileID.PhantasmalDeathray,
-				ProjectileID.FairyQueenSunDance,
-				ProjectileID.SandBallFalling,
-				ProjectileID.SiltBall,
-				ProjectileID.SlushBall,
-				ProjectileID.EbonsandBallFalling,
-				ProjectileID.CrimsandBallFalling,
-				ProjectileID.PearlSandBallFalling,
-				ProjectileID.AshBallFalling
-			};
+			ProjectilesBlockBlacklist = new Dictionary<int, OnTryBlockAction>();
+			AddProjectileToBlockBlacklist(ProjectileID.PhantasmalDeathray);
+			AddProjectileToBlockBlacklist(ProjectileID.FairyQueenSunDance);
+			AddProjectileToBlockBlacklist(ProjectileID.SandBallFalling);
+			AddProjectileToBlockBlacklist(ProjectileID.SiltBall);
+			AddProjectileToBlockBlacklist(ProjectileID.SlushBall);
+			AddProjectileToBlockBlacklist(ProjectileID.EbonsandBallFalling);
+			AddProjectileToBlockBlacklist(ProjectileID.CrimsandBallFalling);
+			AddProjectileToBlockBlacklist(ProjectileID.PearlSandBallFalling);
+			AddProjectileToBlockBlacklist(ProjectileID.AshBallFalling);
 
 			Mod thoriumMod = OrchidMod.ThoriumMod;
 			if (thoriumMod != null)
 			{
-				ProjectilesBlockBlacklist.Add(thoriumMod.Find<ModProjectile>("OctopusArm").Type);
-				ProjectilesBlockBlacklist.Add(thoriumMod.Find<ModProjectile>("GraniteEradicatorArm").Type);
-				ProjectilesBlockBlacklist.Add(thoriumMod.Find<ModProjectile>("KrakenArm").Type);
+				void pushArm(Projectile projectile, Projectile anchor, float distance)
+				{
+					Vector2 tip = projectile.position + projectile.rotation.ToRotationVector2() * (projectile.ai[1]);
+					Player owner = Main.player[anchor.owner];
+					// CombatText.NewText(Main.player[anchor.owner].getRect(), Color.Pink, Math.Acos(Vector2.Dot(Vector2.Normalize(tip - projectile.Center), Vector2.Normalize(anchor.Center - projectile.Center))).ToString());
+					// Dust.QuickDust(tip, Color.NavajoWhite);
+					if (Math.Acos(Vector2.Dot(Vector2.Normalize(tip - projectile.Center), Vector2.Normalize(anchor.Center - projectile.Center))) < MathHelper.PiOver2) projectile.ai[1] = Math.Min(Vector2.Distance(projectile.Center, anchor.Center), distance);
+				}
+
+				AddProjectileToBlockBlacklist(thoriumMod.Find<ModProjectile>("OctopusArm").Type, (projectile, anchor) => pushArm(projectile, anchor, 100f));
+				AddProjectileToBlockBlacklist(thoriumMod.Find<ModProjectile>("GraniteEradicatorArm").Type, (projectile, anchor) => pushArm(projectile, anchor, 75f));
+				AddProjectileToBlockBlacklist(thoriumMod.Find<ModProjectile>("KrakenArm").Type, (projectile, anchor) => pushArm(projectile, anchor, 160f));
+				AddProjectileToBlockBlacklist(thoriumMod.Find<ModProjectile>("QueenJellyfishArm").Type, (projectile, anchor) => pushArm(projectile, anchor, 250f));;
 				
 				FieldInfo armorKey = thoriumMod.Code.GetType("ThoriumMod.ThoriumHotkeySystem")?.GetField("ArmorKey", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 				if (armorKey != null)
@@ -1634,7 +1646,7 @@ namespace OrchidMod.Content.Guardian
 			Predicate<Projectile> ProjInRange;
 			if (range < 0) ProjInRange = new Predicate<Projectile>(T => T.Hitbox.Intersects(targetArea) || (lenience > 0 && Collision.CheckAABBvLineCollision(targetArea.TopLeft(), targetArea.Size(), T.Hitbox.ClosestPointInRect(from), T.Hitbox.ClosestPointInRect(from) + (T.velocity - fromVel) * lenience)));
 			else ProjInRange = new Predicate<Projectile>(T => (T.Hitbox.Intersects(targetArea) || (lenience > 0 && Collision.CheckAABBvLineCollision(targetArea.TopLeft(), targetArea.Size(), T.Hitbox.ClosestPointInRect(from), T.Hitbox.ClosestPointInRect(from) + (T.velocity - fromVel) * lenience))) && (T.Hitbox.ClosestPointInRect(from).Distance(from) <= range || (lenience > 0 && from.ClosestPointOnLine(T.Hitbox.ClosestPointInRect(from), T.Hitbox.ClosestPointInRect(from) + (T.velocity - fromVel) * lenience).Distance(from) <= range)));
-			foreach (Projectile proj in Main.projectile.Where(T => T.active && !ProjectilesBlockBlacklist.Contains(T.type) && ProjInRange(T) && ProjPredicate(T)))
+			foreach (Projectile proj in Main.projectile.Where(T => T.active && !ProjectilesBlockBlacklist.ContainsKey(T.type) && ProjInRange(T) && ProjPredicate(T)))
 			{
 				if (anchor != null && proj.ModProjectile == anchor)
 				{
