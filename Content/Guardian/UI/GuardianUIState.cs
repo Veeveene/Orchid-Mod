@@ -358,6 +358,9 @@ namespace OrchidMod.Content.Guardian.UI
 						spriteBatch.Draw(textureOn, drawpos, new Rectangle(0, 0, (int)(modPlayer.GuardianGuardRecharging * textureOn.Width + 0.5f), textureBlockBarOn.Height), new Color(flash, flash, flash, 0.5f));
 					}
 				}
+				Vector2 guardStart = new (position.X - offSet, position.Y);
+				Vector2 guardEnd = guardStart + new Vector2(textureBlockBarOn.Width * modPlayer.GuardianGuardMax + 2 * (modPlayer.GuardianGuardMax - 1), textureBlockBarOn.Height);
+				ShowMouseTextForRegion(spriteBatch, modPlayer, guardStart, guardEnd, "{0}/{1}".FormatWith(modPlayer.GuardianGuard, modPlayer.GuardianGuardMax));
 
 				offSet = (int)(modPlayer.GuardianSlamMax / 2f * (textureSlamBarOn.Width + 2));
 				if (offSet > offSetIcons) offSetIcons = offSet; // Calculates the offset for banner and rune icon based on the largest offset between block (guard) and slam stacks
@@ -399,6 +402,9 @@ namespace OrchidMod.Content.Guardian.UI
 						spriteBatch.Draw(textureSlamBarHighlight, drawposHighlight + new Vector2(0, textureSlamBarHighlight.Height - chargeHeight), new Rectangle(0, textureSlamBarHighlight.Height - chargeHeight, textureSlamBarHighlight.Width, chargeHeight), color);
 					}
 				}
+				Vector2 slamStart = new (position.X - offSet, position.Y + 18 * player.gravDir);
+				Vector2 slamEnd = slamStart + new Vector2(textureSlamBarOn.Width * modPlayer.GuardianSlamMax + 2 * (modPlayer.GuardianSlamMax - 1), textureBlockBarOn.Height);
+				ShowMouseTextForRegion(spriteBatch, modPlayer, slamStart, slamEnd, "{0}/{1}".FormatWith(modPlayer.GuardianSlam, modPlayer.GuardianSlamMax));
 
 				offSet = (int)((textureIconRuneOn.Width + 2) * 0.5f);
 				if (modPlayer.RuneProjectiles.Count > 0)
@@ -703,6 +709,9 @@ namespace OrchidMod.Content.Guardian.UI
 							drawpos.Y += chargeTextureOn.Height - val;
 							if (player.gravDir < 0) drawpos.Y -= (chargeTextureOn.Height - rectangle.Height);
 							spriteBatch.Draw(chargeTextureOn, drawpos, rectangle, Color.White, 0f, Vector2.Zero, 1f, effect, 0f);
+							
+							drawpos = new Vector2(position.X - (chargeTextureOn == textureGauntletOn && blocking != null ? 21 : 9), position.Y - 94 * player.gravDir + 3f * (player.gravDir - 1));
+							ShowMouseTextForRegion(spriteBatch, modPlayer, drawpos, drawpos + chargeTextureOn.Size(), "{0}%".FormatWith((int)Utils.Clamp(modPlayer.GuardianItemCharge, 0, 180f) * 5 / 9));
 						}
 
 
@@ -748,6 +757,24 @@ namespace OrchidMod.Content.Guardian.UI
 				spriteBatch.End();
 				spriteBatch.Begin(spriteBatchSnapshot);
 			}
+		}
+
+		public static void ShowMouseTextForRegion(SpriteBatch spriteBatch, OrchidGuardian guardian, Vector2 startPos, Vector2 endPos, string text)
+		{
+			if (guardian.GuardianDebugVisuals > 0)
+				Utils.DrawRectangle(spriteBatch, startPos + Main.screenPosition, endPos + Main.screenPosition, new Color(175, 255, 175), new Color(175, 255, 175), 2f);
+			if (MouseInScaledRegion(startPos, endPos))
+				Main.instance.MouseText(text);
+		}
+
+		public static bool MouseInScaledRegion(Vector2 startPos, Vector2 endPos)
+		{
+			if (Main.dedServ) return false;
+			
+			Vector2 mousePos = Main.MouseScreen;
+			Vector2 adjStart = Vector2.Transform(startPos, Main.GameViewMatrix.EffectMatrix * Main.GameViewMatrix.ZoomMatrix) / Main.UIScale;
+			Vector2 adjEnd = Vector2.Transform(endPos, Main.GameViewMatrix.EffectMatrix * Main.GameViewMatrix.ZoomMatrix) / Main.UIScale;
+			return mousePos.X > adjStart.X && mousePos.X < adjEnd.X && mousePos.Y > adjStart.Y && mousePos.Y < adjEnd.Y;
 		}
 	}
 }
