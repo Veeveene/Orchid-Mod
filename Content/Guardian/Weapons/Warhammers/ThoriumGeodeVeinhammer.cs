@@ -145,8 +145,8 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             string TooltipToGet = Mod.GetLocalizationKey("Items.ThoriumGeodeVeinhammer.PickaxePowerNone");
             if (bestPickPower > 0) TooltipToGet = Mod.GetLocalizationKey("Items.ThoriumGeodeVeinhammer.PickaxePower");
 
-            string text = Language.GetText(TooltipToGet).Format(bestPickPower);
-            if (bestPick != null && Main.keyState.PressingShift()) text += string.Format(" ({0} [i:{1}])", bestPick.Name, bestPick.type);
+            string text = Language.GetTextValue(TooltipToGet, bestPickPower);
+            if (bestPick != null && Main.keyState.PressingShift()) text += $" ({bestPick.Name} [i:{bestPick.type}])";
 
             tooltips.Insert(index + 1, new TooltipLine(Mod, "VeinhammerPickPower", text));
         }

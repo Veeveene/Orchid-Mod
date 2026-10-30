@@ -62,7 +62,7 @@ namespace OrchidMod.Content.Guardian
 			// {
 			// 	string[] splitText = tt.Text.Split(' ');
 			// 	string damageValue = splitText.First();
-			// 	tt.Text = damageValue + " " + Language.GetTextValue(ModContent.GetInstance<OrchidMod>().GetLocalizationKey("DamageClasses.GuardianDamageClass.DisplayName"));
+			// 	tt.Text = damageValue + " " + Language.GetTextValue(Mod.GetLocalizationKey("DamageClasses.GuardianDamageClass.DisplayName"));
 			// }
 
 			int index = tooltips.FindIndex(x => x.Name == "Speed" && x.Mod == "Terraria");

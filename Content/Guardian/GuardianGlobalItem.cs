@@ -47,19 +47,19 @@ namespace OrchidMod.Content.Guardian
 				if (item.type == OrchidMod.ThoriumMod.Find<ModItem>("DepthDiverHelmet").Type)
 				{
 					int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Defense")); // Tooltip#0 doesn't work
-					tooltips.Insert(index + 2, new TooltipLine(Mod, "Tooltip", Language.GetTextValue(ModContent.GetInstance<OrchidMod>().GetLocalizationKey("Items.DepthDiverHelmet.Tooltip"))));
+					tooltips.Insert(index + 2, new TooltipLine(Mod, "Tooltip", Language.GetTextValue(Mod.GetLocalizationKey("Items.DepthDiverHelmet.Tooltip"))));
 				}
 
 				if (item.type == OrchidMod.ThoriumMod.Find<ModItem>("DepthDiverChestplate").Type)
 				{
 					int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Defense"));
-					tooltips.Insert(index + 2, new TooltipLine(Mod, "Tooltip", Language.GetTextValue(ModContent.GetInstance<OrchidMod>().GetLocalizationKey("Items.DepthDiverChestplate.Tooltip"))));
+					tooltips.Insert(index + 2, new TooltipLine(Mod, "Tooltip", Language.GetTextValue(Mod.GetLocalizationKey("Items.DepthDiverChestplate.Tooltip"))));
 				}
 
 				if (item.type == OrchidMod.ThoriumMod.Find<ModItem>("DepthDiverGreaves").Type)
 				{
 					int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Defense"));
-					tooltips.Insert(index + 2, new TooltipLine(Mod, "Tooltip", Language.GetTextValue(ModContent.GetInstance<OrchidMod>().GetLocalizationKey("Items.DepthDiverGreaves.Tooltip"))));
+					tooltips.Insert(index + 2, new TooltipLine(Mod, "Tooltip", Language.GetTextValue(Mod.GetLocalizationKey("Items.DepthDiverGreaves.Tooltip"))));
 				}
 			}
 		}

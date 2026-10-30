@@ -334,7 +334,7 @@ namespace OrchidMod.Content.Guardian
 			// {
 			// 	string[] splitText = tt.Text.Split(' ');
 			// 	string damageValue = splitText.First();
-			// 	tt.Text = damageValue + " " + Language.GetTextValue(ModContent.GetInstance<OrchidMod>().GetLocalizationKey("DamageClasses.GuardianDamageClass.DisplayName"));
+			// 	tt.Text = damageValue + " " + Language.GetTextValue(Mod.GetLocalizationKey("DamageClasses.GuardianDamageClass.DisplayName"));
 			// }
 
 			int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Knockback")) + 1;
@@ -342,7 +342,7 @@ namespace OrchidMod.Content.Guardian
 
 			if (GuardStacks > 0 || SlamStacks > 0)
 			{
-				string TooltipToGet = GetInstance<OrchidMod>().GetLocalizationKey("Misc.GuardianGrants");
+				string TooltipToGet = Mod.GetLocalizationKey("Misc.GuardianGrants");
 				switch(GuardStacks)
 				{
 					case > 0: TooltipToGet += "Guard"; break;
@@ -353,7 +353,7 @@ namespace OrchidMod.Content.Guardian
 				}
 				if (GuardStacks == SlamStacks) TooltipToGet += "Same";
 
-				tooltips.Insert(index, new TooltipLine(Mod, "GuardianGrants", Language.GetText(TooltipToGet).Format(GuardStacks, SlamStacks))
+				tooltips.Insert(index, new TooltipLine(Mod, "GuardianGrants", Language.GetTextValue(TooltipToGet, GuardStacks, SlamStacks))
 				{
 					OverrideColor = new Color(175, 255, 175)
 				});
@@ -362,7 +362,7 @@ namespace OrchidMod.Content.Guardian
 
 			if (!CannotBlock)
 			{
-				string block = Language.GetText(ShouldBlock ? "Mods.OrchidMod.UI.GuardianItem.ToBlock" : "Mods.OrchidMod.UI.GuardianItem.ToSlam").Format(click);
+				string block = Language.GetTextValue(ShouldBlock ? "Mods.OrchidMod.UI.GuardianItem.ToBlock" : "Mods.OrchidMod.UI.GuardianItem.ToSlam", click);
 				string line = "Mods.OrchidMod.UI.GuardianItem.HammerBlock";
 				if (ShouldBlock ? (GuardBlockCost != 1 || SlamBlockCost != 0) : (GuardBlockCost != 0 || SlamBlockCost != 1))
 				{
@@ -370,7 +370,7 @@ namespace OrchidMod.Content.Guardian
 					if (SlamBlockCost > 0) line += "Slam";
 					if (GuardBlockCost == SlamBlockCost) line += "Same";
 				}
-				tooltips.Insert(index, new TooltipLine(Mod, "ClickInfo", Language.GetText(line).Format(click, block, GuardBlockCost, SlamBlockCost))
+				tooltips.Insert(index, new TooltipLine(Mod, "ClickInfo", Language.GetTextValue(line.FirstCharToUpper(), click, block, GuardBlockCost, SlamBlockCost).FirstCharToUpper())
 				{
 					OverrideColor = new Color(175, 255, 175)
 				});
@@ -384,7 +384,7 @@ namespace OrchidMod.Content.Guardian
 			}
 
 			string ChargeToThrow = Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.ChargeToThrow");
-			if (!CannotSwing) ChargeToThrow = Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.SwingWhileCharging");
+			if (!CannotSwing) ChargeToThrow = Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.SwingWhileCharging", click);
 			tooltips.Insert(index, new TooltipLine(Mod, "Swing", ChargeToThrow)
 			{
 				OverrideColor = new Color(175, 255, 175)

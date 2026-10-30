@@ -78,7 +78,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Gauntlets
 				{
 					int speed = 0;
 					if (int.TryParse(displayValue.Split(' ').First(), out int result)) speed = result;
-					displayValue = Language.GetText("GameUI.Speed").Format((int)(speed * gauntlet.AddedVelocityMult));
+					displayValue = Language.GetTextValue("GameUI.Speed", (int)(speed * gauntlet.AddedVelocityMult));
 				}
 			}
 		}
