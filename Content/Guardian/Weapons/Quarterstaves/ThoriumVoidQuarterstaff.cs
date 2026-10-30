@@ -6,7 +6,6 @@ using System.Linq;
 using OrchidMod.Assets;
 using OrchidMod.Common.Attributes;
 using OrchidMod.Common.ModObjects;
-using OrchidMod.Common;
 using OrchidMod.Common.Global.Projectiles;
 using OrchidMod.Utilities;
 using OrchidMod.Content.Guardian.Buffs;
@@ -17,8 +16,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.Localization;
 
 
 namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
@@ -45,8 +44,6 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 		public int HitNPCIndex = -1;
 		public Vector2 HitNPCLockVector = Vector2.Zero;
 		public int HitNPCLockTimer = 0;
-
-		public int CounterBlobStacks;
 		
 		public static Color VoidColor(Player player, bool dark = false, float speed = 4f, float offset = 0f)
 		{
@@ -79,7 +76,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			Item.useTime = 40;
 			ParryDuration = 40;
 			Item.knockBack = 6f;
-			Item.damage = 136;
+			Item.damage = 196;
 			JabChargeGain = 0.4f;
 			SwingStyle = 2;
 			JabSpeed = 1.0f;
@@ -88,6 +85,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			ChargeRate = 0.5f;
 			CounterDamage = 0.5f;
 			CounterHits = 4;
+			GuardStacks = 0;
 			
 			OldPositionTrail = [];
 			OldSizeTrail = [];
@@ -193,7 +191,13 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 
 					if (!player.HasBuff<GuardianVoidQuarterstaffBuff>())
 					{
-						if (CounterBlobStacks > 0) CounterBlobStacks = 0;
+						// if (guardian.GuardianVoidQuarterstaff > 0)
+						// {
+						// 	player.AddBuff(ModContent.BuffType<GuardianVoidQuarterstaffDebuff>(), 40 * guardian.GuardianVoidQuarterstaff);
+						// 	SoundEngine.PlaySound(SoundID.Item104, player.Center);
+						// 	player.Hurt(guardian.VoidDeath, (int)(player.statLifeMax2 * 0.065333f) * guardian.GuardianVoidQuarterstaff, -1, dodgeable: false, scalingArmorPenetration: 1f, knockback: 0);
+						// 	guardian.GuardianVoidQuarterstaff = 0;
+						// }
 						if (ShouldDrawRiftTrail) ShouldDrawRiftTrail = false;
 					}
 				}
@@ -244,6 +248,22 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			}
 		}
 
+		public override void QuarterstaffModifyHitNPC(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, ref NPC.HitModifiers modifiers, bool jabAttack, bool counterAttack, bool firstHit)
+		{
+			if (!jabAttack && !counterAttack && HitNPCIndex != -1 && HitNPCLockTimer > 0 && target.whoAmI != HitNPCIndex) modifiers.FinalDamage *= 0.75f;
+		}
+
+		public override void ModifyTooltips(List<TooltipLine> tooltips)
+		{
+			base.ModifyTooltips(tooltips);
+			
+			int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Knockback"));
+			tooltips.Insert(index + 1, new TooltipLine(Mod, "GuardianGrants", Language.GetTextValue(Mod.GetLocalizationKey("Items.ThoriumVoidQuarterstaff.Grants")))
+			{
+				OverrideColor = new Color(175, 255, 175)
+			});
+		}
+
 		public override void OnHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, NPC.HitInfo hit, bool jabAttack, bool counterAttack)
 		{
 			int debuffType = OrchidMod.ThoriumMod.TryFind("LightCurse", out ModBuff lightCurse) ? lightCurse.Type : BuffID.ShadowFlame;
@@ -256,33 +276,15 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 					projectile.localAI[0] = 0;
 				}
 
-
 				float launchAngle = MathHelper.WrapAngle(Vector2.Normalize(player.Center - target.Center).ToRotation());
 				float launchPower = 13.5f;
 				bool reduceGain = player.controlDown;
-				bool increaseGain = player.controlUp;
-				bool tiltLeft = player.controlLeft;
-				bool tiltRight = player.controlRight;
+				bool increaseGain = player.controlUp;;
 
-				if (launchAngle is >= -MathHelper.PiOver4 and < MathHelper.PiOver4)
-				{
-					(reduceGain, increaseGain, tiltLeft, tiltRight) = (player.controlLeft, player.controlRight, player.controlUp, player.controlDown);
-				}
-				else if (launchAngle is >= 3 * MathHelper.PiOver4 and < 5 * MathHelper.PiOver4)
-				{
-					(reduceGain, increaseGain, tiltLeft, tiltRight) = (player.controlRight, player.controlLeft, player.controlDown, player.controlUp);
-				}
-				else if (launchAngle is >= 5 * MathHelper.PiOver4 and < 7 * MathHelper.PiOver4)
-				{
-					(reduceGain, increaseGain, tiltLeft, tiltRight) = (player.controlUp, player.controlDown, player.controlRight, player.controlLeft);
-				}
+				if (player.Center.X < target.Center.X ^ player.gravDir == -1) (reduceGain, increaseGain) = (increaseGain, reduceGain);
 				
-				if (player.gravDir == -1) (reduceGain, increaseGain) = (increaseGain, reduceGain);
-				if (tiltLeft) launchAngle += 22.5f;
-				else if (tiltRight) launchAngle -= 22.5f;
-				if (increaseGain) launchPower += 3.5f;
-				else if (reduceGain) launchPower -= 3.5f;
-
+				if (increaseGain) launchAngle += 22.5f;
+				else if (reduceGain) launchAngle -= 22.5f;
 
 				player.velocity = Vector2.UnitX.RotatedBy(launchAngle) * launchPower;
 				player.wingTime += player.wingTimeMax * 0.25f;
@@ -291,25 +293,34 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 				HitNPCLockTimer = 0;
 				HitNPCLockVector = Vector2.Zero;
 
-				player.AddBuff(ModContent.BuffType<GuardianVoidQuarterstaffBuff>(), 240);	
+				if (!player.HasBuff<GuardianVoidQuarterstaffBuff>())
+				{
+					SoundEngine.PlaySound(SoundID.Item117, player.Center);
+					
+					for (int i = 0; i < 15; i++)
+					{
+						Dust dust = Dust.NewDustPerfect(player.Center, DustID.Shadowflame, Main.rand.NextVector2CircularEdge(3f, 3f), Scale: 2f);
+						dust.noGravity = true;
+					}
+				}
+				
+				if (ShouldDrawRiftTrail) for (int i = 0; i < 3; i++) SpawnVoidBlobs(player, target, guardian.GetGuardianDamage(Item.damage * 0.4f));
+				
+				player.AddBuff<GuardianVoidQuarterstaffBuff>(240);
+				// guardian.GuardianVoidQuarterstaffTimer = 60;
 				HasChargedHit = true;
 			} 
 		}
 
 		public override void OnHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, NPC.HitInfo hit, bool jabAttack, bool counterAttack)
 		{
-			if (!jabAttack)
+			if (!jabAttack && !counterAttack)
 			{
-				if (!counterAttack) 
-				{
-					if (player.HasBuff<GuardianVoidQuarterstaffBuff>())
-					{
-						CounterBlobStacks += 3;
-						if (CounterBlobStacks < 15) CombatText.NewText(player.getRect(), Color.Magenta, CounterBlobStacks);
-						if (CounterBlobStacks > 15) CounterBlobStacks = 15;
-					}
-				}
+				if (player.HasBuff<GuardianVoidQuarterstaffBuff>())
+					guardian.GuardianGuardRecharging += 0.5f;
+				else guardian.AddGuard();
 			}
+
 		}
 
 		public override void OnAttackEnd(Player player, OrchidGuardian guardian, Projectile projectile, bool jabAttack, bool counterAttack)
@@ -323,13 +334,17 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 				else
 				{
 					ShouldDrawRiftTrail = false;
-					if (player.HasBuff<GuardianVoidQuarterstaffBuff>())
-					{
-						player.ClearBuff(ModContent.BuffType<GuardianVoidQuarterstaffBuff>());
-						SoundEngine.PlaySound(SoundID.Item104, player.Center);
-						if (CounterBlobStacks > 0) player.Hurt(guardian.VoidDeath, (int)(player.statLifeMax2 * 0.065333f) * CounterBlobStacks, -1, dodgeable: false, scalingArmorPenetration: 1f, knockback: 0);
-						CounterBlobStacks = 0;
-					}
+					// if (player.HasBuff<GuardianVoidQuarterstaffBuff>())
+					// {
+					// 	player.ClearBuff(ModContent.BuffType<GuardianVoidQuarterstaffBuff>());;
+					// 	if (guardian.GuardianVoidQuarterstaff > 0)
+					// 	{
+					// 		player.AddBuff(ModContent.BuffType<GuardianVoidQuarterstaffDebuff>(), 40 * guardian.GuardianVoidQuarterstaff);
+					// 		SoundEngine.PlaySound(SoundID.Item104, player.Center);
+					// 		player.Hurt(guardian.VoidDeath, (int)(player.statLifeMax2 * 0.065333f) * guardian.GuardianVoidQuarterstaff, -1, dodgeable: false, scalingArmorPenetration: 1f, knockback: 0);
+					// 	}
+					// 	guardian.GuardianVoidQuarterstaff = 0;
+					// }
 				}
 			}
 			
@@ -358,13 +373,12 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 					if (nearby.Length > 0) target = nearby[Main.rand.Next(nearby.Length)];
 					else goto ResetBlobStacks;
 				}
-				for (int i = 0; i < CounterBlobStacks; i++)
-				{
-					SpawnVoidBlobs(player, target, guardian.GetGuardianDamage(Item.damage * 0.4f));
-				}
+				// for (int i = 0; i < guardian.GuardianVoidQuarterstaff; i++)
+				// {
+				// 	SpawnVoidBlobs(player, target, guardian.GetGuardianDamage(Item.damage * 0.4f));
+				// }
 				ResetBlobStacks: 
-				CounterBlobStacks = 0;
-				player.ClearBuff(ModContent.BuffType<GuardianVoidQuarterstaffBuff>());
+				guardian.GuardianVoidQuarterstaff = 0;
 			} 
 		}
 
@@ -374,7 +388,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			if (ShouldDrawRiftTrail)
 			{
 				anchor.rotation = anchor.ai[1] + 3 * MathHelper.PiOver4 + (float)Math.Cos(0.0786f * (anchor.ai[0] - 1)) * 2.8f * -player.direction;
-				anchor.Center = player.MountedCenter.Floor() + Vector2.UnitY.RotatedBy(anchor.ai[1] + (float)Math.Cos(0.0786f * (anchor.ai[0] - 1)) * 2.6f * -player.direction) * 24f * (1 + 1.2f * (float)Math.Sin(0.0786f * (anchor.ai[0] - 1)));
+				anchor.Center = player.MountedCenter.Floor() + Vector2.UnitY.RotatedBy(anchor.ai[1] + (float)Math.Cos(0.0786f * (anchor.ai[0] - 1)) * 2.6f * -player.direction) * 24f * (1 + 1.2f * (float)Math.Cos(0.0786f * (anchor.ai[0] - 1)));
 				player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, MathHelper.PiOver4 * player.direction + anchor.ai[1] + 0.1f - (float)Math.Cos(0.102f * (anchor.ai[0] - 9)) * player.direction);
 				player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, anchor.ai[1] - 0.1f + (float)Math.Cos(0.102f * (anchor.ai[0]- 9)) * 0.2f * player.direction);
 				
@@ -433,7 +447,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 				spriteBatch.End(out SpriteBatchSnapshot snapshot);
 				SpriteBatchSnapshot glowSnapshot = snapshot with { BlendState = BlendState.Additive, RasterizerState = RasterizerState.CullNone };
 				spriteBatch.Begin(glowSnapshot);
-				
+
 				for (int i = 0; i < OldPositionTrail.Count; i++)
 				{
 					Color color = Lighting.GetColor(OldPositionTrail[i].ToTileCoordinates(), Color.Lerp(new Color(57, 0, 86), new Color(188, 0, 163), i / 20f));
@@ -448,26 +462,14 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 					spriteBatch.Begin(snapshot);
 					spriteBatch.Draw(TextureTrail, OldPositionTrail[i] - Main.screenPosition, null, color, 0, TextureTrail.Size() * 0.5f, scale * 0.5f, SpriteEffects.None, 0f);
 
-					spriteBatch.End();
-					spriteBatch.Begin(glowSnapshot);
+					if (i != OldPositionTrail.Count - 1)
+					{
+						spriteBatch.End();
+						spriteBatch.Begin(glowSnapshot);
+					}
 				}
-				
-				Vector2 drawPos = tipPos - Main.screenPosition;
-				Color colorPink = Lighting.GetColor(tipPos.ToTileCoordinates(), new Color(188, 0, 163));
-				Vector2 offset = Main.rand.NextVector2Circular(1f, 1f);
-				float scale2 = 0.5f + 0.5f * (float)Math.Sin(0.0785f * (projectile.ai[0] - 1));
-				spriteBatch.End();
-				spriteBatch.Begin(glowSnapshot);
-				spriteBatch.Draw(TextureTrailGlow, drawPos + offset * 5f, null, colorPink * 0.8f, projectile.rotation, TextureTrailGlow.Size() * 0.5f, projectile.scale * scale2 * 0.75f, SpriteEffects.None, 0f);	
-		
-				spriteBatch.End();
-				spriteBatch.Begin(snapshot);
-				spriteBatch.Draw(TextureTrail, drawPos + offset * 5f, null, colorPink, projectile.rotation, TextureTrail.Size() * 0.5f, projectile.scale * scale2 * 0.5f, SpriteEffects.None, 0f);
-
-				
-				Color colorPurple = Lighting.GetColor(GetTipPosition(projectile).ToTileCoordinates(), new Color(57, 0, 86));
-				spriteBatch.Draw(TextureTrailGlow, drawPos + offset * 2.5f, null, colorPurple * 0.8f, projectile.rotation, TextureTrailGlow.Size() * 0.5f, projectile.scale * scale2 * 0.4f, SpriteEffects.None, 0f);		
-				spriteBatch.Draw(TextureTrail, drawPos + offset * 2.5f, null, colorPurple, projectile.rotation, TextureTrail.Size() * 0.5f, projectile.scale * scale2 * 0.25f, SpriteEffects.None, 0f);	
+				// spriteBatch.End();
+				// spriteBatch.Begin(snapshot);
 			}
 
 			return true;
@@ -475,7 +477,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 
 		public override void PostDrawQuarterstaff(SpriteBatch spriteBatch, Projectile projectile, Player player, Color lightColor, SpriteEffects effects)
 		{
-			if (player == Main.LocalPlayer && player.GetModPlayer<OrchidGuardian>().GuardianItemCharge >= 180f && projectile.ai[0] is 0 or 1)
+			if (player == Main.LocalPlayer && player.Guardian(out OrchidGuardian guardian).GuardianItemCharge >= 180f && projectile.ai[0] is 0 or 1)
 			{
 				spriteBatch.End(out SpriteBatchSnapshot snapshot);
 				spriteBatch.Begin(snapshot with { BlendState = BlendState.Additive, RasterizerState = RasterizerState.CullNone });
@@ -484,11 +486,12 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 
 				Vector2 drawPositionRing = Vector2.Transform(player.VisualMountedCenter() - Main.screenPosition, Main.GameViewMatrix.EffectMatrix);
 				
-				spriteBatch.Draw(TextureRing, drawPositionRing , null, new Color(120, 0, 181) * 0.5f, miscCountAngle, TextureRing.Size() * 0.5f, 0.28f + 0.007f * MathF.Sin(player.miscCounterNormalized * MathHelper.TwoPi), SpriteEffects.None, 0f);
-				spriteBatch.Draw(TextureRing, drawPositionRing, null, VoidColor(player, true) * 0.5f, -miscCountAngle, TextureRing.Size() * 0.5f, 0.28f + 0.014f * MathF.Cos(player.miscCounterNormalized * MathHelper.TwoPi * 2.01f), SpriteEffects.None, 0f);
+				spriteBatch.Draw(TextureRing, drawPositionRing , null, new Color(120, 0, 181) * 0.5f, miscCountAngle, TextureRing.Size() * 0.5f, 0.28f + 0.007f * MathF.Sin(miscCountAngle), SpriteEffects.None, 0f);
+				spriteBatch.Draw(TextureRing, drawPositionRing, null, VoidColor(player, true) * 0.5f, -miscCountAngle, TextureRing.Size() * 0.5f, 0.28f + 0.014f * MathF.Cos(miscCountAngle * 2.01f), SpriteEffects.None, 0f);
 
 				Vector2 finalPoint = Main.ReverseGravitySupport(CalcFirstThingInLine(player, 400, 1.5f, out float width, out NPC hitNPC) - Main.screenPosition) + Main.screenPosition;
-				spriteBatch.DrawString(FontAssets.CombatText[0].Value, finalPoint.Floor().ToString(), player.VisualCenter() - Vector2.UnitY * 24 * player.gravDir - Main.screenPosition, Color.MediumPurple, 0, default, 1f, (player.gravDir < 0 ? SpriteEffects.FlipVertically : SpriteEffects.None), 0f);
+				
+				if (guardian.GuardianDebugVisuals > 0) spriteBatch.DrawString(FontAssets.CombatText[0].Value, finalPoint.Floor().ToString(), player.VisualCenter() - Vector2.UnitY * 24 * player.gravDir - Main.screenPosition, Color.MediumPurple, 0, default, 1f, (player.gravDir < 0 ? SpriteEffects.FlipVertically : SpriteEffects.None), 0f);
 
 				Vector2 chainDirection = finalPoint - player.VisualMountedCenter();
 				Vector2 segment = Vector2.Normalize(chainDirection) * TextureLine.Height * 0.3f;
@@ -501,11 +504,12 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 				
 				while (nbSegments > 0)
 				{
-					Color drawColor = VoidColor(player, offset: Offset[(nbSegmentsMax - nbSegments) % 80] / 80f, speed: 1f);
+					Color drawColor = VoidColor(player, offset: Offset[(nbSegmentsMax - nbSegments) % 80] / 80f, speed: 1.5f);
 					if (nbSegments == nbSegmentsMax)
 					{
 						Vector2 drawPositionReticle = Vector2.Transform(finalPoint - Main.screenPosition, Main.GameViewMatrix.EffectMatrix);
-						spriteBatch.Draw(TextureRing, drawPositionReticle, null, drawColor, player.miscCounterNormalized * MathHelper.TwoPi, TextureRing.Size() * 0.5f, 0.007f * width, SpriteEffects.None, 0f);
+						spriteBatch.Draw(TextureRing, drawPositionReticle, null, new Color(120, 0, 181) * 0.5f, -miscCountAngle, TextureRing.Size() * 0.5f, 0.007f * (width + MathF.Sin(miscCountAngle)), SpriteEffects.None, 0f);
+						spriteBatch.Draw(TextureRing, drawPositionReticle, null, drawColor * 0.5f, miscCountAngle, TextureRing.Size() * 0.5f, 0.007f  * (width + MathF.Cos(miscCountAngle * 2.01f)) , SpriteEffects.None, 0f);
 					}
 					
 					nbSegments--;

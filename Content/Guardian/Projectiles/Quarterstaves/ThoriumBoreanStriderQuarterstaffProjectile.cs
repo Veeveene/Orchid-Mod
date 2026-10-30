@@ -229,7 +229,7 @@ public class ThoriumBoreanStriderQuarterstaffProjectile : OrchidModGuardianProje
 					guardian.AddGuard(guardsToAdd);
 					guardian.AddSlam(slamsToAdd);
 				}
-				else if (IsLocalOwner) player.AddBuff(ModContent.BuffType<GuardianBoreanStriderQuarterstaffBuff>(), 600);
+				else if (IsLocalOwner) player.AddBuff<GuardianBoreanStriderQuarterstaffBuff>(600);
 
 
 				SoundEngine.PlaySound(SoundID.Item4);

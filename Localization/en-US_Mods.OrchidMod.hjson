@@ -3281,7 +3281,8 @@ Items: {
 		DisplayName: Lodestone Crusher
 		Tooltip:
 			'''
-			Left click after throwing to make the hammer crash down, costing 3 slams
+			Charged throws crash down, erupting with damaging rocks on contact
+			Slams blast the hammer downward after a delay, producing a larger eruption 
 			Damage will sunder enemies, increasing the damage they take by 10%
 			'''
 	}
@@ -3302,9 +3303,9 @@ Items: {
 		Tooltip:
 			'''
 			Slam to warp to an enemy in line of sight, empowering the staff on hit
-			While empowered, charge speed is massively increased and hits store up to 15 void energy
-			Counterattacks release void energy as seeking blobs
+			While empowered, charge speed is massively increased
 			'''
+		Grants: Grants 1 guard when fully charged, but only when Void Rush is not active
 	}
 
 	ThoriumNagaQuarterstaff: {
@@ -3501,6 +3502,42 @@ Items: {
 			'''
 			After a greathammer throw hit, your next slam does an extra weak swing
 			Extra swings deal half damage and grant less charge on hit
+			'''
+	}
+
+	StaffRocketSharkRed: {
+		DisplayName: Hemogoblin Shark–Print Staff-Mounted Propulsion System
+		Tooltip:
+			'''
+			Increases armor penetration by 5
+			{$Items.StaffRocketBlue.Tooltip}
+			'''
+	}
+
+	StaffRocketSharkGreen: {
+		DisplayName: Shark-Print Staff-Mounted Propulsion System
+		Tooltip:
+			'''
+			Increases armor penetration by 5
+			{$Items.StaffRocketBlue.Tooltip}
+			'''
+	}
+
+	StaffRocketSharkBlue: {
+		DisplayName: Orca-Print Staff-Mounted Propulsion System
+		Tooltip:
+			'''
+			Increases armor penetration by 5
+			{$Items.StaffRocketBlue.Tooltip}
+			'''
+	}
+
+	StaffRocketSharkYellow: {
+		DisplayName: Sand Shark–Print Staff-Mounted Propulsion System
+		Tooltip:
+			'''
+			Increases armor penetration by 5
+			{$Items.StaffRocketBlue.Tooltip}
 			'''
 	}
 }

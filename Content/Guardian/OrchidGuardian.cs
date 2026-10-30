@@ -126,6 +126,8 @@ namespace OrchidMod.Content.Guardian
 		public int GuardianDebugVisuals = 0;
 		public int OldGuardianDebugVisuals = 0;
 		public byte GuardianJewelerGauntlet = 0;
+		public byte GuardianVoidQuarterstaff = 0; // Holds amount of stacks for Flux Ripper's effect. 
+		public byte GuardianVoidQuarterstaffTimer = 0; // . 
 		public bool GuardianBronzeShieldBuff = false;
 		public float GuardianBronzeShieldDamage = 0;
 		public bool GuardianBronzeShieldProtection = false;
@@ -613,6 +615,24 @@ namespace OrchidMod.Content.Guardian
 				GuardianBadgeHopliteLevel = 0;
 			}
 
+			if (Player.HasBuff<GuardianVoidQuarterstaffBuff>())
+			{
+				if (GuardianVoidQuarterstaff > 15)
+					GuardianVoidQuarterstaff = 15;
+			}
+			else if (GuardianVoidQuarterstaff > 0) GuardianVoidQuarterstaff = 0;
+
+			if (GuardianVoidQuarterstaff > 0)
+			{
+				GuardianVoidQuarterstaffTimer--;
+				if (GuardianVoidQuarterstaffTimer == 0)
+				{
+					GuardianVoidQuarterstaffTimer = 60;
+					GuardianVoidQuarterstaff--;
+				}
+			}
+			else GuardianVoidQuarterstaffTimer = 60;
+			
 			if (GuardianCounter)
 			{
 				if (GuardianCounterTime > 0) GuardianCounterTime--;

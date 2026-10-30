@@ -22,9 +22,7 @@ public class ThoriumVoidQuarterstaffProjectile : OrchidModGuardianProjectile
 	public List<Vector2> OldPosition;
 	public List<float> OldRotation;
 	public int TimeSpent = 0;
-
-	public Vector2 Destination;
-
+	
 	public Projectile Quarterstaff;
 
 	public override string Texture => OrchidAssets.MiscPath + "Extra_8";
@@ -233,7 +231,6 @@ public class ThoriumVoidQuarterstaffProjectile : OrchidModGuardianProjectile
 	{
 		writer.WriteVector2(OriginalVelocity);
 		writer.WriteVector2(OriginalPosition);
-		writer.WriteVector2(Destination);
 		writer.Write(TimeSpent);
 	}
 
@@ -241,7 +238,6 @@ public class ThoriumVoidQuarterstaffProjectile : OrchidModGuardianProjectile
 	{
 		OriginalVelocity = reader.ReadVector2();
 		OriginalPosition = reader.ReadVector2();
-		Destination = reader.ReadVector2();
 		TimeSpent = reader.ReadInt32();
 	}
 
