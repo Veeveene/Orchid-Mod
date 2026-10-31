@@ -34,7 +34,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Gauntlets
 			return new Color(255, 200, 200);
 		}
 
-		public override void SafeModifyTooltips(List<TooltipLine> tooltips)
+		public override void SafeModifyTooltips(List<TooltipLine> tooltips, OrchidGuardian guardian)
 		{
 			TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
 			if (tt != null)

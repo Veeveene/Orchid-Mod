@@ -41,7 +41,7 @@ namespace OrchidMod.Content.Guardian
 		public virtual void ExtraAIGauntlet(Player player, OrchidGuardian guardian, Projectile anchor, bool offHandGauntlet) { }
 		public virtual void PostDrawGauntlet(SpriteBatch spriteBatch, Projectile projectile, Player player, bool offHandGauntlet, Color lightColor) { }
 		public virtual bool PreDrawGauntlet(SpriteBatch spriteBatch, Projectile projectile, Player player, bool offHandGauntlet, ref Color lightColor) { return true; }
-		public virtual void SafeModifyTooltips(List<TooltipLine> tooltips) { } // Called at the end of ModifyTooltips
+		public virtual void SafeModifyTooltips(List<TooltipLine> tooltips, OrchidGuardian guardian) { } // Called at the end of ModifyTooltips
 
 		public virtual Color GetColor(bool offHand) => Color.White;
 		/// <summary> Responsible for playing the sound when the player begins guarding with the weapon. Default behavior is <c>SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), player.Center);</c> </summary>
@@ -353,7 +353,7 @@ namespace OrchidMod.Content.Guardian
 				OverrideColor = new Color(175, 255, 175)
 			});
 
-			SafeModifyTooltips(tooltips);
+			SafeModifyTooltips(tooltips, guardian);
 		}
 
 		public virtual Texture2D GetGauntletTexture(Player player, Projectile anchor, bool OffHandGauntlet, out Rectangle? drawRectangle, int frame = 0)
