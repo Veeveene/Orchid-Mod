@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using OrchidMod.Common;
 using OrchidMod.Content.General.Prefixes;
+using OrchidMod.Content.Guardian.Buffs;
 using OrchidMod.Content.Guardian.Projectiles.Misc;
 using OrchidMod.Utilities;
 using ReLogic.Content;
@@ -188,6 +189,7 @@ namespace OrchidMod.Content.Guardian
 					{ // First frame of the counterattack
 						if (guardianItem.CounterHits > 0)
 						{
+							guardian.GuardianItemCharge = 0f;
 							Projectile.damage = guardian.GetGuardianDamage(QuarterstaffItem.damage * guardianItem.CounterDamage);
 							Projectile.CritChance = guardian.GetGuardianCrit(QuarterstaffItem.crit);
 							Projectile.knockBack = QuarterstaffItem.knockBack * guardianItem.CounterKnockback;
@@ -245,6 +247,7 @@ namespace OrchidMod.Content.Guardian
 
 					if (Projectile.ai[2] >= 0)
 					{
+						owner.ClearBuff(ModContent.BuffType<GuardianQuarterstaffPommelBuff>());
 						Projectile.ai[0] = 0f;
 						Projectile.ai[1] = 0f;
 						Projectile.ai[2] = 0f;
@@ -661,6 +664,11 @@ namespace OrchidMod.Content.Guardian
 						guardian.AddGuard(guardianItem.GuardStacks);
 						guardian.AddSlam(guardianItem.SlamStacks);
 						guardianItem.OnHitFirst(player, guardian, target, Projectile, hit, false, false);
+
+						if (guardian.GuardianQuarterstaffPommel)
+						{
+							player.AddBuff(ModContent.BuffType<GuardianQuarterstaffPommelBuff>(), 120);
+						}
 					}
 					guardianItem.OnHit(player, guardian, target, Projectile, hit, false, false);
 				}
@@ -697,9 +705,17 @@ namespace OrchidMod.Content.Guardian
 				guardianItem.QuarterstaffModifyHitNPC(player, guardian, target, Projectile, ref modifiers, Projectile.ai[0] < 0f, Projectile.ai[2] < 0f, FirstHit);
 			}
 
-			if (target.aiStyle == NPCAIStyleID.Worm && Projectile.ai[0] == 0f && target.type != NPCID.SolarCrawltipedeTail && target.type != NPCID.StardustWormHead)
-			{ // counterattacking a worm, exception for crawltipedes and milkyway weavers
-				modifiers.FinalDamage *= 0.5f;
+			if (Projectile.ai[0] == 0f)
+			{
+				if (target.aiStyle == NPCAIStyleID.Worm && target.type != NPCID.SolarCrawltipedeTail && target.type != NPCID.StardustWormHead)
+				{ // counterattacking a worm, exception for crawltipedes and milkyway weavers
+					modifiers.FinalDamage *= 0.5f;
+				}
+
+				if (player.HasBuff<GuardianQuarterstaffPommelBuff>())
+				{
+					modifiers.FinalDamage *= 1.5f;
+				}
 			}
 		}
 
