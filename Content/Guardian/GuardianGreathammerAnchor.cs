@@ -715,7 +715,7 @@ namespace OrchidMod.Content.Guardian
 
 			if (HammerGlowTexture != null)
 			{
-				spriteBatch.Draw(HammerTexture, pos, frame, HammerItem.GetHammerGlowmaskColor(player, Projectile, lightColor), rot, drawOffs, 1, effect, 0);
+				spriteBatch.Draw(HammerGlowTexture, pos, frame, HammerItem.GetHammerGlowmaskColor(player, Projectile, lightColor), rot, drawOffs, 1, effect, 0);
 			}
 
 			return false;
