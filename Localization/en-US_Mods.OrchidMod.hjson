@@ -3145,40 +3145,28 @@ Items: {
 		Tooltip: Fully charge to release damaging spores
 	}
 
-	StaffRocketYellow: {
-		DisplayName: Yellow Staff-Mounted Propulsion System
-		Tooltip:
-			'''
-			Left click while parrying with a quarterstaff to dash
-			Costs 1 slam
-			'''
-	}
-
 	StaffRocketRed: {
 		DisplayName: Red Staff-Mounted Propulsion System
 		Tooltip:
 			'''
-			Left click while parrying with a quarterstaff to dash
+			{0} while parrying with a quarterstaff to dash
 			Costs 1 slam
 			'''
 	}
 
 	StaffRocketGreen: {
 		DisplayName: Green Staff-Mounted Propulsion System
-		Tooltip:
-			'''
-			Left click while parrying with a quarterstaff to dash
-			Costs 1 slam
-			'''
+		Tooltip: "{$Items.StaffRocketRed.Tooltip}"
 	}
 
 	StaffRocketBlue: {
 		DisplayName: Blue Staff-Mounted Propulsion System
-		Tooltip:
-			'''
-			Left click while parrying with a quarterstaff to dash
-			Costs 1 slam
-			'''
+		Tooltip: "{$Items.StaffRocketRed.Tooltip}"
+	}
+
+	StaffRocketYellow: {
+		DisplayName: Yellow Staff-Mounted Propulsion System
+		Tooltip: "{$Items.StaffRocketRed.Tooltip}"
 	}
 
 	PumpkingWarhammer: {
@@ -4324,7 +4312,7 @@ UI: {
 		SwingWhileCharging: Charge to throw, {0} to swing while charging
 		UsesUpTo: Uses up to {0} slams
 		RuneDuration: "{0} second rune duration"
-        DashDuringSwing: "{0} during reinforced attack to dash"
+		DashDuringSwing: "{0} during reinforced attack to dash"
 		Block: "{0} to block"
 		ToBlock: to block
 		ToSlam: to slam

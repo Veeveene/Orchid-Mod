@@ -131,8 +131,8 @@ namespace OrchidMod.Content.Guardian
 			{
 				if (player.ownedProjectileCounts[AnchorType] > 0)
 				{
-					OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
-					Projectile projectile = Main.projectile.First(i => i.active && i.owner == player.whoAmI && i.type == AnchorType);
+					OrchidGuardian guardian = Guardian(player);
+					Projectile projectile = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == AnchorType);
 
 					bool shouldBlock = Main.mouseRight;
 					bool shouldSlam = Main.mouseLeft && (Main.mouseLeftRelease || slamAutoReuse);
@@ -213,7 +213,7 @@ namespace OrchidMod.Content.Guardian
 
 		public sealed override void HoldItem(Player player)
 		{
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = Guardian(player);
 			guardian.GuardianDisplayUI = 300;
 
 			if (player.ownedProjectileCounts[AnchorType] == 0)
@@ -248,7 +248,7 @@ namespace OrchidMod.Content.Guardian
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips)
 		{
-			OrchidGuardian guardian = Main.LocalPlayer.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = Guardian();
 			// TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
 			// if (tt != null)
 			// {

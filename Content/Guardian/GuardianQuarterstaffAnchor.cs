@@ -275,6 +275,7 @@ namespace OrchidMod.Content.Guardian
 								SoundEngine.PlaySound(SoundID.Item37, owner.Center);
 								guardian.GuardianParry = true;
 								guardian.GuardianParryBuffer = true;
+								guardianItem.OnBlock(owner, guardian, Projectile);
 							}
 						}
 					}
@@ -733,7 +734,7 @@ namespace OrchidMod.Content.Guardian
 			if (QuarterstaffItem.ModItem is not OrchidModGuardianQuarterstaff guardianItem) return false;
 
 			Player player = Main.player[Projectile.owner];
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 			SpriteEffects effect = SpriteEffects.None;
 			float rotationoffset = 0f;
 

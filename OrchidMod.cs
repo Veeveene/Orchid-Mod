@@ -1,3 +1,5 @@
+global using OrchidMod.Utilities;
+
 using OrchidMod.Content.Alchemist;
 using System.Collections.Generic;
 using System.IO;

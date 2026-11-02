@@ -27,7 +27,9 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
         public int waterAttack = 0;
         public int waterAttackSuper = 0;
         private int waterAttackCooldown = 0;
-        
+
+        public override bool IsLoadingEnabled(Mod mod) => false;
+
         public override void SafeSetDefaults()
         {
             Item.width = 48;

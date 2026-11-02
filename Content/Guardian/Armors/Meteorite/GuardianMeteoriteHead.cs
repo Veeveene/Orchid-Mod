@@ -27,7 +27,7 @@ namespace OrchidMod.Content.Guardian.Armors.Meteorite
 
 		public override void UpdateEquip(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = Guardian(player);
 			modPlayer.GuardianGuardMax++;
 			player.GetDamage<GuardianDamageClass>() += 0.05f;
 		}
@@ -39,7 +39,7 @@ namespace OrchidMod.Content.Guardian.Armors.Meteorite
 
 		public override void UpdateArmorSet(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = Guardian(player);
 			player.setBonus = SetBonusText.Value;
 			modPlayer.GuardianMeteorite = true;
 		}

@@ -133,10 +133,8 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
                 .Register();
         }
 
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        public override void SafeModifyTooltips(List<TooltipLine> tooltips, OrchidGuardian guardian)
         {
-            base.ModifyTooltips(tooltips);
-            
             int index = tooltips.FindIndex(ttip => ttip.Mod == "Terraria" && ttip.Name == "Tooltip1");
             
             int bestPickPower = 0;

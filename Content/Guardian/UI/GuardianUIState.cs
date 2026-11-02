@@ -279,7 +279,7 @@ namespace OrchidMod.Content.Guardian.UI
 		{
 			Recalculate();
 			Player player = Main.LocalPlayer;
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = player.Guardian();
 
 			if (!player.dead && modPlayer.GuardianDisplayUI > 0)
 			{

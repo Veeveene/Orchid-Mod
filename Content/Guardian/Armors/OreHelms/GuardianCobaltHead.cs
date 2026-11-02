@@ -27,7 +27,7 @@ namespace OrchidMod.Content.Guardian.Armors.OreHelms
 
 		public override void UpdateEquip(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = Guardian(player);
 			player.moveSpeed += 0.15f;
 			player.GetAttackSpeed<MeleeDamageClass>() += 0.15f;
 			modPlayer.GuardianSlamMax += 2;
@@ -42,7 +42,7 @@ namespace OrchidMod.Content.Guardian.Armors.OreHelms
 		public override void UpdateArmorSet(Player player)
 		{
 			player.setBonus = SetBonusText.Value;
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = Guardian(player);
 			modPlayer.GuardianSlamRecharge += 1.2f;
 		}
 

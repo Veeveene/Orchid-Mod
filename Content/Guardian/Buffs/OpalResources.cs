@@ -1,5 +1,6 @@
 using OrchidMod.Content.Guardian.Weapons.Gauntlets;
 using System.Reflection;
+using OrchidMod.Utilities;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -20,7 +21,7 @@ namespace OrchidMod.Content.Guardian.Buffs
 			player.manaRegenBonus += 2;
 			player.manaRegenDelayBonus += 1;
 
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 			guardian.GuardianGuardRecharge += 0.1f;
 			guardian.GuardianSlamRecharge += 0.1f;
 

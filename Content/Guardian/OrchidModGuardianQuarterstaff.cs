@@ -171,7 +171,7 @@ namespace OrchidMod.Content.Guardian
 			{
 				if (player.ownedProjectileCounts[AnchorType] > 0)
 				{
-					var guardian = player.GetModPlayer<OrchidGuardian>();
+					var guardian = Guardian(player);
 					var proj = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == AnchorType);
 					if (proj != null && proj.ModProjectile is GuardianQuarterstaffAnchor anchor)
 					{
@@ -207,7 +207,7 @@ namespace OrchidMod.Content.Guardian
 
 		public sealed override void HoldItem(Player player)
 		{
-			var guardian = player.GetModPlayer<OrchidGuardian>();
+			var guardian = Guardian(player);
 			guardian.GuardianDisplayUI = 300;
 
 			if (player.ownedProjectileCounts[AnchorType] != 1)
@@ -246,7 +246,7 @@ namespace OrchidMod.Content.Guardian
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips)
 		{
-			var guardian = Main.LocalPlayer.GetModPlayer<OrchidGuardian>();
+			var guardian = Guardian();
 			// TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
 			// if (tt != null)
 			// {
@@ -281,6 +281,8 @@ namespace OrchidMod.Content.Guardian
 					OverrideColor = new Color(175, 255, 175)
 				});
 			}
+			
+			SafeModifyTooltips(tooltips, guardian);
 		}
 	}
 }

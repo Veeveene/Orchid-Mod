@@ -47,10 +47,8 @@ namespace OrchidMod.Content.Guardian.Weapons.Gauntlets
 
 		public override void ExtraAIGauntlet(Player player, OrchidGuardian guardian, Projectile projectile, bool offHandGauntlet)
 		{
-			if (projectile.ai[2] > 0)
-			{
-				Main.player[projectile.owner].GetModPlayer<OrchidGuardian>().GuardianItemCharge += 0.3f / Item.useTime * Main.player[projectile.owner].statDefense;
-			}
+			// The gauntlet anchor already passes in Main.player[projectile.owner] for the "player" parameter
+			ChargeSpeedMultiplier = 1 + 0.01f * player.statDefense;
 		}
 
 		public override bool OnPunch(Player player, OrchidGuardian guardian, Projectile projectile, bool offHandGauntlet, bool fullyManuallyCharged, ref bool charged, ref int damage)

@@ -194,7 +194,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			int killedTargets = 0;
 			foreach (int target in Targets)
 			{
-				OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+				OrchidGuardian guardian = Guardian(player);
 				NPC npc = Main.npc[target];
 				bool conducted = npc.HasBuff<ThoriumGrandThunderBirdWarhammerDebuff>();
 				if (player.whoAmI == Main.myPlayer)

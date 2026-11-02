@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using OrchidMod.Common.ModObjects;
 using Terraria;
 using OrchidMod.Content.Guardian;
@@ -8,20 +9,10 @@ namespace OrchidMod.Utilities;
 
 public static partial class OrchidUtils
 {
-	public static OrchidPlayer OrchidPlayer(this Player player) => player.GetModPlayer<OrchidPlayer>();
-	public static OrchidGuardian Guardian(this Player player) => player.GetModPlayer<OrchidGuardian>();
-	public static OrchidGuardian Guardian(this Player player, out OrchidGuardian guardian)
-	{
-		guardian = player.Guardian();
-		return guardian;
-	}
+	public static OrchidPlayer OrchidPlayer(this Player player) => (player ?? Main.LocalPlayer).GetModPlayer<OrchidPlayer>();
+	public static OrchidGuardian Guardian(this Player player) => (player ?? Main.LocalPlayer).GetModPlayer<OrchidGuardian>();
 	
-	public static OrchidShapeshifter Shapeshifter(this Player player) => player.GetModPlayer<OrchidShapeshifter>();
-	public static OrchidShapeshifter Shapeshifter(this Player player, out OrchidShapeshifter shifter)
-	{
-		shifter = player.Shapeshifter();
-		return shifter;
-	}
+	public static OrchidShapeshifter Shapeshifter(this Player player) => (player ?? Main.LocalPlayer).GetModPlayer<OrchidShapeshifter>();
 	
 	/*we're probably not going to do anything with alchemist or gambler, i originally added these as boilerplate*/
 	// public static OrchidAlchemist Alchemist(this Player player) => player.GetModPlayer<OrchidAlchemist>();

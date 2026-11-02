@@ -44,7 +44,7 @@ namespace OrchidMod.Content.Guardian
 		public sealed override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 		{
 			Player player = Main.player[Projectile.owner];
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 
 			SafeOnHitNPC(target, hit, damageDone, player, guardian);
 		}
@@ -54,7 +54,7 @@ namespace OrchidMod.Content.Guardian
 			FirstHit = NotHitYet;
 			NotHitYet = false;
 			Player player = Main.player[Projectile.owner];
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 			SafeModifyHitNPC(target, ref modifiers, player, guardian);
 			OrchidGlobalNPC modTarget = target.GetGlobalNPC<OrchidGlobalNPC>();
 			if (!modTarget.GuardianHit)

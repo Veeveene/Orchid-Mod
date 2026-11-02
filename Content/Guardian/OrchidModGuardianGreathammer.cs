@@ -149,7 +149,7 @@ namespace OrchidMod.Content.Guardian
 
 		public sealed override void HoldItem(Player player)
 		{
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = Guardian(player);
 			guardian.GuardianDisplayUI = 300;
 			
 			Projectile projectile;
@@ -173,7 +173,7 @@ namespace OrchidMod.Content.Guardian
 			Projectile projectile = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == AnchorType);
 			if (projectile.ModProjectile is GuardianGreathammerAnchor anchor)
 			{
-				OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+				OrchidGuardian guardian = Guardian(player);
 				bool chargeInput = guardian.GetGauntletPunchInput(false);
 				bool swingInput = guardian.GetGauntletBlockInput(false);
 				if (anchor.IsIdle)
@@ -257,7 +257,7 @@ namespace OrchidMod.Content.Guardian
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips)
 		{
-			var guardian = Main.LocalPlayer.GetModPlayer<OrchidGuardian>();
+			var guardian = Guardian();
 			// TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
 			// if (tt != null)
 			// {
@@ -293,6 +293,8 @@ namespace OrchidMod.Content.Guardian
 					OverrideColor = new Color(175, 255, 175)
 				});
 			}
+			
+			SafeModifyTooltips(tooltips, guardian);
 		}
 	}
 }

@@ -61,17 +61,16 @@ namespace OrchidMod.Content.Guardian
 
 		public sealed override void HoldItem(Player player)
 		{
-			var projectileType = ModContent.ProjectileType<GuardianRuneAnchor>();
-			var guardian = player.GetModPlayer<OrchidGuardian>();
+			var guardian = Guardian(player);
 			guardian.GuardianDisplayUI = 300;
 
-			if (player.ownedProjectileCounts[projectileType] != 1)
+			if (player.ownedProjectileCounts[AnchorType] != 1)
 			{
 				if (IsLocalPlayer(player))
 				{
 					foreach (Projectile projectile in Main.projectile)
 					{
-						if (projectile.active && projectile.owner == player.whoAmI && projectile.type == projectileType)
+						if (projectile.active && projectile.owner == player.whoAmI && projectile.type == AnchorType)
 						{
 							projectile.Kill();
 						}
@@ -85,7 +84,7 @@ namespace OrchidMod.Content.Guardian
 			}
 			else
 			{
-				var proj = Main.projectile.First(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
+				var proj = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == AnchorType);
 				if (proj != null && proj.ModProjectile is GuardianRuneAnchor rune)
 				{
 					if (rune.SelectedItem != player.selectedItem)
@@ -99,13 +98,13 @@ namespace OrchidMod.Content.Guardian
 
 		public override bool CanUseItem(Player player)
 		{
-			var guardian = player.GetModPlayer<OrchidGuardian>();
+			var guardian = Guardian(player);
 			if (player.whoAmI == Main.myPlayer && !player.cursed)
 			{
 				var projectileType = ModContent.ProjectileType<GuardianRuneAnchor>();
 				if (player.ownedProjectileCounts[projectileType] > 0)
 				{
-					var proj = Main.projectile.First(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
+					var proj = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
 					if (proj != null && proj.ModProjectile is GuardianRuneAnchor anchor && guardian.GuardianItemCharge == 0f)
 					{
 						foreach (Projectile projectile in Main.projectile) 
@@ -127,14 +126,7 @@ namespace OrchidMod.Content.Guardian
 			return false;
 		}
 
-		public override bool? UseItem(Player player)
-		{
-			if (player.whoAmI == Main.myPlayer)
-			{
-				var guardian = player.GetModPlayer<OrchidGuardian>();
-			}
-			return true;
-		}
+		public override bool? UseItem(Player player) => true;
 
 		public override bool AltFunctionUse(Player player)
 		{
@@ -157,7 +149,7 @@ namespace OrchidMod.Content.Guardian
 			// }
 
 			int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Knockback"));
-			tooltips.Insert(index + 1, new TooltipLine(Mod, "RuneDuration", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.RuneDuration", OrchidUtils.FramesToSeconds((int)(RuneDuration * Main.LocalPlayer.GetModPlayer<OrchidGuardian>().GuardianRuneTimer)))));
+			tooltips.Insert(index + 1, new TooltipLine(Mod, "RuneDuration", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.RuneDuration", OrchidUtils.FramesToSeconds((int)(RuneDuration * Guardian().GuardianRuneTimer)))));
 
 			index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Knockback"));
 			tooltips.Insert(index + 1, new TooltipLine(Mod, "UseSlams", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.UsesUpTo", this.RuneCost)));

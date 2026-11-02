@@ -25,7 +25,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 
 		public override void HoldItemFrame(Player player)
 		{
-			player.GetModPlayer<OrchidGuardian>().GuardianCounter = true;
+			Guardian(player).GuardianCounter = true;
 		}
 
 		public override void Protect(Player player, OrchidGuardian guardian, Projectile shield)

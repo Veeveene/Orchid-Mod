@@ -86,7 +86,7 @@ namespace OrchidMod.Content.Guardian
 		public override void OnSpawn(IEntitySource source)
 		{
 			Player player = Main.player[Projectile.owner];
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 			Item item = player.inventory[player.selectedItem];
 
 			if (item == null || !(item.ModItem is OrchidModGuardianHammer hammerItem))
@@ -721,7 +721,7 @@ namespace OrchidMod.Content.Guardian
 				else range = -40;
 			}
 			Player player = Main.player[Projectile.owner];
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 			HammerItem.OnThrowTileCollide(player, guardian, Projectile, oldVelocity, OffHand);
 			return false;
 		}
@@ -845,7 +845,7 @@ namespace OrchidMod.Content.Guardian
 		{
 			if (HammerTexture == null) return false;
 			Player player = Main.player[Projectile.owner];
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 			Rectangle drawRectangle = HammerTexture.Frame(1, HammerItem.HammerFrames, 0, Frame % HammerItem.HammerFrames);
 
 			if (HammerItem.PreDrawHammer(player, guardian, Projectile, spriteBatch, ref lightColor, ref HammerTexture, ref drawRectangle, OffHand))

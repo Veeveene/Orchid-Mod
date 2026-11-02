@@ -189,10 +189,10 @@ namespace OrchidMod.Content.Guardian.Weapons.Gauntlets
 
 		public override void SafeModifyTooltips(List<TooltipLine> tooltips, OrchidGuardian guardian)
 		{
-			int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Tooltip1"));
+			int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Tooltip0"));
 
 			string pull = PullOnKill ? Language.GetTextValue("Mods.OrchidMod.Items.ThoriumYewGauntlet.PullOnKill") : Language.GetTextValue("Mods.OrchidMod.Items.ThoriumYewGauntlet.NoPullOnKill");
-			tooltips.Insert(index + 1, new TooltipLine(Mod, "ClickInfo2", pull));
+			tooltips.Insert(index + 1, new TooltipLine(Mod, "ClickInfo2", pull) {OverrideColor = Color.DarkGray});
 		}
 	
 	}

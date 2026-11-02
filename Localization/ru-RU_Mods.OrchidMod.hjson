@@ -3136,15 +3136,6 @@ Items: {
 		Tooltip: Полностью заряженные атаки выпускают наносящие урон споры
 	}
 
-	StaffRocketYellow: {
-		DisplayName: Жёлтая нашестовая ракетная установка
-		Tooltip:
-			'''
-			Нажмите ЛКМ по время парирования боевым шестом, чтобы совершить рывок
-			Расходует 1 оч. нападения
-			'''
-	}
-
 	StaffRocketRed: {
 		DisplayName: Красная нашестовая ракетная установка
 		Tooltip:
@@ -3165,6 +3156,15 @@ Items: {
 
 	StaffRocketBlue: {
 		DisplayName: Синяя нашестовая ракетная установка
+		Tooltip:
+			'''
+			Нажмите ЛКМ по время парирования боевым шестом, чтобы совершить рывок
+			Расходует 1 оч. нападения
+			'''
+	}
+
+	StaffRocketYellow: {
+		DisplayName: Жёлтая нашестовая ракетная установка
 		Tooltip:
 			'''
 			Нажмите ЛКМ по время парирования боевым шестом, чтобы совершить рывок
@@ -3272,7 +3272,8 @@ Items: {
 		// DisplayName: Lodestone Crusher
 		/* Tooltip:
 			'''
-			Left click after throwing to make the hammer crash down, costing 3 slams
+			Charged throws crash down, erupting with damaging rocks on contact
+			Slams blast the hammer downward after a delay, producing a larger eruption 
 			Damage will sunder enemies, increasing the damage they take by 10%
 			''' */
 	}
@@ -3292,10 +3293,10 @@ Items: {
 		// DisplayName: Flux Ripper
 		/* Tooltip:
 			'''
-			Slam to warp to an enemy in line of sight, increasing melee speed dramatically
-			Hold UP or DOWN to control knockback trajectory
-			Releases seeking void blobs on charged hits and counterattacks
+			Slam to warp to an enemy in line of sight, empowering the staff on hit
+			While empowered, charge speed is massively increased
 			''' */
+		// Grants: Grants 1 guard when fully charged, but only when Void Rush is not active
 	}
 
 	ThoriumNagaQuarterstaff: {
@@ -3370,13 +3371,13 @@ Items: {
 		Death: {
 			// Common1: "{0} could not control the Void energy any longer"
 			// Common2: "{0} was forced to use alternative payment"
-			// Common3: "{0}'s soul got transmuted into Guards to shield their now-lifeless body"
-			// Common4: "{0} experienced instant death"
-			// Common5: "{0} was sent to Coznix's House by Void Sentinel"
+			// Common3: "{0}'s soul got transmuted into Guards to shield their corpse"
+			// Common4: "{0} was consumed by darkness..."
+			// Common5: "{0} was sent to Coznix's House by Void Sentinel Armor"
 			// Common6: "{0} was digested by their armor"
 			// Common7: "{0} was used up"
 			// Common8: "{0} could no longer hold up their end of the deal"
-			// Rare1: "{0} experienced [c:960000/instant death]"
+			// Rare1: "{0} experienced instant death"
 			// Rare2: "{0} had a skill issue"
 		}
 	}
@@ -3492,6 +3493,42 @@ Items: {
 			'''
 			After a greathammer throw hit, your next slam does an extra weak swing
 			Extra swings deal half damage and grant less charge on hit
+			''' */
+	}
+
+	StaffRocketSharkRed: {
+		// DisplayName: Hemogoblin Shark–Print Staff-Mounted Propulsion System
+		/* Tooltip:
+			'''
+			Increases armor penetration by 5
+			{$Items.StaffRocketBlue.Tooltip}
+			''' */
+	}
+
+	StaffRocketSharkGreen: {
+		// DisplayName: Shark-Print Staff-Mounted Propulsion System
+		/* Tooltip:
+			'''
+			Increases armor penetration by 5
+			{$Items.StaffRocketBlue.Tooltip}
+			''' */
+	}
+
+	StaffRocketSharkBlue: {
+		// DisplayName: Orca-Print Staff-Mounted Propulsion System
+		/* Tooltip:
+			'''
+			Increases armor penetration by 5
+			{$Items.StaffRocketBlue.Tooltip}
+			''' */
+	}
+
+	StaffRocketSharkYellow: {
+		// DisplayName: Sand Shark–Print Staff-Mounted Propulsion System
+		/* Tooltip:
+			'''
+			Increases armor penetration by 5
+			{$Items.StaffRocketBlue.Tooltip}
 			''' */
 	}
 }
@@ -4212,6 +4249,7 @@ Misc: {
 	EntryAdded: Запись {0} добавлена в рукопись о скрытых реакциях!
 	CurrentСard: "Текущая карта: "
 	PlayingСard: "Разыгранная карта: "
+	// MiscInput: press "{0}"
 	Crossmod: "Кроссмод предмет с "
 	// ThoriumMagicThorHammer: Right click within your inventory to activate Opposing Mode
 }
@@ -4277,8 +4315,8 @@ UI: {
 		ParryDuration: Длительность парирования: {0} сек.
 		// ParryDistance: "{0}{1} parry dash distance"
 		BlockDuration: Длительность блока: {0} сек.
-		// ParryAndBlockDuration: "{0} second parry duration, {1} second block duration"
 		// SlamDuration: "{0} second slam duration"
+		// ParryAndBlockDuration: "{0} second parry duration, {1} second block duration"
 		Interrupted: Прервано
 		Charged: Заряжено
 		Reinforced: Усилено
@@ -4297,27 +4335,24 @@ UI: {
 			'''
 		UsesUpTo: Использует до {0} оч. нападения
 		RuneDuration: Время действия руны: {0} сек.
-		// Block: "{0} click to block"
-		// ToBlock: to block
-		// ToSlam: to slam
-		// HammerBlock: "{0} click {1}"
-		// HammerBlockGuard: "{0} click {1}, costing {2} {^2:guard;guards}"
-		// HammerBlockSlam: "{0} click {1}, costing {3} {^3:slam;slams}"
-		// HammerBlockGuardSlamSame: "{0} click {1}, costing {2} {^2:guard;guards} and {^2:slam;slams}"
-		// HammerBlockGuardSlam: "{0} click {1}, costing {2} {^2:guard;guards} and {3} {^3:slam;slams}"
 		// DashDuringSwing: "{0} during reinforced attack to dash"
 		Block: Нажмите {0}, чтобы сделать блок
-		BlockGuard: Нажмите {0}, чтобы сделать блок за {1} оч. обороны
-		BlockSlam: Нажмите {0}, чтобы сделать блок за {1} оч. нападения
-		BlockGuardSlamSame: Нажмите {0}, чтобы сделать блок за {1} оч. обороны и нападения
-		BlockGuardSlam: Нажмите {0}, чтобы сделать блок за {1} оч. обороны и {2} оч. нападения
+		// ToBlock: to block
+		// ToSlam: to slam
+		// HammerBlock: "{0} {1}"
+		// HammerBlockGuard: "{0} {1}, costing {2} {^2:guard;guards}"
+		// HammerBlockSlam: "{0} {1}, costing {3} {^3:slam;slams}"
+		// HammerBlockGuardSlamSame: "{0} {1}, costing {2} {^2:guard;guards} and {^2:slam;slams}"
+		// HammerBlockGuardSlam: "{0} {1}, costing {2} {^2:guard;guards} and {3} {^3:slam;slams}"
 		BuffDuration: Длительность эффекта: {0} сек.
 		HorizonLaceShieldStacks: Даёт 3 оч. обороны при полном заряде
 		DamageOfDefense: Наносит противостоящий урон, равный {0}% от вашей защиты
-		// Deflect: "{0} click to deflect enemies and projectiles"
-		// GreathammerDeflect: "{0} click to deflect, stunning enemies and reflecting projectiles"
+		// NoChargeScaling: Does not scale with charge speed
+		// SpecialChargeScaling: "{0}% benefit from charge speed boosts"
+		// Deflect: "{0} to deflect enemies and projectiles"
+		// GreathammerDeflect: "{0} to deflect, stunning enemies and reflecting projectiles"
 		// DeflectGrants: Successful deflects cost {0} {^0:guard;guards} and grant {0} {^0:slam;slams}
-		// SlamChargeToThrow: Charge to throw, {0} click to slam while charging
+		// SlamChargeToThrow: Charge to throw, {0} to slam while charging
 		// MissingGuards: Not enough guards!
 		// MissingSlams: Not enough slams!
 		// MissingGuardsAndSlams: Not enough guards or slams!

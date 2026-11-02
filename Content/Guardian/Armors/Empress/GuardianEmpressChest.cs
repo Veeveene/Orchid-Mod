@@ -30,7 +30,7 @@ namespace OrchidMod.Content.Guardian.Armors.Empress
 
 		public override void UpdateEquip(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = Guardian(player);
 			player.GetAttackSpeed(DamageClass.Melee) += 0.25f;
 			modPlayer.GuardianSlamMax += 2;
 			modPlayer.GuardianSlamRecharge += 0.8f;
@@ -44,7 +44,7 @@ namespace OrchidMod.Content.Guardian.Armors.Empress
 
 		public override void UpdateArmorSet(Player player)
 		{
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = Guardian(player);
 			player.setBonus = SetBonusText.Value;
 			guardian.GuardianBonusRune += 2;
 			guardian.GuardianRuneTimer += 0.5f;

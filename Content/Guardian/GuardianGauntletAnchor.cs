@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using OrchidMod.Common;
 using OrchidMod.Content.General.Prefixes;
+using OrchidMod.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -329,7 +330,7 @@ namespace OrchidMod.Content.Guardian
 		public bool CanInstantSlam(OrchidModGuardianGauntlet gauntlet)
 		{
 			Player player = Main.player[Projectile.owner];
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 
 			if (guardian.GuardianItemCharge < 180f)
 			{
@@ -371,7 +372,7 @@ namespace OrchidMod.Content.Guardian
 			if (!ModContent.HasAsset(guardianItem.GauntletTexture)) return false;
 
 			Player player = Main.player[Projectile.owner];
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 			Color color = Lighting.GetColor((int)(Projectile.Center.X / 16f), (int)(Projectile.Center.Y / 16f), Color.White);
 
 			if (guardianItem.PreDrawGauntlet(spriteBatch, Projectile, player, OffHandGauntlet, ref color))

@@ -27,7 +27,7 @@ namespace OrchidMod.Content.Guardian.Armors.Misc
 
 		public override void UpdateEquip(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = Guardian(player);
 			modPlayer.GuardianCrystalNinja = true;
 			modPlayer.GuardianSlamMax += 1;
 			modPlayer.GuardianGuardMax += 1;
@@ -40,7 +40,6 @@ namespace OrchidMod.Content.Guardian.Armors.Misc
 
 		public override void UpdateArmorSet(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
 			player.setBonus = Language.GetTextValue("ArmorSetBonus.CrystalNinja");
 			player.GetDamage<GenericDamageClass>() += 0.1f;
 			player.GetCritChance<GenericDamageClass>() += 10;

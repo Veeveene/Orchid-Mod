@@ -533,7 +533,7 @@ namespace OrchidMod.Content.Guardian
 			if (!ModContent.HasAsset(guardianItem.ShieldTexture)) return false;
 
 			Player player = Main.player[Projectile.owner];
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 			Color color = Lighting.GetColor((int)(Projectile.Center.X / 16f), (int)(Projectile.Center.Y / 16f), Color.White);
 
 			if (guardianItem.PreDrawShield(spriteBatch, Projectile, player, ref color))

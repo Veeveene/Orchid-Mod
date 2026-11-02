@@ -17,7 +17,7 @@ namespace OrchidMod.Content.Guardian
 		{
 			if (OrchidMod.ThoriumMod != null)
 			{
-				OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+				OrchidGuardian modPlayer = player.Guardian();
 
 				if (item.type == OrchidMod.ThoriumMod.Find<ModItem>("DepthDiverHelmet").Type)
 				{
@@ -42,8 +42,6 @@ namespace OrchidMod.Content.Guardian
 			// <item><description>"Tooltip#" - A tooltip line of the item. # will be 0 for the first line, 1 for the second, etc.</description></item>
 			if (OrchidMod.ThoriumMod != null)
 			{
-				OrchidGuardian modPlayer = Main.LocalPlayer.GetModPlayer<OrchidGuardian>();
-
 				if (item.type == OrchidMod.ThoriumMod.Find<ModItem>("DepthDiverHelmet").Type)
 				{
 					int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Defense")); // Tooltip#0 doesn't work

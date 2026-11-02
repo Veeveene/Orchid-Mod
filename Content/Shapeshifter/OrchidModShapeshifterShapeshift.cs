@@ -157,7 +157,7 @@ namespace OrchidMod.Content.Shapeshifter
 
 				if (player.ownedProjectileCounts[projectileType] != 0)
 				{
-					Projectile proj = Main.projectile.First(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
+					Projectile proj = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
 					if (proj != null && proj.ModProjectile is ShapeshifterShapeshiftAnchor anchor)
 					{
 						if (anchor.ShapeshifterItem != Item)

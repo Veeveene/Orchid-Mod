@@ -4,6 +4,7 @@ using OrchidMod.Common.Attributes;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using OrchidMod.Utilities;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -13,6 +14,8 @@ namespace OrchidMod.Content.Guardian
 	[ClassTag(ClassTags.Guardian)]
 	public abstract class OrchidModGuardianItem : ModItem
 	{
+		public static OrchidGuardian Guardian(Player player = null) => player.Guardian();
+		
 		protected Projectile SpawnAnchor<T>(Player player, out T anchor, int damage = 0, float knockback = 0) where T : OrchidModGuardianAnchor
 		{
 			Projectile projectile = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<T>(), damage, knockback, player.whoAmI);
@@ -51,6 +54,9 @@ namespace OrchidMod.Content.Guardian
 			//OrchidPlayer modPlayer = player.GetModPlayer<OrchidPlayer>();
 			return base.CanUseItem(player);
 		}
+		
+		/// <summary> Called at the end of ModifyTooltips, allowing for further tooltip changes. </summary>
+		public virtual void SafeModifyTooltips(List<TooltipLine> tooltips, OrchidGuardian guardian) {}
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips)
 		{
@@ -68,6 +74,8 @@ namespace OrchidMod.Content.Guardian
 				string key = Mod.GetLocalizationKey("UI.GuardianItem.") + (BonusChargeRateMultiplier <= 0 ? "No" : "Special") + "ChargeScaling";
 				tooltips.Insert(index + 1, new TooltipLine(Mod, "ChargeSpeedScaling", Language.GetTextValue(key, 100 *  BonusChargeRateMultiplier)));
 			}
+			
+			SafeModifyTooltips(tooltips, Guardian());
 		}
 	}
 }

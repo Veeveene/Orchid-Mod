@@ -1,15 +1,10 @@
-using System;
-using Microsoft.Xna.Framework;
-using OrchidMod.Common;
-using OrchidMod.Common.ModObjects;
 using OrchidMod.Content.Guardian;
 using OrchidMod.Content.Guardian.Armors.OreHelms;
+using OrchidMod.Utilities;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
 
 namespace OrchidMod.Content.General.Armor
 {
@@ -82,12 +77,12 @@ namespace OrchidMod.Content.General.Armor
 					if (item == GuardianHelmID || item == GuardianAncientHelmID)
 					{
 						player.setBonus = SetBonusText[4].Value;
-						OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+						OrchidGuardian guardian = player.Guardian();
 						//this references old guardian regen formulas. before 1.5.1 guard/slam regen would apply 40% as 1 - 0.4 = 0.667 = 6.67s regen time, or 1.66 per 10 seconds, rather than 1 / (1 + 0.4) = 0.714 = 7.14s regen time, or 1.4 per 10 seconds. this makes it significantly stronger than the tooltip value implies
 						guardian.GuardianGuardRecharge += 0.6667f;
 						guardian.GuardianSlamRecharge += 0.6667f;
 					}
-				break;
+					break;
 			}
 		}
 

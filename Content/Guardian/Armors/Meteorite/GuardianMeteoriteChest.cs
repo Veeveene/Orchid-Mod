@@ -18,7 +18,7 @@ namespace OrchidMod.Content.Guardian.Armors.Meteorite
 
 		public override void UpdateEquip(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = Guardian(player);
 			modPlayer.GuardianSlamMax ++;
 			player.GetDamage<GuardianDamageClass>() += 0.05f;
 			player.aggro += 250;

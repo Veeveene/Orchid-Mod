@@ -4,52 +4,85 @@
         <name>OrchidMod</name>
     </assembly>
     <members>
+        <member name="F:OrchidMod.Common.Global.Projectiles.OrchidGlobalProjectile.NPCOwner">
+            <summary>If this projectile originated from an NPC, or originated from a projectile that had this set, it is set to the NPC's WhoAmI. Defaults to 255 and is set to 255 if the NPC dies.</summary>
+        </member>
+        <member name="F:OrchidMod.Common.Global.Projectiles.OrchidGlobalProjectile.StunTimer">
+            <summary>If the player's NPCOwner was stunned or becomes stunned, this is set to the duration of the stun. The projectile cannot deal damage while this is above 0.</summary>
+        </member>
+        <member name="P:OrchidMod.Common.ModObjects.OrchidModProjectile.IsLocalOwner">
+            <summary>If true, then the index of this projectile's owner matches the local player's index. Used for running code only on the owner's end.</summary>
+        </member>
+        <member name="P:OrchidMod.Common.ModObjects.OrchidModProjectile.Owner">
+            <summary>Shorthand for the Player instance this projectile belongs to.</summary>
+        </member>
+        <member name="P:OrchidMod.Common.ModObjects.OrchidModProjectile.ModPlayer">
+            <summary>Shorthand for the <see cref="P:OrchidMod.Common.ModObjects.OrchidModProjectile.Owner"/>'s OrchidPlayer instance.</summary>
+        </member>
+        <member name="F:OrchidMod.Common.ModObjects.OrchidPlayer.ForcedVelocityVector">
+            <summary>Vector the player will be moved every frame if ForcedVelocityTimer > 0, ignoring normal velocity.</summary>
+        </member>
+        <member name="F:OrchidMod.Common.ModObjects.OrchidPlayer.ForcedVelocityUpkeep">
+            <summary>Multiplier of ForcedVelocityVector the player velocity is set to after ForcedVelocityTimer expires.</summary>
+        </member>
+        <member name="F:OrchidMod.Common.ModObjects.OrchidPlayer.ForcedVelocityIgnoresPlatforms">
+            <summary>If set to true, the player will phase through solid-top tiles. resets to false when ForcedVelocityTimer expires.</summary>
+        </member>
+        <member name="F:OrchidMod.Common.ModObjects.OrchidPlayer.ForcedVelocityTimer">
+            <summary>How long should the forced velocity be kept.</summary>
+        </member>
         <member name="F:OrchidMod.Common.ModObjects.OrchidPlayer.LastHitNPC">
-            <summary> The last NPC referenced in OnHitNPC() for this player</summary>
+            <summary>The last NPC referenced in OnHitNPC() for this player</summary>
         </member>
         <member name="F:OrchidMod.Common.ModObjects.OrchidPlayer.DoubleTapping">
-            <summary> Set to 15 after a tap, decremented every frame. Registers a double tap and resets to 0 if another tap is input while above 0.</summary>
-            <remarks> Up = 0, Right = 1, Down = 2, Left = 3</remarks>
+            <summary>Set to 15 after a tap, decremented every frame. Registers a double tap and resets to 0 if another tap is input while above 0.</summary>
+            <remarks>Up = 0, Right = 1, Down = 2, Left = 3</remarks>
         </member>
         <member name="F:OrchidMod.Common.ModObjects.OrchidPlayer.DoubleTapped">
-            <summary> Set to 15 after a double tap, decremented every frame.</summary>
-            <remarks> Up = 0, Right = 1, Down = 2, Left = 3</remarks>
+            <summary>Set to 15 after a double tap, decremented every frame.</summary>
+            <remarks>Up = 0, Right = 1, Down = 2, Left = 3</remarks>
         </member>
         <member name="P:OrchidMod.Common.ModObjects.OrchidPlayer.DoubleTapUp">
-            <summary> The player has double tapped Up on this frame.</summary>
+            <summary>The player has double tapped Up on this frame.</summary>
         </member>
         <member name="P:OrchidMod.Common.ModObjects.OrchidPlayer.DoubleTapDown">
-            <summary> The player has double tapped Down on this frame.</summary>
+            <summary>The player has double tapped Down on this frame.</summary>
         </member>
         <member name="P:OrchidMod.Common.ModObjects.OrchidPlayer.DoubleTapRight">
-            <summary> The player has double tapped Down on this frame.</summary>
+            <summary>The player has double tapped Down on this frame.</summary>
         </member>
         <member name="P:OrchidMod.Common.ModObjects.OrchidPlayer.DoubleTapLeft">
-            <summary> The player has double tapped Right on this frame.</summary>
+            <summary>The player has double tapped Right on this frame.</summary>
         </member>
         <member name="P:OrchidMod.Common.ModObjects.OrchidPlayer.DoubleTapSetBonus">
-            <summary> The player has double tapped their Set Bonus key on this frame.</summary>
+            <summary>The player has double tapped their Set Bonus key on this frame.</summary>
         </member>
         <member name="P:OrchidMod.Common.ModObjects.OrchidPlayer.DoubleTapAny">
-            <summary> The player has double tapped a direction on this frame.</summary>
+            <summary>The player has double tapped a direction on this frame.</summary>
         </member>
         <member name="P:OrchidMod.Common.ModObjects.OrchidPlayer.DoubleTappedUp">
-            <summary> Set to 15 after a double tap. Decremented every frame.</summary>
+            <summary>Set to 15 after a double tap. Decremented every frame.</summary>
         </member>
         <member name="P:OrchidMod.Common.ModObjects.OrchidPlayer.DoubleTappedDown">
-            <summary> Set to 15 after a double tap. Decremented every frame.</summary>
+            <summary>Set to 15 after a double tap. Decremented every frame.</summary>
         </member>
         <member name="P:OrchidMod.Common.ModObjects.OrchidPlayer.DoubleTappedRight">
-            <summary> Set to 15 after a double tap. Decremented every frame.</summary>
+            <summary>Set to 15 after a double tap. Decremented every frame.</summary>
         </member>
         <member name="P:OrchidMod.Common.ModObjects.OrchidPlayer.DoubleTappedLeft">
-            <summary> Set to 15 after a double tap. Decremented every frame.</summary>
+            <summary>Set to 15 after a double tap. Decremented every frame.</summary>
         </member>
         <member name="F:OrchidMod.Common.ModObjects.OrchidPlayer.TitaniumShards">
             <summary>List of current Orchid Titanium Shards owned by this player.</summary>
         </member>
         <member name="F:OrchidMod.Common.ModObjects.OrchidPlayer.HideAllDrawLayers">
             <summary>If true, all player Drawlayers will not render.</summary>
+        </member>
+        <member name="F:OrchidMod.Common.ModObjects.OrchidPlayer.SmartCursorTrigger">
+            <summary>If true, the players Smart Cursor will be enabled next time they un-shapeshift or stop holding a guardian weapon.</summary>
+        </member>
+        <member name="F:OrchidMod.Common.ModObjects.OrchidPlayer.SmartCursorCheck">
+            <summary>If true, prevents SmartCursorTrigger from being modified again until the player un-shapeshifts or stops holding a guardian weapon.</summary>
         </member>
         <member name="F:OrchidMod.Common.ModObjects.OrchidPlayer.OrchidDamageResistance">
             <summary>Divides damage taken by the player by the sum of all damage resistance bonuses.</summary>
@@ -60,37 +93,565 @@
         <member name="M:OrchidMod.Common.ModObjects.OrchidPlayer.SpawnTitaniumShards(Terraria.DataStructures.IEntitySource,System.Int32,System.Int32)">
             <summary>Spawns custom Orchid Titanium Shards, and refreshes the player's Titanium Barrier buff.</summary>
         </member>
+        <member name="F:OrchidMod.Content.Guardian.Accessories.StaffRocket.Variant">
+            <summary>Determines the type of rocket </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.GuardianAttackInfo.Offense">
+            <summary> Whether this action is responsible for dealing damage or spawning a projectile intended to cause direct damage. Defaults to true when a blank AttackInfo is instanced. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.GuardianAttackInfo.Defense">
+            <summary> Whether this action takes direct action to defend the player, including granting invulnerability, destroying projectiles, or spawning a blocking hitbox. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.GuardianAttackInfo.Guard">
+            <summary> Whether this action is involved in the initiation of a defensive action, including initiating a parry, block or deflect. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.GuardianAttackInfo.Slam">
+            <summary> Whether this action is a slamming attack, including attacks that can consume either a slam or another resource. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.GuardianAttackInfo.charge">
+            <summary> Internal bool not intended for direct use. See <c>Charged</c>. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.GuardianAttackInfo.chargeContext">
+            <summary> Internal bool not intended for direct use. See <c>Jab</c> and <c>Reinforced</c>. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.GuardianAttackInfo.Counter">
+            <summary> Whether this action should be treated as a counterattack. This will automatically be set as part of <c>OrchidGuardian.OnAttack</c> if <c>OrchidGuardian.GuardianCounterTime > 0</c> and <c>Slam</c> is <c>true</c>. </summary>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.GuardianAttackInfo.Charged">
+            <summary> Whether this action consumes a full charge to perform. This is mutually exclusive with <c>Jab</c>, and <c>Reinforced</c> is dependent on this. Setting this to <c>true</c> will disable <c>Jab</c>, and setting this to <c>false</c> will disable <c>Reinforced</c>.</summary>
+            <remarks> See <c>SetCharged()</c>, <c>SetJab()</c>, <c>SetReinforced()</c>, and <c>SetNonCharge()</c> for helper methods for setting these fields. </remarks>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.GuardianAttackInfo.Jab">
+            <summary> Whether this action is a jab, a non-charged attack performed in relation to charging, including during charging or with the primary purpose of accumulating charge or an equivalent resource. </summary>
+            <inheritdoc cref="P:OrchidMod.Content.Guardian.GuardianAttackInfo.Charged"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.GuardianAttackInfo.Reinforced">
+            <summary> Whether this action is reinforced, consuming more than a full charge to perform. This also counts as <c>Charged</c>. </summary>
+            <inheritdoc cref="P:OrchidMod.Content.Guardian.GuardianAttackInfo.Charged"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.GuardianAttackInfo.NonCharge">
+            <summary> Whether this action is unrelated to charging. This will only be true if <c>Charged</c> and <c>Jab</c> are false. </summary>
+            <inheritdoc cref="P:OrchidMod.Content.Guardian.GuardianAttackInfo.Charged"/>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.GuardianAttackInfo.SetChargeState(System.Boolean,System.Boolean)">
+            <summary> Use to manually set charge state. </summary>
+            <inheritdoc cref="P:OrchidMod.Content.Guardian.GuardianAttackInfo.Charged"/>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.GuardianAttackInfo.SetOffense">
+            <summary> Helper method that flags <c>this.Offense</c> then returns <c>this</c>. </summary>
+            <remarks> Useful for daisy-chaining to quickly set multiple flags. To make a gauntlet slam that also counts as guarding, defending and counterattacking, you can do <c>AttackID.GauntletSlam.SetDefense().SetGuard().SetCounter()</c>.</remarks>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.GuardianAttackInfo.ResetOffense">
+            <summary> Helper method that disables <c>this.Offense</c> then returns <c>this</c>. </summary>
+            <inheritdoc cref="M:OrchidMod.Content.Guardian.GuardianAttackInfo.SetOffense"/>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.GuardianAttackInfo.SetDefense">
+            <summary> Helper method that flags <c>this.Defense</c> then returns <c>this</c>. </summary>
+            <inheritdoc cref="M:OrchidMod.Content.Guardian.GuardianAttackInfo.SetOffense"/>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.GuardianAttackInfo.SetGuard">
+            <summary> Helper method that flags <c>this.Guard</c> then returns <c>this</c>. </summary>
+            <inheritdoc cref="M:OrchidMod.Content.Guardian.GuardianAttackInfo.SetOffense"/>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.GuardianAttackInfo.SetSlam">
+            <summary> Helper method that flags <c>this.Slam</c> then returns <c>this</c>. </summary>
+            <inheritdoc cref="M:OrchidMod.Content.Guardian.GuardianAttackInfo.SetOffense"/>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.GuardianAttackInfo.SetCharged">
+            <summary> Helper method that flags <c>this.Charged</c>, disables <c>this.Reinforced</c> and <c>this.Jab</c>, then returns <c>this</c>. Note that <c>Charged</c> is mutually exclusive with <c>Jab</c>. Use <c>SetReinforced</c> instead for reinforced attacks. </summary>
+            <inheritdoc cref="M:OrchidMod.Content.Guardian.GuardianAttackInfo.SetOffense"/>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.GuardianAttackInfo.SetJab">
+            <summary> Helper method that flags <c>this.Jab</c>, disables <c>this.Charged</c> and <c>this.Reinforced</c>, then returns <c>this</c>. Note that <c>Jab</c> is mutually exclusive with <c>Charged</c> and <c>Reinforced</c>. </summary>
+            <inheritdoc cref="M:OrchidMod.Content.Guardian.GuardianAttackInfo.SetOffense"/>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.GuardianAttackInfo.SetReinforced">
+            <summary> Helper method that flags <c>this.Charged</c> and <c>this.Reinforced</c>, disables <c>this.Jab</c>, then returns <c>this</c>. Note that <c>Charged</c> is mutually exclusive with <c>Jab</c>. </summary>
+            <inheritdoc cref="M:OrchidMod.Content.Guardian.GuardianAttackInfo.SetOffense"/>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.GuardianAttackInfo.SetNonCharge">
+            <summary> Helper method that disables <c>this.Charged</c>, <c>this.Reinforced</c>, and <c>this.Jab</c>, then returns <c>this</c>.</summary>
+            <inheritdoc cref="M:OrchidMod.Content.Guardian.GuardianAttackInfo.SetOffense"/>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.GuardianAttackInfo.SetCounter">
+            <summary> Helper method that flags <c>this.Counter</c> then returns <c>this</c>. </summary>
+            <inheritdoc cref="M:OrchidMod.Content.Guardian.GuardianAttackInfo.SetOffense"/>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.AttackID.Bash">
+            <summary> AttackInfo with Offense. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.AttackID.Defend">
+            <summary> AttackInfo with Defense. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.AttackID.Guard">
+            <summary> AttackInfo with Guard. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.AttackID.GuardAttack">
+            <summary> AttackInfo with Offense and Guard. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.AttackID.Block">
+            <summary> AttackInfo with Defense and Guard. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.AttackID.BlockAttack">
+            <summary> AttackInfo with Offense, Defense, and Guard. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.AttackID.Slam">
+            <summary> Attackinfo with Offense and Slam. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.AttackID.ChargedBuff">
+            <summary> Attackinfo with Charged. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.AttackID.Charged">
+            <summary> Attackinfo with Offense and Charged. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.AttackID.ChargedBlock">
+            <summary> Attackinfo with Defense, Guard, and Charged. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.AttackID.ChargedSlam">
+            <summary> Attackinfo with Offense, Slam and Charged. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.AttackID.Jab">
+            <summary> Attackinfo with Offense and Jab. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.AttackID.SlamJab">
+            <summary> Attackinfo with Offense, Slam, and Jab. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.AttackID.ReinforcedBuff">
+            <summary> Attackinfo with Reinforced. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.AttackID.CounterDefend">
+            <summary> Attackinfo with Offense, Defense and Counter. </summary>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.ShieldBlock">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.Block"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.ShieldCharge">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.ChargedBlock"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.ShieldBash">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.Bash"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.ShieldSlam">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.Slam"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.HammerSwing">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.Jab"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.HammerBash">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.Bash"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.HammerCharge">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.Charged"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.HammerBlock">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.BlockAttack"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.RuneCharge">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.ChargedBuff"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.RuneReinforce">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.ReinforcedBuff"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.GauntletJab">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.Jab"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.GauntletSlam">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.Slam"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.GauntletCharge">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.ChargedSlam"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.GauntletGuard">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.Guard"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.Parry">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.Defend"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.StandardCharge">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.ChargedBuff"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.StandardReinforce">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.ReinforcedBuff"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.QuarterstaffJab">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.Jab"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.QuarterstaffCharge">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.Charged"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.QuarterstaffGuard">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.Guard"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.QuarterstaffCounter">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.CounterDefend"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.KatarSlam">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.SlamJab"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.KatarCharge">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.Charged"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.KatarDash">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.GuardAttack"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.GreathammerCharge">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.Charged"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.GreathammerSlam">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.SlamJab"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.GreathammerSlamWeak">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.Jab"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.GreathammerDeflect">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.BlockAttack"/>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.AttackID.GreathammerWeakDeflect">
+            <inheritdoc cref="F:OrchidMod.Content.Guardian.AttackID.Bash"/>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.GuardianGreathammerAnchor.ChangeState(System.Single,System.Single,System.Single,System.Boolean,System.Boolean,System.Single,System.Single,System.Boolean,System.Boolean)">
+            <summary>Sets the Greathammer's <c>ai[]</c> states to match the specified mode and animation time.</summary>
+            <remarks>Sets <c>Mode</c>, <c>Anim</c>, <c>Extra</c> and <c>velocity</c>. <c>Anim</c> can only be reduced if <c>timeUpperLimit</c> is true, and only be increased if <c>timeLowerLimit</c> is true. If <c>quiet</c> is false, then this will only run on local and not remote and cause <c>netUpdate</c> to be flagged, with a delay of one frame if <c>updateDelay</c> is true.</remarks>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.GuardianGreathammerAnchor.DoSlam(OrchidMod.Content.Guardian.OrchidGuardian,System.Boolean)">
+            <summary>The Greathammer will initiate a slam. If "weak" is set to true, the slam will deal half damage and grant half charge.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.GuardianHammerAnchor.GrantResources">
+            <summary>Whether this spawned anchor will grant resources when it hits with a fully charged attack. Defaults to true, and is not modified by the default anchor.</summary>
+        </member>
         <member name="M:OrchidMod.Content.Guardian.GuardianQuarterstaffAnchor.DoAnimStyle(System.Int32,System.Single,Terraria.Audio.SoundStyle,System.Boolean)">
             <summary>Executes the given animation style. <c>ai</c> should begin at 40 and decrement to 0 for the animation to play in correct order.</summary>
             <remarks>Animation style IDs<br/>
             0: Jab (default jab)<br/>
             1: Double swing (default swing)<br/>
             2: Single swing, upward<br/>
-            2: Single swing, downward <br/>
-            3: 360° swing (default counterattack)<br/>
+            3: Single swing, downward <br/>
+            4: 360° swing (default counterattack)<br/>
             </remarks>
         </member>
-        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGauntlet.OnPunch(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile,System.Boolean,System.Boolean,System.Boolean@,System.Int32@)">
+        <member name="T:OrchidMod.Content.Guardian.OrchidGuardian.OnTryBlockAction">
+            <summary> Current timer for slam stack regen or degen. Increments slams at 1 or higher, decrements at -1 or lower.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.GuardianGuardRecharge">
+            <summary> Natural guard generation multiplier. The player will naturally generate this many guards every 10 seconds.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.GuardianSlamRecharge">
+            <summary> Natural slam generation multiplier. The player will naturally generate this many slams every 10 seconds.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.GuardianGuardMax">
+            <summary> Max guard charges. Defaults to 3.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.GuardianSlamMax">
+            <summary> Max slam charges. Defaults to 3.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.GuardianRegenThreshold">
+            <summary> The ratio of guards and slams out of the player's maximum that can naturally be regenerated before the regeneration penalty takes effect. Default is 0.5.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.ParryInvincibilityBonus">
+            <summary> Bonus in frames added to the length of parry iframes. Defaults to 0.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.GuardianSlamDistance">
+            <summary> Slam Distance multiplier. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.GuardianBlockDuration">
+            <summary> Block Duration multiplier (pavises). Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.GuardianParryDuration">
+            <summary> Parry Duration multiplier (gauntlets, misc). Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.GuardianDeflectStunDuration">
+            <summary> Deflect Stun Duration multiplier (greathammers). Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.GuardianChargeSpeed">
+            <summary> Multiplies weapon charging speed without affecting melee speed. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.GuardianHammerMagnet">
+            <summary> Throw warhammers will bend in the direction of the cursor when thrown if this is >0f. For reference, the basic Hammer magnet sets this value to 50f. Defaults to 0f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.GuardianHammerThrowVelocity">
+            <summary> Multiplier applied to the velocity of all warhammer throws. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.GuardianGuardRecharging">
+            <summary> Current timer for guard stack regen or degen. Increments guards at 1 or higher, decrements at -1 or lower.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.GuardianSlamRecharging">
+            <summary> Current timer for slam stack regen or degen. Increments slams at 1 or higher, decrements at -1 or lower.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.GuardianParry">
+            <summary> Player is currently parrying.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.GauntletPunchCooldown">
+            <summary> Cooldown in frames between starting a new punch charge since starting the last one. Can begin a punch when 0 or lower, goes down to -10. Half of the gauntlet's punch animation time is added when a charge is started. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.SlamCostUI">
+            <summary> Displays an outline around guards in the UI if > 0.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.GuardCostUI">
+            <summary> Displays an outline around slams in the UI if > 0.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.MissingGuardsUI">
+            <summary>Causes this number amount of guards to flash red on the UI.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.MissingSlamsUI">
+            <summary>Causes this number amount of slams to flash red on the UI.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.MissingResourcesTimer">
+            <summary>How long until MissingGuardsUI and MissingSlamsUI is cleared.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.GuardianCounter">
+            <summary> Allows the player to trigger counterattack effects. Set when able to use an item that has counterattack effects. Use GuardianCounterTime to check for counterattack eligibility. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.GuardianCounterTime">
+            <summary> Timer for performing a counterattack if GuardianCounter is true. Set to 60 after guarding with a gauntlet, or to the block or counter duration after guarding with a pavise or quarterstaff. Will always be 0 if GuardianCounter is false. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.GuardianCounterHorizon">
+            <summary> Makes the GuardianCounter indicator flash Horizon colors instead of red. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.CachedGuardianItemCharge">
+            <summary>Stores a copy of <see cref="F:OrchidMod.Content.Guardian.OrchidGuardian.GuardianItemCharge"/>, in case .</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidGuardian.DeflectedEnemies">
+            <summary>Enemies deflected by the player's last <c>DoDeflect</c>. Cleared and repopulated when <c>DoDeflect</c> is called.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidGuardian.ResetStandards(System.Boolean)">
+            <summary>Resets all boolean-controlled Standard effects. Called in OrchidGuardian.ResetEffects and GuardianStandardAnchor when a standard is switched. forceReset controls whether to respect OrchidGuardian.GuardianStandardBuffer to give one frame  of leeway.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidGuardian.DoParryItemParry(Terraria.Entity)">
+            <remarks> Calls <c>OnAttack</c> with <c>AttackID.Parry</c>. Use overload to override. </remarks>
+            <inheritdoc cref="M:OrchidMod.Content.Guardian.OrchidGuardian.DoParryItemParry(Terraria.Entity,OrchidMod.Content.Guardian.GuardianAttackInfo)"/>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidGuardian.DoParryItemParry(Terraria.Entity,OrchidMod.Content.Guardian.GuardianAttackInfo)">
+            <summary> Performs parrying actions if the player is holding a parryItem, including giving the player invulnerability, triggering the parryItem's parrying related functions, and the player's responses to guarding enemies or projectiles, depending on the aggressor. </summary>
+            <remarks> <c>attack</c> is the GuardianAttackInfo that will be supplied for <c>OnAttack</c>, and defaults to <c>AttackID.Parry</c> in simplified overload. </remarks>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidGuardian.OnAttack(OrchidMod.Content.Guardian.GuardianAttackInfo,OrchidMod.Content.Guardian.OrchidModGuardianItem)">
+            <summary> Should be called when the player performs any action with a guardian weapon. Uses <c>GuardianAttackInfo</c> to determine attack context. See <c>AttackID</c> for a set of predefined attacks. </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidGuardian.DoDeflect(Microsoft.Xna.Framework.Rectangle,System.Boolean@,System.Boolean@,OrchidMod.Content.Guardian.OrchidModGuardianDeflectItem,Terraria.ModLoader.ModProjectile,System.Predicate{Terraria.NPC},System.Predicate{Terraria.Projectile},System.Single,System.Single,System.Nullable{Microsoft.Xna.Framework.Vector2},System.Nullable{Microsoft.Xna.Framework.Vector2},System.Nullable{System.Int32})">
+            <summary>If <c>item</c> is null or <c>item.PreDeflect</c> returns true, performs a deflect. Any enemies or blockable projectiles that would intersect a point in <c>targetArea</c> within <c>range</c> distance of <c>origin</c> in the next <c>lenience</c> frames and match <c>EnemyPredicate</c> or <c>ProjPredicate</c> respectively will be deflected, caching enemies in the player's <c>DeflectedEnemies</c> and deleting projectiles. Returns <c>true</c> if a deflect occurred, and flags <c>caughtProjectile</c> if at least one projectile was deflected and/or <c>killedNPC</c> if at least one NPC was killed by the damage.</summary>
+            <remarks>Fields left default will be treated with default behavior. <c>item</c> functions will not be called if <c>null</c>. The default <c>Predicate</c>s will check only for <c>!NPC.friendly</c> or <c>Projectile.hostile</c>. <c>range</c> defaults to -1 and will be ignored if less than 0. <c>lenience</c> defaults to 0, so the target needs to already be inside of the hitbox. <c>origin</c> defaults to the <c>Center</c> of this player.</remarks>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidGuardian.WarnMissingResources(System.Int32,System.Int32,System.Int32,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>Highlights that the player is missing resources. The number of guards or slams specified will flash red for the time specified, and text will optionally be displayed for which one the player doesn't have enough of.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidGuardian.SyncGuardianItemCharge">
+            <summary>Attempts to send a packet syncing GuardianItemCharge on the server and other clients. Does nothing unless called by the local client as a multiplayer client.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidGuardian.GetGauntletPunchInput(System.Nullable{System.Boolean})">
+            <summary>Returns the primary mouse input for "gauntlet-like" weapons: <c>Main.mouseLeft</c> by default, or <c>Main.mouseRight</c> if swapped in the config.</summary>
+            <param name="tap">If <c>Main.mouseLeftRelease</c>/<c>Main.mouseRightRelease</c> should be considered as part of the input. Returns <c>Main.mouseLeftRelease</c>/<c>Main.mouseRightRelease</c> by itself if null.</param>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidGuardian.GetGauntletBlockInput(System.Nullable{System.Boolean})">
+            <summary>Returns the secondary mouse input for "gauntlet-like" weapons: <c>Main.mouseRight</c> by default, or <c>Main.mouseLeft</c> if swapped in the config.</summary>
+            <param name="tap">If <c>Main.mouseRightRelease</c>/<c>Main.mouseLeftRelease</c> should be considered as part of the input. Returns <c>Main.mouseRightRelease</c>/<c>Main.mouseLeftRelease</c> by itself if null</param>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidGuardian.GetPaviseSlamInput(System.Nullable{System.Boolean})">
+            <summary>Returns the primary mouse input for "pavise-like" weapons: <c>Main.mouseLeft</c> by default, or <c>Main.mouseRight</c> if swapped in the config.</summary>
+            <param name="tap">If <c>Main.mouseLeftRelease</c>/<c>Main.mouseRightRelease</c> should be considered as part of the input. Returns <c>Main.mouseLeftRelease</c>/<c>Main.mouseRightRelease</c> by itself if null</param>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidGuardian.GetPaviseBlockInput(System.Nullable{System.Boolean})">
+            <summary>Returns the secondary mouse input for "pavise-like" weapons: <c>Main.mouseRight</c> by default, or <c>Main.mouseLeft</c> if swapped in the config.</summary>
+            <param name="tap">If <c>Main.mouseRightRelease</c>/<c>Main.mouseLeftRelease</c> should be considered as part of the input. Returns <c>Main.mouseRightRelease</c>/<c>Main.mouseLeftRelease</c> by itself if null</param>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianDeflectItem.InvincibilityDuration">
+            <summary>Iframes given by a deflect.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianDeflectItem.DeflectDamage">
+            <summary>Multiplier for the item's damage to be dealt to deflected NPCs.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianDeflectItem.PreDeflect(Microsoft.Xna.Framework.Rectangle@,System.Boolean@,System.Boolean@,System.Boolean@,Terraria.ModLoader.ModProjectile,System.Predicate{Terraria.NPC}@,System.Predicate{Terraria.Projectile}@,System.Single@,System.Single@,Microsoft.Xna.Framework.Vector2@,System.Int32@)">
+            <summary>Called at the beginning of a deflect. Allows modifying deflect parameters or overriding deflect behavior for this weapon. Return false to prevent default deflect code from running.</summary>
+            <remarks>See <c>OrchidGuardian.DoDeflect</c> for information on parameters.</remarks>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianDeflectItem.PostDeflect(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.ModLoader.ModProjectile,System.Boolean,System.Boolean)">
+            <summary>Called once at the end of a deflect. Use <c>OrchidGuardian.DeflectedEnemies</c> to access enemies hit by the deflect.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianDeflectItem.OnDeflectNPC(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.NPC,Terraria.ModLoader.ModProjectile)">
+            <summary>Called for <b>each</b> NPC deflected by a deflect. Return false to prevent that NPC from being deflected. Note that this only runs for enemies in the deflect's area of effect and matching the deflect's <c>EnemyPredicate</c> - see <c>PreDeflect</c> for overriding parameters or deflect behavior.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianDeflectItem.OnDeflectProjectile(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,Terraria.ModLoader.ModProjectile)">
+            <summary>Called for <b>each</b> projectile deflected by a deflect. Return false to prevent that projectile from being deflected. Note that this only runs for projectiles in the deflect's area of effect and matching the deflect's <c>ProjPredicate</c> - see <c>PreDeflect</c> for overriding parameters or deflect behavior.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianDeflectItem.PlayDeflectSound(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,System.Boolean)">
+            <summary>Responsible for playing the sound when the player deflects with this weapon.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianEquipable.SafeModifyTooltips(System.Collections.Generic.List{Terraria.ModLoader.TooltipLine},OrchidMod.Content.Guardian.OrchidGuardian)">
+            <summary> Called at the end of ModifyTooltips, allowing for further tooltip changes. </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGauntlet.OnPunch(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,System.Boolean,System.Boolean,System.Boolean@,System.Int32@)">
             <summary> Called right before a punch projectile is spawned. Return false to prevent normal punch projectiles from spawning. </summary>
         </member>
-        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGauntlet.OnParryGauntlet(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Entity,Terraria.Projectile)">
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGauntlet.OnParryGauntlet(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Entity,Terraria.Projectile)">
             <summary> Called after the player parries damage. </summary>
         </member>
-        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGauntlet.PreGuard(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile)">
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGauntlet.PreGuard(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile)">
             <summary> Called when the player presses the guard button to begin guarding while at least one gauntlet can guard. Return false to prevent guarding. Defaults to <c>guardian.UseGuard(1)</c>. Returning true without calling <c>guardian.UseGuard</c> will allow the player to guard without resources. </summary>
             <param name="anchor"> A gauntlet currently eligible for parrying. Will be the main hand gauntlet if both can parry. </param>
         </member>
-        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGauntlet.PlayGuardSound(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile)">
-            <summary> Responsible for playing the sound when the player begins guarding with the weapon. Default behavior is <c>SoundEngine.PlaySound(SoundID.Item37, player.Center);</c> </summary>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGauntlet.PlayGuardSound(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile)">
+            <summary> Responsible for playing the sound when the player begins guarding with the weapon. Default behavior is <c>SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), player.Center);</c> </summary>
         </member>
-        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGauntlet.PlayPunchSound(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile,System.Boolean)">
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGauntlet.PlayPunchSound(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,System.Boolean)">
             <summary> Responsible for playing the sound when the player punches with the weapon. Default behavior is <c>SoundEngine.PlaySound(charged ? SoundID.DD2_MonkStaffGroundMiss : SoundID.DD2_MonkStaffSwing, player.Center);</c> </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGauntlet.GauntletPostDrawUI(Microsoft.Xna.Framework.Graphics.SpriteBatch,Terraria.Player,Microsoft.Xna.Framework.Color@,Terraria.Projectile,Terraria.Projectile)">
+            <summary>Draws extra UI elements on the GuardianUIState while held.</summary>
         </member>
         <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianGauntlet.PunchSpeed">
             <summary> Jab and slam animation speed multiplier. Also affected by melee speed, but not by usetime. </summary>
         </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.SlamStacks">
+            <summary>Amount of slams (resource) to grant the owner on a fully charged throw hit. SlamStacks or GuardStacks should always be >0. Defaults to 0</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.GuardStacks">
+            <summary>Amount of guards (resource) to grant the owner on a fully charged throw hit. GuardStacks or SlamStacks should always be >0. Defaults to 0</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.GuardCost">
+            <summary>Number of guards consumed on a successful deflect. The player will be granted an equal number of slams.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.StunDuration">
+            <summary>Duration of deflect stuns applied to hit enemies. Defaults to 120 (2 seconds). Use OrchidModGuardianGreathammer.GetStunDuration() when attempting to get the stun duration to apply.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.ReturnSpeed">
+            <summary>Multiplier for the speed of the greathammer when returning after a throw. Multiplier is relative to ShootSpeed. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.SlamSpeed">
+            <summary>Multiplier for the speed of the slam animation. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.DeflectSpeed">
+            <summary>Multiplier for the speed of the deflect animation. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.SlamChargeGain">
+            <summary>Multiplier for the amount of bonus charge gained from hitting with a slam. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.WaitChargeGain">
+            <summary>Multiplier for the baseline charge speed of the weapon. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.BashDamage">
+            <summary>Multiplier for the item damage dealt to enemies hit by an uncharged bash. Defaults to 0.25f</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.SlamDamage">
+            <summary>Multiplier for the item damage dealt to enemies hit by a slam. Defaults to 1f</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.ThrowDamage">
+            <summary>Multiplier for the item damage dealt to enemies hit by a throw. Defaults to 1.5f</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.Range">
+            <summary>Time in frames before throw velocity reaches 0 and the hammer begins returning. Throw velocity loss is calculated dynamically, so it will slow faster with a lower time, and vice versa. Use `Item.ShootSpeed` to control base throw velocity. Defaults to 20.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.AuraScale">
+            <summary>Multiplier for the size of the default Greathammer aura and its hitbox. Defaults to 1f</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.ThrowHitCooldown">
+            <summary>Projectile.localNPCHitCooldown for the hammer anchor while thrown. Defaults to -1.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.HammerFrames">
+            <summary>Amount of frames for the HammerTexture to be split into. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.DrawOffset">
+            <summary>Offsets the draw origin of the hammer sprite from its center. Defaults to <c>new(-8, 8)</c> to make the point the player holds it at and the point it pivots on closer to the center of the shaft rather than near the head.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.AuraPrimary">
+            <summary>Color of the main trail of the aura. Recommended to leave alpha at a low value.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.AuraSecondary">
+            <summary>Color of the outer trail of the aura. Recommended to leave alpha at a low value.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.OnSlam(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,OrchidMod.Content.Guardian.GuardianGreathammerAnchor,System.Boolean,System.Boolean@)">
+            <summary>Called on the first frame of a swing, FullyCharged is true if the guardian's weapon charge is full.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.OnSlamEnd(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,OrchidMod.Content.Guardian.GuardianGreathammerAnchor,System.Boolean,System.Boolean)">
+            <summary>Called at the end of a slam, right after switching back to a charging state.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.ModifyHit(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,OrchidMod.Content.Guardian.GuardianGreathammerAnchor,Terraria.NPC,Terraria.NPC.HitModifiers@)">
+            <summary>Called before default ModifyHit functionality. Return false to prevent normal multipliers like SwingDamage or reduced damage after penetration from applying.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.OnThrowTileCollide(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,Microsoft.Xna.Framework.Vector2)">
+            <summary>Called at the end of the anchor's TileCollide(), after applying normal warhammer tilecollide behavior.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.OnThrow(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile)">
+            <summary>Called on the first frame of a throw</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.ExtraAI(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,OrchidMod.Content.Guardian.GuardianGreathammerAnchor)">
+            <summary>Called at the end of the anchor's Projectile AI()</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.ThrowAI(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,OrchidMod.Content.Guardian.GuardianGreathammerAnchor)">
+            <summary>Called before default throw AI. Return false to prevent the default AI from running.</summary>
+            <remarks>If returning false, use <c>anchor.ReturnFromThrow()</c> to return to held from thrown.</remarks>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.PreDrawHammer(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,Microsoft.Xna.Framework.Graphics.SpriteBatch,Microsoft.Xna.Framework.Color@,Microsoft.Xna.Framework.Graphics.Texture2D@,Microsoft.Xna.Framework.Rectangle@)">
+            <summary>Called before drawing the hammer. Return false to prevent the default draw code from running.</summary>
+            <remarks>The default draw code will use hammerTexture and drawRectangle (which defaults to null)</remarks>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.PostDrawHammer(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,Microsoft.Xna.Framework.Graphics.SpriteBatch,Microsoft.Xna.Framework.Color,Microsoft.Xna.Framework.Graphics.Texture2D,Microsoft.Xna.Framework.Rectangle)">
+            <summary>Called after drawing the hammer.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.GetHammerGlowmaskColor(Terraria.Player,Terraria.Projectile,Microsoft.Xna.Framework.Color)">
+            <summary>Color applied to the hammer's glowmask when drawn. To automatically draw a glowmask for the hammer, add a HammerName_Glow texture file where the hammer texture is located.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.PreSound(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,System.Boolean)">
+            <summary>Called before the base Greathammer anchor plays any sound other than the full charge ding. Return false to prevent the sound, if playing your own.</summary>
+            <remarks>Use <c>projectile.ai[0]</c> to determine the context of the sound. <c>2</c> is slamming, <c>3</c> and <c>4</c> are successful and failed deflects, <c>5</c> is throwing or after being thrown, and <c>-1</c> is catching. <c>justThrown</c> will be flagged for the hammer's initial throw sound.</remarks>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.GetStunDuration(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian)">
+            <summary>Gets the stun duration for this specific warhammer, taking external modifiers into account (such as reforges).</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.WarhammerPostDrawUI(Microsoft.Xna.Framework.Graphics.SpriteBatch,Terraria.Player,Microsoft.Xna.Framework.Color@,Terraria.Projectile)">
+            <summary>Draws extra UI elements on the GuardianUIState while held.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.SafeHoldItem(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile)">
+            <summary>Called at the end of HoldItem if an anchor exists.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianGreathammer.GreathammerPostDeflect(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,OrchidMod.Content.Guardian.GuardianGreathammerAnchor,System.Boolean,System.Boolean)">
+            <summary>Handles behavior after a deflect. Projectiles caught have been killed and the player's <c>OrchidGuardian.DeflectedEnemies</c> has been populated. Return true to stun enemies hit by the deflect. Remember if overriding to spawn a projectile for caughtProjectile. Returns true by default.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.SlamStacks">
+            <summary>Amount of slams (resource) to grand the owner on a fully charged throw hit. SlamStacks or GuardStacks should always be >0. Defaults to 0</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.GuardStacks">
+            <summary>Amount of guards (resource) to grand the owner on a fully charged throw hit. GuardStacks or SlamStacks should always be >0. Defaults to 0</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.BlockDuration">
+            <summary>Time in frame the warhammer will remain in the air before returning to the player when blocking. Defaults to 180, as warhammers tend to have long block durations. If set to -1, the block duration line will not be displayed.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.Penetrate">
+            <summary>Will the warhammer pierce enemies when thrown? Defaults to false.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.TileCollide">
+            <summary>Will the warhammer phase through tiles when thrown? Defaults to true.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.TileBounce">
+            <summary>Will the warhammer bounce off tiles when thrown? Defaults to false.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.ReturnSpeed">
+            <summary>Multiplier for the speed of the warhammer when returning after a throw. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.SwingSpeed">
+            <summary>Multiplier for the speed of a melee swing animation. Defaults to 1f.</summary>
+        </member>
         <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.SwingChargeGain">
-            <summary>Multiplier for the amount of bonus charge gained from hitting with a melee swing.</summary>
+            <summary>Multiplier for the amount of bonus charge gained from hitting with a melee swing. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.WaitChargeGain">
+            <summary>Multiplier for the baseline charge speed of the weapon. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.SwingDamage">
+            <summary>Multiplier for the item damage dealt to enemies hit by a swing. Defaults to 0.5f</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.ThrowDamage">
+            <summary>Multiplier for the item damage dealt to enemies hit by a throw. Defaults to 1f</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.BlockDamage">
+            <summary>Multiplier for the item damage dealt to enemies hit by a block. Defaults to 0.33f</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.HitCooldown">
+            <summary>Projectile.localNPCHitCooldown for the hammer anchor. Defaults to 30.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.CannotBlock">
+            <summary>If true, the warhammer cannot block. Defaults to false.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.ShouldBlock">
+            <summary>If false, the warhammer's blocking attack will not block enemies or projectiles, and the tooltip will display <c>ToSlam</c> instead. Can be manually overridden in <c>BlockAI</c>.</summary>
         </member>
         <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.CannotSwing">
             <summary>If true, the warhammer will never be swung.</summary>
@@ -104,28 +665,242 @@
         <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.hasSpecialHammerTexture">
             <summary>If true, the anchor will load and use ItemName_Hammer.png as its texture.</summary>
         </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.SlamBlockCost">
+            <summary>Amount of slams (resource) required to initiate a block. Defaults to 0.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.GuardBlockCost">
+            <summary>Amount of guards (resource) required to initiate a block. Defaults to 1.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.HammerFrames">
+            <summary>Amount of frames drawn on the HammerTexture. Used occasionally for special hammers. See PumpkingWarhammer for an example. Defaults to 1.</summary>
+        </member>
         <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.CannotMagnet">
             <summary>If true, the warhammer will be unaffected by the Hammer Magnet accessory.</summary>
         </member>
         <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.CannotExplode">
             <summary>If true, the warhammer will be unaffected by the Remote Detonator accessory.</summary>
         </member>
-        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.ThrowAI(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile,System.Boolean)">
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.IgnoreHammerThrowVelocity">
+            <summary>If true, the OrchidGuardian.GuardianHammerThrowVelocity multiplier will not affect throw velocity. Defaults to false.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianHammer.DualWarhammers">
+            <summary>If true, this item will have the player dual wield warhammers. Defaults to false.</summary>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.OrchidModGuardianHammer.Warslammer">
+            <summary>Shorthand helper for <c>GuardBlockCost = 0; ShouldBlock = false; SlamBlockCost = value;</c></summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.OnBlockContact(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.NPC,Terraria.Projectile)">
+            <summary>Called upon pushing an enemy with a throw (can happen repeatedly).</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.OnBlockNPC(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.NPC,Terraria.Projectile)">
+            <summary>Called upon blocking an enemy (1 time per throw per enemy).</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.OnBlockFirstNPC(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.NPC,Terraria.Projectile)">
+            <summary>Called upon blocking the first enemy of a blocking throw</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.OnBlockProjectile(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,Terraria.Projectile)">
+            <summary>Called upon blocking a proejctile, return false to prevent the projectile from being destroyed</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.OnBlockFirstProjectile(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,Terraria.Projectile)">
+            <summary>Called upon blocking the first projectile of a blocking throw</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.OnMeleeHit(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.NPC,Terraria.Projectile,System.Single,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>Called upon landing any melee swing hit</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.OnMeleeHitFirst(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.NPC,Terraria.Projectile,System.Single,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>Called upon landing the first hit of a melee swing</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.OnThrowHit(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.NPC,Terraria.Projectile,System.Single,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>Called upon landing any throw hit</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.OnThrowHitFirst(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.NPC,Terraria.Projectile,System.Single,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>Called upon landing the first hit of a throw</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.OnBlockHit(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.NPC,Terraria.Projectile,System.Single,System.Boolean)">
+            <summary>Called upon landing any block hit</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.OnBlockHitFirst(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.NPC,Terraria.Projectile,System.Single,System.Boolean)">
+            <summary>Called upon landing the first hit of a block</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.ModifyHit(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,Terraria.NPC,Terraria.NPC.HitModifiers@,System.Boolean,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>Called before default ModifyHit functionality. Return false to prevent normal multipliers like SwingDamage or reduced damage after penetration from applying.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.OnThrowTileCollide(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,Microsoft.Xna.Framework.Vector2,System.Boolean)">
+            <summary>Called at the end of the anchor's TileCollide(), after applying normal warhammer tilecollide behavior.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.OnSwing(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,System.Boolean,System.Boolean)">
+            <summary>Called on the first frame of a swing, FullyCharged is true if the guardian's hammer charge is full, FullyCharged is true if the guardian's hammer charge is full</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.OnThrow(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,System.Boolean,System.Boolean)">
+            <summary>Called on the first frame of a throw</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.OnBlockThrow(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile)">
+            <summary>Called on the first frame of a block</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.ExtraAI(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,System.Boolean)">
+            <summary>Called at the end of the anchor's Projectile AI()</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.ThrowAI(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,System.Boolean,System.Boolean)">
             <summary>Called before default throw AI. Return false to prevent the default AI from running.</summary>
             <remarks>Remember to set <c>Projectile.friendly</c> and <c>OrchidModGuardianProjectile.ResetHitStatus()</c> if overriding default behavior.</remarks>
         </member>
-        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.PreDrawHammer(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile,Microsoft.Xna.Framework.Graphics.SpriteBatch,Microsoft.Xna.Framework.Color@,Microsoft.Xna.Framework.Graphics.Texture2D@,Microsoft.Xna.Framework.Rectangle@)">
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.BlockAI(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,OrchidMod.Content.Guardian.GuardianHammerAnchor,System.Boolean@)">
+            <summary>Called before default block AI. Return false to prevent the default AI from running. Set ShouldBlock to true or false to override this item's ShouldBlock for this frame.</summary>
+            <remarks>Remember to set <c>Projectile.friendly</c> and <c>OrchidModGuardianProjectile.ResetHitStatus()</c> if overriding default behavior.</remarks>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.PreDrawHammer(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,Microsoft.Xna.Framework.Graphics.SpriteBatch,Microsoft.Xna.Framework.Color@,Microsoft.Xna.Framework.Graphics.Texture2D@,Microsoft.Xna.Framework.Rectangle@,System.Boolean)">
             <summary>Called before drawing the hammer. Return false to prevent the default draw code from running.</summary>
             <remarks>The default draw code will use hammerTexture and drawRectangle (which defaults to null)</remarks>
         </member>
-        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.PostDrawHammer(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile,Microsoft.Xna.Framework.Graphics.SpriteBatch,Microsoft.Xna.Framework.Color,Microsoft.Xna.Framework.Graphics.Texture2D,Microsoft.Xna.Framework.Rectangle)">
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.PostDrawHammer(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,Microsoft.Xna.Framework.Graphics.SpriteBatch,Microsoft.Xna.Framework.Color,Microsoft.Xna.Framework.Graphics.Texture2D,Microsoft.Xna.Framework.Rectangle,System.Boolean)">
             <summary>Called after drawing the hammer.</summary>
         </member>
-        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianParryItem.OnParryOther(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile)">
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.GetHammerGlowmaskColor(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,Microsoft.Xna.Framework.Color,System.Boolean)">
+            <summary>Color applied to the hammer's glowmask when drawn. To automatically draw a glowmask for the hammer, add a HammerName_Glow texture file where the hammer texture is located.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.WarhammerPostDrawUI(Microsoft.Xna.Framework.Graphics.SpriteBatch,Terraria.Player,Microsoft.Xna.Framework.Color@,Terraria.Projectile)">
+            <summary>Draws extra UI elements on the GuardianUIState while held.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianHammer.GetAnchors(Terraria.Player)">
+            <summary>Returns the whoamI of the warhammer anchors used by this item. When dual wielding, the 2nd value of the array will the the whoam of the offhand warhammer, else, it will be -1. Returns null if no hammers exist.</summary>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.OrchidModGuardianItem.BonusChargeRateMultiplier">
+            <summary>Determines the multiplier that applies to <see cref="F:OrchidMod.Content.Guardian.OrchidGuardian.GuardianChargeSpeed"/>) for this item.</summary>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.OrchidModGuardianItem.AnchorType">
+            <summary>The relevant anchor type this item spawns, if not -1.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianItem.ModifyAttackInfo(OrchidMod.Content.Guardian.GuardianAttackInfo@)">
+            <summary> Called when an anchor spawned by this item calls <c>OrchidGuardian.OnAttack</c> to trigger attack-related effects like set bonuses or accessories. Modify the <c>GuardianAttackInfo</c> reference to change what attack-related effects it triggers. <c>GuardianAttackInfo.Counter</c> will automatically be set to <c>true</c> if <c>GuardianAttackInfo.Slam</c> is <c>true</c> and the player meets the conditions for a counterattack, and if <c>GuardianAttackInfo.Counter</c> is <c>true</c> after this function, <c>OrchidGuardian.GuardianCounterTime</c> will be reset. Return <c>false</c> to prevent triggering any effects. Returns <c>true</c> by default. </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianItem.SafeModifyTooltips(System.Collections.Generic.List{Terraria.ModLoader.TooltipLine},OrchidMod.Content.Guardian.OrchidGuardian)">
+            <summary> Called at the end of ModifyTooltips, allowing for further tooltip changes. </summary>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.OrchidModGuardianKatar.KatarTexture">
+            <summary> Path to the texture of the held katar. </summary>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.OrchidModGuardianKatar.KatarTextureGlow">
+            <summary> Path to the texture of held katar glowmasks, if any. </summary>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.OrchidModGuardianKatar.KatarBackTexture">
+            <summary> Path to the texture of the offhand katar held texture, if any. </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.OnHitParry(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.NPC,Terraria.Projectile)">
+            <summary> Called upon hitting an enemy with a parry. </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.OnHit(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.NPC,Terraria.Projectile,Terraria.NPC.HitInfo,System.Boolean)">
+            <summary> Called upon hitting an enemy with a slam or a charged attack. </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.OnHitFirst(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.NPC,Terraria.Projectile,Terraria.NPC.HitInfo,System.Boolean)">
+            <summary> Called upon hitting the first enemy of a given slam or a charged attack. Use this to trigger effects that should not happen multiple times when hitting multiple targets with one attack. </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.KatarModifyHitNPC(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.NPC,Terraria.Projectile,Terraria.NPC.HitModifiers@,System.Boolean)">
+            <summary> Allows access to Projectile.ModifyHitNPC for katar jabs. </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.OnJab(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,System.Boolean,System.Boolean,System.Boolean@,System.Int32@)">
+            <summary> Called right before a jab projectile is spawned. Return false to prevent normal jab projectiles from spawning. </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.OnParryKatar(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Entity,Terraria.Projectile)">
+            <summary> Called after the player parries damage. </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.OnDashKatar(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile)">
+            <summary> Called as the players begins a katar dash. </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.PreGuard(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile)">
+            <summary> Called every frame by Katar jab projectiles. Return false to prevent normal projectile AI from running (which simply slows down the projectile). </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.ProjectileAI(Terraria.Player,Terraria.Projectile,System.Boolean)">
+            <summary> Called every frame by Katar jab projectiles. Return false to prevent normal projectile AI from running (which simply slows down the projectile). </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.ExtraAIKatar(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,System.Boolean)">
+            <summary> Called at the end of the Anchor Projectile AI update. </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.PostDrawKatar(Microsoft.Xna.Framework.Graphics.SpriteBatch,Terraria.Projectile,Terraria.Player,System.Boolean,Microsoft.Xna.Framework.Color)">
+            <summary> Called after drawing the katar anchor projectile. </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.PreDrawKatar(Microsoft.Xna.Framework.Graphics.SpriteBatch,Terraria.Projectile,Terraria.Player,System.Boolean,Microsoft.Xna.Framework.Color@)">
+            <summary> Called before drawing the katar anchor projectile. Return false to prevent normal draw code from running. </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.GetColor">
+            <summary> Called when drawing the katar jab projectiles color. </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.PlayGuardSound(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile)">
+            <summary> Responsible for playing the sound when the player begins guarding with the weapon. Default behavior is <c>SoundEngine.PlaySound(SoundID.DD2_JavelinThrowersAttack.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), player.Center);</c> </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.PlayPunchSound(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,System.Boolean)">
+            <summary> Responsible for playing the sound when the player punches with the weapon. Default behavior is <c>SoundEngine.PlaySound(charged ? SoundID.DD2_MonkStaffGroundMiss : SoundID.DD2_MonkStaffSwing, player.Center);</c> </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.SafeHoldItem(Terraria.Player)">
+            <summary> Called at the end of OrchidModGuardianKatar.HoldItem. </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.ChargeJabCost(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,System.Boolean)">
+            <summary> Cost to jab while charging the katar. Defaults to 1 slam. </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.ChargeJabCostUI(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile)">
+            <summary> Should mirror ChargeJabCost() for clarity, highlighting the jab cost when using the weapon. </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.GetKatarGlowmaskColor(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,Microsoft.Xna.Framework.Color)">
+            <summary> Color used to draw potential glowmasks. Defaults to Color.White. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.hasBackKatar">
+            <summary> Return true if the weapon should use a different texture for the offhand katar. Remember to add a corresponding XXX_KatarBack.png texture. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.Frames">
+            <summary> How many frames does the spritesheet uses? </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.JabVelocity">
+            <summary> Velocity of jab projectiles. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.JabSpeed">
+            <summary> Jab and slam animation speed multiplier. Also affected by melee speed, but not by usetime. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.ParryDamage">
+            <summary> Multiplier applied to the item damage to get a Parry damage. Defaults to 1f. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.ParryKnockback">
+            <summary> Parry knockback. Defaults to 1f. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.SlamDamage">
+            <summary> Multiplier applied to the item damage to get a Slam damage. Defaults to 2f. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.ChargedAttackDamage">
+            <summary> Multiplier applied to the item damage to get a Charged attack damage. Defaults to 2f. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.ChargedAttackKnockback">
+            <summary> Multiplier applied to the item knockback to get a Charged attack knockback (note that slams deal normal item knockback). Defaults to 1.5f. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.ChargedAttackDoT">
+            <summary> Multiplier for how much of a charged attack damage should be dealt as a DoT. Defaults to 0.5f, should never be equal or higher than 1f. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.ParryDuration">
+            <summary> Duration (in frames) of a right click parry (also the duration of the parry dash). Defaults to 10. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.ParryDashSpeed">
+            <summary> Velocity of the Parry dash. Defaults to 20f. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.ParryDashMomentum">
+            <summary> Multiplies the velocity of the player after the parry dash (retains more momentum with higher values). Defaults to 0.33f (for early game weapons). </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.ChargeSpeedMultiplier">
+            <summary> Multiplier to the weapon charge speed when holding left click. Defaults to 1f. </summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianKatar.NoUpwardsParryDash">
+            <summary> Prevents the user from dashing upwards. Generally used to balance very early game katars. Defaults to false. </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianKatar.KatarPostDrawUI(Microsoft.Xna.Framework.Graphics.SpriteBatch,Terraria.Player,Microsoft.Xna.Framework.Color@,Terraria.Projectile,Terraria.Projectile)">
+            <summary>Draws extra UI elements on the GuardianUIState while held.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianParryItem.InvincibilityDuration">
+            <summary>Iframes duration after a parry Defaults to 40.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianParryItem.OnParryOther(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile)">
             <summary>Specifically called if the aggressor when initiating the parry is neither an NPC nor a Projectile.</summary>
         </member>
-        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianParryItem.PlayParrySound(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile)">
-            <summary> Responsible for playing the sound when the player parries with this weapon. Default behavior is <c>SoundEngine.PlaySound(SoundID.Item37, player.Center);</c> </summary>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianParryItem.PlayParrySound(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile)">
+            <summary> Responsible for playing the sound when the player parries with this weapon. Default behavior is <c>SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), player.Center);</c> </summary>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.OrchidModGuardianProjectile.Guardian">
+            <summary>Shorthand for the <see cref="P:OrchidMod.Common.ModObjects.OrchidModProjectile.Owner">Owner</see>'s OrchidGuardian instance.</summary>
         </member>
         <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianProjectile.FirstHit">
             <summary>Set to false in ModifyHitNPC when this projectile or specific anchor attack hits an enemy a second time. Flagged before most hit functions.</summary>
@@ -144,28 +919,79 @@
             <summary>Resets <c>FirstHit</c> and <c>NotHitYet</c> to true, and sets <c>Strong</c> to the input bool.</summary>
             <remarks>See also <see cref="F:OrchidMod.Content.Guardian.OrchidModGuardianProjectile.Strong"/></remarks>
         </member>
-        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.PreJabAI(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile)">
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.PreJabAI(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile)">
             <summary>Called before uncharged jab or mid-charging jab AI is executed, including repositioning the quarterstaff and the player's arms for its attack animation. Return false to prevent normal AI from running, effectively overriding <c>JabStyle</c>.</summary>
             <remarks>During a jab, <c>Projectile.ai[0]</c> is set to -40 as an animation timer and incremented by <c>JabSpeed</c> every frame until it reaches 0. Use <c>Projectile.ResetLocalNPCHitImmunity()</c> for multi-swing animations to allow them to hit multiple times. See <c>GuardianQuarterstaffAnchor</c> for examples of default <c>JabStyle</c> behavior.</remarks>
         </member>
-        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.PreSwingAI(Terraria.Player,OrchidMod.OrchidGuardian,Terraria.Projectile)">
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.PreSwingAI(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile)">
             <summary>Called before fully charged swing AI is executed, including repositioning the quarterstaff and the player's arms for its attack animation. Return false to prevent normal AI from running, effectively overriding <c>SwingStyle</c>.</summary>
             <remarks>During a swing, <c>Projectile.ai[0]</c> is set to 41 as an animation timer and decremented by <c>SwingSpeed</c> every frame until it reaches 1. Use <c>Projectile.ResetLocalNPCHitImmunity()</c> for multi-swing animations to allow them to hit multiple times. See <c>GuardianQuarterstaffAnchor</c> for examples of default <c>SwingStyle</c> behavior.</remarks>
         </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.SafeCanHitNPC(Terraria.Player,Terraria.Projectile,Terraria.NPC)">
+            <summary>Called during the anchor's <c>CanHitNPC</c> check. Defaults to true, which results in <c>base.CanHitNPC()</c> being called.</summary>
+        </member>
+        <member name="P:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.TipOffset">
+            <summary>Indexes into <see cref="M:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.GetTipPosition(Terraria.Projectile)"/></summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.GetTipPosition(Terraria.Projectile)">
+            <summary></summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.ParryDuration">
+            <summary>Item parry duration. Defaults to 60.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.SlamStacks">
+            <summary>Slams granted by a Charged Attack hit. Should generally not be modified unless part of a specific weapon gimmick. Defaults to 0.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.GuardStacks">
+            <summary>Guards granted by a Charged Attack hit. Should generally not be modified unless part of a specific weapon gimmick. Defaults to 2.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.JabSpeed">
+            <summary>Jab speed multiplier. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.SwingSpeed">
+            <summary>Charged attack speed multiplier. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.CounterSpeed">
+            <summary>Counter speed multiplier. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.JabDamage">
+            <summary>Jab damage multiplier. Defaults to 0.5f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.ChargedDamage">
+            <summary>Charged attack damage multiplier. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.CounterDamage">
+            <summary>Counter damage multiplier. Defaults to 0.67f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.CounterHits">
+            <summary>Number of local iframe resets during a counterattack, use scarsely. Defaults to 3.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.ChargedKnockback">
+            <summary>Charged attack knockback multiplier. Defaults to 1.5f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.JabKnockback">
+            <summary>Jab knockback multiplier. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.CounterKnockback">
+            <summary>Counter knockback multiplier. Defaults to 1f.</summary>
+        </member>
         <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.JabStyle">
-            <summary>Indexes into <c>GuardianQuarterstaffAnchor.DoAnimStyle</c> to get jab animation AI.</summary>
+            <summary>Indexes into <c>GuardianQuarterstaffAnchor.DoAnimStyle</c> to get jab animation AI. Defaults to 0.</summary>
             <inheritdoc cref="M:OrchidMod.Content.Guardian.GuardianQuarterstaffAnchor.DoAnimStyle(System.Int32,System.Single,Terraria.Audio.SoundStyle,System.Boolean)" select="remarks" />
         </member>
         <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.SwingStyle">
-            <summary>Indexes into <c>GuardianQuarterstaffAnchor.DoAnimStyle</c> to get swing animation AI.</summary>
+            <summary>Indexes into <c>GuardianQuarterstaffAnchor.DoAnimStyle</c> to get swing animation AI. Defaults to 1.</summary>
             <inheritdoc cref="M:OrchidMod.Content.Guardian.GuardianQuarterstaffAnchor.DoAnimStyle(System.Int32,System.Single,Terraria.Audio.SoundStyle,System.Boolean)" select="remarks" />
         </member>
         <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.CounterStyle">
-            <summary>Indexes into <c>GuardianQuarterstaffAnchor.DoAnimStyle</c> to get counterattack animation AI.</summary>
+            <summary>Indexes into <c>GuardianQuarterstaffAnchor.DoAnimStyle</c> to get counterattack animation AI. Defaults to 4.</summary>
             <inheritdoc cref="M:OrchidMod.Content.Guardian.GuardianQuarterstaffAnchor.DoAnimStyle(System.Int32,System.Single,Terraria.Audio.SoundStyle,System.Boolean)" select="remarks" />
         </member>
         <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.JabChargeGain">
             <summary>Multiplier for the amount of bonus charge gained from hitting with a jab.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.ChargeRate">
+            <summary>Multiplier for the rate of charge gained.</summary>
         </member>
         <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.QuarterstaffFrames">
             <summary>
@@ -173,61 +999,72 @@
             <br/> The animation frame must be set manually using <c>GuardianQuarterstaffAnchor.QuarterstaffAnimFrame</c>.
             </summary>
         </member>
-        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianShield.SlamHitFirst(Terraria.Player,Terraria.Projectile,Terraria.NPC)">
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.QuarterstaffPostDrawUI(Microsoft.Xna.Framework.Graphics.SpriteBatch,Terraria.Player,Microsoft.Xna.Framework.Color@,Terraria.Projectile)">
+            <summary>Draws extra UI elements on the GuardianUIState while held.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianQuarterstaff.ModifyAttackInfo(OrchidMod.Content.Guardian.GuardianAttackInfo@)">
+            <remarks> Quarterstaves use this by default to set their parry action as <c>Offense</c> and <c>Counter</c>. When overriding this, set <c>Offense</c> and <c>Counter</c> if <c>Defense</c> is set unless intending to replace default quarterstaff counterattack functionality. </remarks>
+            <inheritdoc cref="M:OrchidMod.Content.Guardian.OrchidModGuardianItem.ModifyAttackInfo(OrchidMod.Content.Guardian.GuardianAttackInfo@)"/>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianShield.SlamHitFirst(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,Terraria.NPC,System.Boolean)">
             <summary>Called once per slam, when the slam first hits an enemy.</summary>
         </member>
-        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianShield.SlamHit(Terraria.Player,Terraria.Projectile,Terraria.NPC)">
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianShield.SlamHit(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,Terraria.NPC,System.Boolean)">
             <summary>Called when this shield's slam hits an enemy.</summary>
         </member>
-        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianShield.Slam(Terraria.Player,Terraria.Projectile)">
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianShield.Slam(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,System.Boolean)">
             <summary>Called on the first frame of a slam.</summary>
         </member>
-        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianShield.SlamEnd(Terraria.Player,Terraria.Projectile)">
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianShield.SlamEnd(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,System.Boolean)">
             <summary>Called on the last frame of a slam.</summary>
         </member>
-        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianShield.Push(Terraria.Player,Terraria.Projectile,Terraria.NPC)">
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianShield.Push(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,Terraria.NPC)">
             <summary>Called when an enemy collides with the shield during a block. Will be called once per frame per enemy colliding with it.</summary>
         </member>
-        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianShield.Protect(Terraria.Player,Terraria.Projectile)">
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianShield.Protect(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile)">
             <summary>Called once per block when the first enemy or projectile is blocked. This is called after <c>Push</c> or <c>Block</c>, but before <c>Block</c> destroys the projectile.</summary>
         </member>
-        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianShield.Block(Terraria.Player,Terraria.Projectile,Terraria.Projectile)">
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianShield.Block(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,Terraria.Projectile)">
             <summary>Called when a projectile collides with the shield during a block. Return <c>true</c> to destroy the projectile. Defaults to <c>true</c>.</summary>
             <returns>Whether to destroy the projectile.</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:OrchidMod.Content.Guardian.OrchidModGuardianShield.Reflect(Terraria.Player,Terraria.Projectile,Terraria.Projectile,System.Int32@)" -->
-        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianShield.BlockStart(Terraria.Player,Terraria.Projectile)">
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianShield.Reflect(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,Terraria.Projectile,System.Int32@)">
+            <summary>Called when a projectile collides with the shield during a block, this should be used to spawn projectiles created by reflecting projectiles.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianShield.BlockStart(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,System.Boolean)">
             <summary>Called on the first frame of a block.</summary>
         </member>
-        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianShield.BlockEnd(Terraria.Player,Terraria.Projectile)">
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianShield.BlockEnd(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile)">
             <summary>Called on the last frame of a block. Will spawn dust at the end of a block if it returns true</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianShield.PlayGuardSound(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile)">
+            <summary> Responsible for playing the sound when the player begins guarding with the weapon. Default behavior is <c>SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), player.Center);</c> </summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianShield.ModifyBlockingAngle(Terraria.Player,OrchidMod.Content.Guardian.OrchidGuardian,Terraria.Projectile,System.Single@)">
+            <summary>Called while blocking to modify the angle the shield blocks toward. Return <c>false</c> to prevent default shield rotation behavior. Defaults to <c>true</c>.</summary>
         </member>
         <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianShield.shouldFlip">
             <summary>Causes the shield's held sprite to flip when facing right.</summary>
-        </member>
-        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianShield.useDiscreteAim">
-            <summary>
-            If true, the shield will be rotated in discrete steps, instead of a single continuous circle. Defaults to false.
-            </summary>
-        </member>
-        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianShield.discreteAimIncrements">
-            <summary>
-            The amount of steps per half-rotation that the shield will snap to, if <c>useDiscreteAim</c> is true.
-            <br/> A value of <c>0</c> results in only a single possible angle, directly in front of the player. Otherwise, there will be twice as many snap points as this value.
-            </summary>
-        </member>
-        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianShield.discreteAimRotation">
-            <summary>
-            The angle, in pi/2 increments, that the base angle will be rotated by.
-            </summary>
         </member>
         <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianShield.lockSlamRotation">
             <summary>
             If true, slams performed with the shield will be locked to the rotation they started with, rather than being free to rotate mid-slam.
             </summary>
         </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianShield.blockRotation">
+            <summary>How fast the pavise rotates towards the player cursor while blocking. Arbitrary value, defaults to 10f.</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.OrchidModGuardianShield.ChargeSpeedMultiplier">
+            <summary>Charge speed multiplier for this item. Defaults to 1f.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianShield.PavisePostDrawUI(Microsoft.Xna.Framework.Graphics.SpriteBatch,Terraria.Player,Microsoft.Xna.Framework.Color@,Terraria.Projectile)">
+            <summary>Draws extra UI elements on the GuardianUIState while held.</summary>
+        </member>
         <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianStandard.DrawCustomFlag(Microsoft.Xna.Framework.Graphics.SpriteBatch,Terraria.Projectile,Terraria.Player,Microsoft.Xna.Framework.Color,Microsoft.Xna.Framework.Vector2,System.Single)">
             <summary>Overrides the default flag drawing, but still renders the shaft. Return true to prevent the default flag from being drawn.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Guardian.OrchidModGuardianStandard.StandardPostDrawUI(Microsoft.Xna.Framework.Graphics.SpriteBatch,Terraria.Player,Microsoft.Xna.Framework.Color@,Terraria.Projectile)">
+            <summary>Draws extra UI elements on the GuardianUIState while held.</summary>
         </member>
         <member name="M:OrchidMod.Content.Guardian.Projectiles.Misc.GuardianHorizonLanceAnchor.GetHorizonGlowColor(System.Single,System.Single,System.Single)">
             <summary> Mimics the <c>HorizonGlow</c> shader, returning a color modified by the given phase similar to what the shader would provide. </summary>
@@ -246,6 +1083,9 @@
         </member>
         <member name="M:OrchidMod.Content.Guardian.Projectiles.Misc.GuardianHorizonLanceAnchor.GetHorizonGlowColor(System.Double,Microsoft.Xna.Framework.Color)">
             <inheritdoc cref="M:OrchidMod.Content.Guardian.Projectiles.Misc.GuardianHorizonLanceAnchor.GetHorizonGlowColor(System.Single,Microsoft.Xna.Framework.Color)"/>
+        </member>
+        <member name="F:OrchidMod.Content.Guardian.Projectiles.Quarterstaves.ThoriumBoreanStriderQuarterstaffProjectile.Ready">
+            <summary></summary>
         </member>
         <member name="F:OrchidMod.Content.Guardian.Weapons.Warhammers.PumpkingWarhammer.EmbeddedScythe">
             <summary> 
@@ -335,38 +1175,146 @@
         <member name="M:OrchidMod.Content.Shaman.ShamanWeaponAnchor.GetInactiveAnimation">
             <summary> Call to position the player's hand and return visual offsets to appear in it properly.</summary>
         </member>
-        <member name="F:OrchidMod.OrchidGuardian.ProjectilesBlockBlacklist">
-            <summary> Current timer for slam stack regen or degen. Increments slams at 1 or higher, decrements at -1 or lower.</summary>
+        <member name="F:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.AllowGFXOffY">
+            <summary>XXXXX</summary>
         </member>
-        <member name="F:OrchidMod.OrchidGuardian.GuardianGuardRecharge">
-            <summary> Natural guard generation multiplier. The player will naturally generate this many guards every 10 seconds.</summary>
+        <member name="F:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftWidth">
+            <summary>Wildshape hitbox Width. Defaults to 10.</summary>
         </member>
-        <member name="F:OrchidMod.OrchidGuardian.GuardianSlamRecharge">
-            <summary> Natural slam generation multiplier. The player will naturally generate this many slams every 10 seconds.</summary>
+        <member name="F:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftHeight">
+            <summary>Wildshape hitbox Height. Defaults to 10.</summary>
         </member>
-        <member name="F:OrchidMod.OrchidGuardian.GuardianRegenThreshold">
-            <summary> The ratio of guards and slams out of the player's maximum that can naturally be regenerated before the regeneration penalty takes effect. Default is 0.5.</summary>
+        <member name="F:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.AutoReuseLeft">
+            <summary>Whether the left click ability click casts repeatedly hy holding the input. Defaults to true.</summary>
         </member>
-        <member name="F:OrchidMod.OrchidGuardian.GuardianGuardRecharging">
-            <summary> Current timer for guard stack regen or degen. Increments guards at 1 or higher, decrements at -1 or lower.</summary>
+        <member name="F:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.AutoReuseRight">
+            <summary>Whether the right click ability click casts repeatedly hy holding the input. Defaults to false.</summary>
         </member>
-        <member name="F:OrchidMod.OrchidGuardian.GuardianSlamRecharging">
-            <summary> Current timer for slam stack regen or degen. Increments slams at 1 or higher, decrements at -1 or lower.</summary>
+        <member name="F:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.MeleeSpeedLeft">
+            <summary>Whether melee speed makes the left click ability recover faster. Defaults to true.</summary>
         </member>
-        <member name="F:OrchidMod.OrchidGuardian.GauntletPunchCooldown">
-            <summary> Cooldown in frames between starting a new punch charge since starting the last one. Can begin a punch when 0 or lower, goes down to -10. Half of the gauntlet's punch animation time is added when a charge is started. </summary>
+        <member name="F:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.MeleeSpeedRight">
+            <summary>Whether melee speed makes the right click ability recover faster. Defaults to true.</summary>
         </member>
-        <member name="F:OrchidMod.OrchidGuardian.GuardianCounter">
-            <summary> Allows the player to trigger counterattack effects. Set when able to use an item that has counterattack effects. Use GuardianCounterTime to check for counterattack eligibility. </summary>
+        <member name="F:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.GroundedWildshape">
+            <summary>Is the shapeshift supposedly a grounded creature? (affects the movement speed given by some items like magiluminescense). Defaults to false.</summary>
         </member>
-        <member name="F:OrchidMod.OrchidGuardian.GuardianCounterTime">
-            <summary> Timer for performing a counterattack if GuardianCounter is true. Set to 60 after guarding with a gauntlet, or to the block or counter duration after guarding with a pavise or quarterstaff. Will always be 0 if GuardianCounter is false. </summary>
+        <member name="F:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.WebImmunity">
+            <summary>If true, movement is not affected by webs. Defaults to false.</summary>
         </member>
-        <member name="F:OrchidMod.OrchidGuardian.GuardianCounterHorizon">
-            <summary> Makes the GuardianCounter indicator flash Horizon colors instead of red. </summary>
+        <member name="F:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.GravityMult">
+            <summary>Fall speed multiplier for the wildshape. defaults to 1f.</summary>
         </member>
-        <member name="M:OrchidMod.OrchidGuardian.ResetStandards(System.Boolean)">
-            <summary>Resets all boolean-controlled Standard effects. Called in OrchidGuardian.ResetEffects and GuardianStandardAnchor when a standard is switched. forceReset controls whether to respect OrchidGuardian.GuardianStandardBuffer to give one frame  of leeway.</summary>
+        <member name="F:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftType">
+            <summary>Which type is this wildshape (Sage, Predator, Warden, Symbiote)? Defaults to ShapeshifterShapeshiftType.None (don't use that)!</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftTypeUI">
+            <summary>Will attempt to draw a simple UI for the wildshape if this is != None. Defaults to ShapeshifterShapeshiftTypeUI.None. (None, Count, Fill).</summary>
+        </member>
+        <member name="F:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftImmunities">
+            <summary>A list of Buff IDs this specific wildshape is immune to.</summary>
+        </member>
+        <member name="P:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.LeftClickTooltip">
+            <summary>Can be overriden to replace the text on the left click tooltip line. Probably shouldn't be.</summary>
+        </member>
+        <member name="P:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.RightClickTooltip">
+            <summary>Can be overriden to replace the text on the right click tooltip line. Probably shouldn't be.</summary>
+        </member>
+        <member name="P:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.JumpTooltip">
+            <summary>Can be overriden to replace the text on the jump tooltip line. Probably shouldn't be.</summary>
+        </member>
+        <member name="P:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.PassiveTooltip">
+            <summary>Can be overriden to replace the text on the passive tooltip line. Probably shouldn't be.</summary>
+        </member>
+        <member name="P:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.TypeTooltip">
+            <summary>Can be overriden to replace the text on wildshape type tooltip line. Probably shouldn't be.</summary>
+        </member>
+        <member name="P:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.TextureShapeshift">
+            <summary>Path to this wildshape's textures. Probably shouldn't be overriden.</summary>
+        </member>
+        <member name="P:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.TextureIcon">
+            <summary>Path to this wildshape's icon texture. Probably shouldn't be overriden.</summary>
+        </member>
+        <member name="P:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.TextureUI">
+            <summary>Path to this wildshape's UI front texture. Probably shouldn't be overriden.</summary>
+        </member>
+        <member name="P:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.TextureUIBack">
+            <summary>Path to this wildshape's UI back texture. Probably shouldn't be overriden.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftPreDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch,Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Rectangle,Microsoft.Xna.Framework.Graphics.SpriteEffects,Terraria.Player,Microsoft.Xna.Framework.Color)">
+            <summary>Called before drawing the shapeshift anchor if it is going to be drawn.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftPostDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch,Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Rectangle,Microsoft.Xna.Framework.Graphics.SpriteEffects,Terraria.Player,Microsoft.Xna.Framework.Color)">
+            <summary>Called after drawing the shapeshift anchor</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftShouldDraw(Terraria.Projectile,Terraria.Player,Microsoft.Xna.Framework.Color@)">
+            <summary>Called before drawing the shapeshift anchor, return false to prevent it. Defaults to true;</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftAnchorAI(Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Terraria.Player,OrchidMod.OrchidShapeshifter)">
+            <summary>Called every frame as the main AI for this wildshape's Anchor projectile.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftBuffs(Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Terraria.Player,OrchidMod.OrchidShapeshifter)">
+            <summary>Called after PostUpdateEquips, change player stats here if necessary.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftOnLeftClick(Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Terraria.Player,OrchidMod.OrchidShapeshifter)">
+            <summary>What happens after a successful left click input (only called on the owner's client).</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftOnRightClick(Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Terraria.Player,OrchidMod.OrchidShapeshifter)">
+            <summary>What happens after a successful right click input (only called on the owner's client)</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftOnJump(Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Terraria.Player,OrchidMod.OrchidShapeshifter)">
+            <summary>What happens after a successful jump input (only called on the owner's client).</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftAnchorOnShapeshift(Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Terraria.Player,OrchidMod.OrchidShapeshifter)">
+            <summary>Called right after the player transforms.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftAnchorOnShapeshiftFast(Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Terraria.Player,OrchidMod.OrchidShapeshifter)">
+            <summary>Called when the player "fast transforms", which happens if they haven't changed shapes in a few seconds. Override fields here for faster gameplay (eg: make the player starts with a double jump ready).</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.OnKillAnchor(Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Terraria.Player,OrchidMod.OrchidShapeshifter)">
+            <summary>Makes stuff happen when the anchor disappears (player leaves shapeshift form).</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftCanLeftClick(Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Terraria.Player,OrchidMod.OrchidShapeshifter)">
+            <summary>If true, will use this wildshape's left click ability (calls ShapeshiftOnRightClick).</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftCanRightClick(Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Terraria.Player,OrchidMod.OrchidShapeshifter)">
+            <summary>If true, will use this wildshape's right click ability (calls ShapeshiftOnRightClick).</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftCanJump(Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Terraria.Player,OrchidMod.OrchidShapeshifter)">
+            <summary>If true, will use this wildshape's jump ability (calls ShapeshiftOnJump). Defaults to a simple player.controlJump.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftFreeDodge(Terraria.Player.HurtInfo,Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Terraria.Player,OrchidMod.OrchidShapeshifter)">
+            <summary>Called when the player takes damage, return true to not take the hit (used for some effects like the tortoise block).</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftModifyHurt(Terraria.Player.HurtModifiers@,Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Terraria.Player,OrchidMod.OrchidShapeshifter)">
+            <summary>Allows modifying damage taken while shapeshifted.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftOnHitByProjectile(Terraria.Projectile,Terraria.Player.HurtInfo,Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Terraria.Player,OrchidMod.OrchidShapeshifter)">
+            <summary>Called after taking a hit from a Projectile.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftOnHitByNPC(Terraria.NPC,Terraria.Player.HurtInfo,Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Terraria.Player,OrchidMod.OrchidShapeshifter)">
+            <summary>Called after taking a hit from a NPC.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftOnHitByAnything(Terraria.Player.HurtInfo,Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Terraria.Player,OrchidMod.OrchidShapeshifter)">
+            <summary>Called after taking a hit from a Anything.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftOnHitNPC(Terraria.NPC,Terraria.NPC.HitInfo,System.Int32,Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Terraria.Player,OrchidMod.OrchidShapeshifter)">
+            <summary>Called upon dealing "contact" damage to a NPC with the shapeshift anchor.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftOnApplyBleed(Terraria.NPC,Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Terraria.Player,OrchidMod.OrchidShapeshifter,OrchidMod.Content.Shapeshifter.ShapeshifterBleed)">
+            <summary>Called after a bleed has been applied to a NPC.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.ShapeshiftGetUIInfo(Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Terraria.Player,OrchidMod.OrchidShapeshifter,System.Int32@,System.Int32@)">
+            <summary>Called locally when drawing the UI. Will draw uiCount "clear" symbols on top of uiCountMax "background" symbols.</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.SafeHoldItem(Terraria.Player)">
+            <summary>ModItem.HoldItem(Player player).</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.GetColor(Microsoft.Xna.Framework.Color,Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Terraria.Player,OrchidMod.OrchidShapeshifter,System.Boolean)">
+            <summary>Color used to draw the shapeshift anchor. Defaults to player.GetImmuneAlphaPure(inputColor, 0f);</summary>
+        </member>
+        <member name="M:OrchidMod.Content.Shapeshifter.OrchidModShapeshifterShapeshift.GetColorGlow(Microsoft.Xna.Framework.Color,Terraria.Projectile,OrchidMod.Content.Shapeshifter.ShapeshifterShapeshiftAnchor,Terraria.Player,OrchidMod.OrchidShapeshifter)">
+            <summary>Color used to draw the shapeshift anchor glowmask. Defaults to player.GetImmuneAlphaPure(Color.White, 0f);</summary>
         </member>
         <member name="F:OrchidMod.OrchidShaman.NearestTarget">
             <summary> Array position in <c>Main.NPC</c> of the nearest valid target NPC for ShamanWeapons to attack. Set to -1 by default and if the player has no active ShamanWeapons.</summary>
@@ -393,6 +1341,140 @@
         </member>
         <member name="P:OrchidMod.OrchidShaman.HasEarthTarget">
             <summary> Alias for <c>EarthTarget != Vector2.Zero</c></summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterIncompatibleProjectiles">
+            <summary>These projectile IDs will kill the wildshape anchor if they are owned by the local player </summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterIncompatibleBuffs">
+            <summary>These buff IDs will kill the wildshape anchor if they affect the local player </summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterAuthorizedDrawLayers">
+            <summary>Internal Names of DrawLayers that remain visible when shapeshifted. Should be considered when handling cross-mod compatiblity.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterPredatorBleedPotency">
+            <summary>Damage per stack of the predator attack bleed (applied by all attacks while shapeshifted into a predator). Be careful not to override this with a lower value. Defaults to 0.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterPredatorBleedMaxStacks">
+            <summary>Maximum stacks of the predator attack bleed (applied by all attacks while shapeshifted into a predator). Be careful not to override this with a lower value. Defaults to 0.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterMeleeSpeedBonus">
+            <summary>Added to shapeshifter melee speed multipliers. Defaults to 0f.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterMoveSpeedBonus">
+            <summary>Additive, scales logarithmically. Can be used as shapeshifter-only alternative to player.movespeed, should be preferred. Defaults to 0f.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterMoveSpeedBonusFlat">
+            <summary>Additive, added to the final shapeshifter movespeed. Defaults to 0f.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterMoveSpeedBonusFinal">
+            <summary>Multiplicative, used before adding ShapeshifterMoveSpeedBonusFlat. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterMoveSpeedBonusGrounded">
+            <summary>Multiplicative, used for effects that increase grounded speed like magiluminescence. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterMoveSpeedBonusNotGrounded">
+            <summary>Multiplicative, used for effects that increase the movespeed of "flying" wildshapes, at all times. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterMoveSpeedMiscOverride">
+            <summary>Multiplies the speed of other means of movement, like dashes. Should generally not be edited as dashes that should be affected by movespeed already are. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterMoveSpeedDecelerate">
+            <summary>Deceleration multiplier for shapeshifter movement. Allows making slippery surfaces, or dashes. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterMoveSpeedAccelerate">
+            <summary>Acceleration multiplier for shapeshifter movement, does not modify top speed and should be used for stuff like slippery surfaces. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterHealingBonus">
+            <summary>Multiplicative, affects the direct healing provided by shapeshifter effects (generally possesed by Warden wildshapes). Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterJumpSpeed">
+            <summary>Multiplicative, affects most jumps for various wildshapes. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterGravity">
+            <summary>Multiplicative, mostly used for movement in liquids. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterMaxFallSpeed">
+            <summary>Multiplicative, mostly used for movement in liquids. Defaults to 1f.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterSetHarpy">
+            <summary>Harpy armor set bonus (causes feathers to fall when attacking from above)</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterSetPyre">
+            <summary>Pyre armor set bonus (creates flames around thep layer when dealing damage)</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterSageDamageOnHit">
+            <summary>If true, hitting new targets while shapeshifted into a Sage increase feral damage (Deepwater Locket locket effect).</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterSurvival">
+            <summary>Used by the survival potion.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterHairpin">
+            <summary>If true, uses the player hair color on compatible wildshapes.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterShawlFeather">
+            <summary>Used only for dash visuals</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterShawlWind">
+            <summary>Used only for dash visuals</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterShawlPhoenix">
+            <summary>Used only for dash visuals</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterHookDash">
+            <summary>Shawl accessories tree effect. If >0f, the player gains the ability to dash while shapeshifted.
+            This is the base speed at which the player will be launched. Be careful not to override this with a lower value. Defaults to 0f.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterHarness">
+            <summary>Youxia Harness effect, this is the base damage of the projectile fired.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterFastShapeshiftTimer">
+            <summary>Goes up by 1 every frame, up to 300. Shapeshifting removes 300 from this value. If equal to 300 when shapeshifter, reduces cooldowns for a more smooth gameplay.
+            If below 0 while shapeshifted, applied the Shapeshifting Sickness debuff, reducing various stats.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterPredatorFoxSpeed">
+            <summary>Used by the Ice Fox wildshape to increase speed upon transforming.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterSageDamageOnHitCount">
+            <summary>Used by the Deepwater Locket effect (ShapeshifterSageDamageOnHit)</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterSageDamageOnHitTimer">
+            <summary>Used by the Deepwater Locket effect (ShapeshifterSageDamageOnHit)</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterSageDamageOnHitTargets">
+            <summary>Used by the Deepwater Locket effect (ShapeshifterSageDamageOnHit)</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterSetHarpyDamagePool">
+            <summary>Used to spawn the Harpy set feathers (ShapeshifterShawlFeather)</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterSetTimer">
+            <summary>Used as a time by various shapeshifter armor sets.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterSetPyreDamagePool">
+            <summary>Used to spawn the Pyre set flames (ShapeshifterSetPyre)</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterShawlCooldown">
+            <summary>Cooldown for the shawl accessory dashes</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterHookInputTimer">
+            <summary>How long has the player been holding the dash key?</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterNoDecelerationTimer">
+            <summary>Lowers deceleration while >0. Used by dashes.</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterHookDashSync">
+            <summary>Synced so other clients can display what happens at the start of a hook dash</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterUIDashTimer">
+            <summary>Should be set to 30, used to display an arrow when the dash is available</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterUITransformationTimer">
+            <summary>Should be set to 30, used to display a fox icon when a transformation is ready or the player transforms too much</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterScrollTransformationBuffer">
+            <summary>Prevents transforming while the player is scrolling</summary>
+        </member>
+        <member name="F:OrchidMod.OrchidShapeshifter.ShapeshifterControlMountRelease">
+            <summary>Used to quickly transform while no mount is equipped. Resets to false every frame is Player.controlMount is not true.</summary>
         </member>
     </members>
 </doc>

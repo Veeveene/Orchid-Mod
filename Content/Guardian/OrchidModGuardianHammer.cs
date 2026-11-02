@@ -193,14 +193,14 @@ namespace OrchidMod.Content.Guardian
 
 		public sealed override void HoldItem(Player player)
 		{
-			var guardian = player.Guardian();
+			var guardian = Guardian(player);
 			guardian.GuardianDisplayUI = 300;
 			if (player.ownedProjectileCounts[AnchorType] == 0 && guardian.GuardianItemCharge > 0) guardian.GuardianItemCharge = 0; // Failsafe
 		}
 
 		public override bool? UseItem(Player player)
 		{
-			var guardian = player.GetModPlayer<OrchidGuardian>();
+			var guardian = Guardian(player);
 			bool validRMBInput = !CannotBlock && Main.mouseRight && Main.mouseRightRelease && guardian.UseSlam(SlamBlockCost, true) && guardian.UseGuard(GuardBlockCost, true);
 
 			if (validRMBInput || Main.mouseLeft)
@@ -272,7 +272,7 @@ namespace OrchidMod.Content.Guardian
 				}
 			}
 
-			var guardian = player.GetModPlayer<OrchidGuardian>();
+			var guardian = Guardian(player);
 
 			bool validRMBInput = false;
 			if (anchors == null && !CannotBlock && Main.mouseRight && Main.mouseRightRelease)
@@ -285,7 +285,7 @@ namespace OrchidMod.Content.Guardian
 				}
 			}
 
-			if ((player.ownedProjectileCounts[AnchorType] > 0 && (offHandCheck || !validRMBInput)) || (!(Main.mouseRight && Main.mouseRightRelease && player.GetModPlayer<OrchidGuardian>().UseGuard(1, true)) && !Main.mouseLeft)) return false;
+			if ((player.ownedProjectileCounts[AnchorType] > 0 && (offHandCheck || !validRMBInput)) || (!(Main.mouseRight && Main.mouseRightRelease && guardian.UseGuard(1, true)) && !Main.mouseLeft)) return false;
 
 			if (validRMBInput || Main.mouseLeft)
 			{
@@ -299,11 +299,10 @@ namespace OrchidMod.Content.Guardian
 		/// <summary>Returns the whoamI of the warhammer anchors used by this item. When dual wielding, the 2nd value of the array will the the whoam of the offhand warhammer, else, it will be -1. Returns null if no hammers exist.</summary>
 		public int[] GetAnchors(Player player)
 		{
-			var projectileType = ModContent.ProjectileType<GuardianHammerAnchor>();
 			int[] anchors = [-1, -1];
 			foreach (Projectile proj in Main.projectile)
 			{
-				if (proj.active && proj.owner == player.whoAmI && proj.type == projectileType)
+				if (proj.active && proj.owner == player.whoAmI && proj.type == AnchorType)
 				{
 					if (anchors[0] == -1)
 					{
@@ -328,7 +327,7 @@ namespace OrchidMod.Content.Guardian
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips)
 		{
-			var guardian = Main.LocalPlayer.GetModPlayer<OrchidGuardian>();
+			var guardian = Guardian();
 			// TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
 			// if (tt != null)
 			// {
@@ -389,6 +388,8 @@ namespace OrchidMod.Content.Guardian
 			{
 				OverrideColor = new Color(175, 255, 175)
 			});
+			
+			SafeModifyTooltips(tooltips, guardian);
 		}
 	}
 }

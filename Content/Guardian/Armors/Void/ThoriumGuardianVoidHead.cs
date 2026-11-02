@@ -32,7 +32,7 @@ namespace OrchidMod.Content.Guardian.Armors.Void
 
 		public override void UpdateEquip(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = Guardian(player);
 			modPlayer.GuardianGuardMax++;
 			player.GetDamage<GuardianDamageClass>() += 0.21f;
 		}
@@ -44,7 +44,7 @@ namespace OrchidMod.Content.Guardian.Armors.Void
 
 		public override void UpdateArmorSet(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = Guardian(player);
 			player.setBonus = SetBonusText.Value;
 			modPlayer.GuardianVoid = true;
 			if (!player.HasBuff<GuardianRegenPotionBuff>()) modPlayer.GuardianRegenThreshold = 1f / modPlayer.GuardianGuardMax;

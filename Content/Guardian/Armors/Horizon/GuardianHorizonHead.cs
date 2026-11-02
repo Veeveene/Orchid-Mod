@@ -32,7 +32,7 @@ namespace OrchidMod.Content.Guardian.Armors.Horizon
 
 		public override void UpdateEquip(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = Guardian(player);
 			modPlayer.modPlayer.OrchidDamageResistance += 0.15f;
 			player.GetDamage<GuardianDamageClass>() += 0.15f;
 			player.GetCritChance<GuardianDamageClass>() += 15;
@@ -46,7 +46,7 @@ namespace OrchidMod.Content.Guardian.Armors.Horizon
 
 		public override void UpdateArmorSet(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = Guardian(player);
 			player.setBonus = SetBonusText.Value;
 			modPlayer.GuardianHorizon = true;
 		}

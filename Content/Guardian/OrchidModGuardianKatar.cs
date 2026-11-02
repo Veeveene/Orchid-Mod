@@ -48,8 +48,6 @@ namespace OrchidMod.Content.Guardian
 		public virtual void PostDrawKatar(SpriteBatch spriteBatch, Projectile projectile, Player player, bool offHandKatar, Color lightColor) { }
 		/// <summary> Called before drawing the katar anchor projectile. Return false to prevent normal draw code from running. </summary>
 		public virtual bool PreDrawKatar(SpriteBatch spriteBatch, Projectile projectile, Player player, bool offHandKatar, ref Color lightColor) { return true; }
-		/// <summary> Called at the end of ModifyTooltips, allowing for further tooltip changes. </summary>
-		public virtual void SafeModifyTooltips(List<TooltipLine> tooltips) { }
 		/// <summary> Called when drawing the katar jab projectiles color. </summary>
 		public virtual Color GetColor() => Color.White;
 		/// <summary> Responsible for playing the sound when the player begins guarding with the weapon. Default behavior is <c>SoundEngine.PlaySound(SoundID.DD2_JavelinThrowersAttack.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), player.Center);</c> </summary>
@@ -115,7 +113,7 @@ namespace OrchidMod.Content.Guardian
 			OrchidGlobalItemPerEntity orchidItem = Item.GetGlobalItem<OrchidGlobalItemPerEntity>();
 			orchidItem.guardianWeapon = true;
 
-			this.SafeSetDefaults();
+			SafeSetDefaults();
 			Item.useAnimation = Item.useTime;
 		}
 
@@ -152,7 +150,7 @@ namespace OrchidMod.Content.Guardian
 			int[] anchors = GetAnchors(player);
 			if (anchors != null)
 			{
-				OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+				OrchidGuardian guardian = Guardian(player);
 				bool swap = ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletInputs;
 				bool punchHold = swap ? Main.mouseRight : Main.mouseLeft;
 				bool punchTap = swap ? Main.mouseRightRelease : Main.mouseLeftRelease;
@@ -281,14 +279,14 @@ namespace OrchidMod.Content.Guardian
 		public sealed override void HoldItem(Player player)
 		{
 			var projectileType = ModContent.ProjectileType<GuardianKatarAnchor>();
-			var guardian = player.GetModPlayer<OrchidGuardian>();
+			var guardian = Guardian(player);
 			guardian.GuardianDisplayUI = 300;
 			int count = player.ownedProjectileCounts[projectileType];
 			if (count < 2)
 			{
 				if (count == 1)
 				{
-					var proj = Main.projectile.First(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
+					var proj = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
 					if (proj != null && proj.ModProjectile is GuardianKatarAnchor) proj.Kill();
 				}
 
@@ -370,7 +368,7 @@ namespace OrchidMod.Content.Guardian
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips)
 		{
-			var guardian = Main.LocalPlayer.GetModPlayer<OrchidGuardian>();
+			var guardian = Guardian();
 			// TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
 			// if (tt != null)
 			// {
@@ -394,7 +392,7 @@ namespace OrchidMod.Content.Guardian
 				OverrideColor = new Color(175, 255, 175)
 			});
 
-			SafeModifyTooltips(tooltips);
+			SafeModifyTooltips(tooltips, guardian);
 		}
 
 		public virtual Texture2D GetKatarTexture(Player player, Projectile anchor, bool OffHandGauntlet, out Rectangle? drawRectangle, int frame = 0)

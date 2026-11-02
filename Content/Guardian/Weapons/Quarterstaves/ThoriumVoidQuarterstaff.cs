@@ -50,7 +50,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			float progress = (player.miscCounterNormalized + offset) * speed;
 			Color lightColor = dark ? new Color(188, 0, 163) : new Color(255, 58, 228);
 			Color darkColor = dark ? new Color(57, 0, 86) : new Color(120, 0, 181);
-			return Color.Lerp(lightColor, darkColor, Utils.Turn01ToCyclic010(progress));
+			return Color.Lerp(lightColor, darkColor, Utils.Turn01ToCyclic010(progress % 1f));
 		}
 		
 		public override void SafeSetStaticDefaults()
@@ -253,10 +253,8 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			if (!jabAttack && !counterAttack && HitNPCIndex != -1 && HitNPCLockTimer > 0 && target.whoAmI != HitNPCIndex) modifiers.FinalDamage *= 0.75f;
 		}
 
-		public override void ModifyTooltips(List<TooltipLine> tooltips)
+		public override void SafeModifyTooltips(List<TooltipLine> tooltips, OrchidGuardian guardian)
 		{
-			base.ModifyTooltips(tooltips);
-			
 			int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Knockback"));
 			tooltips.Insert(index + 1, new TooltipLine(Mod, "GuardianGrants", Language.GetTextValue(Mod.GetLocalizationKey("Items.ThoriumVoidQuarterstaff.Grants")))
 			{
@@ -477,7 +475,8 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 
 		public override void PostDrawQuarterstaff(SpriteBatch spriteBatch, Projectile projectile, Player player, Color lightColor, SpriteEffects effects)
 		{
-			if (player == Main.LocalPlayer && player.Guardian(out OrchidGuardian guardian).GuardianItemCharge >= 180f && projectile.ai[0] is 0 or 1)
+			OrchidGuardian guardian = Guardian(player);
+			if (IsLocalPlayer(player) && guardian.GuardianItemCharge >= 180f && projectile.ai[0] is 0 or 1)
 			{
 				spriteBatch.End(out SpriteBatchSnapshot snapshot);
 				spriteBatch.Begin(snapshot with { BlendState = BlendState.Additive, RasterizerState = RasterizerState.CullNone });
@@ -494,7 +493,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 				if (guardian.GuardianDebugVisuals > 0) spriteBatch.DrawString(FontAssets.CombatText[0].Value, finalPoint.Floor().ToString(), player.VisualCenter() - Vector2.UnitY * 24 * player.gravDir - Main.screenPosition, Color.MediumPurple, 0, default, 1f, (player.gravDir < 0 ? SpriteEffects.FlipVertically : SpriteEffects.None), 0f);
 
 				Vector2 chainDirection = finalPoint - player.VisualMountedCenter();
-				Vector2 segment = Vector2.Normalize(chainDirection) * TextureLine.Height * 0.3f;
+				Vector2 segment = Vector2.Normalize(chainDirection) * TextureLine.Height * 0.15f;
 				
 				int nbSegments = 0;
 

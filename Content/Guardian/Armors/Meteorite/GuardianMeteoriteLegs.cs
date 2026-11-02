@@ -18,8 +18,6 @@ namespace OrchidMod.Content.Guardian.Armors.Meteorite
 
 		public override void UpdateEquip(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
-			//modPlayer.GuardianRecharge -= 0.1f;
 			player.moveSpeed += 0.1f;
 			player.GetAttackSpeed(DamageClass.Melee) += 0.1f;
 		}

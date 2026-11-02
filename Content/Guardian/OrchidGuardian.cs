@@ -68,6 +68,7 @@ namespace OrchidMod.Content.Guardian
 		public delegate void OnTryBlockAction(Projectile projectile, Projectile anchor);
 		public static Dictionary<int, OnTryBlockAction> ProjectilesBlockBlacklist;
 		public static void AddProjectileToBlockBlacklist(int type, OnTryBlockAction onTryBlock = null) => ProjectilesBlockBlacklist.Add(type, onTryBlock);
+		public static void AddProjectileToBlockBlacklist<T>(OnTryBlockAction onTryBlock = null) where T : ModProjectile => ProjectilesBlockBlacklist.Add(ModContent.ProjectileType<T>(), onTryBlock);
 		
 		public OrchidPlayer modPlayer;
 
@@ -99,7 +100,8 @@ namespace OrchidMod.Content.Guardian
 		public float GuardianDeflectStunDuration = 1f;
 		public float GuardianMeleeSpeed = 1f; // Edited via reforges. It multiplies the player MeleeSpeed in postupdate
 		public float GuardianWeaponScale = 1f; // Multiplies pavise scale
-		public float GuardianChargeSpeed = 1f; // Multiplies weapon charge speed without necessarily affecting MeleeSpeed 
+		/// <summary> Multiplies weapon charging speed without affecting melee speed. Defaults to 1f.</summary>
+		public float GuardianChargeSpeed = 1f;
 
 		// Set effects, accessories, misc
 
@@ -1425,19 +1427,6 @@ namespace OrchidMod.Content.Guardian
 				Player.immune = true;
 
 				Projectile anchor = null;
-
-				/*
-				int[] anchorTypes = [ModContent.ProjectileType<GuardianQuarterstaffAnchor>(), ModContent.ProjectileType<GuardianGauntletAnchor>(), ModContent.ProjectileType<GuardianHorizonLanceAnchor>()];
-
-				foreach (int type in anchorTypes)
-				{
-					if (Player.ownedProjectileCounts[type] > 0)
-					{
-						anchor = Main.projectile.First(i => i.active && i.owner == Player.whoAmI && (i.type == type));
-						break;
-					}
-				}
-				*/
 
 				foreach (Projectile anchorProjectile in Main.projectile)
 				{

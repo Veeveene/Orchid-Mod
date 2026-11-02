@@ -1,7 +1,9 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using Humanizer;
+using OrchidMod.Utilities;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace OrchidMod.Content.Guardian.Accessories;
 
@@ -21,7 +23,7 @@ public abstract class StaffRocket(int? variant = null) : OrchidModGuardianEquipa
 	
 	public override void UpdateAccessory(Player player, bool hideVisual)
 	{
-		OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+		OrchidGuardian modPlayer = Guardian(player);
 		modPlayer.GuardianStaffRocket = Variant;
 	}
 	
@@ -39,6 +41,12 @@ public abstract class StaffRocket(int? variant = null) : OrchidModGuardianEquipa
 		.AddRecipeGroup(RecipeGroupID.IronBar, 5)
 		.AddTile(TileID.Anvils)
 		.Register();
+	}
+
+	public override void SafeModifyTooltips(List<TooltipLine> tooltips, OrchidGuardian guardian)
+	{
+		TooltipLine tt = tooltips.Find(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Tooltip0"));
+		if (tt != null) tt.Text = tt.Text.FormatWith(OrchidUtils.GetClickInfoTooltip(guardian.GauntletInputSwap, false)).FirstCharToUpper();
 	}
 }
 	public class StaffRocketRed() : StaffRocket(1);
