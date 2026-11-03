@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OrchidMod.Assets;
+using OrchidMod.Common;
 using OrchidMod.Common.Attributes;
 using OrchidMod.Common.ModObjects;
 using OrchidMod.Common.Global.Projectiles;
@@ -144,8 +145,8 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 					{
 						if (ShouldDrawRiftTrail && projectile.ai[0] < 31 && projectile.ai[2] == 0)
 						{
-							OldPositionTrail.Add(tipPosition);
-							OldSizeTrail.Add(0.05f + 0.95f * (float)Math.Sin(0.0785f * (projectile.ai[0] - 1)));
+							OldPositionTrail.Add(tipPosition + player.velocity * 0.333f * (anchor.TimeSpent % 3 - 1));
+							OldSizeTrail.Add((0.05f + 0.95f * (float)Math.Sin(0.0785f * (projectile.ai[0] - 6))));
 						}
 						if (OldPositionTrail.Count > 20)
 						{
@@ -156,7 +157,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 						if (HitNPCIndex != -1 && Main.npc[HitNPCIndex] is {} target && OrchidModProjectile.IsValidTarget(target) && HitNPCLockTimer > 0)
 						{
 							Vector2 targetPoint = target.Center + target.velocity + HitNPCLockVector;
-							if (!Collision.SolidCollision(targetPoint - player.Size * 0.5f, player.width, player.height))
+							if (Collision.IsClearSpotTest(targetPoint - player.Size * 0.5f, 16f, player.width, player.height, true, true, (int)player.gravDir, true, true))
 								player.Center = target.Center + target.velocity + HitNPCLockVector;
 							else HitNPCLockTimer = -1;
 							HitNPCLockTimer--;
@@ -205,46 +206,53 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 		}
 
 		public override void OnAttack(Player player, OrchidGuardian guardian, Projectile projectile, bool jabAttack, bool counterAttack) 
-		{ 
-			if (!jabAttack && !counterAttack)
+		{
+			if (projectile.ModProjectile is GuardianQuarterstaffAnchor anchor)
 			{
-				Vector2 oldCenter = projectile.Center;
-				projectile.scale *= 1.25f;
-				projectile.width = (int)(projectile.width * 1.25f);
-				projectile.height = (int)(projectile.height * 1.25f);
-				projectile.Center = oldCenter;
-
-        		Vector2 tipPosition = projectile.Center - Vector2.UnitY.RotatedBy(projectile.rotation + MathHelper.PiOver4) * projectile.width * 0.5f;
-				if (player.direction == 1) tipPosition.X -= 12;
-
-				if (OrchidMod.ThoriumMod.TryFind("VoidHeartDust", out ModDust dust))
-					for (int i = 0; i < 10; i++) Dust.NewDustDirect(player.Center, 24, 24, dust.Type, Scale: 3f);
-
-				Vector2 target = CalcFirstThingInLine(player, 600, 1f, out float width, out NPC hitNPC);
-				
-				if (IsLocalPlayer(player)) Main.SetCameraLerp(0.1f, 10);
-
-				player.RemoveAllGrapplingHooks();
-					
-				guardian.modPlayer.SetDodgeImmuneTime(15);
-
-				Vector2 oldPosition = player.Center;
-				Vector2 segment = Vector2.Normalize(target - player.Center);
-				Vector2 finalPosition = target - player.Size * 0.5f + segment * width;
-				if (hitNPC != null)
+				if (!jabAttack && !counterAttack)
 				{
-					finalPosition = hitNPC.Center + hitNPC.DirectionTo(player.Center) * (width + (ShouldDrawRiftTrail ? 48 : 36) * projectile.scale);
-					HitNPCIndex = hitNPC.whoAmI;
-					HitNPCLockTimer = 60;
-					HitNPCLockVector = finalPosition - hitNPC.Center;
-				}
-				player.DoQueenSlimeHookTeleport(finalPosition.Floor());
-				projectile.Center += (player.position - oldPosition);
-				projectile.netUpdate = true;
+					anchor.TimeSpent = 0;
 
-				projectile.localAI[0] = 30;
-			
-				SoundEngine.PlaySound(SoundID.Item8, player.Center);
+					Vector2 oldCenter = projectile.Center;
+					projectile.scale *= 1.25f;
+					projectile.width = (int)(projectile.width * 1.25f);
+					projectile.height = (int)(projectile.height * 1.25f);
+					projectile.Center = oldCenter;
+
+					Vector2 tipPosition = projectile.Center - Vector2.UnitY.RotatedBy(projectile.rotation + MathHelper.PiOver4) * projectile.width * 0.5f;
+					if (player.direction == 1) tipPosition.X -= 12;
+
+					if (OrchidMod.ThoriumMod.TryFind("VoidHeartDust", out ModDust dust))
+						for (int i = 0; i < 10; i++)
+							Dust.NewDustDirect(player.Center, 24, 24, dust.Type, Scale: 3f);
+
+					Vector2 target = CalcFirstThingInLine(player, 600, 1f, out float width, out NPC hitNPC);
+
+					if (IsLocalPlayer(player)) Main.SetCameraLerp(0.1f, 10);
+
+					player.RemoveAllGrapplingHooks();
+
+					guardian.modPlayer.SetDodgeImmuneTime(15);
+
+					Vector2 oldPosition = player.Center;
+					Vector2 segment = Vector2.Normalize(target - player.Center);
+					Vector2 finalPosition = target - player.Size * 0.5f + segment * width;
+					if (hitNPC != null)
+					{
+						finalPosition = hitNPC.Center + hitNPC.DirectionTo(player.Center) * (width + (ShouldDrawRiftTrail ? 42 : 32) * projectile.scale);
+						HitNPCIndex = hitNPC.whoAmI;
+						HitNPCLockTimer = 40;
+						HitNPCLockVector = finalPosition - hitNPC.Center;
+					}
+
+					player.DoQueenSlimeHookTeleport(finalPosition.Floor());
+					projectile.Center += (player.position - oldPosition);
+					projectile.netUpdate = true;
+
+					projectile.localAI[0] = 30;
+
+					SoundEngine.PlaySound(SoundID.Item8, player.Center);
+				}
 			}
 		}
 
@@ -276,13 +284,10 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 
 				float launchAngle = MathHelper.WrapAngle(Vector2.Normalize(player.Center - target.Center).ToRotation());
 				float launchPower = 13.5f;
-				bool reduceGain = player.controlDown;
-				bool increaseGain = player.controlUp;;
+				bool reduceGain = player.controlRight;
+				bool increaseGain = player.controlLeft;
 
 				if (player.Center.X < target.Center.X ^ player.gravDir == -1) (reduceGain, increaseGain) = (increaseGain, reduceGain);
-				
-				if (increaseGain) launchAngle += 22.5f;
-				else if (reduceGain) launchAngle -= 22.5f;
 
 				player.velocity = Vector2.UnitX.RotatedBy(launchAngle) * launchPower;
 				player.wingTime += player.wingTimeMax * 0.25f;
@@ -315,7 +320,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			if (!jabAttack && !counterAttack)
 			{
 				if (player.HasBuff<GuardianVoidQuarterstaffBuff>())
-					guardian.GuardianGuardRecharging += 0.5f;
+					guardian.GuardianGuardRecharging += 0.25f;
 				else guardian.AddGuard();
 			}
 
@@ -328,6 +333,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 				if (HasChargedHit)
 				{
 					ShouldDrawRiftTrail = true;
+					HitNPCLockVector = Vector2.Zero;
 				}
 				else
 				{
@@ -371,10 +377,10 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 					if (nearby.Length > 0) target = nearby[Main.rand.Next(nearby.Length)];
 					else goto ResetBlobStacks;
 				}
-				// for (int i = 0; i < guardian.GuardianVoidQuarterstaff; i++)
-				// {
-				// 	SpawnVoidBlobs(player, target, guardian.GetGuardianDamage(Item.damage * 0.4f));
-				// }
+				for (int i = 0; i < 7; i++)
+				{
+					SpawnVoidBlobs(player, target, guardian.GetGuardianDamage(Item.damage * 0.333f));
+				}
 				ResetBlobStacks: 
 				guardian.GuardianVoidQuarterstaff = 0;
 			} 
@@ -441,7 +447,6 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 
 			if (OldPositionTrail.Count > 0)
 			{
-				Vector2 tipPos = projectile.Center - Vector2.UnitY.RotatedBy(projectile.rotation + MathHelper.PiOver4) * projectile.width * projectile.scale * 0.1f;
 				spriteBatch.End(out SpriteBatchSnapshot snapshot);
 				SpriteBatchSnapshot glowSnapshot = snapshot with { BlendState = BlendState.Additive, RasterizerState = RasterizerState.CullNone };
 				spriteBatch.Begin(glowSnapshot);
@@ -449,16 +454,19 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 				for (int i = 0; i < OldPositionTrail.Count; i++)
 				{
 					Color color = Lighting.GetColor(OldPositionTrail[i].ToTileCoordinates(), Color.Lerp(new Color(57, 0, 86), new Color(188, 0, 163), i / 20f));
-					float scale = Utils.WrappedLerp(0.4f, 1f, i / 20f) * projectile.scale * OldSizeTrail[i];
+					float scale = Utils.WrappedLerp(0.4f, 1.2f, i / 20f) * projectile.scale * OldSizeTrail[i];
 
+					Vector2 offSet = Main.rand.NextVector2Unit() * scale;
+					
 					Vector2 glowPos = OldPositionTrail[i] - Main.screenPosition;
 					if (i < OldPositionTrail.Count - 1)
 						glowPos -= Vector2.Normalize(OldPositionTrail[i + 1] - OldPositionTrail[i]) * 0.5f;
-					spriteBatch.Draw(TextureTrailGlow, glowPos, null, color * 0.8f, 0, TextureTrailGlow.Size() * 0.5f, scale * 0.75f, SpriteEffects.None, 0f);
+					glowPos += offSet * 2f;
+					spriteBatch.Draw(TextureTrailGlow, glowPos, null, color * 0.8f, 0, TextureTrailGlow.Size() * 0.5f, scale * 0.667f, SpriteEffects.None, 0f);
 
 					spriteBatch.End();
 					spriteBatch.Begin(snapshot);
-					spriteBatch.Draw(TextureTrail, OldPositionTrail[i] - Main.screenPosition, null, color, 0, TextureTrail.Size() * 0.5f, scale * 0.5f, SpriteEffects.None, 0f);
+					spriteBatch.Draw(TextureTrail, OldPositionTrail[i] + offSet * 4f - Main.screenPosition, null, color, 0, TextureTrail.Size() * 0.5f, scale * 0.5f, SpriteEffects.None, 0f);
 
 					if (i != OldPositionTrail.Count - 1)
 					{
@@ -551,7 +559,19 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			{
 				Vector2 point = finalPoint + velocity;
 
-				hitNPC = Main.npc.FirstOrDefault(npc => OrchidModProjectile.IsValidTarget(npc) && npc.CircularizeHitbox(2f).HasPointInCircle(point));
+
+				hitNPC = Main.npc.FirstOrDefault(npc =>
+				{
+					if (!OrchidModProjectile.IsValidTarget(npc)) return false;
+					float lenience = 1.5f;
+
+					bool isBoss = npc.boss || (npc.realLife != -1 && Main.npc[npc.realLife].boss);
+					if (isBoss) lenience *= 2;
+					// Disincentivise 
+					float protectionRatio = Math.Max(npc.defense - player.GetWeaponArmorPenetration(player.HeldItem), 0) / (float)player.GetWeaponDamage(player.HeldItem);
+					if (protectionRatio > 1) lenience *= (isBoss ? 0.125f : 0.5f) * (1 / protectionRatio);
+					return npc.CircularizeHitbox(lenience).HasPointInCircle(point);
+				});
 				if (hitNPC != null)
 				{
 					width = hitNPC.GetLargestDimension() * 0.5f;
