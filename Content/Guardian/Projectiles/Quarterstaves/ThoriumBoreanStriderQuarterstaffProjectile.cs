@@ -100,7 +100,7 @@ public class ThoriumBoreanStriderQuarterstaffProjectile : OrchidModGuardianProje
 					Projectile.localNPCHitCooldown = 20;
 					if (Projectile.ai[1] != 1)
 					{
-						HitCount = 20;
+						HitCount = 10;
 						Projectile.timeLeft = (int)Guardian.GetParryDuration(QuarterstaffItem, 120) + 1;
 					}
 
@@ -203,12 +203,12 @@ public class ThoriumBoreanStriderQuarterstaffProjectile : OrchidModGuardianProje
 
 		if (Strong)
 		{
-			int toAdd = 2;
-			if (target.aiStyle == NPCAIStyleID.Worm && target.type != NPCID.SolarCrawltipedeTail && target.type != NPCID.StardustWormHead) toAdd = 1;
+			int toAdd = 1;
+			if (target.aiStyle is NPCAIStyleID.Worm or NPCAIStyleID.TheDestroyer && target.type != NPCID.SolarCrawltipedeTail && target.type != NPCID.StardustWormHead) toAdd = 2;
 			HitCount += toAdd;
 
-			if (HitCount < 40)
-				SetSize(2.5f * (1 - 0.02f * HitCount));
+			if (HitCount < 20)
+				SetSize(2.5f * (1 - 0.04f * HitCount));
 			else Projectile.Kill();
 
 			SoundEngine.PlaySound(SoundID.Item50, Projectile.Center);
