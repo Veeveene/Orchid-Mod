@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using OrchidMod.Common;
 using OrchidMod.Common.ModObjects;
 using Terraria;
 using Terraria.Localization;
@@ -171,7 +172,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 
 			if (!((GuardianHammerAnchor)projectile.ModProjectile).WeakHit && !FullyCharged)
 			{
-				CombatText.NewText(player.Hitbox, new Color(175, 255, 175), Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.Charged"), false);
+				CombatText.NewText(player.Hitbox, OrchidColors.GuardianTooltip, Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.Charged"), false);
 				SoundEngine.PlaySound(SoundID.Item92, player.Center);
 				guardian.GuardianItemCharge = 210;
 			}

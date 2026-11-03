@@ -5,6 +5,7 @@ using OrchidMod.Content.General.Prefixes;
 using OrchidMod.Utilities;
 using System.Collections.Generic;
 using System.Linq;
+using OrchidMod.Common;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -354,7 +355,7 @@ namespace OrchidMod.Content.Guardian
 
 				tooltips.Insert(index, new TooltipLine(Mod, "GuardianGrants", Language.GetTextValue(TooltipToGet, GuardStacks, SlamStacks))
 				{
-					OverrideColor = new Color(175, 255, 175)
+					OverrideColor = OrchidColors.GuardianTooltip
 				});
 				index++;
 			}
@@ -371,7 +372,7 @@ namespace OrchidMod.Content.Guardian
 				}
 				tooltips.Insert(index, new TooltipLine(Mod, "ClickInfo", Language.GetTextValue(line.FirstCharToUpper(), click, block, GuardBlockCost, SlamBlockCost).FirstCharToUpper())
 				{
-					OverrideColor = new Color(175, 255, 175)
+					OverrideColor = OrchidColors.GuardianTooltip
 				});
 
 				if (BlockDuration > 0)
@@ -386,7 +387,7 @@ namespace OrchidMod.Content.Guardian
 			if (!CannotSwing) ChargeToThrow = Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.SwingWhileCharging", click);
 			tooltips.Insert(index, new TooltipLine(Mod, "Swing", ChargeToThrow)
 			{
-				OverrideColor = new Color(175, 255, 175)
+				OverrideColor = OrchidColors.GuardianTooltip
 			});
 			
 			SafeModifyTooltips(tooltips, guardian);

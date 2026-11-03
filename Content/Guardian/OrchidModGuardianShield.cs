@@ -263,7 +263,7 @@ namespace OrchidMod.Content.Guardian
 			string click = OrchidUtils.GetClickInfoTooltip(guardian.PaviseInputSwap);
 			tooltips.Insert(index + 2, new TooltipLine(Mod, "ClickInfo", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.Block", click).FirstCharToUpper())
 			{
-				OverrideColor = new Color(175, 255, 175)
+				OverrideColor = OrchidColors.GuardianTooltip
 			});
 		}
 

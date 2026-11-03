@@ -266,7 +266,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Knockback"));
 			tooltips.Insert(index + 1, new TooltipLine(Mod, "GuardianGrants", Language.GetTextValue(Mod.GetLocalizationKey("Items.ThoriumVoidQuarterstaff.Grants")))
 			{
-				OverrideColor = new Color(175, 255, 175)
+				OverrideColor = OrchidColors.GuardianTooltip
 			});
 		}
 

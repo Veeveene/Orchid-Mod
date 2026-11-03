@@ -13,6 +13,7 @@ namespace OrchidMod.Common
 		public static readonly Color ShapeshifterTag = new(100, 175, 150);
 
 		public static readonly Color CrossmodContentWarning = new(255, 130, 110);
+		public static readonly Color GuardianTooltip = new(175, 255, 175);
 
 		public static Color GetClassTagColor(ClassTags tag)
 		{

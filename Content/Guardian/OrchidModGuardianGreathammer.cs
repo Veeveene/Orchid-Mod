@@ -273,12 +273,12 @@ namespace OrchidMod.Content.Guardian
 
 			tooltips.Insert(index + 2, new TooltipLine(Mod, "DeflectGrants", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.DeflectGrants", GuardCost))
 			{
-				OverrideColor = new Color(175, 255, 175)
+				OverrideColor = OrchidColors.GuardianTooltip
 			});
 
 			tooltips.Insert(index + 3, new TooltipLine(Mod, "Charge", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.SlamChargeToThrow", click).FirstCharToUpper())
 			{
-				OverrideColor = new Color(175, 255, 175)
+				OverrideColor = OrchidColors.GuardianTooltip
 			});
 
 			if (GuardStacks > 0 || SlamStacks > 0)
@@ -290,7 +290,7 @@ namespace OrchidMod.Content.Guardian
 
 				tooltips.Insert(index + 1, new TooltipLine(Mod, "GuardianGrants", Language.GetTextValue(TooltipToGet, GuardStacks, SlamStacks))
 				{
-					OverrideColor = new Color(175, 255, 175)
+					OverrideColor = OrchidColors.GuardianTooltip
 				});
 			}
 			

@@ -144,7 +144,7 @@ namespace OrchidMod.Content.Guardian
 								PreviousruneCost = runeCost;
 								if (PreviousruneCost == 0)
 								{
-									CombatText.NewText(owner.Hitbox, new Color(175, 255, 175), Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.Charged"), false);
+									CombatText.NewText(owner.Hitbox, OrchidColors.GuardianTooltip, Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.Charged"), false);
 									SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact, owner.Center);
 								}
 								else
@@ -175,7 +175,7 @@ namespace OrchidMod.Content.Guardian
 								if (fullyCharged)
 								{
 									runeAmount += guardianItem.RuneAmountScaling;
-									CombatText.NewText(owner.Hitbox, new Color(175, 255, 175), Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.Reinforced"), false);
+									CombatText.NewText(owner.Hitbox, OrchidColors.GuardianTooltip, Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.Reinforced"), false);
 								}
 
 								guardianItem.Activate(owner, guardian, RuneItem.shoot, RuneItem.damage, RuneItem.knockBack, RuneItem.crit, (int)(guardianItem.RuneDuration * guardian.GuardianRuneTimer), guardianItem.RuneDistance, runeAmount);

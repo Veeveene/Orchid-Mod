@@ -762,7 +762,7 @@ namespace OrchidMod.Content.Guardian.UI
 		public static void ShowMouseTextForRegion(SpriteBatch spriteBatch, OrchidGuardian guardian, Vector2 startPos, Vector2 endPos, string text)
 		{
 			if (guardian.GuardianDebugVisuals > 0)
-				Utils.DrawRectangle(spriteBatch, startPos + Main.screenPosition, endPos + Main.screenPosition, new Color(175, 255, 175), new Color(175, 255, 175), 2f);
+				Utils.DrawRectangle(spriteBatch, startPos + Main.screenPosition, endPos + Main.screenPosition, OrchidColors.GuardianTooltip, OrchidColors.GuardianTooltip, 2f);
 			if (MouseInScaledRegion(startPos, endPos))
 				Main.instance.MouseText(text);
 		}

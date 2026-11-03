@@ -274,7 +274,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Misc
 								if (Projectile.ai[1] > 0 && !Reinforced)
 								{
 									Reinforced = true;
-									CombatText.NewText(owner.Hitbox, new Color(175, 255, 175), Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.Reinforced"));
+									CombatText.NewText(owner.Hitbox, OrchidColors.GuardianTooltip, Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.Reinforced"));
 								}
 
 								Projectile.ai[1] = guardianItem.StandardDuration * guardian.GuardianStandardTimer;

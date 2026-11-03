@@ -4,6 +4,7 @@ using OrchidMod.Common.Global.Items;
 using OrchidMod.Utilities;
 using System.Collections.Generic;
 using System.Linq;
+using OrchidMod.Common;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -149,7 +150,7 @@ namespace OrchidMod.Content.Guardian
 
 				tooltips.Insert(index + 1, new TooltipLine(Mod, "GuardianGrants", Language.GetTextValue(TooltipToGet, GuardStacks, SlamStacks))
 				{
-					OverrideColor = new Color(175, 255, 175)
+					OverrideColor = OrchidColors.GuardianTooltip
 				});
 			}
 
@@ -157,7 +158,7 @@ namespace OrchidMod.Content.Guardian
 			{
 				tooltips.Insert(index + 1, new TooltipLine(Mod, "ShieldSlams", "Grants " + this.SlamStacks + " slam" + (this.SlamStacks > 1 ? "s" : "") + " when fully charged")
 				{
-					OverrideColor = new Color(175, 255, 175)
+					OverrideColor = OrchidColors.GuardianTooltip
 				});
 			}*/
 
