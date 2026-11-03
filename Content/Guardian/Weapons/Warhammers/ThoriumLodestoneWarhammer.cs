@@ -29,7 +29,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             CannotMagnet = true;
             CannotExplode = true;
 			Penetrate = true;
-			CannotBlock = true;
+			Warslammer = 3;
         }
 
         public override void ExtraAI(Player player, OrchidGuardian guardian, Projectile projectile, bool OffHand)
@@ -38,7 +38,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             // Generic dust particles
             if (Main.rand.NextBool(3))
 			{ // From Lodestone Staff source
-				Main.dust[Dust.NewDust(new Vector2(projectile.Center.X - 16f, projectile.Center.Y - 16f), 32, 32, DustID.Dirt, projectile.velocity.X / 2f, projectile.velocity.Y / 2f, 150, new Color(), 1.5f)].noGravity = true;
+				Dust.NewDustDirect(new Vector2(projectile.Center.X - 16f, projectile.Center.Y - 16f), 32, 32, DustID.Dirt, projectile.velocity.X / 2f, projectile.velocity.Y / 2f, 150, new Color(), 1.5f).noGravity = true;
 			}
 
             if (projectile.ModProjectile is GuardianHammerAnchor anchor)
@@ -88,6 +88,11 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
                     if (projectile.shimmerWet && anchor.range > 30) anchor.range = 30;
                 }
             }
+        }
+
+        public override bool BlockAI(Player player, OrchidGuardian guardian, Projectile projectile, GuardianHammerAnchor anchor, ref bool shouldBlock)
+        {
+	        return true;
         }
 
         public override void OnSwing(Player player, OrchidGuardian guardian, Projectile projectile, bool FullyCharged, bool OffHand)
