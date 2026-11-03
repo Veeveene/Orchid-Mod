@@ -130,9 +130,9 @@ namespace OrchidMod.Common.ModObjects
 
 		public override void PostUpdate()
 		{
-			if (Main.cSmartCursorModeIsToggleAndNotHold && ModContent.GetInstance<OrchidClientConfig>().SmartSmartCursor && Player.whoAmI == Main.myPlayer)
+			if (Main.cSmartCursorModeIsToggleAndNotHold && OrchidMod.OrchidClientConfig.SmartSmartCursor && Player.whoAmI == Main.myPlayer)
 			{
-				if (Player.HeldItem.ModItem != null && (Player.HeldItem.ModItem is OrchidModGuardianItem && Player.HeldItem.damage > 0 && !Player.HeldItem.accessory) || Player.GetModPlayer<OrchidShapeshifter>().IsShapeshifted)
+				if (Player.HeldItem.ModItem != null && (Player.HeldItem.ModItem is OrchidModGuardianItem && Player.HeldItem.damage > 0 && !Player.HeldItem.accessory) || modPlayerShapeshifter.IsShapeshifted)
 				{ // if the player is holding a guardian weapon or shapeshifted
 					if (!SmartCursorCheck)
 					{ // disable smart cursor automatically and remember it

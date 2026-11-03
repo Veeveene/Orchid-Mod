@@ -368,7 +368,7 @@ namespace OrchidMod.Content.Shapeshifter
 		public void Teleport(Vector2 position)
 		{
 			Player player = Main.player[Projectile.owner];
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = Shapeshifter(player);
 			if (shapeshifter.IsShapeshifted)
 			{
 				shapeshifter.Shapeshift.ShapeshiftTeleport(position, Projectile, this, player, shapeshifter);
@@ -504,7 +504,7 @@ namespace OrchidMod.Content.Shapeshifter
 
 			if (shapeshifterItem.ShapeshiftShouldDraw(Projectile, player, ref lightColor))
 			{
-				OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+				OrchidShapeshifter shapeshifter = Shapeshifter(player);
 				Color color = shapeshifterItem.GetColor(shapeshifter.ShapeshifterHairpin ? lightColor.MultiplyRGBA(player.hairColor) : lightColor, Projectile, this, player, shapeshifter, true);
 				Vector2 drawPosition = Vector2.Transform(Projectile.Center - Main.screenPosition + Vector2.UnitY * player.gfxOffY, Main.GameViewMatrix.EffectMatrix).Floor();
 				Rectangle drawRectangle = TextureShapeshift.Bounds;

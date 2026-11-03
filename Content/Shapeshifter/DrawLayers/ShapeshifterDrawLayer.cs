@@ -19,7 +19,7 @@ namespace OrchidMod.Content.Shapeshifter.DrawLayers
 
 		public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
 		{
-			return drawInfo.drawPlayer.GetModPlayer<OrchidShapeshifter>().IsShapeshifted;
+			return drawInfo.drawPlayer.Shapeshifter().IsShapeshifted;
 		}
 
 		//public override Position GetDefaultPosition() => new Between(null, PlayerDrawLayers.FirstVanillaLayer);
@@ -31,7 +31,7 @@ namespace OrchidMod.Content.Shapeshifter.DrawLayers
 		protected override void Draw(ref PlayerDrawSet drawInfo)
 		{
 			Player player = drawInfo.drawPlayer;
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = player.Shapeshifter();
 			ShapeshifterShapeshiftAnchor anchor = shapeshifter.ShapeshiftAnchor;
 			Projectile anchorProjectile = anchor.Projectile;
 			Color lightColor = Lighting.GetColor((int)(anchorProjectile.Center.X / 16f), (int)(anchorProjectile.Center.Y / 16f));
@@ -44,7 +44,7 @@ namespace OrchidMod.Content.Shapeshifter.DrawLayers
 				bool drawHairColor = (shapeshifter.ShapeshifterHairpin && !anchor.SwapHairColorTrigger) || (anchor.SwapHairColorTrigger && !shapeshifter.ShapeshifterHairpin);
 				Texture2D hairTexture = (anchor.TextureShapeshiftHairGray != null && drawHairColor) ? anchor.TextureShapeshiftHairGray : anchor.TextureShapeshiftHair;
 				Color color = shapeshifterItem.GetColor(shapeshifter.ShapeshifterHairpin ? lightColor.MultiplyRGBA(player.hairColor) : lightColor, anchorProjectile, anchor, player, shapeshifter, true);
-				Color colorGlow = shapeshifterItem.GetColorGlow(lightColor, anchorProjectile, anchor, player, player.GetModPlayer<OrchidShapeshifter>());
+				Color colorGlow = shapeshifterItem.GetColorGlow(lightColor, anchorProjectile, anchor, player, shapeshifter);
 				Color colorLight = shapeshifterItem.GetColor(lightColor, anchorProjectile, anchor, player, shapeshifter);
 				Vector2 drawPosition = Vector2.Transform(anchorProjectile.Center - Main.screenPosition + Vector2.UnitY * player.gfxOffY, Main.GameViewMatrix.EffectMatrix).Floor();
 				Rectangle drawRectangle = anchor.TextureShapeshift.Bounds;

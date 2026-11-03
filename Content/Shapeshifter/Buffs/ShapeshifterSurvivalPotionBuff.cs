@@ -7,7 +7,7 @@ namespace OrchidMod.Content.Shapeshifter.Buffs
 	{
 		public override void Update(Player player, ref int buffIndex)
 		{
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = player.Shapeshifter();
 			if (shapeshifter.IsShapeshifted)
 			{
 				shapeshifter.ShapeshifterSurvival = true;

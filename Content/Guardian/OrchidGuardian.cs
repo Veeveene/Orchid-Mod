@@ -1033,7 +1033,7 @@ namespace OrchidMod.Content.Guardian
 
 		public void OnUseSlam()
 		{
-			if (GuardianThoriumCenser && OrchidMod.ThoriumMod != null)
+			if (GuardianThoriumCenser && OrchidMod.ThoriumMod is {} thoriumMod)
 			{
 				Player lowestHealthPlayer = Player;
 				foreach (Player player in Main.player)
@@ -1057,7 +1057,7 @@ namespace OrchidMod.Content.Guardian
 				*/
 
 				// This is how the War Forger applies its shield, where 5f is the shield amount, and 10f is the maximum shield amount that can be applied
-				int projectileType = OrchidMod.ThoriumMod.Find<ModProjectile>("HealerShield").Type;
+				int projectileType = thoriumMod.Find<ModProjectile>("HealerShield").Type;
 				Projectile.NewProjectile(Player.GetSource_FromThis(), lowestHealthPlayer.Center, Vector2.Zero, projectileType, 0, 0.0f, Player.whoAmI, 5f, 10f, 0.0f);
 			}
 			if (MissingResourcesTimer > 0)

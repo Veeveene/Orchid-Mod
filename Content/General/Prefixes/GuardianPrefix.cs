@@ -165,14 +165,14 @@ namespace OrchidMod.Content.General.Prefixes
 
 		public override void HoldItem(Item item, Player player)
 		{
-			OrchidPlayer modPlayer = player.GetModPlayer<OrchidPlayer>();
+			OrchidGuardian modPlayer = player.Guardian();
 			//if (blockDuration != 1f && blockDuration != 0f) modPlayer.modPlayerGuardian.GuardianBlockDuration += blockDuration;
 			if (speed != 1f && speed != 0f)
 			{
 				if (item.ModItem is OrchidModGuardianShield)
-					modPlayer.modPlayerGuardian.GuardianWeaponScale += speed - 1f;
+					modPlayer.GuardianWeaponScale += speed - 1f;
 				else
-					modPlayer.modPlayerGuardian.GuardianMeleeSpeed += speed - 1f;
+					modPlayer.GuardianMeleeSpeed += speed - 1f;
 			}
 		}
 

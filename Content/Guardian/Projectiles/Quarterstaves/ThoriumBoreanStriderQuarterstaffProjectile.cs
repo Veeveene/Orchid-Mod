@@ -81,6 +81,8 @@ public class ThoriumBoreanStriderQuarterstaffProjectile : OrchidModGuardianProje
 		Projectile.direction = Projectile.velocity.X > 0 ? 1 : -1;
 		Projectile.spriteDirection = Projectile.direction;
 
+		OrchidGuardian guardian = Guardian(Owner);
+
 		if (!Ready)
 		{
 			/* Always called on first tick */
@@ -101,7 +103,7 @@ public class ThoriumBoreanStriderQuarterstaffProjectile : OrchidModGuardianProje
 					if (Projectile.ai[1] != 1)
 					{
 						HitCount = 10;
-						Projectile.timeLeft = (int)Guardian.GetParryDuration(QuarterstaffItem, 120) + 1;
+						Projectile.timeLeft = (int)guardian.GetParryDuration(QuarterstaffItem, 120) + 1;
 					}
 
 					Projectile.Name = Language.GetTextValue("Mods.OrchidMod.Projectiles.ThoriumBoreanStriderQuarterstaffProjectile.StrongName");
@@ -158,7 +160,7 @@ public class ThoriumBoreanStriderQuarterstaffProjectile : OrchidModGuardianProje
 			}
 			else
 			{
-				if (QuarterstaffProj?.ai[0] == 0 || Guardian.GuardianItemCharge == 0)
+				if (QuarterstaffProj?.ai[0] == 0 || guardian.GuardianItemCharge == 0)
 					Projectile.ai[1] = 0;
 
 				Projectile.velocity *= (Projectile.timeLeft < 60 ? 0.9f : 1.04f);

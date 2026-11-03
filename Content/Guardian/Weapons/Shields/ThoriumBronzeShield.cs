@@ -38,8 +38,9 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 
 		public override void SlamHit(Player player, OrchidGuardian guardian, Projectile shield, NPC npc, bool WeakSlam)
 		{
-			int buff = player.FindBuffIndex(ModContent.BuffType<GuardianThoriumBronzeShieldBuff>());
-			if (buff != -1) player.DelBuff(buff);
+			// int buff = player.FindBuffIndex(ModContent.BuffType<GuardianThoriumBronzeShieldBuff>());
+			// if (buff != -1) player.DelBuff(buff);
+			player.ClearBuff<GuardianThoriumBronzeShieldBuff>();
 
 			/*var thoriumMod = OrchidMod.ThoriumMod;
 			if (thoriumMod != null)

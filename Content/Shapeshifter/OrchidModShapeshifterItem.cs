@@ -11,6 +11,9 @@ namespace OrchidMod.Content.Shapeshifter
 	[ClassTag(ClassTags.Shapeshifter)]
 	public abstract class OrchidModShapeshifterItem : ModItem
 	{
+		/// <seealso cref="OrchidUtils.Shapeshifter(Player)"/>
+		public static OrchidShapeshifter Shapeshifter(Player player = null) => player.Shapeshifter();
+		
 		public bool IsLocalPlayer(Player player) => player.whoAmI == Main.myPlayer;
 
 		public virtual void SafeSetDefaults() { }

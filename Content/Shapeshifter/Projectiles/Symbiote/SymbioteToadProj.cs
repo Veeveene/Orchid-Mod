@@ -67,7 +67,7 @@ namespace OrchidMod.Content.Shapeshifter.Projectiles.Symbiote
 				Projectile.velocity = Vector2.Normalize(initialVelocity); // so enemies are KB'd in the right direction 
 			}
 
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = Shapeshifter(player);
 			TongueProgress += shapeshifter.GetShapeshifterMeleeSpeed();
 
 			if (shapeshifter.IsShapeshifted)

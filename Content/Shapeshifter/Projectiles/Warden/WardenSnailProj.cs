@@ -163,7 +163,7 @@ namespace OrchidMod.Content.Shapeshifter.Projectiles.Warden
 
 				if (Owner.Hitbox.Intersects(Projectile.Hitbox))
 				{
-					OrchidShapeshifter shapeshifter = Main.LocalPlayer.GetModPlayer<OrchidShapeshifter>();
+					OrchidShapeshifter shapeshifter = Shapeshifter();
 					if (shapeshifter.IsShapeshifted)
 					{
 						if (shapeshifter.ShapeshiftAnchor.ShapeshifterItem.ModItem is WardenSnail snail)

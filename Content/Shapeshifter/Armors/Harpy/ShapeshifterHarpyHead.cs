@@ -38,7 +38,7 @@ namespace OrchidMod.Content.Shapeshifter.Armors.Harpy
 
 		public override void UpdateArmorSet(Player player)
 		{
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = Shapeshifter(player);
 			shapeshifter.ShapeshifterSetHarpy = true;
 			player.setBonus = SetBonusText.Value;
 		}

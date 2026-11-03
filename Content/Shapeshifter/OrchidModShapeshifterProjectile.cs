@@ -14,6 +14,8 @@ namespace OrchidMod.Content.Shapeshifter
 	public abstract class OrchidModShapeshifterProjectile : OrchidModProjectile
 	{
 		public bool MeleeHit = false; // used to "fake" true melee hits for thorium compatibility (call npc.ModNPC.OnHitByItem in ShapeshifterGlobalNPC's OnHitByProjectile)
+		
+		public OrchidShapeshifter Shapeshifter(Player player = null) => player.Shapeshifter();
 
 		public ShapeshifterShapeshiftType ShapeshifterShapeshiftType;
 		public virtual void SafeOnHitNPC(NPC target, NPC.HitInfo hit, int damageDone, Player player, OrchidShapeshifter shapeshifter) { }
@@ -56,7 +58,7 @@ namespace OrchidMod.Content.Shapeshifter
 		public sealed override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 		{
 			Player player = Main.player[Projectile.owner];
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = Shapeshifter(player);
 
 			if (ShapeshifterShapeshiftType == ShapeshifterShapeshiftType.Predator)
 			{

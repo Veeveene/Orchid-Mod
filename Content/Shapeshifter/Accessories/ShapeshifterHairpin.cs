@@ -18,13 +18,13 @@ namespace OrchidMod.Content.Shapeshifter.Accessories
 		}
 		public override void UpdateVanity(Player player)
 		{
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = Shapeshifter(player);
 			shapeshifter.ShapeshifterHairpin = true;
 		}
 
 		public override void UpdateAccessory(Player player, bool hideVisual)
 		{
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = Shapeshifter(player);
 			shapeshifter.ShapeshifterHairpin = true;
 		}
 	}

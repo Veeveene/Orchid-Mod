@@ -447,7 +447,7 @@ namespace OrchidMod.Content.Guardian
 			}
 
 			oldOwnerPos = owner.MountedCenter;
-			guardianItem.ExtraAIShield(owner, Guardian, Projectile);
+			guardianItem.ExtraAIShield(owner, Guardian(owner), Projectile);
 		}
 
 		// https://stackoverflow.com/questions/5514366/how-to-know-if-a-line-intersects-a-rectangle

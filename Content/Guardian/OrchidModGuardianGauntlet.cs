@@ -330,7 +330,7 @@ namespace OrchidMod.Content.Guardian
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips)
 		{
-			var guardian = OrchidUtils.Guardian(null);
+			var guardian = Guardian();
 			// TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
 			// if (tt != null)
 			// {

@@ -11,7 +11,7 @@ namespace OrchidMod.Content.Guardian
 	public abstract class OrchidModGuardianProjectile : OrchidModProjectile
 	{
 		/// <summary>Shorthand for the <see cref="OrchidModProjectile.Owner">Owner</see>'s OrchidGuardian instance.</summary>
-		public OrchidGuardian Guardian => Owner.Guardian();
+		public OrchidGuardian Guardian(Player player = null) => player.Guardian();
 		
 		public virtual void SafeOnHitNPC(NPC target, NPC.HitInfo hit, int damageDone, Player player, OrchidGuardian guardian) { }
 		public virtual void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers, Player player, OrchidGuardian guardian) { }

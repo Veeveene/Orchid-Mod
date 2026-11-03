@@ -145,7 +145,7 @@ namespace OrchidMod.Content.Shapeshifter
 
 		public sealed override void HoldItem(Player player)
 		{
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = Shapeshifter(player);
 			if (PlayerInput.ScrollWheelDelta != 0)
 			{
 				shapeshifter.ShapeshifterScrollTransformationBuffer = ModContent.GetInstance<OrchidClientConfig>().ShapeshifterScrollDelay;
@@ -186,7 +186,7 @@ namespace OrchidMod.Content.Shapeshifter
 						}
 					}
 
-					player.GetModPlayer<OrchidShapeshifter>().ShapeshifterScrollTransformationBuffer = 0;
+					Shapeshifter(player).ShapeshifterScrollTransformationBuffer = 0;
 					CreateNewAnchor(player);
 				}
 			}
@@ -195,7 +195,7 @@ namespace OrchidMod.Content.Shapeshifter
 
 		public void CreateNewAnchor(Player player)
 		{
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = Shapeshifter(player);
 			if (shapeshifter.ShapeshifterFastShapeshiftTimer >= 300)
 			{
 				player.itemTime = 10;
@@ -839,7 +839,7 @@ namespace OrchidMod.Content.Shapeshifter
 
 		public void HandleSpecificInteractionsPostUpdate(Projectile projectile, Player player)
 		{ // Cross mod interactions, or buff specific interactions. Handled on a case-by-case basis
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = Shapeshifter(player);
 			if (shapeshifter.Player.windPushed)
 			{ // mighty winds (sandstorm)
 				ShapeshifterShapeshiftAnchor anchor = shapeshifter.ShapeshiftAnchor;
@@ -897,7 +897,7 @@ namespace OrchidMod.Content.Shapeshifter
 
 		public void HandleSpecificInteractionsFinalVelocity(ref Vector2 intendedVelocity, ref bool phaseThroughTiles, Projectile projectile, Player player, bool stepUpDown = false, bool cancelSlopeOffet = true, bool preventDownInput = false, bool forceFallThrough = false)
 		{ // Cross mod interactions, or buff specific interactions. Handled on a case-by-case basis
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = Shapeshifter(player);
 			if (player.windPushed && projectile.ModProjectile is ShapeshifterShapeshiftAnchor anchor)
 			{ // mighty winds (sandstorm)
 				float windSpeed = Main.windSpeedCurrent * 0.025f;

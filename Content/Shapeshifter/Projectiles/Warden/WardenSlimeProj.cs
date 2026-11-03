@@ -28,7 +28,7 @@ namespace OrchidMod.Content.Shapeshifter.Projectiles.Warden
 		{
 			if (IsLocalOwner)
 			{  // Can't hit an enemy already hit by the falling player
-				OrchidShapeshifter shapeshifter = Main.LocalPlayer.GetModPlayer<OrchidShapeshifter>();
+				OrchidShapeshifter shapeshifter = Shapeshifter();
 				if (shapeshifter.IsShapeshifted)
 				{
 					if (shapeshifter.ShapeshiftAnchor.ShapeshifterItem.ModItem is WardenSlime slime)

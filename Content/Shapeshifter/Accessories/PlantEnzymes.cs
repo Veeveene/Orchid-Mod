@@ -16,7 +16,7 @@ namespace OrchidMod.Content.Shapeshifter.Accessories
 
 		public override void UpdateAccessory(Player player, bool hideVisual)
 		{
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = Shapeshifter(player);
 			shapeshifter.ShapeshifterHealingBonus += 0.5f;
 			player.aggro += 250;
 		}

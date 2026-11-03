@@ -20,7 +20,7 @@ namespace OrchidMod.Content.Shapeshifter.Accessories
 			player.lavaRose = true;
 			player.fireWalk = true; // obsi skull effect
 			player.moveSpeed += 0.12f;
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = Shapeshifter(player);
 			shapeshifter.ShapeshifterShawlPhoenix = true;
 			if (shapeshifter.ShapeshifterHookDash < 12f)
 			{

@@ -20,7 +20,7 @@ namespace OrchidMod.Content.Shapeshifter.Accessories
 
 		public static void PlaceTorchCheck(Player player)
 		{
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = Shapeshifter(player);
 			if (shapeshifter.IsShapeshifted && player.whoAmI == Main.myPlayer)
 			{
 				if (Main.mouseMiddle && Main.mouseMiddleRelease && shapeshifter.ShapeshiftAnchor.LeftCLickCooldown <= 0f && shapeshifter.ShapeshiftAnchor.RightCLickCooldown <= 0f)

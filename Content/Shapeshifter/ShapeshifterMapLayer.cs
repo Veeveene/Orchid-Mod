@@ -17,7 +17,7 @@ namespace OrchidMod.Content.Shapeshifter
 			{
 				if (player.active)
 				{
-					ShapeshifterShapeshiftAnchor anchor = player.GetModPlayer<OrchidShapeshifter>().ShapeshiftAnchor;
+					ShapeshifterShapeshiftAnchor anchor = player.Shapeshifter().ShapeshiftAnchor;
 					if (anchor != null && (player.team == Main.LocalPlayer.team || player.team == 0))
 					{ // Don't draw if the player is not transformer or in another team
 						if (player.whoAmI != Main.myPlayer)

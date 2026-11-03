@@ -166,7 +166,7 @@ namespace OrchidMod.Content.Shapeshifter
 		{
 			if (!npc.friendly && !npc.CountsAsACritter && npc.aiStyle != NPCAIStyleID.Spell)
 			{
-				OrchidShapeshifter shapeshifter = Main.LocalPlayer.GetModPlayer<OrchidShapeshifter>();
+				OrchidShapeshifter shapeshifter = OrchidUtils.Shapeshifter(null);
 
 				if (shapeshifter.IsShapeshifted)
 				{

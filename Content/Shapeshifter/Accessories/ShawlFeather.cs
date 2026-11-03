@@ -16,7 +16,7 @@ namespace OrchidMod.Content.Shapeshifter.Accessories
 
 		public override void UpdateAccessory(Player player, bool hideVisual)
 		{
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = Shapeshifter(player);
 			shapeshifter.ShapeshifterShawlFeather = true;
 			if (shapeshifter.ShapeshifterHookDash < 10f)
 			{

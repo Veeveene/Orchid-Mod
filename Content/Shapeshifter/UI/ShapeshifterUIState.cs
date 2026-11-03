@@ -40,7 +40,7 @@ namespace OrchidMod.Content.Shapeshifter.UI
 		{
 			Recalculate();
 			Player player = Main.LocalPlayer;
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = player.Shapeshifter();
 
 			if (!player.dead)
 			{
