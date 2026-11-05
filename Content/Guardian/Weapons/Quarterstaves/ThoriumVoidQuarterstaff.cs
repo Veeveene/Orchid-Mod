@@ -26,6 +26,9 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 	[CrossmodContent("ThoriumMod")]
 	public class ThoriumVoidQuarterstaff : OrchidModGuardianQuarterstaff
 	{
+		public static int ThoriumVoidDustID { get; private set; } = -1;
+		public static int ThoriumLightCurseID { get; private set; } = -1;
+
 		public static Texture2D TextureLine;
 		public static Texture2D TextureLineBlur;
 		public static Texture2D TextureRing;
@@ -64,6 +67,12 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			TextureTrailGlow ??= OrchidAssets.GetExtraTexture(11, AssetRequestMode.ImmediateLoad).Value;
 			
 			ItemID.Sets.GamepadWholeScreenUseRange[Type] = true;
+			
+			if (OrchidMod.ThoriumMod is { } thoriumMod)
+			{
+				ThoriumVoidDustID = thoriumMod.Find<ModDust>("VoidHeartDust").Type;
+				ThoriumLightCurseID = thoriumMod.Find<ModBuff>("LightCurse").Type;
+			}
 		}
 
 		protected override float TipOffset => 0.25f;
@@ -77,7 +86,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			Item.useTime = 40;
 			ParryDuration = 40;
 			Item.knockBack = 6f;
-			Item.damage = 196;
+			Item.damage = 136;
 			JabChargeGain = 0.4f;
 			SwingStyle = 2;
 			JabSpeed = 1.0f;
@@ -125,11 +134,8 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 				projectile.localAI[0]--;
 				if (projectile.localAI[0] < 0) projectile.localAI[0] = 0;
 
-				if (OrchidMod.ThoriumMod != null && Main.rand.NextBool(10))
-				{
-					int dustType = OrchidMod.ThoriumMod.Find<ModDust>("VoidHeartDust").Type;
-					Dust.NewDustDirect(tipPosition, 16, 16, dustType);
-				}
+				if (ThoriumVoidDustID != -1 && Main.rand.NextBool(10))
+					Dust.NewDustDirect(tipPosition, 16, 16, ThoriumVoidDustID);
 				
 				if (GlowIntensity > 0) Lighting.AddLight(projectile.Center, VoidColor(player).ToVector3() * GlowIntensity);
 
@@ -159,7 +165,6 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 							Vector2 targetPoint = target.Center + target.velocity + HitNPCLockVector;
 							if (Collision.IsClearSpotTest(targetPoint - player.Size * 0.5f, 16f, player.width, player.height, true, true, (int)player.gravDir, true, true))
 								player.Center = target.Center + target.velocity + HitNPCLockVector;
-							else HitNPCLockTimer = -1;
 							HitNPCLockTimer--;
 							if (HitNPCLockTimer < 0)
 							{
@@ -222,9 +227,8 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 					Vector2 tipPosition = projectile.Center - Vector2.UnitY.RotatedBy(projectile.rotation + MathHelper.PiOver4) * projectile.width * 0.5f;
 					if (player.direction == 1) tipPosition.X -= 12;
 
-					if (OrchidMod.ThoriumMod.TryFind("VoidHeartDust", out ModDust dust))
-						for (int i = 0; i < 10; i++)
-							Dust.NewDustDirect(player.Center, 24, 24, dust.Type, Scale: 3f);
+					if (ThoriumVoidDustID != -1)
+						for (int i = 0; i < 10; i++) Dust.NewDustDirect(player.Center, 24, 24, ThoriumVoidDustID, Scale: 3f);
 
 					Vector2 target = CalcFirstThingInLine(player, 600, 1f, out float width, out NPC hitNPC);
 
@@ -239,7 +243,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 					Vector2 finalPosition = target - player.Size * 0.5f + segment * width;
 					if (hitNPC != null)
 					{
-						finalPosition = hitNPC.Center + hitNPC.DirectionTo(player.Center) * (width + (ShouldDrawRiftTrail ? 42 : 32) * projectile.scale);
+						finalPosition = hitNPC.Center + hitNPC.DirectionTo(player.Center) * (width + (ShouldDrawRiftTrail ? 36 : 24) * projectile.scale);
 						HitNPCIndex = hitNPC.whoAmI;
 						HitNPCLockTimer = 40;
 						HitNPCLockVector = finalPosition - hitNPC.Center;
@@ -272,7 +276,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 
 		public override void OnHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, NPC.HitInfo hit, bool jabAttack, bool counterAttack)
 		{
-			int debuffType = OrchidMod.ThoriumMod.TryFind("LightCurse", out ModBuff lightCurse) ? lightCurse.Type : BuffID.ShadowFlame;
+			int debuffType = OrchidMod.ThoriumMod is {} thoriumMod ? thoriumMod.Find<ModBuff>("LightCurse").Type : BuffID.ShadowFlame;
 			
 			target.AddBuff(debuffType, jabAttack ? 45 : 180);
 			if (!jabAttack && !counterAttack && HitNPCIndex != -1 && HitNPCLockTimer > 0 && target.whoAmI == HitNPCIndex) 
