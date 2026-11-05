@@ -22,10 +22,10 @@ namespace OrchidMod.Common.ModObjects
 
 		/// <summary>If true, then the index of this projectile's owner matches the local player's index. Used for running code only on the owner's end.</summary>
 		public bool IsLocalOwner => Projectile.owner == Main.myPlayer;
-		/// <summary>Shorthand for the Player instance this projectile belongs to.</summary>
+		/// <summary>Shorthand for the Player instance this projectile belongs to. Recommended to cache this.</summary>
 		public Player Owner => Main.player[Projectile.owner];
 		
-		/// <summary>Shorthand for the <see cref="Owner"/>'s OrchidPlayer instance.</summary>
+		/// <summary>Shorthand for the <see cref="Owner"/>'s OrchidPlayer instance. Recommended to cache this.</summary>
 		public OrchidPlayer ModPlayer => Main.player[Projectile.owner].OrchidPlayer();
 		public static bool IsValidTarget(NPC npc, bool includecritter = false) => npc.active && npc.life > 0 && !npc.dontTakeDamage && !npc.friendly && (includecritter || !npc.CountsAsACritter);
 
