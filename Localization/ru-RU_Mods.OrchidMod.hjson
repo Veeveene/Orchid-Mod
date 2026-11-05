@@ -276,6 +276,11 @@ Buffs: {
 		// DisplayName: Stunned
 		// Description: Can't act after being hit with a giant hammer
 	}
+
+	GuardianQuarterstaffPommelBuff: {
+		// DisplayName: Parry Stance
+		// Description: Next hit will automatically be parried at the cost of a guard
+	}
 }
 
 AlchemistRecipe: {
@@ -3496,39 +3501,12 @@ Items: {
 			''' */
 	}
 
-	StaffRocketSharkRed: {
-		// DisplayName: Hemogoblin Shark–Print Staff-Mounted Propulsion System
+	QuarterstaffPommel: {
+		// DisplayName: Quarterstaff Pommel
 		/* Tooltip:
 			'''
-			Increases armor penetration by 5
-			{$Items.StaffRocketBlue.Tooltip}
-			''' */
-	}
-
-	StaffRocketSharkGreen: {
-		// DisplayName: Shark-Print Staff-Mounted Propulsion System
-		/* Tooltip:
-			'''
-			Increases armor penetration by 5
-			{$Items.StaffRocketBlue.Tooltip}
-			''' */
-	}
-
-	StaffRocketSharkBlue: {
-		// DisplayName: Orca-Print Staff-Mounted Propulsion System
-		/* Tooltip:
-			'''
-			Increases armor penetration by 5
-			{$Items.StaffRocketBlue.Tooltip}
-			''' */
-	}
-
-	StaffRocketSharkYellow: {
-		// DisplayName: Sand Shark–Print Staff-Mounted Propulsion System
-		/* Tooltip:
-			'''
-			Increases armor penetration by 5
-			{$Items.StaffRocketBlue.Tooltip}
+			For 2 seconds after a quarterstaff charged attack hit, the next parry is automatic
+			Increases counterattack damage by 50% for the duration
 			''' */
 	}
 }

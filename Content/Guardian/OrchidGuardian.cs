@@ -144,9 +144,10 @@ namespace OrchidMod.Content.Guardian
 		public float GuardianHammerThrowVelocity = 1f;
 		public bool GuardianThoriumCenser = false; // Life Quartz Censer
 		public bool GuardianArmMotor = false; // Greathammer Arm Motor
+		public bool GuardianQuarterstaffPommel = false; // Quarterstaff Pommel
 
 		// Debug bonus resources that do not get updated (for use with DragonLens)
-		
+
 		public int GuardianDebugBonusGuards = 0;
 		public int GuardianDebugBonusSlams = 0;
 		public int GuardianDebugBonusRunes = 0;
@@ -199,6 +200,7 @@ namespace OrchidMod.Content.Guardian
 		public int GuardianStaffRocketCooldown = 0; // Cooldown between rocket dashes
 		public int GuardianBadgeHopliteLevel = 0; // goes up to 2 for bonus katar charge speed
 		public int GuardianArmMotorCount = 0; // set to 2 after a charged attack hit, greathammers do additional slams if this is >1.
+		/// <summary>If true, the player will attempt to automatically parry the next hit taken if they have an available guard.</summary>
 
 		public const int GuardianRechargeTime = 600;
 
@@ -716,6 +718,7 @@ namespace OrchidMod.Content.Guardian
 			GuardianHammerThrowVelocity = 1f;
 			GuardianThoriumCenser = false;
 			GuardianArmMotor = false;
+			GuardianQuarterstaffPommel = false;
 			if (!GuardianBronzeShieldBuff) GuardianBronzeShieldDamage = 0;
 
 			GuardianMeteorite = false;
@@ -946,8 +949,10 @@ namespace OrchidMod.Content.Guardian
 
 		public override void ModifyHurt(ref Player.HurtModifiers modifiers)
 		{
-			if (GuardianParry)
+			if (GuardianParry || Player.HasBuff<GuardianQuarterstaffPommelBuff>())
 			{
+				if (!GuardianParry) UseGuard(1);
+
 				modifiers.DamageSource.TryGetCausingEntity(out Entity entity);
 				DoParryItemParry(entity);
 				modifiers.Cancel();
