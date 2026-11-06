@@ -33,7 +33,7 @@ namespace OrchidMod.Content.General.Prefixes
 		private readonly int crit;
 		private readonly float speed;
 		
-		public virtual float obnoxiousness => 1f; // exclusive to The Big Honkers' special Annoying prefix
+		public virtual float obnoxiousness => 1f; // exclusive to toy hammers' special Annoying prefix
 
 		public override void Unload() => prefixes.Clear();
 
