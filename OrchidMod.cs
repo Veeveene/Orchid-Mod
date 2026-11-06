@@ -1,3 +1,5 @@
+global using OrchidMod.Utilities;
+
 using OrchidMod.Content.Alchemist;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +19,7 @@ using Terraria.Graphics.Shaders;
 using OrchidMod.Content.Shapeshifter;
 using Terraria.ModLoader.IO;
 using OrchidMod.Content.Guardian;
+using OrchidMod.Content.Guardian.UI;
 using Terraria.Audio;
 
 namespace OrchidMod
@@ -123,6 +126,8 @@ namespace OrchidMod
 				var instance = (IPostSetupContent)Activator.CreateInstance(type, null);
 				instance.PostSetupContent(this);
 			}
+			
+			GuardianUIState.ReloadTextures();
 
 			ThoriumModCalls();
 			//BossChecklistCalls();

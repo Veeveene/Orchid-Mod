@@ -7,6 +7,7 @@ using Terraria.ObjectData;
 using Terraria.Localization;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 
 namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 {
@@ -53,8 +54,8 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			Main.tileLighted[Type] = true;
 
 			TileObjectData.newTile.CopyFrom(TileObjectData.Style2xX);
-			TileObjectData.newTile.AnchorValidTiles = new int[] { TileID.MushroomGrass };
-			TileObjectData.newTile.CoordinateHeights = new[] { 16, 16, 18 };
+			TileObjectData.newTile.AnchorValidTiles = [TileID.MushroomGrass];
+			TileObjectData.newTile.CoordinateHeights = [16, 16, 18];
 			TileObjectData.addTile(Type);
 
 			LocalizedText name = CreateMapEntryName();
@@ -63,6 +64,8 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			DustType = DustID.GlowingMushroom;
 			HitSound = SoundID.Grass;
 			RegisterItemDrop(ModContent.ItemType<VerveineAltQuarterstaff>());
+			
+			FlexibleTileWand.RubblePlacementLarge.AddVariation(ModContent.ItemType<VerveineAltQuarterstaff>(), Type, 0);
 		}
 
 		public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)

@@ -30,12 +30,12 @@ namespace OrchidMod.Content.Guardian.Buffs.Debuffs
 					int remainingDamage = npc.buffTime[buffIndex] / 15;
 					if (otherNPC.immune[player.whoAmI] <= 0)
 					{
-						player.ApplyDamageToNPC(otherNPC, 500, npc.velocity.Length(), npc.velocity.X > 0 ? 1 : -1, false, ModContent.GetInstance<GuardianDamageClass>(), true);
+						player.ApplyDamageToNPC(otherNPC, Main.remixWorld ? 100 : 500, npc.velocity.Length(), npc.velocity.X > 0 ? 1 : -1, false, ModContent.GetInstance<GuardianDamageClass>(), true);
 						otherNPC.immune[player.whoAmI] = 10;
 					}
 					if (npc.immune[player.whoAmI] <= 0)
 					{
-						player.ApplyDamageToNPC(npc, Math.Clamp(npc.life - remainingDamage, 1, 500), 0f, 1, false, ModContent.GetInstance<GuardianDamageClass>());
+						player.ApplyDamageToNPC(npc, Math.Clamp(npc.life - remainingDamage, 1, Main.remixWorld ? 100 : 500), 0f, 1, false, ModContent.GetInstance<GuardianDamageClass>());
 						if (npc.life > 10)
 							npc.immune[player.whoAmI] = 10;
 					}
@@ -63,7 +63,7 @@ namespace OrchidMod.Content.Guardian.Buffs.Debuffs
 					Player player = Main.player[orchidNPC.StarKOOwner];
 
 					npc.velocity *= 0f;
-					player.ApplyDamageToNPC(npc, 500, 0f, 1, false, ModContent.GetInstance<GuardianDamageClass>(), true);
+					player.ApplyDamageToNPC(npc, Main.remixWorld ? 100 : 500, 0f, 1, false, ModContent.GetInstance<GuardianDamageClass>(), true);
 					npc.RequestBuffRemoval(ModContent.BuffType<HockeyQuarterstaffDebuff>());
 				}
 			}

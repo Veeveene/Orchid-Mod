@@ -36,10 +36,11 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			blockDuration = 360;
 		}
 
-		public override void SlamHit(Player player, Projectile shield, NPC npc, bool WeakSlam)
+		public override void SlamHit(Player player, OrchidGuardian guardian, Projectile shield, NPC npc, bool WeakSlam)
 		{
-			int buff = player.FindBuffIndex(ModContent.BuffType<GuardianThoriumBronzeShieldBuff>());
-			if (buff != -1) player.DelBuff(buff);
+			// int buff = player.FindBuffIndex(ModContent.BuffType<GuardianThoriumBronzeShieldBuff>());
+			// if (buff != -1) player.DelBuff(buff);
+			player.ClearBuff<GuardianThoriumBronzeShieldBuff>();
 
 			/*var thoriumMod = OrchidMod.ThoriumMod;
 			if (thoriumMod != null)
@@ -52,20 +53,18 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 		float oldVelX;
 		float oldVelY;
 
-		public override void BlockStart(Player player, Projectile shield)
+		public override void BlockStart(Player player, OrchidGuardian guardian, Projectile shield, bool manuallyFullyCharged)
 		{
 			oldVelX = player.velocity.X;
 			oldVelY = player.velocity.Y;
 			//redundant behavior to counteract the first two frames not counting
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
 			if (IsLocalPlayer(player)) Main.buffNoTimeDisplay[ModContent.BuffType<GuardianThoriumBronzeShieldBuff>()] = true;
 			guardian.GuardianBronzeShieldBuff = true;
 			guardian.GuardianBronzeShieldDamage = guardian.GuardianGuardRecharge / 100f;
 		}
 
-		public override void ExtraAIShield(Player player, Projectile projectile)
+		public override void ExtraAIShield(Player player, OrchidGuardian guardian, Projectile projectile)
 		{
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
 			if (projectile.ai[0] > 0)
 			{
 				oldVelX = player.velocity.X = MathHelper.Lerp(player.velocity.X, oldVelX, 0.6f);

@@ -188,7 +188,7 @@ namespace OrchidMod.Content.Shapeshifter.Weapons.Predator
 
 		public override void UpdateInventory(Player player)
 		{
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = Shapeshifter(player);
 			if (shapeshifter.IsShapeshifted)
 			{
 				if (shapeshifter.Shapeshift.Type != Type)
@@ -408,7 +408,7 @@ namespace OrchidMod.Content.Shapeshifter.Weapons.Predator
 				spriteBatch.End(out SpriteBatchSnapshot spriteBatchSnapshot);
 				spriteBatch.Begin(spriteBatchSnapshot with { BlendState = BlendState.Additive });
 
-				OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+				OrchidShapeshifter shapeshifter = Shapeshifter(player);
 
 				float scalemult = (float)Math.Sin(anchor.ai[0] * 0.2092f) * 0.125f + 1f;
 

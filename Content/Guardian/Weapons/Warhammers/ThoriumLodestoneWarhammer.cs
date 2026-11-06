@@ -10,15 +10,6 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
     [CrossmodContent("ThoriumMod")]
     public class ThoriumLodestoneWarhammer : OrchidModGuardianHammer
     {
-    
-        private static Mod ThoriumMod => ModLoader.GetMod("ThoriumMod");
-        private static ModBuff ThoriumSunderedDebuff => ThoriumMod.Find<ModBuff>("Sundered");
-
-        public override bool IsLoadingEnabled(Mod mod)
-        {
-            return ModLoader.HasMod("ThoriumMod");
-        }
-
         public override void SafeSetDefaults()
         {
             Item.width = 42;
@@ -38,8 +29,8 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             CannotMagnet = true;
             CannotExplode = true;
 			Penetrate = true;
-		}
-        
+			Warslammer = 3;
+        }
 
         public override void ExtraAI(Player player, OrchidGuardian guardian, Projectile projectile, bool OffHand)
         {
@@ -47,7 +38,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
             // Generic dust particles
             if (Main.rand.NextBool(3))
 			{ // From Lodestone Staff source
-				Main.dust[Dust.NewDust(new Vector2(projectile.Center.X - 16f, projectile.Center.Y - 16f), 32, 32, DustID.Dirt, projectile.velocity.X / 2f, projectile.velocity.Y / 2f, 150, new Color(), 1.5f)].noGravity = true;
+				Dust.NewDustDirect(new Vector2(projectile.Center.X - 16f, projectile.Center.Y - 16f), 32, 32, DustID.Dirt, projectile.velocity.X / 2f, projectile.velocity.Y / 2f, 150, new Color(), 1.5f).noGravity = true;
 			}
 
             if (projectile.ModProjectile is GuardianHammerAnchor anchor)
@@ -74,17 +65,17 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
                         projectile.velocity.X = 2f * projectile.direction;
                     }
 
-                    if (anchor.range <= 285)
+                    if (anchor.range <= Range - 15)
                     {
                         // Blip sound to 
                        //  if (anchor.range == 285) SoundEngine.PlaySound(SoundID.MaxMana); // I don't like the bleep
-                        guardian.SlamCostUI = 3;
+                       if (anchor.Ding) guardian.SlamCostUI = 3;
                     
                         projectile.velocity.Y += 0.75f;
                         if (projectile.velocity.Y > 20f) projectile.velocity.Y = 20f;
                         projectile.velocity.X *= 0.95f;
                     
-                        if (Main.mouseLeft && Main.mouseLeftRelease && anchor.Ding && IsLocalPlayer(player) && (int)projectile.ai[2] != 1 && guardian.UseSlam(3, true))
+                        if (guardian.GetGauntletPunchInput(true) && anchor.Ding && IsLocalPlayer(player) && (int)projectile.ai[2] != 1 && guardian.UseSlam(3, true))
 						{
 							guardian.UseSlam(3);
 							SoundEngine.PlaySound(SoundID.Item88);
@@ -92,9 +83,16 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
 							projectile.ai[2] = 1f;
 							projectile.netUpdate = true;
                         }
-                    } 
+                    }
+
+                    if (projectile.shimmerWet && anchor.range > 30) anchor.range = 30;
                 }
             }
+        }
+
+        public override bool BlockAI(Player player, OrchidGuardian guardian, Projectile projectile, GuardianHammerAnchor anchor, ref bool shouldBlock)
+        {
+	        return true;
         }
 
         public override void OnSwing(Player player, OrchidGuardian guardian, Projectile projectile, bool FullyCharged, bool OffHand)
@@ -218,7 +216,8 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
 
         private static void DoBlastStuff(Projectile projectile, bool uberCharged, NPC hitTarget = null)
         {
-			if (projectile.active && projectile.ModProjectile is GuardianHammerAnchor anchor)
+	        Mod thoriumMod = OrchidMod.ThoriumMod;
+			if (thoriumMod != null && projectile.active && projectile.ModProjectile is GuardianHammerAnchor anchor)
 			{
 				bool BigBlast = (uberCharged && anchor.Ding);
 				Vector2 position;
@@ -247,7 +246,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
                 
                 // We only want the big explosion if the hammer was fully charged before Ultra Smashing
                 // (this may or may not already be covered for in ExtraAI() but it's good to be sure)
-                int blastProjType = BigBlast ? ThoriumMod.Find<ModProjectile>("LodestoneStaffPro4").Type : ThoriumMod.Find<ModProjectile>("LodestoneStaffPro2").Type;
+                int blastProjType = BigBlast ? thoriumMod.Find<ModProjectile>("LodestoneStaffPro4").Type : thoriumMod.Find<ModProjectile>("LodestoneStaffPro2").Type;
                 // Boom projectile
                 Projectile blastProj = Projectile.NewProjectileDirect(
                     projectile.GetSource_FromAI(),
@@ -267,7 +266,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
                             projectile.GetSource_FromAI(),
 							position, 
                             new Vector2(Main.rand.NextFloat(-0.5f, 0.5f) * 3.5f, -Main.rand.NextFloat(1.25f,2.5f)*(uberCharged ? 4 : 2)),
-                            ThoriumMod.Find<ModProjectile>("LodestoneStaffPro5").Type, 
+                            thoriumMod.Find<ModProjectile>("LodestoneStaffPro5").Type, 
                             (int)(projectile.damage * 0.2f), 
                             projectile.knockBack, 
                             projectile.owner,
@@ -276,7 +275,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers {
                         );
                         rockProj.DamageType = ModContent.GetInstance<GuardianDamageClass>();
                     }
-                SoundEngine.PlaySound(SoundID.Item14); 
+                SoundEngine.PlaySound(SoundID.Item70); 
                 // Kill the projectile so it can only go "boom" once
                 projectile.Kill();
             }

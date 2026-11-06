@@ -70,7 +70,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Quarterstaves
 			if (Owner == Main.LocalPlayer)
 			{
 				bool attackInput = Main.mouseLeft && Main.mouseLeftRelease;
-                if (ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs) attackInput = Main.mouseRight && Main.mouseRightRelease;
+                if (ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletInputs) attackInput = Main.mouseRight && Main.mouseRightRelease;
 
 				if (Projectile.timeLeft > 11 && attackInput) 
 				{

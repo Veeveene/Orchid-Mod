@@ -102,7 +102,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			
 				if (Targets.Count > 0)
 				{
-					if (projectile.ai[1] == 0 && guardProj.BlockDuration == 0 && guardian.GuardianItemCharge < 210f)
+					if (projectile.ai[1] == 0 && guardProj.BlockDuration == 0 && guardian.GuardianItemCharge is > 0 and < 210f)
 					{
 						guardian.GuardianItemCharge += 7.5f * Targets.Count / Item.useTime * player.GetTotalAttackSpeed(DamageClass.Melee);
 						if (guardian.GuardianItemCharge > 210f)
@@ -194,7 +194,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			int killedTargets = 0;
 			foreach (int target in Targets)
 			{
-				OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+				OrchidGuardian guardian = Guardian(player);
 				NPC npc = Main.npc[target];
 				bool conducted = npc.HasBuff<ThoriumGrandThunderBirdWarhammerDebuff>();
 				if (player.whoAmI == Main.myPlayer)

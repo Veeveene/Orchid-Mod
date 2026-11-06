@@ -1,6 +1,7 @@
 using OrchidMod.Common;
 using OrchidMod.Common.Global.NPCs;
 using OrchidMod.Common.ModObjects;
+using OrchidMod.Utilities;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,6 +10,9 @@ namespace OrchidMod.Content.Guardian
 {
 	public abstract class OrchidModGuardianProjectile : OrchidModProjectile
 	{
+		/// <summary>Shorthand for the <see cref="OrchidModProjectile.Owner">Owner</see>'s OrchidGuardian instance.</summary>
+		public OrchidGuardian Guardian(Player player = null) => player.Guardian();
+		
 		public virtual void SafeOnHitNPC(NPC target, NPC.HitInfo hit, int damageDone, Player player, OrchidGuardian guardian) { }
 		public virtual void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers, Player player, OrchidGuardian guardian) { }
 		/// <summary>Set to false in ModifyHitNPC when this projectile or specific anchor attack hits an enemy a second time. Flagged before most hit functions.</summary>
@@ -40,7 +44,7 @@ namespace OrchidMod.Content.Guardian
 		public sealed override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 		{
 			Player player = Main.player[Projectile.owner];
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 
 			SafeOnHitNPC(target, hit, damageDone, player, guardian);
 		}
@@ -50,7 +54,7 @@ namespace OrchidMod.Content.Guardian
 			FirstHit = NotHitYet;
 			NotHitYet = false;
 			Player player = Main.player[Projectile.owner];
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 			SafeModifyHitNPC(target, ref modifiers, player, guardian);
 			OrchidGlobalNPC modTarget = target.GetGlobalNPC<OrchidGlobalNPC>();
 			if (!modTarget.GuardianHit)

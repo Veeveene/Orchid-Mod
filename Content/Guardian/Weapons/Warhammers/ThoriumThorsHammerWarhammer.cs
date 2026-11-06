@@ -34,14 +34,14 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			BlockDuration = 80;
 		}
 
-		public override bool CanRightClick() => ModContent.GetInstance<OrchidClientConfig>().GuardianThoriumThorsHammerConversion;
+		public override bool CanRightClick() => true;
 
 		
 		public override void RightClick(Player player)
 		{
-			if (OrchidMod.ThoriumMod != null && ModContent.GetInstance<OrchidClientConfig>().GuardianThoriumThorsHammerConversion)
+			if (OrchidMod.ThoriumMod is {} thoriumMod)
 			{
-				Item.ChangeItemType(OrchidMod.ThoriumMod.Find<ModItem>("MeleeThorHammer").Type);
+				Item.ChangeItemType(thoriumMod.Find<ModItem>("MeleeThorHammer").Type);
 			}
 		}
 
@@ -101,7 +101,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 		public override void AddRecipes()
 		{
 			var thoriumMod = OrchidMod.ThoriumMod;
-			if (thoriumMod != null)
+			if (thoriumMod != null && OrchidMod.OrchidServerConfig.GuardianThoriumThorsHammerConversion)
 			{
 				var recipe = CreateRecipe();
 				recipe.AddTile(thoriumMod, "ThoriumAnvil");
@@ -124,11 +124,8 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
         {
             base.ModifyTooltips(tooltips);
             
-			if (ModContent.GetInstance<OrchidClientConfig>().GuardianThoriumThorsHammerConversion)
-			{
-				int index = tooltips.FindIndex(ttip => ttip.Mod == "Terraria" && ttip.Name == "Tooltip0");
-				tooltips[index].Text = Language.GetTextValue(Mod.GetLocalizationKey("Items.ThoriumThorsHammerWarhammer.ChangeMode"));
-			}
-        }
+			int index = tooltips.FindIndex(ttip => ttip.Mod == "Terraria" && ttip.Name == "Tooltip0");
+			tooltips[index].Text = Language.GetTextValue(Mod.GetLocalizationKey("Items.ThoriumThorsHammerWarhammer.ChangeMode"));
+		}
 	}
 }

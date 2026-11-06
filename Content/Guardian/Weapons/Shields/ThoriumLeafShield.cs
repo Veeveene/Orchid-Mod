@@ -55,7 +55,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			anchor.NeedNetUpdate = true;
 		}
 
-		public override void Protect(Player player, Projectile shield)
+		public override void Protect(Player player, OrchidGuardian guardian, Projectile shield)
 		{
 			if (IsLocalPlayer(player))
 			{
@@ -64,7 +64,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			}
 		}
 
-		public override void SlamHitFirst(Player player, Projectile shield, NPC npc, bool WeakSlam)
+		public override void SlamHitFirst(Player player, OrchidGuardian guardian, Projectile shield, NPC npc, bool WeakSlam)
 		{
 			if (IsLocalPlayer(player) && !WeakSlam)
 			{

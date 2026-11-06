@@ -85,11 +85,10 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			};
 		}
 
-		public override void Push(Player player, Projectile shield, NPC npc)
+		public override void Push(Player player, OrchidGuardian guardian, Projectile shield, NPC npc)
 		{
 			if (npc.aiStyle == NPCAIStyleID.Spell)
 			{
-				OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
 				IEntitySource source = player.GetSource_ItemUse(Item);
 				Vector2 direction = Vector2.Normalize(shield.Center - player.Center).RotatedByRandom(MathHelper.ToRadians(5f));
 				int projectileDamage = guardian.GetGuardianDamage(Item.damage * 0.5f);
@@ -100,11 +99,10 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			}
 		}
 
-		public override bool Block(Player player, Projectile shield, Projectile projectile)
+		public override bool Block(Player player, OrchidGuardian guardian, Projectile shield, Projectile projectile)
 		{
 			if (IsLocalPlayer(player))
 			{
-				OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
 				IEntitySource source = player.GetSource_ItemUse(Item);
 				Vector2 direction = Vector2.Normalize(shield.Center - player.Center).RotatedByRandom(MathHelper.ToRadians(5f));
 

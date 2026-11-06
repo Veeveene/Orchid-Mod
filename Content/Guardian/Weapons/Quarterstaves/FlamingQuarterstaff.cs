@@ -21,9 +21,13 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			Item.damage = 35;
 		}
 
-		public override void PostDrawQuarterstaff(SpriteBatch spriteBatch, Projectile projectile, Player player, Color lightColor)
+		public override bool SafeCanHitNPC(Player player, Projectile anchor, NPC target) => Collision.CanHit(player, target);
+
+		protected override float TipOffset => 0.15f;
+
+		public override void PostDrawQuarterstaff(SpriteBatch spriteBatch, Projectile projectile, Player player, Color lightColor, SpriteEffects effects)
 		{
-			Vector2 pos = projectile.Center - Vector2.UnitX.RotatedBy(projectile.rotation + MathHelper.Pi * 0.75f) * 32;
+			Vector2 pos = GetTipPosition(projectile);
 			if (!player.wet || Main.tile[(int)pos.X / 16, (int)pos.Y / 16].CheckingLiquid)
 			{
 				Main.instance.LoadNPC(25);
@@ -34,7 +38,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 
 		public override void ExtraAIQuarterstaff(Player player, OrchidGuardian guardian, Projectile projectile)
 		{
-			Vector2 pos = projectile.Center - Vector2.UnitX.RotatedBy(projectile.rotation + MathHelper.Pi * 0.75f) * 32;
+			Vector2 pos = GetTipPosition(projectile);
 			if (!player.wet || Main.tile[(int)pos.X / 16, (int)pos.Y / 16].LiquidAmount < (pos.Y + player.gfxOffY) % 16 * 16 && !Main.tile[(int)pos.X / 16, (int)pos.Y / 16].HasUnactuatedTile)
 			{
 				bool bigAttack = projectile.ai[0] > 14 || projectile.ai[2] < 0;

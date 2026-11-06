@@ -13,17 +13,31 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 		{
 			Item.width = 54;
 			Item.height = 42;
-			Item.value = Item.sellPrice(0, 7, 0, 0);
-			Item.rare = ItemRarityID.Pink;
-			Item.useTime = 10;
-			ParryDuration = 60;
-			Item.knockBack = 24f;
-			Item.damage = 114;
+			if (Main.remixWorld)
+			{
+				Item.value = Item.sellPrice(0, 2, 0, 0);
+				Item.rare = ItemRarityID.Green;
+				Item.useTime = 30;
+				ParryDuration = 30;
+				Item.knockBack = 18f;
+				Item.damage = 38;
+				ChargedDamage = 1.5f;
+				JabChargeGain = 1f;
+			}
+			else
+			{
+				Item.value = Item.sellPrice(0, 7, 0, 0);
+				Item.rare = ItemRarityID.Pink;
+				Item.useTime = 10;
+				ParryDuration = 60;
+				Item.knockBack = 24f;
+				Item.damage = 114;
+				ChargedDamage = 2f;
+				JabChargeGain = 1.5f;
+			}
 			SwingStyle = 2;
 			SwingSpeed = 1.5f;
 			JabSpeed = 1.3f;
-			ChargedDamage = 2f;
-			JabChargeGain = 1.5f;
 		}
 
 		public override void OnHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, NPC.HitInfo hit, bool jabAttack, bool counterAttack)
@@ -31,7 +45,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			if (!jabAttack && !counterAttack && target.knockBackResist > 0f)
 			{
 				Vector2 velocity = Vector2.UnitY.RotatedBy(projectile.ai[1]) * Item.knockBack;
-				target.AddBuff(ModContent.BuffType<HockeyQuarterstaffDebuff>(), 90);
+				target.AddBuff(ModContent.BuffType<HockeyQuarterstaffDebuff>(), Main.remixWorld ? 60 : 90);
 				OrchidGlobalNPC orchidTarget = target.GetGlobalNPC<OrchidGlobalNPC>();
 				orchidTarget.ForcedVelocity = target.velocity = velocity;
 				orchidTarget.StarKOOwner = player.whoAmI;

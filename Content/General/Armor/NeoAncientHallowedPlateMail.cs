@@ -1,14 +1,10 @@
-using System;
-using Microsoft.Xna.Framework;
-using OrchidMod.Common;
-using OrchidMod.Common.ModObjects;
+using OrchidMod.Content.Guardian;
 using OrchidMod.Content.Guardian.Armors.OreHelms;
+using OrchidMod.Utilities;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
 
 namespace OrchidMod.Content.General.Armor
 {
@@ -16,8 +12,16 @@ namespace OrchidMod.Content.General.Armor
 	public class NeoAncientHallowedPlateMail : ModItem
 	{
 		public static LocalizedText[] SetBonusText { get; private set; }
-		static int GuardianHelmID;
-		static int GuardianAncientHelmID;
+		private static int GuardianHelmID;
+		private static int GuardianAncientHelmID;
+
+		private static int ThoriumGuiseID = -1;
+		private static int ThoriumAncientGuiseID = -1;
+		private static int ThoriumChapeauID = -1;
+		private static int ThoriumAncientChapeauID = -1;
+		private static int ThoriumCowlID = -1;
+		private static int ThoriumAncientCowlID = -1;
+		
 		public override void SetStaticDefaults()
 		{
 			ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.AncientHallowedPlateMail;
@@ -27,6 +31,16 @@ namespace OrchidMod.Content.General.Armor
 			SetBonusText = [this.GetLocalization("SetBonusMelee"), this.GetLocalization("SetBonusRanged"), this.GetLocalization("SetBonusMagic"), this.GetLocalization("SetBonusSummon"), this.GetLocalization("SetBonusGuardian")];
 			GuardianHelmID = ModContent.ItemType<GuardianHallowedHead>();
 			GuardianAncientHelmID = ModContent.ItemType<GuardianAncientHallowedHead>();
+
+			if (OrchidMod.ThoriumMod is { } thoriumMod)
+			{
+				ThoriumGuiseID = thoriumMod.Find<ModItem>("HallowedGuise").Type;
+				ThoriumAncientGuiseID = thoriumMod.Find<ModItem>("AncientHallowedGuise").Type;
+				ThoriumChapeauID = thoriumMod.Find<ModItem>("HallowedChapeau").Type;
+				ThoriumAncientChapeauID = thoriumMod.Find<ModItem>("AncientHallowedChapeau").Type;
+				ThoriumCowlID = thoriumMod.Find<ModItem>("HallowedCowl").Type;
+				ThoriumAncientCowlID = thoriumMod.Find<ModItem>("AncientHallowedCowl").Type;
+			}
 		}
 
 		public override void SetDefaults()
@@ -45,7 +59,11 @@ namespace OrchidMod.Content.General.Armor
 
 		public override bool IsArmorSet(Item head, Item body, Item legs)
 		{
-			return (legs.type == ItemID.HallowedGreaves || legs.type == ItemID.AncientHallowedGreaves) && ((head.type >= ItemID.HallowedHelmet && head.type <= ItemID.HallowedMask) || (head.type >= ItemID.HallowedHood && head.type <= ItemID.AncientHallowedHood) || head.type == GuardianHelmID || head.type == GuardianAncientHelmID);
+			bool legsMatch = legs.type == ItemID.HallowedGreaves || legs.type == ItemID.AncientHallowedGreaves;
+			bool headMatch = (head.type >= ItemID.HallowedHelmet && head.type <= ItemID.HallowedMask) || (head.type >= ItemID.HallowedHood && head.type <= ItemID.AncientHallowedHood) || head.type == GuardianHelmID || head.type == GuardianAncientHelmID;
+			if (OrchidMod.ThoriumMod is not null && ThoriumGuiseID != -1 && ThoriumAncientGuiseID != -1 && ThoriumChapeauID != -1 && ThoriumAncientChapeauID != -1 && ThoriumCowlID != -1 && ThoriumAncientCowlID != -1)
+				headMatch |= (head.type == ThoriumGuiseID || head.type == ThoriumAncientGuiseID || head.type == ThoriumChapeauID || head.type == ThoriumAncientChapeauID || head.type == ThoriumCowlID || head.type == ThoriumAncientCowlID);
+			return legsMatch && headMatch;
 		}
 
 		public override void UpdateArmorSet(Player player)
@@ -81,12 +99,22 @@ namespace OrchidMod.Content.General.Armor
 					if (item == GuardianHelmID || item == GuardianAncientHelmID)
 					{
 						player.setBonus = SetBonusText[4].Value;
-						OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+						OrchidGuardian guardian = player.Guardian();
 						//this references old guardian regen formulas. before 1.5.1 guard/slam regen would apply 40% as 1 - 0.4 = 0.667 = 6.67s regen time, or 1.66 per 10 seconds, rather than 1 / (1 + 0.4) = 0.714 = 7.14s regen time, or 1.4 per 10 seconds. this makes it significantly stronger than the tooltip value implies
 						guardian.GuardianGuardRecharge += 0.6667f;
 						guardian.GuardianSlamRecharge += 0.6667f;
 					}
-				break;
+					break;
+			}
+
+			if (OrchidMod.ThoriumMod is { } thoriumMod)
+			{
+				if (thoriumMod.Find<ModItem>("HallowedGuise") is {} guise && item == ThoriumGuiseID) guise.UpdateArmorSet(player);
+				else if (thoriumMod.Find<ModItem>("AncientHallowedGuise") is {} ancientGuise && item == ThoriumAncientGuiseID) ancientGuise.UpdateArmorSet(player);
+				else if (thoriumMod.Find<ModItem>("HallowedChapeau") is {} chapeau && item == ThoriumChapeauID) chapeau.UpdateArmorSet(player);
+				else if (thoriumMod.Find<ModItem>("AncientHallowedChapeau") is {} ancientChapeau && item == ThoriumAncientChapeauID) ancientChapeau.UpdateArmorSet(player);
+				else if (thoriumMod.Find<ModItem>("HallowedCowl") is {} cowl && item == ThoriumCowlID) cowl.UpdateArmorSet(player);
+				else if (thoriumMod.Find<ModItem>("AncientHallowedCowl") is {} ancientCowl && item == ThoriumAncientCowlID) ancientCowl.UpdateArmorSet(player);
 			}
 		}
 

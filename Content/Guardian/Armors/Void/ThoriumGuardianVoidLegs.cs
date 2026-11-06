@@ -23,13 +23,12 @@ namespace OrchidMod.Content.Guardian.Armors.Void
 
 		public override void UpdateEquip(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
-			modPlayer.GuardianSlamRecharge += 0.75f;
-			modPlayer.GuardianSlamMax++;
-			player.moveSpeed += 0.2f;
-			player.jumpSpeedBoost += 0.5f;
-			player.maxFallSpeed *= 1.25f;
-			player.aggro += 600;
+			OrchidGuardian modPlayer = Guardian(player);
+			modPlayer.GuardianGuardMax++;
+			player.moveSpeed += 0.3f;
+			player.jumpSpeedBoost += 1f;
+			player.runAcceleration *= 1.15f;
+			player.maxFallSpeed *= 1.5f;
 		}
 
 		public override void AddRecipes()

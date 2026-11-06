@@ -23,7 +23,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			blockDuration = 110;
 		}
 
-		public override void Protect(Player player, Projectile shield)
+		public override void Protect(Player player, OrchidGuardian guardian, Projectile shield)
 		{
 			player.GetModPlayer<OrchidPlayer>().TryHeal(10);
 		}

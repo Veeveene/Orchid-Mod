@@ -5,6 +5,8 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
 using OrchidMod.Common.Attributes;
+using OrchidMod.Content.Guardian.Buffs;
+using OrchidMod.Utilities;
 
 namespace OrchidMod.Content.Guardian.Armors.Void
 {
@@ -30,11 +32,9 @@ namespace OrchidMod.Content.Guardian.Armors.Void
 
 		public override void UpdateEquip(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
-			modPlayer.GuardianGuardRecharge += 0.75f;
+			OrchidGuardian modPlayer = Guardian(player);
 			modPlayer.GuardianGuardMax++;
-			player.GetDamage<GuardianDamageClass>() += 0.10f;
-			player.aggro += 600;
+			player.GetDamage<GuardianDamageClass>() += 0.21f;
 		}
 
 		public override bool IsArmorSet(Item head, Item body, Item legs)
@@ -44,9 +44,10 @@ namespace OrchidMod.Content.Guardian.Armors.Void
 
 		public override void UpdateArmorSet(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = Guardian(player);
 			player.setBonus = SetBonusText.Value;
-			player.statLifeMax2 -= 250;
+			modPlayer.GuardianVoid = true;
+			if (!player.HasBuff<GuardianRegenPotionBuff>()) modPlayer.GuardianRegenThreshold = 1f / modPlayer.GuardianGuardMax;
 		}
 
 		public override void AddRecipes()

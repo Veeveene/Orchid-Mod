@@ -21,13 +21,11 @@ namespace OrchidMod.Content.Guardian.Accessories
 
 		public override void UpdateAccessory(Player player, bool hideVisual)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
-
 			int projectileType = ModContent.ProjectileType<GuardianShieldAnchor>();
 			if (player.ownedProjectileCounts[projectileType] > 0)
 			{
-				var guardian = player.GetModPlayer<OrchidGuardian>();
-				Projectile proj = Main.projectile.First(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
+				OrchidGuardian guardian = Guardian(player);
+				Projectile proj = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
 				if (proj.localAI[0] - proj.ai[0] < 2)
 				{
 					damageIncrease = 0f;

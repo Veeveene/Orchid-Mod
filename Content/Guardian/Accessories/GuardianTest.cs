@@ -18,7 +18,6 @@ namespace OrchidMod.Content.Guardian.Accessories
 
 		public override bool? UseItem(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
 			Main.NewText("Generating all attack type names.");
 			for (byte i = 0; i < 128; i++)
 			{
@@ -29,15 +28,33 @@ namespace OrchidMod.Content.Guardian.Accessories
 
 		public override void UpdateAccessory(Player player, bool hideVisual)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = Guardian(player);
 			modPlayer.GuardianInfiniteResources = true;
-			if (!hideVisual) modPlayer.GuardianDebugVisuals = 1;
+			if (!hideVisual)
+			{
+				int mode = 6;
+				for (int i = 3; i < 8; i++)
+				{
+					if (player.armor[i].type == Type)
+						mode = i - 2;
+				}
+				modPlayer.GuardianDebugVisuals = mode;
+			}
 		}
 
 		public override void UpdateVanity(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
-			modPlayer.GuardianDebugVisuals = 1;
+			OrchidGuardian modPlayer = Guardian(player);
+			int mode = 6;
+			for (int i = 13; i < 18; i++)
+			{
+				if (player.armor[i].type == Type)
+				{
+					mode = i - 12;
+					break;
+				}
+			}
+			modPlayer.GuardianDebugVisuals = mode;
 		}
 
 		public static string AttackTypeString(GuardianAttackInfo info)

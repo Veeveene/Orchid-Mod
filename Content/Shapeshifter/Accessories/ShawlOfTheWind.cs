@@ -17,7 +17,7 @@ namespace OrchidMod.Content.Shapeshifter.Accessories
 		public override void UpdateAccessory(Player player, bool hideVisual)
 		{
 			player.moveSpeed += 0.12f;
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = Shapeshifter(player);
 			shapeshifter.ShapeshifterShawlWind = true;
 			if (shapeshifter.ShapeshifterHookDash < 11f)
 			{

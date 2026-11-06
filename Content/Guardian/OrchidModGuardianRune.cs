@@ -61,38 +61,30 @@ namespace OrchidMod.Content.Guardian
 
 		public sealed override void HoldItem(Player player)
 		{
-			var projectileType = ModContent.ProjectileType<GuardianRuneAnchor>();
-			var guardian = player.GetModPlayer<OrchidGuardian>();
+			var guardian = Guardian(player);
 			guardian.GuardianDisplayUI = 300;
 
-			if (player.ownedProjectileCounts[projectileType] != 1)
+			if (player.ownedProjectileCounts[AnchorType] != 1)
 			{
 				if (IsLocalPlayer(player))
 				{
 					foreach (Projectile projectile in Main.projectile)
 					{
-						if (projectile.active && projectile.owner == player.whoAmI && projectile.type == projectileType)
+						if (projectile.active && projectile.owner == player.whoAmI && projectile.type == AnchorType)
 						{
 							projectile.Kill();
 						}
 					}
 
-					var index = Projectile.NewProjectile(Item.GetSource_FromThis(), player.Center.X, player.Center.Y, 0f, 0f, projectileType, 0, 0f, player.whoAmI);
-
-					var proj = Main.projectile[index];
-					if (proj.ModProjectile is not GuardianRuneAnchor rune)
-					{
-						proj.Kill();
-					}
-					else
-					{
+					Projectile proj = SpawnAnchor(player, out GuardianRuneAnchor rune);
+					if (rune is not null)
 						rune.OnChangeSelectedItem(player);
-					}
+					else proj.Kill();
 				}
 			}
 			else
 			{
-				var proj = Main.projectile.First(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
+				var proj = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == AnchorType);
 				if (proj != null && proj.ModProjectile is GuardianRuneAnchor rune)
 				{
 					if (rune.SelectedItem != player.selectedItem)
@@ -106,13 +98,13 @@ namespace OrchidMod.Content.Guardian
 
 		public override bool CanUseItem(Player player)
 		{
-			var guardian = player.GetModPlayer<OrchidGuardian>();
+			var guardian = Guardian(player);
 			if (player.whoAmI == Main.myPlayer && !player.cursed)
 			{
 				var projectileType = ModContent.ProjectileType<GuardianRuneAnchor>();
 				if (player.ownedProjectileCounts[projectileType] > 0)
 				{
-					var proj = Main.projectile.First(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
+					var proj = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
 					if (proj != null && proj.ModProjectile is GuardianRuneAnchor anchor && guardian.GuardianItemCharge == 0f)
 					{
 						foreach (Projectile projectile in Main.projectile) 
@@ -134,14 +126,7 @@ namespace OrchidMod.Content.Guardian
 			return false;
 		}
 
-		public override bool? UseItem(Player player)
-		{
-			if (player.whoAmI == Main.myPlayer)
-			{
-				var guardian = player.GetModPlayer<OrchidGuardian>();
-			}
-			return true;
-		}
+		public override bool? UseItem(Player player) => true;
 
 		public override bool AltFunctionUse(Player player)
 		{
@@ -155,16 +140,16 @@ namespace OrchidMod.Content.Guardian
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips)
 		{
-			TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
-			if (tt != null)
-			{
-				string[] splitText = tt.Text.Split(' ');
-				string damageValue = splitText.First();
-				tt.Text = damageValue + " " + Language.GetTextValue(ModContent.GetInstance<OrchidMod>().GetLocalizationKey("DamageClasses.GuardianDamageClass.DisplayName"));
-			}
+			// TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
+			// if (tt != null)
+			// {
+			// 	string[] splitText = tt.Text.Split(' ');
+			// 	string damageValue = splitText.First();
+			// 	tt.Text = damageValue + " " + Language.GetTextValue(Mod.GetLocalizationKey("DamageClasses.GuardianDamageClass.DisplayName"));
+			// }
 
 			int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Knockback"));
-			tooltips.Insert(index + 1, new TooltipLine(Mod, "RuneDuration", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.RuneDuration", OrchidUtils.FramesToSeconds((int)(RuneDuration * Main.LocalPlayer.GetModPlayer<OrchidGuardian>().GuardianRuneTimer)))));
+			tooltips.Insert(index + 1, new TooltipLine(Mod, "RuneDuration", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.RuneDuration", OrchidUtils.FramesToSeconds((int)(RuneDuration * Guardian().GuardianRuneTimer)))));
 
 			index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Knockback"));
 			tooltips.Insert(index + 1, new TooltipLine(Mod, "UseSlams", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.UsesUpTo", this.RuneCost)));

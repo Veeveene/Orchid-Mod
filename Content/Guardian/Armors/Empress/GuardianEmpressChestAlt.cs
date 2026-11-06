@@ -30,7 +30,7 @@ namespace OrchidMod.Content.Guardian.Armors.Empress
 
 		public override void UpdateEquip(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = Guardian(player);
 			modPlayer.GuardianGuardMax += 2;
 			modPlayer.GuardianGuardRecharge += 0.8f;
 			player.aggro += 250;
@@ -43,7 +43,7 @@ namespace OrchidMod.Content.Guardian.Armors.Empress
 
 		public override void UpdateArmorSet(Player player)
 		{
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = Guardian(player);
 			player.setBonus = SetBonusText.Value;
 			if (player.HeldItem.ModItem is OrchidModGuardianShield || player.HeldItem.ModItem is OrchidModGuardianGauntlet)
 			{

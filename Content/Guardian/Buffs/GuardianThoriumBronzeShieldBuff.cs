@@ -3,6 +3,7 @@ using Terraria.ModLoader;
 using Terraria.Localization;
 using OrchidMod.Content.Guardian.Weapons.Shields;
 using System;
+using OrchidMod.Utilities;
 
 namespace OrchidMod.Content.Guardian.Buffs
 {
@@ -20,7 +21,7 @@ namespace OrchidMod.Content.Guardian.Buffs
 
 		public override void Update(Player player, ref int buffIndex)
 		{
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 			guardian.GuardianBronzeShieldBuff = true;
 			if (player.HeldItem.type == ModContent.ItemType<ThoriumBronzeShield>())
 				player.GetDamage<GuardianDamageClass>() *= 1 + guardian.GuardianBronzeShieldDamage;

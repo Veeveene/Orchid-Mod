@@ -24,7 +24,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			blockDuration = 200;
 		}
 
-		public override void Slam(Player player, Projectile shield, bool WeakSlam)
+		public override void Slam(Player player, OrchidGuardian guardian, Projectile shield, bool WeakSlam)
 		{
 			if (IsLocalPlayer(player) && !WeakSlam)
 			{

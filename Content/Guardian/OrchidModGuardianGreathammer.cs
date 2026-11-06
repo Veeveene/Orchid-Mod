@@ -6,6 +6,7 @@ using OrchidMod.Content.General.Prefixes;
 using OrchidMod.Content.Guardian.Buffs.Debuffs;
 using System.Collections.Generic;
 using System.Linq;
+using OrchidMod.Utilities;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -95,7 +96,13 @@ namespace OrchidMod.Content.Guardian
 		/// <summary>Called at the end of HoldItem if an anchor exists.</summary>
 		public virtual void SafeHoldItem(Player player, OrchidGuardian guardian, Projectile anchor) { }
 
-		public override int? AnchorType => ModContent.ProjectileType<GuardianHammerAnchor>();
+		public override int AnchorType => ModContent.ProjectileType<GuardianGreathammerAnchor>();
+		
+		public override void SetStaticDefaults()
+		{
+			ItemID.Sets.ItemsThatAllowRepeatedRightClick[Type] = true;
+			SafeSetStaticDefaults();
+		}
 		public sealed override void SetDefaults()
 		{
 			Item.DamageType = GetInstance<GuardianDamageClass>();
@@ -142,15 +149,14 @@ namespace OrchidMod.Content.Guardian
 
 		public sealed override void HoldItem(Player player)
 		{
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = Guardian(player);
 			guardian.GuardianDisplayUI = 300;
 			
 			Projectile projectile;
-			int greathammerID = ProjectileType<GuardianGreathammerAnchor>();
-			if (player.ownedProjectileCounts[greathammerID] == 0)
-				projectile = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, greathammerID, 0, 0f, player.whoAmI);
-			else projectile = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == greathammerID);
-			if (projectile.ModProjectile is GuardianGreathammerAnchor anchor)
+			if (player.ownedProjectileCounts[AnchorType] == 0)
+				projectile = SpawnAnchor<GuardianGreathammerAnchor>(player, out _);
+			else projectile = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == AnchorType);
+			if (projectile?.ModProjectile is GuardianGreathammerAnchor anchor && anchor.Projectile.ai[0] != 4 && anchor.HammerItem != this)
 			{
 				if (anchor.Projectile.ai[0] != 4 && anchor.HammerItem != this)
 				{
@@ -164,18 +170,12 @@ namespace OrchidMod.Content.Guardian
 		public override bool? UseItem(Player player)
 		{
 			if (!IsLocalPlayer(player)) return false;
-			int greathammerID = ProjectileType<GuardianGreathammerAnchor>();
-			Projectile projectile = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == greathammerID);
+			Projectile projectile = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == AnchorType);
 			if (projectile.ModProjectile is GuardianGreathammerAnchor anchor)
 			{
-				OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
-				bool chargeInput = Main.mouseLeft;
-				bool swingInput = Main.mouseRight;
-				if (GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs)
-				{
-					chargeInput = Main.mouseRight;
-					swingInput = Main.mouseLeft;
-				}
+				OrchidGuardian guardian = Guardian(player);
+				bool chargeInput = guardian.GetGauntletPunchInput(false);
+				bool swingInput = guardian.GetGauntletBlockInput(false);
 				if (anchor.IsIdle)
 				{
 					if (chargeInput)
@@ -250,57 +250,51 @@ namespace OrchidMod.Content.Guardian
 
 		public override bool CanUseItem(Player player)
 		{
-			int greathammerID = ProjectileType<GuardianGreathammerAnchor>();
-			Projectile projectile = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == greathammerID);
-			if (projectile != null && projectile.ModProjectile is GuardianGreathammerAnchor anchor && anchor.IsIdle)
-				return true;
+			Projectile projectile = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == AnchorType);
+			if (projectile != null && projectile.ModProjectile is GuardianGreathammerAnchor anchor && anchor.IsIdle) return true;
 			return false;
 		}
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips)
 		{
-			var guardian = Main.LocalPlayer.GetModPlayer<OrchidGuardian>();
-			TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
-			if (tt != null)
-			{
-				string[] splitText = tt.Text.Split(' ');
-				string damageValue = splitText.First();
-				tt.Text = damageValue + " " + Language.GetTextValue(GetInstance<OrchidMod>().GetLocalizationKey("DamageClasses.GuardianDamageClass.DisplayName"));
-			}
+			var guardian = Guardian();
+			// TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
+			// if (tt != null)
+			// {
+			// 	string[] splitText = tt.Text.Split(' ');
+			// 	string damageValue = splitText.First();
+			// 	tt.Text = damageValue + " " + Language.GetTextValue(Mod.GetLocalizationKey("DamageClasses.GuardianDamageClass.DisplayName"));
+			// }
 
 			int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Knockback"));
-			string click = GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs ? Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.LeftClick") : Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.RightClick");
+			string click = OrchidUtils.GetClickInfoTooltip(guardian.GauntletInputSwap);
 
-			tooltips.Insert(index + 1, new TooltipLine(Mod, "Deflect", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.GreathammerDeflect", click)));
+			tooltips.Insert(index + 1, new TooltipLine(Mod, "Deflect", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.GreathammerDeflect", click).FirstCharToUpper()));
 
 			tooltips.Insert(index + 2, new TooltipLine(Mod, "DeflectGrants", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.DeflectGrants", GuardCost))
 			{
-				OverrideColor = new Color(175, 255, 175)
+				OverrideColor = OrchidColors.GuardianTooltip
 			});
 
-			tooltips.Insert(index + 3, new TooltipLine(Mod, "Charge", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.SlamChargeToThrow", click))
+			tooltips.Insert(index + 3, new TooltipLine(Mod, "Charge", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.SlamChargeToThrow", click).FirstCharToUpper())
 			{
-				OverrideColor = new Color(175, 255, 175)
+				OverrideColor = OrchidColors.GuardianTooltip
 			});
 
 			if (GuardStacks > 0 || SlamStacks > 0)
 			{
-				string TooltipToGet = GetInstance<OrchidMod>().GetLocalizationKey("Misc.GuardianGrants");
-				switch(GuardStacks)
-				{
-					case > 0: TooltipToGet += "Guard"; break;
-				}
-				switch (SlamStacks)
-				{
-					case > 0: TooltipToGet += "Slam"; break;
-				}
+				string TooltipToGet = Mod.GetLocalizationKey("Misc.GuardianGrants");
+				if (GuardStacks > 0) TooltipToGet += "Guard"; 
+				if (SlamStacks > 0) TooltipToGet += "Slam";
 				if (GuardStacks == SlamStacks) TooltipToGet += "Same";
 
-				tooltips.Insert(index + 1, new TooltipLine(Mod, "GuardianGrants", Language.GetText(TooltipToGet).Format(GuardStacks, SlamStacks))
+				tooltips.Insert(index + 1, new TooltipLine(Mod, "GuardianGrants", Language.GetTextValue(TooltipToGet, GuardStacks, SlamStacks))
 				{
-					OverrideColor = new Color(175, 255, 175)
+					OverrideColor = OrchidColors.GuardianTooltip
 				});
 			}
+			
+			SafeModifyTooltips(tooltips, guardian);
 		}
 	}
 }

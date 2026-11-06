@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using OrchidMod.Common;
 using OrchidMod.Content.General.Prefixes;
+using OrchidMod.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -255,20 +256,19 @@ namespace OrchidMod.Content.Guardian
 				{
 					if (Charging)
 					{
-						guardian.GuardianItemCharge += 30f / GauntletItem.useTime * (owner.GetTotalAttackSpeed(DamageClass.Melee) * 2f - 1f) * guardianItem.ChargeSpeedMultiplier;
+						guardian.GuardianItemCharge += 30f / GauntletItem.useTime * (owner.GetTotalAttackSpeed(DamageClass.Melee) * 2f - 1f) * guardian.GetWeaponChargeRate(guardianItem, guardianItem.ChargeSpeedMultiplier);;
 						if (guardian.GuardianItemCharge > 180f)
 						{
 							if (!Ding && IsLocalOwner)
 							{
-								if (ModContent.GetInstance<OrchidClientConfig>().GuardianAltChargeSounds) SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, owner.Center);
-								else SoundEngine.PlaySound(SoundID.MaxMana, owner.Center);
+								SoundEngine.PlaySound(guardian.DingSound, owner.Center);
 								Ding = true;
 							}
 							guardian.GuardianItemCharge = 180f;
 						}
 						else if (CanInstantSlam(guardianItem)) guardian.SlamCostUI = 1;
 
-						if ((ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs ? !Main.mouseRight : !Main.mouseLeft) && owner.whoAmI == Main.myPlayer)
+						if ((ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletInputs ? !Main.mouseRight : !Main.mouseLeft) && owner.whoAmI == Main.myPlayer)
 						{
 							if ((CanInstantSlam(guardianItem) || ModContent.GetInstance<OrchidClientConfig>().GuardianGauntletAlwaysSlam) && guardian.UseSlam(1, true))
 							{ // Consume a slam to fully charge if the player has one
@@ -330,7 +330,7 @@ namespace OrchidMod.Content.Guardian
 		public bool CanInstantSlam(OrchidModGuardianGauntlet gauntlet)
 		{
 			Player player = Main.player[Projectile.owner];
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 
 			if (guardian.GuardianItemCharge < 180f)
 			{
@@ -372,7 +372,7 @@ namespace OrchidMod.Content.Guardian
 			if (!ModContent.HasAsset(guardianItem.GauntletTexture)) return false;
 
 			Player player = Main.player[Projectile.owner];
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 			Color color = Lighting.GetColor((int)(Projectile.Center.X / 16f), (int)(Projectile.Center.Y / 16f), Color.White);
 
 			if (guardianItem.PreDrawGauntlet(spriteBatch, Projectile, player, OffHandGauntlet, ref color))

@@ -20,12 +20,12 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			blockDuration = 200;
 		}
 
-		public override void Push(Player player, Projectile shield, NPC npc)
+		public override void Push(Player player, OrchidGuardian guardian, Projectile shield, NPC npc)
 		{
 			npc.AddBuff(BuffID.OnFire, 600);
 		}
 
-		public override void SlamHit(Player player, Projectile shield, NPC npc, bool WeakSlam)
+		public override void SlamHit(Player player, OrchidGuardian guardian, Projectile shield, NPC npc, bool WeakSlam)
 		{
 			npc.AddBuff(BuffID.OnFire, WeakSlam ? 150 : 600);
 		}

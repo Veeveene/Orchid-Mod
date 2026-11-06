@@ -1,13 +1,20 @@
 using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using OrchidMod;
 using OrchidMod.Common.Attributes;
+using OrchidMod.Common.ModObjects;
 using OrchidMod.Content.Guardian;
+using OrchidMod.Content.Guardian.Buffs;
 using OrchidMod.Content.Guardian.Projectiles.Gauntlets;
+using OrchidMod.Content.Guardian.Projectiles.Quarterstaves;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
+using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -16,7 +23,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 	[CrossmodContent("ThoriumMod")]
     public class ThoriumBoreanStriderQuarterstaff : OrchidModGuardianQuarterstaff
     {
-        public float SnowflakeStacks;    
+        public Vector2 Tip;
 
         public override void SafeSetDefaults()
         {
@@ -24,143 +31,75 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
             Item.height = 44;
             Item.value = Item.sellPrice(0, 2);
             Item.rare = ItemRarityID.Pink;
-            Item.useTime = 25;
+            Item.useTime = 60;
             ParryDuration = 60;
             Item.knockBack = 4f;
-            Item.shootSpeed = 8f;
-            Item.damage = 140;
+            Item.shootSpeed = 12.5f;
+            Item.damage = 330;
+            GuardStacks = 1;
+            SlamStacks = 2;
+            JabChargeGain = 1.4f;
+            ChargeRate = 0.25f;
+            JabSpeed = 0.75f;
         }
 
-        public override void NetSend(BinaryWriter writer)
-        {
-            writer.Write(SnowflakeStacks);
-        }
-
-        public override void NetReceive(BinaryReader reader)
-        {
-            SnowflakeStacks = reader.ReadSingle();
-        }
+        public override bool SafeCanHitNPC(Player player, Projectile anchor, NPC target) => false;
 
         public override void HoldItemFrame(Player player)
         {
-	        if (player.dead)
+	        if (player.HasBuff<GuardianBoreanStriderQuarterstaffBuff>())
 	        {
-		        SnowflakeStacks = 0;
+		        if (ChargeRate < 2f) ChargeRate = 2f;
+		        Item.NetStateChanged();
+	        }
+	        else
+	        {
+		        if (ChargeRate > 0.25f) ChargeRate = 0.25f;
 		        Item.NetStateChanged();
 	        }
         }
 
         public override void ExtraAIQuarterstaff(Player player, OrchidGuardian guardian, Projectile projectile)
         {
-	        if (projectile.ai[0] <= 1f && projectile.localAI[1] == 1)
+	        Tip = projectile.Center - Vector2.UnitY.RotatedBy(projectile.rotation + MathHelper.PiOver4) * projectile.width * 0.25f;
+
+	        if (Main.rand.NextBool(3))
 	        {
-		        projectile.localAI[1] = 0;
-		        projectile.netUpdate = true;
+		         Dust dust = Dust.NewDustDirect(Tip - new Vector2(16), 24, 24, DustID.HallowSpray, Scale: 0.75f);
+		         dust.noGravity = true;
 	        }
         }
 
         public override void OnAttack(Player player, OrchidGuardian guardian, Projectile projectile, bool jabAttack, bool counterAttack)
         {
-            Dust swingDust = Dust.NewDustDirect(projectile.Center, projectile.width * 2, projectile.height * 2, DustID.HallowSpray, Scale: 0.75f);
-            swingDust.noGravity = true;
-            
-            if (projectile.ModProjectile is GuardianQuarterstaffAnchor anchor && anchor.Ding && !jabAttack && projectile.localAI[1] == 0 && SnowflakeStacks >= 6f)
+            for (int i = 0; i < 15; i++)
             {
-	            projectile.localAI[1] = 1;
-	            projectile.netUpdate = true;
-	            SnowflakeStacks = -1;
-                for (int i = -2; i < 3; i++)
-                {
-                    Vector2 velocity = Vector2.Normalize(Main.MouseWorld - player.MountedCenter) * Item.shootSpeed * (4+i)/4;
-                    int damage = guardian.GetGuardianDamage(Item.damage * 0.5f);
-                    Vector2 tipPosition = projectile.Center - Vector2.UnitY.RotatedBy(projectile.rotation + MathHelper.PiOver4) * projectile.width * 0.1f;
-                    
-                    Projectile snowflakeProjectile = Projectile.NewProjectileDirect(Item.GetSource_FromAI(), player.MountedCenter, velocity, ProjectileID.NorthPoleSnowflake, damage, Item.knockBack, projectile.owner);
-                    snowflakeProjectile.CritChance = guardian.GetGuardianCrit(Item.crit);
-                    snowflakeProjectile.rotation = snowflakeProjectile.velocity.ToRotation();
-                    snowflakeProjectile.DamageType = ModContent.GetInstance<GuardianDamageClass>();
-                    snowflakeProjectile.netUpdate = true;
-                }
-                SoundEngine.PlaySound(SoundID.Item28);
-                SnowflakeStacks = 0;
-                Item.NetStateChanged();
+	            Dust swingDust = Dust.NewDustDirect(Tip - new Vector2(4, 4), 8, 8, DustID.HallowSpray, Scale: 0.75f);
+	            swingDust.noGravity = true;
+            }
+            
+            if (IsLocalPlayer(player))
+            {
+	            Vector2 velocity = Vector2.Normalize(Main.MouseWorld - player.MountedCenter) * Item.shootSpeed;
+	            if (jabAttack)
+		            velocity *= 0.4f;
+				else if (counterAttack)
+					velocity *= 0.25f;
+
+	            int grantsRSS = (!counterAttack || jabAttack) ? 1 : 0;
+	            
+	            Projectile flake = Projectile.NewProjectileDirect(projectile.GetSource_FromAI(), player.MountedCenter + Vector2.UnitY.RotatedBy(projectile.ai[1]) * projectile.width * 0.6f, velocity + player.velocity * 0.1f, ModContent.ProjectileType<ThoriumBoreanStriderQuarterstaffProjectile>(), guardian.GetGuardianDamage(Item.damage), Item.knockBack * (!jabAttack && !counterAttack ? 0.5f : 1) , Main.myPlayer, projectile.whoAmI, grantsRSS);
+	            if (!jabAttack || counterAttack) // Swings and counters
+	            {
+		            if (!jabAttack && !counterAttack) player.ClearBuff(ModContent.BuffType<GuardianBoreanStriderQuarterstaffBuff>());
+		            ((ThoriumBoreanStriderQuarterstaffProjectile)flake.ModProjectile).Strong = true;
+	            }
+	            else 
+		            flake.damage = (int)(flake.damage * 0.2f);
             }
         }
 
-        public override void OnHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, NPC.HitInfo hit, bool jabAttack, bool counterAttack)
-        {
-            if (projectile.ModProjectile is GuardianQuarterstaffAnchor anchor) {
-                if (anchor.FirstHit && projectile.localAI[1] == 0)
-                { 
-	                // if (SnowflakeStacks == 9) SoundEngine.PlaySound(SoundID.Item4);
-	                // SnowflakeStacks++;
-	                // if (SnowflakeStacks > 10) SnowflakeStacks = 10;
-	                // if (SnowflakeStacks <= 10) CombatText.NewText(projectile.getRect(), SnowflakeStacks == 10 ? Color.DodgerBlue : Color.LightSkyBlue, SnowflakeStacks.ToString(), SnowflakeStacks == 10);
-
-	                if (SnowflakeStacks < 6)
-	                {
-		                float toAdd = 0;
-		                if (counterAttack) toAdd = 3;
-		                else if (!jabAttack) toAdd = 2;
-		                else toAdd = 1;
-
-		                if ((SnowflakeStacks += toAdd) >= 6f)
-		                {
-			                SnowflakeStacks = 6f;
-			                SoundEngine.PlaySound(SoundID.Item4);
-			                for (int i = 0; i < 10; i++)
-			                {
-				                Dust dust = Dust.NewDustPerfect(player.Center, DustID.FrostHydra, Main.rand.NextVector2CircularEdge(2.5f, 2.5f), Scale: 3f);
-				                dust.noGravity = true;
-			                }
-		                }
-	                }
-
-	                Item.NetStateChanged();
-                }
-
-                Mod thoriumMod = OrchidMod.ThoriumMod;
-                if (thoriumMod != null)
-                {
-	                int debuffType = thoriumMod.Find<ModBuff>("Freezing").Type;
-	                target.AddBuff(debuffType, 120);
-                }
-            }
-        }
-
-        public override void QuarterstaffPostDrawUI(SpriteBatch spriteBatch, Player player, ref Color lightColor, Projectile projectile)
-        {
-	        Vector2 position = (player.position + new Vector2(player.width * 0.5f, player.height + player.gfxOffY + 12)).Floor();
-	        Vector2 drawpos = new Vector2(position.X + 22, position.Y - 94 * player.gravDir + 3f * (player.gravDir - 1)) - Main.screenPosition;
-
-	        Texture2D snowflakeUIOff = ModContent.Request<Texture2D>(Texture + "_UIOff").Value;
-	        Texture2D snowflakeUIOn = ModContent.Request<Texture2D>(Texture + "_UIOn").Value;
-	        Texture2D snowflakeUIReady = ModContent.Request<Texture2D>(Texture + "_UIReady").Value;
-	        
-	        if (OrchidMod.OrchidClientConfig.GuardianThoriumBoreanStriderColorUI)
-		        snowflakeUIOn = ModContent.Request<Texture2D>(ModContent.GetInstance<IceGauntletProjectile>().Texture).Value;
-
-	        
-	        
-	        int val = 26;
-	        float stacks = SnowflakeStacks / 6f; 
-	        while (stacks < 1)
-	        {
-		        stacks += 0.0385f;
-		        val--;
-	        }
-	        Rectangle rectangle = snowflakeUIOff.Bounds;
-	        rectangle.Height = val;
-	        rectangle.Y = snowflakeUIOff.Height - val;
-	        
-	        if (SnowflakeStacks >= 6)
-				spriteBatch.Draw(snowflakeUIReady, drawpos - new Vector2(2f, 2f), null, Color.White * 0.8f, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-	        
-	        spriteBatch.Draw(snowflakeUIOff, drawpos, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-	        drawpos.Y += snowflakeUIOff.Height - val;
-	        spriteBatch.Draw(snowflakeUIOn, drawpos, rectangle, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-
-        }
+        public override void OnHit(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, NPC.HitInfo hit, bool jabAttack, bool counterAttack) { }
     }
 }
 

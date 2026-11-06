@@ -70,7 +70,7 @@ namespace OrchidMod.Content.Shapeshifter.Projectiles.Symbiote
 			// Visuals & Fields updates
 
 			Player player = Owner;
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = Shapeshifter(player);
 			Timespent++;
 
 			if (!Initialized)

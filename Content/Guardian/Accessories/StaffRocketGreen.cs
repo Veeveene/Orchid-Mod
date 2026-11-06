@@ -3,7 +3,8 @@ using Terraria.ID;
 
 namespace OrchidMod.Content.Guardian.Accessories
 {
-	public class StaffRocketGreen : OrchidModGuardianEquipable
+	/*
+	 public class StaffRocketGreen : OrchidModGuardianEquipable
 	{
 		public override void SafeSetDefaults()
 		{
@@ -16,7 +17,7 @@ namespace OrchidMod.Content.Guardian.Accessories
 
 		public override void UpdateAccessory(Player player, bool hideVisual)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = Guardian(player);
 			modPlayer.GuardianStaffRocket = 2;
 		}
 
@@ -29,4 +30,5 @@ namespace OrchidMod.Content.Guardian.Accessories
 			recipe.Register();
 		}
 	}
+	*/
 }

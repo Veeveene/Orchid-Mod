@@ -48,8 +48,6 @@ namespace OrchidMod.Content.Guardian
 		public virtual void PostDrawKatar(SpriteBatch spriteBatch, Projectile projectile, Player player, bool offHandKatar, Color lightColor) { }
 		/// <summary> Called before drawing the katar anchor projectile. Return false to prevent normal draw code from running. </summary>
 		public virtual bool PreDrawKatar(SpriteBatch spriteBatch, Projectile projectile, Player player, bool offHandKatar, ref Color lightColor) { return true; }
-		/// <summary> Called at the end of ModifyTooltips, allowing for further tooltip changes. </summary>
-		public virtual void SafeModifyTooltips(List<TooltipLine> tooltips) { }
 		/// <summary> Called when drawing the katar jab projectiles color. </summary>
 		public virtual Color GetColor() => Color.White;
 		/// <summary> Responsible for playing the sound when the player begins guarding with the weapon. Default behavior is <c>SoundEngine.PlaySound(SoundID.DD2_JavelinThrowersAttack.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), player.Center);</c> </summary>
@@ -99,7 +97,7 @@ namespace OrchidMod.Content.Guardian
 		/// <summary>Draws extra UI elements on the GuardianUIState while held.</summary>
 		public virtual void KatarPostDrawUI(SpriteBatch spriteBatch, Player player, ref Color lightColor, Projectile main, Projectile alt) { }
 
-		public override int? AnchorType => ModContent.ProjectileType<GuardianKatarAnchor>();
+		public override int AnchorType => ModContent.ProjectileType<GuardianKatarAnchor>();
 		public sealed override void SetDefaults()
 		{
 			Item.DamageType = ModContent.GetInstance<GuardianDamageClass>();
@@ -115,7 +113,7 @@ namespace OrchidMod.Content.Guardian
 			OrchidGlobalItemPerEntity orchidItem = Item.GetGlobalItem<OrchidGlobalItemPerEntity>();
 			orchidItem.guardianWeapon = true;
 
-			this.SafeSetDefaults();
+			SafeSetDefaults();
 			Item.useAnimation = Item.useTime;
 		}
 
@@ -152,8 +150,8 @@ namespace OrchidMod.Content.Guardian
 			int[] anchors = GetAnchors(player);
 			if (anchors != null)
 			{
-				OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
-				bool swap = ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs;
+				OrchidGuardian guardian = Guardian(player);
+				bool swap = ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletInputs;
 				bool punchHold = swap ? Main.mouseRight : Main.mouseLeft;
 				bool punchTap = swap ? Main.mouseRightRelease : Main.mouseLeftRelease;
 				bool guardHold = swap ? Main.mouseLeft : Main.mouseRight;
@@ -281,28 +279,22 @@ namespace OrchidMod.Content.Guardian
 		public sealed override void HoldItem(Player player)
 		{
 			var projectileType = ModContent.ProjectileType<GuardianKatarAnchor>();
-			var guardian = player.GetModPlayer<OrchidGuardian>();
+			var guardian = Guardian(player);
 			guardian.GuardianDisplayUI = 300;
 			int count = player.ownedProjectileCounts[projectileType];
 			if (count < 2)
 			{
 				if (count == 1)
 				{
-					var proj = Main.projectile.First(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
+					var proj = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
 					if (proj != null && proj.ModProjectile is GuardianKatarAnchor) proj.Kill();
 				}
 
 				int[] indexes = [-1, -1];
 				for (int i = 0; i < 2; i++)
 				{
-					var index = Projectile.NewProjectile(Item.GetSource_FromThis(), player.Center.X, player.Center.Y, 0f, 0f, projectileType, 0, 0f, player.whoAmI);
-
-					var proj = Main.projectile[index];
-					if (proj.ModProjectile is not GuardianKatarAnchor katar)
-					{
-						proj.Kill();
-					}
-					else
+					Projectile proj = SpawnAnchor(player, out GuardianKatarAnchor katar);
+					if (katar is not null)
 					{
 						indexes[i] = proj.whoAmI;
 						katar.OffHandKatar = i == 0;
@@ -310,6 +302,7 @@ namespace OrchidMod.Content.Guardian
 						katar.OnChangeSelectedItem(player);
 						katar.NeedNetUpdate = true;
 					}
+					else proj.Kill();
 				}
 
 				if (indexes[1] < indexes[0])
@@ -375,31 +368,31 @@ namespace OrchidMod.Content.Guardian
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips)
 		{
-			var guardian = Main.LocalPlayer.GetModPlayer<OrchidGuardian>();
-			TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
-			if (tt != null)
-			{
-				string[] splitText = tt.Text.Split(' ');
-				string damageValue = splitText.First();
-				tt.Text = damageValue + " " + Language.GetTextValue(ModContent.GetInstance<OrchidMod>().GetLocalizationKey("DamageClasses.GuardianDamageClass.DisplayName"));
-			}
+			var guardian = Guardian();
+			// TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
+			// if (tt != null)
+			// {
+			// 	string[] splitText = tt.Text.Split(' ');
+			// 	string damageValue = splitText.First();
+			// 	tt.Text = damageValue + " " + Language.GetTextValue(Mod.GetLocalizationKey("DamageClasses.GuardianDamageClass.DisplayName"));
+			// }
 
 			int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Knockback"));
-			tooltips.Insert(index + 1, new TooltipLine(Mod, "ParryDuration", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.ParryDuration", OrchidUtils.FramesToSeconds((int)(ParryDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianParryDuration)))));
+			tooltips.Insert(index + 1, new TooltipLine(Mod, "ParryDuration", GetDashTooltip(guardian)));
 
 
-			string click = ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs ? Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.LeftClick") : Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.RightClick");
-			tooltips.Insert(index + 2, new TooltipLine(Mod, "ClickInfo", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.Parry", click))
+			string click = OrchidUtils.GetClickInfoTooltip(guardian.GauntletInputSwap);			
+			tooltips.Insert(index + 2, new TooltipLine(Mod, "ClickInfo", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.ParryDash", click).FirstCharToUpper())
 			{
-				OverrideColor = new Color(175, 255, 175)
+				OverrideColor = OrchidColors.GuardianTooltip
 			});
 
-			tooltips.Insert(index + 3, new TooltipLine(Mod, "Swing", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.ChargeToSwing", click))
+			tooltips.Insert(index + 3, new TooltipLine(Mod, "Swing", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.ChargeToJabKatar", click).FirstCharToUpper())
 			{
-				OverrideColor = new Color(175, 255, 175)
+				OverrideColor = OrchidColors.GuardianTooltip
 			});
 
-			SafeModifyTooltips(tooltips);
+			SafeModifyTooltips(tooltips, guardian);
 		}
 
 		public virtual Texture2D GetKatarTexture(Player player, Projectile anchor, bool OffHandGauntlet, out Rectangle? drawRectangle, int frame = 0)
@@ -422,6 +415,51 @@ namespace OrchidMod.Content.Guardian
 			{
 				return null;
 			}
+		}
+
+		public string GetDashTooltip(OrchidGuardian guardian)
+		{
+			OrchidClientConfig.KatarDistanceUnits units = OrchidMod.OrchidClientConfig.KatarDistanceUnit;
+			if (units == OrchidClientConfig.KatarDistanceUnits.Duration)
+				return Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.ParryDuration", OrchidUtils.FramesToSeconds((int)guardian.GetParryDuration(Item, ParryDuration)));
+			
+			float distance = ParryDuration * ParryDashSpeed;
+			float unitConversion = units switch
+			{
+				OrchidClientConfig.KatarDistanceUnits.Tiles => 0.0625f,
+				OrchidClientConfig.KatarDistanceUnits.Feet => 0.125f,
+				_ => 1f
+			};
+
+			const string unitBaseKey = "Mods.OrchidMod.UI.Units";
+			string unitName = units switch
+			{
+				OrchidClientConfig.KatarDistanceUnits.Pixels => Language.GetTextValue(unitBaseKey + ".Pixels"),
+				OrchidClientConfig.KatarDistanceUnits.Tiles => Language.GetTextValue(unitBaseKey + ".Tiles"),
+				OrchidClientConfig.KatarDistanceUnits.Feet => Language.GetTextValue(unitBaseKey + ".Feet"),
+				OrchidClientConfig.KatarDistanceUnits.Descriptor => "",
+				_ => Language.GetTextValue(unitBaseKey + ".Pixels")
+			};
+
+			object distanceValue = distance * unitConversion;
+			if (units == OrchidClientConfig.KatarDistanceUnits.Descriptor)
+			{
+				const string descriptorBaseKey = "Mods.OrchidMod.UI.GuardianItem.ParryDistanceDescriptor";
+				distanceValue = distance switch
+				{
+					>= 800 => Language.GetTextValue(descriptorBaseKey + ".AbsurdlyFar"),
+					> 560 => Language.GetTextValue(descriptorBaseKey + ".ExtremelyFar"),
+					> 400 => Language.GetTextValue(descriptorBaseKey + ".VeryFar"),
+					> 280 => Language.GetTextValue(descriptorBaseKey + ".Far"),
+					> 180 => Language.GetTextValue(descriptorBaseKey + ".Average"),
+					> 120 => Language.GetTextValue(descriptorBaseKey + ".Short"),
+					> 60 => Language.GetTextValue(descriptorBaseKey + ".VeryShort"),
+					> 0 => Language.GetTextValue(descriptorBaseKey + ".ExtremelyShort"),
+					_ => Language.GetTextValue(descriptorBaseKey + ".None")
+				};
+			}
+			
+			return Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.ParryDistance", distanceValue, unitName);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using OrchidMod.Utilities;
 using Terraria;
 using Terraria.ID;
 using Terraria.Audio;
@@ -27,7 +28,7 @@ namespace OrchidMod.Content.Guardian.Projectiles.Standards
 		{
 			if (target.whoAmI == Projectile.ai[0]) return false;
 			Player player = Main.player[Projectile.owner];
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 			GuardianStandardAnchor standardAnchor = guardian.GuardianCurrentStandardAnchor.ModProjectile as GuardianStandardAnchor; 
 			if (target.Center.Distance(player.Center) > (standardAnchor.BuffItem.ModItem as OrchidModGuardianStandard).AuraRange * guardian.GuardianStandardRange + target.width * 0.5f) return false;
 			return base.CanHitNPC(target);

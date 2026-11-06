@@ -31,6 +31,9 @@ namespace OrchidMod.Content.Guardian.Projectiles.Misc
 				Owner.RemoveAllGrapplingHooks();
 				SoundEngine.PlaySound(SoundID.DD2_KoboldIgnite.WithPitchOffset(-0.1f).WithVolumeScale(1.2f));
 
+				if (Projectile.velocity == Vector2.Zero || Projectile.velocity.HasNaNs())
+					Projectile.velocity = Main.rand.NextVector2Unit();
+				
 				for (int i = 0; i < 3; i++)
 				{
 					Gore gore = Gore.NewGoreDirect(Owner.GetSource_FromAI(), Projectile.Center + new Vector2(Main.rand.NextFloat(-24f, 0f), Main.rand.NextFloat(-24f, 0f)), Vector2.UnitY.RotatedByRandom(MathHelper.Pi), 61 + Main.rand.Next(3));

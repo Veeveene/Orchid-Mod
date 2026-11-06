@@ -26,7 +26,7 @@ namespace OrchidMod.Content.Guardian.Armors.Misc
 
 		public override void UpdateEquip(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = Guardian(player);
 			modPlayer.GuardianSlamMax += 1;
 			modPlayer.GuardianGuardMax += 1;
 			player.aggro += 250;
@@ -55,7 +55,7 @@ namespace OrchidMod.Content.Guardian.Armors.Misc
 
 		public override void UpdateArmorSet(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = Guardian(player);
 			player.setBonus = SetBonusText.Value;
 			modPlayer.GuardianGit = true;
 		}

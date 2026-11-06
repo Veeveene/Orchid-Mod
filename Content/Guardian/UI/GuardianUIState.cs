@@ -9,7 +9,14 @@ using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Humanizer;
+using JetBrains.Annotations;
+using log4net;
+using OrchidMod.Content.Guardian.Misc;
+using ReLogic.Graphics;
 using Terraria;
+using Terraria.GameContent;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
 
@@ -19,8 +26,17 @@ namespace OrchidMod.Content.Guardian.UI
 	{
 		public static bool NeedTextureReload;
 
+		[CanBeNull]
+		public static IGuardianCustomUIItem LastUsedCustomUIItem = null;
+
+		public static Dictionary<Type, Texture2D> TextureCustomOffCache = new();
+		public static Dictionary<Type, Texture2D> TextureCustomOnCache = new();
+		public static Dictionary<Type, Texture2D> TextureCustomReadyCache = new();
+
 		public static Texture2D textureBlockBarOn;
 		public static Texture2D textureBlockBarOff;
+		public static Texture2D textureBlockBarOnVoid;
+		public static Texture2D textureBlockBarOffVoid;
 		public static Texture2D textureBlockReady;
 
 		public static Texture2D textureBlockBarHighlight;
@@ -68,6 +84,13 @@ namespace OrchidMod.Content.Guardian.UI
 		public static Texture2D textureGuardianNeedleOff;
 		public static Texture2D textureGuardianNeedleReady;
 
+		public static Texture2D textureCustomOn;
+		public static Texture2D textureCustomOff;
+		public static Texture2D textureCustomReady;
+		public static Texture2D textureFallbackOn;
+		public static Texture2D textureFallbackOff;
+		public static Texture2D textureFallbackReady;
+
 		public static Texture2D textureBlockOn;
 		public static Texture2D textureBlockOff;
 
@@ -81,6 +104,10 @@ namespace OrchidMod.Content.Guardian.UI
 			=> layers.FindIndex(layer => layer.Name.Equals("Vanilla: Resource Bars"));
 		public override void OnInitialize()
 		{
+			TextureCustomReadyCache = new();
+			TextureCustomOffCache = new();
+			TextureCustomOnCache = new();
+
 			ReloadTextures();
 
 			Width.Set(0f, 0f);
@@ -95,9 +122,13 @@ namespace OrchidMod.Content.Guardian.UI
 			textureHammerMain = ModContent.Request<Texture2D>(path + "HammerBar", AssetRequestMode.ImmediateLoad).Value;
 			textureHammerIcon = ModContent.Request<Texture2D>(path + "HammerIcon1", AssetRequestMode.ImmediateLoad).Value;
 			textureHammerIconBig = ModContent.Request<Texture2D>(path + "HammerIcon2", AssetRequestMode.ImmediateLoad).Value;
+			
+			textureBlockBarOnVoid = ModContent.Request<Texture2D>(path + "BlockBarOnVoid", AssetRequestMode.ImmediateLoad).Value;
+			textureBlockBarOffVoid = ModContent.Request<Texture2D>(path + "BlockBarOffVoid", AssetRequestMode.ImmediateLoad).Value;
 
 			// Chance textures file path if the fancy config option is enabled
-			if (ModContent.GetInstance<OrchidClientConfig>().GuardianUseFancyUI) path += "Fancy/";
+			bool fancy = ModContent.GetInstance<OrchidClientConfig>().GuardianUseFancyUI;
+			if (fancy) path += "Fancy/";
 
 			textureBlockBarOn = ModContent.Request<Texture2D>(path + "BlockBarOn", AssetRequestMode.ImmediateLoad).Value;
 			textureBlockBarOff = ModContent.Request<Texture2D>(path + "BlockBarOff", AssetRequestMode.ImmediateLoad).Value;
@@ -156,13 +187,99 @@ namespace OrchidMod.Content.Guardian.UI
 			textureIconStandardHighlight = ModContent.Request<Texture2D>(path + "IconStandardHighlight", AssetRequestMode.ImmediateLoad).Value;
 			textureIconRuneOn = ModContent.Request<Texture2D>(path + "IconRuneOn", AssetRequestMode.ImmediateLoad).Value;
 			textureIconRuneOff = ModContent.Request<Texture2D>(path + "IconRuneOff", AssetRequestMode.ImmediateLoad).Value;
+			
+			textureFallbackOn = ModContent.Request<Texture2D>(path + "FallbackOn", AssetRequestMode.ImmediateLoad).Value;
+			textureFallbackOn.Name = "FallbackOn";
+			textureFallbackOff = ModContent.Request<Texture2D>(path + "FallbackOff", AssetRequestMode.ImmediateLoad).Value;
+			textureFallbackOff.Name = "FallbackOff";
+			textureFallbackReady = ModContent.Request<Texture2D>(path + "FallbackReady", AssetRequestMode.ImmediateLoad).Value;
+			textureFallbackReady.Name = "FallbackReady";
+
+			TextureCustomOnCache.Clear();
+			TextureCustomOffCache.Clear();
+			TextureCustomReadyCache.Clear();
+			LastUsedCustomUIItem = null;
+			
+			ILog logger = OrchidMod.Instance.Logger;
+			foreach (var modItem in ModContent.GetContent<ModItem>())
+			{
+				if (modItem is OrchidModGuardianItem and IGuardianCustomUIItem customUIItem)
+				{
+					string typeName = modItem.Name;
+					string textureName = customUIItem.TextureName;
+					string myPath = path + textureName;
+
+					if (textureName is null)
+					{
+						logger.DebugFormat("IGuardianCustomUIItem \"{0}\" has its \"TextureName\" property set to null; skipping", myPath);
+						continue;
+					}
+					
+					logger.DebugFormat("Considering path {0}", myPath);
+					
+					Texture2D textureOn;
+					Texture2D textureOff;
+					Texture2D textureReady;
+				
+					if (ModContent.RequestIfExists(customUIItem.TextureOnPath(fancy) ?? myPath + "On", out Asset<Texture2D> textOn, AssetRequestMode.ImmediateLoad))
+					{
+						textureOn = textOn.Value;
+						textureOn.Name = textureName + "On";
+						logger.InfoFormat("Found \"On\" texture for {0} at {1}", typeName, myPath + "On");
+					}
+					else
+					{
+						textureOn = textureFallbackOn;
+						textureOn.Name = "FallbackOn";
+						logger.WarnFormat("{0} has no \"On\" texture defined at {1}, using fallback", typeName, myPath + "On");
+					}
+					
+					if (ModContent.RequestIfExists(customUIItem.TextureOffPath(fancy) ?? myPath + "Off", out Asset<Texture2D> textOff, AssetRequestMode.ImmediateLoad))
+					{
+						textureOff = textOff.Value;
+						textureOff.Name = textureName + "Off";
+						logger.InfoFormat("Found \"Off\" texture for {0} at {1}", typeName, myPath + "Off");
+					}
+					else
+					{
+						textureOff = textureFallbackOff;
+						textureOff.Name = "FallbackOff";
+						logger.WarnFormat("{0} has no \"Off\" texture defined at {1}, using fallback", typeName, myPath + "Off");
+					}
+						
+					if (ModContent.RequestIfExists(customUIItem.TextureReadyPath(fancy) ?? myPath + "Ready", out Asset<Texture2D> textReady, AssetRequestMode.ImmediateLoad))
+					{
+						textureReady = textReady.Value;
+						textureReady.Name = textureName + "Ready";
+						logger.InfoFormat("Found \"Ready\" texture for {0} at {1}", typeName, myPath + "Ready");
+					}
+					else
+					{
+						textureReady = textureFallbackReady;
+						textureReady.Name = "FallbackReady";
+						logger.WarnFormat("{0} has no \"Ready\" texture defined at {1}, using fallback", typeName, myPath + "Ready");
+					}
+					
+					logger.DebugFormat("Cached textures {0}, {1}, and {2} for IGuardianCustomUIItem \"{3}\"", textureOn.Name, textureOff.Name, textureReady.Name, typeName);
+					
+					TextureCustomOnCache.Add(customUIItem.GetType(), textureOn);
+					TextureCustomOffCache.Add(customUIItem.GetType(), textureOff);
+					TextureCustomReadyCache.Add(customUIItem.GetType(), textureReady);
+				}
+			}
+			textureCustomOn = textureFallbackOn;
+			textureCustomOff = textureFallbackOff;
+			textureCustomReady = textureFallbackReady;
+			logger.DebugFormat("Current entries for TextureCustomOnCache: {0}", TextureCustomOnCache.Values.Humanize());
+			logger.DebugFormat("Current entries for TextureCustomOffCache: {0}", TextureCustomOffCache.Values.Humanize());
+			logger.DebugFormat("Current entries for TextureCustomReadyCache: {0}", TextureCustomReadyCache.Values.Humanize());
 		}
 
 		public override void Draw(SpriteBatch spriteBatch)
 		{
 			Recalculate();
 			Player player = Main.LocalPlayer;
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = player.Guardian();
 
 			if (!player.dead && modPlayer.GuardianDisplayUI > 0)
 			{
@@ -176,7 +293,7 @@ namespace OrchidMod.Content.Guardian.UI
 				Vector2 position = (player.position + new Vector2(player.width * 0.5f, player.height + player.gfxOffY + 12)).Floor();
 				if (player.gravDir < 0) position.Y -= 81;
 				Vector2 drawpos = position;
-				position = position - Main.screenPosition;
+				position -= Main.screenPosition;
 				SpriteEffects effect = player.gravDir > 0 ? SpriteEffects.None : SpriteEffects.FlipVertically;
 
 				Texture2D chargeTextureOn = null;
@@ -188,32 +305,62 @@ namespace OrchidMod.Content.Guardian.UI
 				for (int i = 0; i < modPlayer.GuardianGuardMax; i++)
 				{
 					bool check = modPlayer.GuardianGuard > i;
-					Texture2D texture = modPlayer.GuardianGuard > i ? textureBlockBarOn : textureBlockBarOff;
-					drawpos = new Vector2(position.X - offSet + (textureBlockBarOn.Width + 2) * i, position.Y);
+					bool voidCheck = modPlayer.GuardianVoid;
+					
+					Texture2D textureOff = textureBlockBarOff;
+					Texture2D textureOn = textureBlockBarOn;
+					if (voidCheck)
+					{
+						textureOff = textureBlockBarOffVoid;
+						textureOn = textureBlockBarOnVoid;
+					}
+					
+					Texture2D texture = check ? textureOn : textureOff;
+					
+					drawpos = new Vector2(position.X - offSet + (textureOn.Width + 2) * i, position.Y);
+					Color bgColor = Color.White;
+					Color fgColor = bgColor;
+					Vector2 voidShake = Main.rand.NextVector2Unit() * Utils.Remap(modPlayer.GuardianGuard + modPlayer.GuardianGuardRecharging, 0, modPlayer.GuardianGuardMax / 2f, 1.5f, 0f);
+					if (voidCheck)
+					{
+						if (Main.rand.NextBool((int)Utils.Remap(modPlayer.GuardianGuard + modPlayer.GuardianGuardRecharging, 0, modPlayer.GuardianGuardMax / 2f, 1, 20))) drawpos += voidShake;
+						bgColor = modPlayer.GuardianGuard < 2 ? Color.Lerp(new Color(57, 0, 86), modPlayer.GuardianGuard < 1 ? new Color(255, 58, 228) : new(120, 0, 181), Utils.Turn01ToCyclic010(player.miscCounterNormalized * (modPlayer.GuardianGuard < 1 ? player.statLife / (float)player.statLifeMax2 < 0.8f ? 6 : 4 : 2))) : new (57, 0, 86);
+					}
+					
+					spriteBatch.Draw(texture, drawpos, null, check ? fgColor : bgColor, 0f, Vector2.Zero, 1f, effect, 0f);
+					
 					Vector2 drawposHighlight = new Vector2(position.X - offSet - 2 + 18 * i, position.Y - 2);
+					if (voidCheck) drawposHighlight += voidShake;
 					if (i < modPlayer.MissingGuardsUI)
 					{
 						float flash = 0.5f + (float)Math.Cos(modPlayer.MissingResourcesTimer * 0.28) * 0.5f;
 						spriteBatch.Draw(textureBlockBarHighlight, drawposHighlight, null, (check ? new Color(255, 92, 92) * 0.8f : new Color(169, 60, 60)) * (1 - flash), 0f, Vector2.Zero, 1f, effect, 0f);
-						spriteBatch.Draw(texture, drawpos, null, check ? Color.White : new Color(1f, flash, flash), 0f, Vector2.Zero, 1f, effect, 0f);
+						spriteBatch.Draw(texture, drawpos, null, check ? fgColor : (voidCheck ? new Color(255, 58, 228) : Color.White).Multiply(new Color(1f, flash, flash)), 0f, Vector2.Zero, 1f, effect, 0f);
 					}
-					else spriteBatch.Draw(texture, drawpos, null, Color.White, 0f, Vector2.Zero, 1f, effect, 0f);
+					else spriteBatch.Draw(texture, drawpos, null, check ? fgColor : bgColor, 0f, Vector2.Zero, 1f, effect, 0f);
+					
 					if (modPlayer.GuardCostUI > i && modPlayer.MissingGuardsUI <= i)
 					{
 						spriteBatch.Draw(textureBlockBarHighlight, drawposHighlight, null, (check ? Color.White * 0.8f : Color.DarkGray) * 0.8f, 0f, Vector2.Zero, 1f, effect, 0f);
 					}
 					if (modPlayer.GuardianGuard - 1 == i && modPlayer.GuardianGuardRecharging < 0)
 					{
-						int chargingWidth = (int)(-modPlayer.GuardianGuardRecharging * textureBlockBarOn.Width + 0.5f);
+						int chargingWidth = (int)(-modPlayer.GuardianGuardRecharging * textureOn.Width + 0.5f);
 						float flash = 0.6f + (float)Math.Sin(player.miscCounterNormalized * 2 * MathHelper.TwoPi) * 0.2f;
-						spriteBatch.Draw(textureBlockBarOff, drawpos + Vector2.UnitX * (textureBlockBarOn.Width - chargingWidth), new Rectangle(textureBlockBarOn.Width - chargingWidth, 0, chargingWidth, textureBlockBarOn.Height), new Color(flash, flash, flash, 0.6f));
+						spriteBatch.Draw(textureOff, drawpos + Vector2.UnitX * (textureOn.Width - chargingWidth), new Rectangle(textureOn.Width - chargingWidth, 0, chargingWidth, textureOn.Height),
+							/*new Color(flash, flash, flash, 0.6f));*/ (bgColor * flash) with { A = 163 }
+						);
 					}
 					else if (modPlayer.GuardianGuard == i && modPlayer.GuardianGuardRecharging > 0)
 					{
 						float flash = 0.5f + (float)Math.Sin((player.miscCounterNormalized + modPlayer.GuardianGuardRecharging * 1.5f) * 2 * MathHelper.TwoPi) * 0.1f;
-						spriteBatch.Draw(textureBlockBarOn, drawpos, new Rectangle(0, 0, (int)(modPlayer.GuardianGuardRecharging * textureBlockBarOn.Width + 0.5f), textureBlockBarOn.Height), new Color(flash, flash, flash, 0.5f));
+						
+						spriteBatch.Draw(textureOn, drawpos, new Rectangle(0, 0, (int)(modPlayer.GuardianGuardRecharging * textureOn.Width + 0.5f), textureBlockBarOn.Height), new Color(flash, flash, flash, 0.5f));
 					}
 				}
+				Vector2 guardStart = new (position.X - offSet, position.Y);
+				Vector2 guardEnd = guardStart + new Vector2(textureBlockBarOn.Width * modPlayer.GuardianGuardMax + 2 * (modPlayer.GuardianGuardMax - 1), textureBlockBarOn.Height);
+				ShowMouseTextForRegion(spriteBatch, modPlayer, guardStart, guardEnd, "{0}/{1}".FormatWith(modPlayer.GuardianGuard, modPlayer.GuardianGuardMax));
 
 				offSet = (int)(modPlayer.GuardianSlamMax / 2f * (textureSlamBarOn.Width + 2));
 				if (offSet > offSetIcons) offSetIcons = offSet; // Calculates the offset for banner and rune icon based on the largest offset between block (guard) and slam stacks
@@ -255,6 +402,9 @@ namespace OrchidMod.Content.Guardian.UI
 						spriteBatch.Draw(textureSlamBarHighlight, drawposHighlight + new Vector2(0, textureSlamBarHighlight.Height - chargeHeight), new Rectangle(0, textureSlamBarHighlight.Height - chargeHeight, textureSlamBarHighlight.Width, chargeHeight), color);
 					}
 				}
+				Vector2 slamStart = new (position.X - offSet, position.Y + 18 * player.gravDir);
+				Vector2 slamEnd = slamStart + new Vector2(textureSlamBarOn.Width * modPlayer.GuardianSlamMax + 2 * (modPlayer.GuardianSlamMax - 1), textureBlockBarOn.Height);
+				ShowMouseTextForRegion(spriteBatch, modPlayer, slamStart, slamEnd, "{0}/{1}".FormatWith(modPlayer.GuardianSlam, modPlayer.GuardianSlamMax));
 
 				offSet = (int)((textureIconRuneOn.Width + 2) * 0.5f);
 				if (modPlayer.RuneProjectiles.Count > 0)
@@ -300,6 +450,38 @@ namespace OrchidMod.Content.Guardian.UI
 
 				if (player.HeldItem.ModItem is OrchidModGuardianItem guardianItem)
 				{
+					if (guardianItem is IGuardianCustomUIItem customUIItem)
+					{ 
+						if (LastUsedCustomUIItem == null || customUIItem.GetType() != LastUsedCustomUIItem.GetType())
+						{
+							Mod.Logger.DebugFormat("Equipped IGuardianCustomUIItem \"{0}\" of type {1}, trying to load custom textures from cache", guardianItem.Name, guardianItem.GetType());
+							LastUsedCustomUIItem = customUIItem;
+							textureCustomOff = TextureCustomOffCache.GetValueOrDefault(guardianItem.GetType(), textureFallbackOff);
+							textureCustomOn = TextureCustomOnCache.GetValueOrDefault(guardianItem.GetType(), textureFallbackOn);
+							textureCustomReady = TextureCustomReadyCache.GetValueOrDefault(guardianItem.GetType(), textureFallbackReady);
+
+							Mod.Logger.DebugFormat("Loaded textures {0}, {1}, and {2} for IGuardianCustomUIItem \"{3}\"", textureCustomOff.Name, textureCustomOn.Name, textureCustomReady.Name, guardianItem.Name);
+						}
+					}
+					else if (LastUsedCustomUIItem != null)
+					{
+						LastUsedCustomUIItem = null;
+						textureCustomOff = textureFallbackOff;
+						textureCustomOn = textureFallbackOn;
+						textureCustomReady = textureFallbackReady;
+						Mod.Logger.Debug("Unloaded custom textures to fallback values");
+					}
+					
+					
+					if (guardianItem is IGuardianCustomUIItem miscItem && (maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > miscItem.ChargeThreshold(player))))
+					{
+						chargeTextureOn = textureCustomOn;
+						chargeTextureOff = textureCustomOff;
+						chargeTextureReady = textureCustomReady;
+						
+						goto IconDrawing;
+					}
+					
 					if ((maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f)) && guardianItem is OrchidModGuardianHammer)
 					{
 						if (ModContent.GetInstance<OrchidClientConfig>().GuardianUseOldHammerUi)
@@ -351,19 +533,19 @@ namespace OrchidMod.Content.Guardian.UI
 						chargeTextureReady = textureStandardReady;
 					}
 
-					if ((maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f)) && guardianItem is HorizonLance)
-					{
-						chargeTextureOn = textureHorizonLanceOn;
-						chargeTextureOff = textureHorizonLanceOff;
-						chargeTextureReady = textureHorizonLanceReady;
-					}
+					// if ((maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f)) && guardianItem is HorizonLance)
+					// {
+					// 	chargeTextureOn = textureHorizonLanceOn;
+					// 	chargeTextureOff = textureHorizonLanceOff;
+					// 	chargeTextureReady = textureHorizonLanceReady;
+					// }
 
-					if ((maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f)) && guardianItem is GuardianNeedle)
-					{
-						chargeTextureOn = textureGuardianNeedleOn;
-						chargeTextureOff = textureGuardianNeedleOff;
-						chargeTextureReady = textureGuardianNeedleReady;
-					}
+					// if ((maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (70 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f)) && guardianItem is GuardianNeedle)
+					// {
+					// 	chargeTextureOn = textureGuardianNeedleOn;
+					// 	chargeTextureOff = textureGuardianNeedleOff;
+					// 	chargeTextureReady = textureGuardianNeedleReady;
+					// }
 
 					if ((maxHoldTimer || (minHoldTimer && modPlayer.GuardianItemCharge > (23 * player.GetTotalAttackSpeed(DamageClass.Melee) - player.HeldItem.useTime) / 2.5f)) && guardianItem is OrchidModGuardianRune)
 					{
@@ -389,7 +571,7 @@ namespace OrchidMod.Content.Guardian.UI
 							{
 								int val = 22;
 								float block = staffAnchor.ai[2];
-								float step = (player.HeldItem.ModItem as OrchidModGuardianQuarterstaff).ParryDuration;
+								float step = modPlayer.GetParryDuration(player.HeldItem, (player.HeldItem.ModItem as OrchidModGuardianQuarterstaff).ParryDuration);
 								while (block < step)
 								{
 									block += step / 20f;
@@ -437,6 +619,7 @@ namespace OrchidMod.Content.Guardian.UI
 						chargeTextureReady = textureGreathammerReady;
 					}
 
+					IconDrawing:
 					// Parry duration display on standard weapons
 					int shieldType = ModContent.ProjectileType<GuardianShieldAnchor>();
 					int gauntletType = ModContent.ProjectileType<GuardianGauntletAnchor>();
@@ -526,12 +709,15 @@ namespace OrchidMod.Content.Guardian.UI
 							drawpos.Y += chargeTextureOn.Height - val;
 							if (player.gravDir < 0) drawpos.Y -= (chargeTextureOn.Height - rectangle.Height);
 							spriteBatch.Draw(chargeTextureOn, drawpos, rectangle, Color.White, 0f, Vector2.Zero, 1f, effect, 0f);
+							
+							drawpos = new Vector2(position.X - (chargeTextureOn == textureGauntletOn && blocking != null ? 21 : 9), position.Y - 94 * player.gravDir + 3f * (player.gravDir - 1));
+							ShowMouseTextForRegion(spriteBatch, modPlayer, drawpos, drawpos + chargeTextureOn.Size(), "{0}%".FormatWith((int)Utils.Clamp(modPlayer.GuardianItemCharge, 0, 180f) * 5 / 9));
 						}
 
 
-						if (guardianItem.AnchorType != null)
+						if (guardianItem.AnchorType != -1)
 						{
-							Projectile mainAnchor = Main.projectile.FirstOrDefault(proj => proj.whoAmI < Main.maxProjectiles && proj.active && proj.owner == player.whoAmI && proj.type == guardianItem.AnchorType.Value);
+							Projectile mainAnchor = Main.projectile.FirstOrDefault(proj => proj.whoAmI < Main.maxProjectiles && proj.active && proj.owner == player.whoAmI && proj.type == guardianItem.AnchorType);
 							Color color = Color.White;
 							switch (guardianItem)
 							{
@@ -563,10 +749,32 @@ namespace OrchidMod.Content.Guardian.UI
 						}
 					}
 				}
+				else
+				{
+					LastUsedCustomUIItem = null;
+				}
 
 				spriteBatch.End();
 				spriteBatch.Begin(spriteBatchSnapshot);
 			}
+		}
+
+		public static void ShowMouseTextForRegion(SpriteBatch spriteBatch, OrchidGuardian guardian, Vector2 startPos, Vector2 endPos, string text)
+		{
+			if (guardian.GuardianDebugVisuals > 0)
+				Utils.DrawRectangle(spriteBatch, startPos + Main.screenPosition, endPos + Main.screenPosition, OrchidColors.GuardianTooltip, OrchidColors.GuardianTooltip, 2f);
+			if (MouseInScaledRegion(startPos, endPos))
+				Main.instance.MouseText(text);
+		}
+
+		public static bool MouseInScaledRegion(Vector2 startPos, Vector2 endPos)
+		{
+			if (Main.dedServ) return false;
+			
+			Vector2 mousePos = Main.MouseScreen;
+			Vector2 adjStart = Vector2.Transform(startPos, Main.GameViewMatrix.EffectMatrix * Main.GameViewMatrix.ZoomMatrix) / Main.UIScale;
+			Vector2 adjEnd = Vector2.Transform(endPos, Main.GameViewMatrix.EffectMatrix * Main.GameViewMatrix.ZoomMatrix) / Main.UIScale;
+			return mousePos.X > adjStart.X && mousePos.X < adjEnd.X && mousePos.Y > adjStart.Y && mousePos.Y < adjEnd.Y;
 		}
 	}
 }

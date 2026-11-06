@@ -16,7 +16,7 @@ namespace OrchidMod.Content.Guardian.Accessories
 
 		public override void UpdateAccessory(Player player, bool hideVisual)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = Guardian(player);
 			if (modPlayer.GuardianChain < 32f)
 			{ // Overrides any "worse" chain with this one, and uses its texture
 				modPlayer.GuardianChain = 32f;

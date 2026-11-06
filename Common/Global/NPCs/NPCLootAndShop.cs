@@ -123,9 +123,10 @@ namespace OrchidMod.Common.Global.NPCs
 
 			if (Main.rand.NextBool())
 			{
-				if (WorldGen.shadowOrbSmashed) OrchidUtils.AddItemToShop<Skateboard>(shop, ref nextSlot);
+				if (WorldGen.shadowOrbSmashed) 
+					OrchidUtils.AddItemToShop(shop, ref nextSlot, Main.remixWorld ? ItemType<HockeyQuarterstaff>() : ItemType<Skateboard>());
 			}
-			else if (ModContent.GetInstance<OrchidServerConfig>().EnableContentGambler)
+			else if (GetInstance<OrchidServerConfig>().EnableContentGambler)
 			{
 				OrchidUtils.AddItemToShop<PileOfChips>(shop, ref nextSlot);
 			}
@@ -138,7 +139,7 @@ namespace OrchidMod.Common.Global.NPCs
 				}
 				else
 				{
-					OrchidUtils.AddItemToShop<HockeyQuarterstaff>(shop, ref nextSlot);
+					OrchidUtils.AddItemToShop(shop, ref nextSlot, Main.remixWorld ? ItemType<Skateboard>() : ItemType<HockeyQuarterstaff>());
 				}
 			}
 		}
@@ -203,6 +204,9 @@ namespace OrchidMod.Common.Global.NPCs
 			IItemDropRuleCondition ThoriumDisabledGambler = new	OrchidDropConditions.ThoriumDisabledEnableContentGambler();
 			IItemDropRuleCondition NotExpert = new Conditions.NotExpert();
 			IItemDropRuleCondition IsExpert = new Conditions.IsExpert();
+			IItemDropRuleCondition IsRemix = new Conditions.RemixSeed();
+			IItemDropRuleCondition RemixPreHM = new Conditions.RemixSeedEasymode();
+			IItemDropRuleCondition RemixHM = new Conditions.RemixSeedHardmode();
 
 			// GENERIC NPCs
 
@@ -299,9 +303,7 @@ namespace OrchidMod.Common.Global.NPCs
 					}
 					break;
 				case NPCID.MartianSaucerCore:
-					{
-						npcLoot.Add(ItemDropRule.Common(ItemType<MartianWarhammer>(), 4));
-					}
+					npcLoot.Add(new DropBasedOnExpertMode(ItemDropRule.Common(ItemType<MartianWarhammer>(), 4), ItemDropRule.ByCondition(ThoriumDisabled, ItemType<MartianWarhammer>(), 4)));
 					break;
 				case NPCID.Paladin:
 					{
@@ -505,6 +507,20 @@ namespace OrchidMod.Common.Global.NPCs
 						npcLoot.Add(ItemDropRule.Common(ItemType<PumpkingWarhammer>(), 5));
 					}
 					break;
+				case NPCID.Mimic:
+				{
+					LeadingConditionRule leadingConditionRule = new(RemixPreHM);
+					leadingConditionRule.OnSuccess(ItemDropRule.OneFromOptionsNotScalingWithLuck(2, ItemType<EnchantedPavise>(), ItemType<EnchantedRune>(), ItemType<GoldChestKatar>()));
+					npcLoot.Add(leadingConditionRule);
+					break;
+				}
+				case NPCID.IceMimic:
+				{
+					LeadingConditionRule leadingConditionRule = new(RemixPreHM);
+					leadingConditionRule.OnSuccess(ItemDropRule.OneFromOptionsNotScalingWithLuck(2, ItemType<IceStandard>(), ItemType<PredatorIceFox>()));
+					npcLoot.Add(leadingConditionRule);
+					break;
+				}
 				default:
 					break;
 			}
@@ -557,6 +573,11 @@ namespace OrchidMod.Common.Global.NPCs
 				if (thoriumMod.IsNPCTypeEquals("Illusionist", npc.type))
 				{
 					npcLoot.Add(ItemDropRule.Common(ItemType<ThoriumIllusionistPavise>()));
+				}
+				
+				if (thoriumMod.IsNPCTypeEquals("BoreanStriderPopped", npc.type))
+				{
+					npcLoot.Add(ItemDropRule.ByCondition(NotExpert, ItemType<ThoriumBoreanStriderQuarterstaff>(), 5));
 				}
 
 				// TheGrandThunderBirdv2 QueenJelly GraniteEnergyStorm Viscount FallenDeathBeholder BoreanStriderPopped Lich Abyssion PatchWerk

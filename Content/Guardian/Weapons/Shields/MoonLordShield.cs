@@ -34,7 +34,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			blockRotation = 0f;
 		}
 
-		public override void Slam(Player player, Projectile shield, bool WeakSlam)
+		public override void Slam(Player player, OrchidGuardian guardian, Projectile shield, bool WeakSlam)
 		{
 			if (!WeakSlam)
 			{
@@ -56,7 +56,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 		}
 
 
-		public override void BlockStart(Player player, Projectile shield)
+		public override void BlockStart(Player player, OrchidGuardian guardian, Projectile shield, bool manuallyFullyCharged)
 		{
 			playerVelocity = 0;
 			originalHeight = 0;
@@ -74,7 +74,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			 Main.EntitySpriteDraw(ModContent.Request<Texture2D>(Texture + "_Glow").Value, position, frame, Color, 0, new Vector2(frame.Width / 2, frame.Height / 2), scale, SpriteEffects.None);
 		}
 
-		public override void ExtraAIShield(Player owner, Projectile projectile)
+		public override void ExtraAIShield(Player owner, OrchidGuardian guardian, Projectile projectile)
 		{
 			if (projectile.ai[1] > 0f) // is slamming
 			{
@@ -118,7 +118,6 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 							guardian.AddSlam(1);
 						}
 					}*/
-					OrchidGuardian guardian = Main.player[projectile.owner].GetModPlayer<OrchidGuardian>();
 					//lol 360% increased regeneration
 					guardian.GuardianGuardRecharge += 3.6f;
 					guardian.GuardianSlamRecharge += 3.6f;

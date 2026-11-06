@@ -20,6 +20,8 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			JabSpeed = 1.3f;
 		}
 
+		public override bool SafeCanHitNPC(Player player, Projectile anchor, NPC target) => Collision.CanHit(player, target);
+
 		public override void AddRecipes()
 		{
 			var recipe = CreateRecipe();

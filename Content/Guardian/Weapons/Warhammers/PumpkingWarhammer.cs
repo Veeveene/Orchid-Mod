@@ -155,57 +155,6 @@ namespace OrchidMod.Content.Guardian.Weapons.Warhammers
 			}
 		}
 
-		// public override bool PreDrawHammer(Player player, OrchidGuardian guardian, Projectile projectile, SpriteBatch spriteBatch, ref Color lightColor, ref Texture2D hammerTexture, ref Rectangle drawRectangle)
-		// {
-		// 	drawRectangle.Height /= 2;
-
-		// 	if (EmbeddedScythe && projectile.ModProjectile is GuardianHammerAnchor anchor && anchor.BlockDuration <= 0)
-		// 	{ // adjusts the draw rectangle to the next frame if the parry scythe is active
-		// 		spriteBatch.End(out SpriteBatchSnapshot spriteBatchSnapshot);
-		// 		spriteBatch.Begin(spriteBatchSnapshot with { BlendState = BlendState.Additive });
-		// 		LocalSpriteBatchSnapshot = spriteBatchSnapshot;
-		// 		drawRectangle.Y += drawRectangle.Height;
-		// 		return true;
-		// 	}
-
-		// 	LocalSpriteBatchSnapshot = null;
-
-		// 	return true;
-		// }
-
-		// public override void PostDrawHammer(Player player, OrchidGuardian guardian, Projectile projectile, SpriteBatch spriteBatch, Color lightColor, Texture2D hammerTexture, Rectangle drawRectangle)
-		// {
-		// 	if (LocalSpriteBatchSnapshot != null)
-		// 	{
-		// 		spriteBatch.End();
-		// 		spriteBatch.Begin((SpriteBatchSnapshot)LocalSpriteBatchSnapshot);
-		// 	}
-		// }
-
-		// public override bool? UseItem(Player player)
-		// { // Copied from the main Warhammer class to edit block guard cost - probably worth making the cost a field if this happens again
-		// 	var guardian = player.GetModPlayer<OrchidGuardian>();
-		// 	int projType = ModContent.ProjectileType<GuardianHammerAnchor>();
-		// 	int damage = guardian.GetGuardianDamage(Item.damage);
-		// 	Projectile projectile = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, projType, damage, Item.knockBack, player.whoAmI);
-		// 	projectile.CritChance = (int)(player.GetCritChance<GuardianDamageClass>() + player.GetCritChance<GenericDamageClass>() + Item.crit);
-
-		// 	if (Main.mouseRight && Main.mouseRightRelease && projectile.ModProjectile is GuardianHammerAnchor anchor && guardian.UseSlam(3, true))
-		// 	{
-		// 		projectile.velocity = Vector2.Normalize(Main.MouseWorld - player.Center) * (10f + (Item.shootSpeed - 10f) * 0.35f * BlockVelocityMult);
-		// 		projectile.friendly = true;
-		// 		projectile.knockBack = 0f;
-		// 		projectile.tileCollide = true;
-
-		// 		anchor.BlockDuration = (int)(BlockDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianBlockDuration + 10);
-		// 		anchor.NeedNetUpdate = true;
-		// 		guardian.UseSlam(3);
-		// 	}
-
-		// 	guardian.GuardianItemCharge = 0f;
-		// 	return true;
-		// }
-
 		public override void OnBlockHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, float knockback, bool crit)
 		{
 			int latchDamage = guardian.GetGuardianDamage(Item.damage * 0.2f);

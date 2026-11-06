@@ -134,5 +134,15 @@ namespace OrchidMod.Utilities
 			texture = TextureAssets.GlowMask[item.glowMask].Value;
 			return texture is not null;
 		}
+
+		public static Color Multiply(this Color value, Vector3 vector) => new((int)(value.R * vector.X), (int)(value.G * vector.Y), (int)(value.B * vector.Z), value.A);
+		public static Color Multiply(this Color value, Vector4 vector) => new((int)(value.R * vector.X), (int)(value.G * vector.Y), (int)(value.B * vector.Z), (int)(value.A * vector.W));
+
+		public static Color Multiply(this Color value, Color value2)
+		{
+			Vector4 multiplied = value.ToVector4() * value2.ToVector4();
+
+			return new Color((int)(multiplied.X * 255), (int)(multiplied.Y * 255), (int)(multiplied.Z * 255), (int)(multiplied.W * 255));
+		}
 	}
 }

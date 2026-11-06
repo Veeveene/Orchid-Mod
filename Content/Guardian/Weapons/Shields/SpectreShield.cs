@@ -25,7 +25,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			blockDuration = 240;
 		}
 
-		public override void Slam(Player player, Projectile shield, bool WeakSlam)
+		public override void Slam(Player player, OrchidGuardian guardian, Projectile shield, bool WeakSlam)
 		{
 			if (IsLocalPlayer(player) && !WeakSlam)
 			{
@@ -33,13 +33,13 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 				int type = ModContent.ProjectileType<SpectreShieldProj>();
 				for (int i = 0; i < 3 + Main.rand.Next(5); i++)
 				{
-					Vector2 dir = Vector2.Normalize(Main.MouseWorld - player.Center).RotatedByRandom(MathHelper.ToRadians(30f)) * Item.shootSpeed;
+					Vector2 dir = Vector2.Normalize(Main.MouseWorld - player.Center).RotatedByRandom(MathHelper.ToRadians(30f)) * Item.shootSpeed * guardian.GuardianSlamDistance;
 					Projectile.NewProjectile(Item.GetSource_FromThis(), anchor.Center + Vector2.UnitY.RotatedByRandom(MathHelper.Pi) * Main.rand.NextFloat(16f), dir, type, (int)(shield.damage * 0.4f), Item.knockBack, player.whoAmI);
 				}
 			}
 		}
 
-		public override void Reflect(Player player, Projectile shield, Projectile projectile, ref int GuardianShieldSpikeReflect)
+		public override void Reflect(Player player, OrchidGuardian guardian, Projectile shield, Projectile projectile, ref int GuardianShieldSpikeReflect)
 		{
 			if (IsLocalPlayer(player) && GuardianShieldSpikeReflect > 0)
 			{

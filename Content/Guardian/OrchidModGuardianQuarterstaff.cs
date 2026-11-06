@@ -22,6 +22,8 @@ namespace OrchidMod.Content.Guardian
 		public virtual void OnHitFirst(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, HitInfo hit, bool jabAttack, bool counterAttack) { } // Called when hitting the first target for the first time during an attack
 		public virtual void QuarterstaffModifyHitNPC(Player player, OrchidGuardian guardian, NPC target, Projectile projectile, ref NPC.HitModifiers modifiers, bool jabAttack, bool counterAttack, bool firstHit) { } // anchor's modifyhitNPC
 		public virtual void OnAttack(Player player, OrchidGuardian guardian, Projectile projectile, bool jabAttack, bool counterAttack) { } // Called on the first frame of an attack
+		public virtual void OnAttackEnd(Player player, OrchidGuardian guardian, Projectile projectile, bool jabAttack, bool counterAttack) { } // Called on the final frame of an attack
+		public virtual void OnBlock(Player player, OrchidGuardian guardian, Projectile projectile) { } // Called on the first frame of a block
 		/// <summary>Called before uncharged jab or mid-charging jab AI is executed, including repositioning the quarterstaff and the player's arms for its attack animation. Return false to prevent normal AI from running, effectively overriding <c>JabStyle</c>.</summary>
 		/// <remarks>During a jab, <c>Projectile.ai[0]</c> is set to -40 as an animation timer and incremented by <c>JabSpeed</c> every frame until it reaches 0. Use <c>Projectile.ResetLocalNPCHitImmunity()</c> for multi-swing animations to allow them to hit multiple times. See <c>GuardianQuarterstaffAnchor</c> for examples of default <c>JabStyle</c> behavior.</remarks>
 		public virtual bool PreJabAI(Player player, OrchidGuardian guardian, Projectile anchor) { return true; }
@@ -30,18 +32,25 @@ namespace OrchidMod.Content.Guardian
 		public virtual bool PreSwingAI(Player player, OrchidGuardian guardian, Projectile anchor) { return true; }
 		public virtual bool PreCounterAI(Player player, OrchidGuardian guardian, Projectile anchor) { return true; }
 		public virtual void OnParryQuarterstaff(Player player, OrchidGuardian guardian, Entity aggressor, Projectile anchor) { } // Called on parrying anything
+		/// <summary>Called during the anchor's <c>CanHitNPC</c> check. Defaults to true, which results in <c>base.CanHitNPC()</c> being called.</summary>
+		public virtual bool SafeCanHitNPC(Player player, Projectile anchor, NPC target) => Collision.CanHit(player, target);
 		public virtual void ExtraAIQuarterstaff(Player player, OrchidGuardian guardian, Projectile projectile) { } // Called at the end of the Anchor Projectile AI
 		public virtual void ExtraAIQuarterstaffJabbing(Player player, OrchidGuardian guardian, Projectile projectile) { } // Called while jabbing
 		public virtual void ExtraAIQuarterstaffBlocking(Player player, OrchidGuardian guardian, Projectile projectile) { } // Called while blocking
 		public virtual void ExtraAIQuarterstaffSwinging(Player player, OrchidGuardian guardian, Projectile projectile) { } // Called while swinging
 		public virtual void ExtraAIQuarterstaffParrying(Player player, OrchidGuardian guardian, Projectile projectile) { } // Called while parrying
-		public virtual void ExtraAIQuarterstaffCharging(Player player, OrchidGuardian guardian, Projectile projectile) { } // Called while chargins
+		public virtual void ExtraAIQuarterstaffCharging(Player player, OrchidGuardian guardian, Projectile projectile) { } // Called while charging
 		public virtual void ExtraAIQuarterstaffCounterattacking(Player player, OrchidGuardian guardian, Projectile projectile) { } // Called while counterattacking
 		public virtual void ExtraAIQuarterstaffIdle(Player player, OrchidGuardian guardian, Projectile projectile) { } // Called while idle
-		public virtual void PostDrawQuarterstaff(SpriteBatch spriteBatch, Projectile projectile, Player player, Color lightColor) { } // Called after the item is done being drawn
-		public virtual bool PreDrawQuarterstaff(SpriteBatch spriteBatch, Projectile projectile, Player player, ref Color lightColor) { return true; } // Return false to prevent normal draw code
+		public virtual void PostDrawQuarterstaff(SpriteBatch spriteBatch, Projectile projectile, Player player, Color lightColor, SpriteEffects effects) { } // Called after the item is done being drawn
+		public virtual bool PreDrawQuarterstaff(SpriteBatch spriteBatch, Projectile projectile, Player player, ref Color lightColor, SpriteEffects effects) { return true; } // Return false to prevent normal draw code
 		public virtual Color GetQuarterstaffGlowmaskColor(Player player, OrchidGuardian guardian, Projectile projectile, Color lightColor) => Color.White;
 		public virtual Color GetColor(bool offHand) => Color.White;
+
+		/// <summary>Indexes into <see cref="GetTipPosition"/></summary>
+		protected virtual float TipOffset => 0.5f;
+		/// <summary></summary>
+		public virtual Vector2 GetTipPosition(Projectile projectile) => projectile.Center - Vector2.UnitY.RotatedBy(projectile.rotation + MathHelper.PiOver4) * projectile.width * projectile.scale * TipOffset;
 
 		public virtual void SafeHoldItem(Player player) { }
 
@@ -83,6 +92,8 @@ namespace OrchidMod.Content.Guardian
 		//public bool SingleSwing = false; // allows a special swing behaviour
 		/// <summary>Multiplier for the amount of bonus charge gained from hitting with a jab.</summary>
 		public float JabChargeGain;
+		/// <summary>Multiplier for the rate of charge gained.</summary>
+		public float ChargeRate = 1f;
 		/// <summary>
 		/// The amount of animation frames of the quarterstaff texture.
 		/// <br/> The animation frame must be set manually using <c>GuardianQuarterstaffAnchor.QuarterstaffAnimFrame</c>.
@@ -92,7 +103,14 @@ namespace OrchidMod.Content.Guardian
 		/// <summary>Draws extra UI elements on the GuardianUIState while held.</summary>
 		public virtual void QuarterstaffPostDrawUI(SpriteBatch spriteBatch, Player player, ref Color lightColor, Projectile projectile) { }
 
-		public override int? AnchorType => ModContent.ProjectileType<GuardianQuarterstaffAnchor>();
+		public override int AnchorType => ModContent.ProjectileType<GuardianQuarterstaffAnchor>();
+		
+		public override void SetStaticDefaults()
+		{
+			ItemID.Sets.ItemsThatAllowRepeatedRightClick[Type] = true;
+			SafeSetStaticDefaults();
+		}
+		
 		public sealed override void SetDefaults()
 		{
 			Item.DamageType = ModContent.GetInstance<GuardianDamageClass>();
@@ -151,22 +169,14 @@ namespace OrchidMod.Content.Guardian
 		{
 			if (player.whoAmI == Main.myPlayer && !player.cursed)
 			{
-				var projectileType = ModContent.ProjectileType<GuardianQuarterstaffAnchor>();
-				if (player.ownedProjectileCounts[projectileType] > 0)
+				if (player.ownedProjectileCounts[AnchorType] > 0)
 				{
-
-					var guardian = player.GetModPlayer<OrchidGuardian>();
-					var proj = Main.projectile.First(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
+					var guardian = Guardian(player);
+					var proj = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == AnchorType);
 					if (proj != null && proj.ModProjectile is GuardianQuarterstaffAnchor anchor)
 					{
-						bool shouldBlock = Main.mouseRight && Main.mouseRightRelease;
-						bool shouldCharge = Main.mouseLeft;
-						
-						if (ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs)
-						{
-							shouldBlock = Main.mouseLeft && Main.mouseLeftRelease;
-							shouldCharge = Main.mouseRight;
-						}
+						bool shouldBlock = guardian.GetGauntletBlockInput(true);
+						bool shouldCharge = guardian.GetGauntletPunchInput(false);
 
 						if (shouldBlock && !shouldCharge && guardian.UseGuard(1, true, warn: true) && proj.ai[0] <= 0f && proj.ai[2] == 0f)
 						{
@@ -197,35 +207,24 @@ namespace OrchidMod.Content.Guardian
 
 		public sealed override void HoldItem(Player player)
 		{
-			var projectileType = ModContent.ProjectileType<GuardianQuarterstaffAnchor>();
-			var guardian = player.GetModPlayer<OrchidGuardian>();
+			var guardian = Guardian(player);
 			guardian.GuardianDisplayUI = 300;
 
-			if (player.ownedProjectileCounts[projectileType] != 1)
+			if (player.ownedProjectileCounts[AnchorType] != 1)
 			{
-				foreach (Projectile projectile in Main.projectile)
+				foreach (Projectile projectile in Main.ActiveProjectiles)
 				{
-					if (projectile.active && projectile.owner == player.whoAmI && projectile.type == projectileType)
-					{
-						projectile.Kill();
-					}
+					if (projectile.owner == player.whoAmI && projectile.type == AnchorType) projectile.Kill();
 				}
 
-				var index = Projectile.NewProjectile(Item.GetSource_FromThis(), player.Center.X, player.Center.Y, 0f, 0f, projectileType, 0, 0f, player.whoAmI);
-
-				var proj = Main.projectile[index];
-				if (proj.ModProjectile is not GuardianQuarterstaffAnchor quarterstaff)
-				{
-					proj.Kill();
-				}
-				else
-				{
+				Projectile proj = SpawnAnchor(player, out GuardianQuarterstaffAnchor quarterstaff);
+				if (quarterstaff is not null)
 					quarterstaff.OnChangeSelectedItem(player);
-				}
+				else proj.Kill();
 			}
 			else
 			{
-				var proj = Main.projectile.First(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
+				var proj = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == AnchorType);
 				if (proj != null && proj.ModProjectile is GuardianQuarterstaffAnchor quarterstaff)
 				{
 					if (quarterstaff.SelectedItem != player.selectedItem)
@@ -247,47 +246,43 @@ namespace OrchidMod.Content.Guardian
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips)
 		{
-			var guardian = Main.LocalPlayer.GetModPlayer<OrchidGuardian>();
-			TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
-			if (tt != null)
-			{
-				string[] splitText = tt.Text.Split(' ');
-				string damageValue = splitText.First();
-				tt.Text = damageValue + " " + Language.GetTextValue(ModContent.GetInstance<OrchidMod>().GetLocalizationKey("DamageClasses.GuardianDamageClass.DisplayName"));
-			}
+			var guardian = Guardian();
+			// TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
+			// if (tt != null)
+			// {
+			// 	string[] splitText = tt.Text.Split(' ');
+			// 	string damageValue = splitText.First();
+			// 	tt.Text = damageValue + " " + Language.GetTextValue(Mod.GetLocalizationKey("DamageClasses.GuardianDamageClass.DisplayName"));
+			// }
 
 			int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Knockback"));
 			tooltips.Insert(index + 1, new TooltipLine(Mod, "ParryDuration", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.ParryDuration", OrchidUtils.FramesToSeconds((int)(ParryDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianParryDuration)))));
 
-			string click = ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs ? Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.LeftClick") : Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.RightClick");
-			tooltips.Insert(index + 2, new TooltipLine(Mod, "ClickInfo", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.Parry", click))
+			string click = OrchidUtils.GetClickInfoTooltip(guardian.GauntletInputSwap);
+			tooltips.Insert(index + 2, new TooltipLine(Mod, "ClickInfo", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.Parry", click).FirstCharToUpper())
 			{
-				OverrideColor = new Color(175, 255, 175)
+				OverrideColor = OrchidColors.GuardianTooltip
 			});
 
-			tooltips.Insert(index + 3, new TooltipLine(Mod, "Swing", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.ChargeToSwing", click))
+			tooltips.Insert(index + 3, new TooltipLine(Mod, "Swing", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.ChargeToSwing", click).FirstCharToUpper())
 			{
-				OverrideColor = new Color(175, 255, 175)
+				OverrideColor = OrchidColors.GuardianTooltip
 			});
 
 			if (GuardStacks > 0 || SlamStacks > 0)
 			{
-				string TooltipToGet = ModContent.GetInstance<OrchidMod>().GetLocalizationKey("Misc.GuardianGrants");
-				switch(GuardStacks)
-				{
-					case > 0: TooltipToGet += "Guard"; break;
-				}
-				switch (SlamStacks)
-				{
-					case > 0: TooltipToGet += "Slam"; break;
-				}
+				string TooltipToGet = Mod.GetLocalizationKey("Misc.GuardianGrants");
+				if (GuardStacks > 0) TooltipToGet += "Guard";
+				if (SlamStacks > 0) TooltipToGet += "Slam"; 
 				if (GuardStacks == SlamStacks) TooltipToGet += "Same";
 
-				tooltips.Insert(index + 1, new TooltipLine(Mod, "GuardianGrants", Language.GetText(TooltipToGet).Format(GuardStacks, SlamStacks))
+				tooltips.Insert(index + 1, new TooltipLine(Mod, "GuardianGrants", Language.GetTextValue(TooltipToGet, GuardStacks, SlamStacks))
 				{
-					OverrideColor = new Color(175, 255, 175)
+					OverrideColor = OrchidColors.GuardianTooltip
 				});
 			}
+			
+			SafeModifyTooltips(tooltips, guardian);
 		}
 	}
 }

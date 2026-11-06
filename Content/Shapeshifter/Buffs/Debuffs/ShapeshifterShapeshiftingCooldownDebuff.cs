@@ -17,7 +17,7 @@ namespace OrchidMod.Content.Shapeshifter.Buffs.Debuffs
 
 		public override void Update(Player player, ref int buffIndex)
 		{
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = player.Shapeshifter();
 			shapeshifter.ShapeshifterMeleeSpeedBonus -= 0.25f;
 			shapeshifter.ShapeshifterMoveSpeedBonusFinal *= 0.75f;
 

@@ -1,6 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Linq;
+using Microsoft.Xna.Framework;
+using OrchidMod.Utilities;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
 
 namespace OrchidMod.Content.Guardian.Weapons.Gauntlets
 {
@@ -23,6 +27,8 @@ namespace OrchidMod.Content.Guardian.Weapons.Gauntlets
 			hasShoulder = true;
 		}
 
+		public float AddedVelocityMult = 1f;
+
 		public override Color GetColor(bool offHand)
 		{
 			return new Color(0, 255, 255);
@@ -41,6 +47,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Gauntlets
 				if (addedVelocity.Length() > 0.1f)
 				{
 					player.position += addedVelocity;
+					if (player.OrchidPlayer().Timer % 15 == 0) AddedVelocityMult = 1 + addedVelocity.Length() / player.velocity.Length();
 				}
 			}
 		}
@@ -58,6 +65,22 @@ namespace OrchidMod.Content.Guardian.Weapons.Gauntlets
 		public override void OnParryGauntlet(Player player, OrchidGuardian guardian, Entity aggressor, Projectile anchor)
 		{
 			guardian.modPlayer.TryHeal(20);
+		}
+	}
+
+	public class NanitesGauntletInfoDisplay : GlobalInfoDisplay
+	{
+		public override void ModifyDisplayParameters(InfoDisplay currentDisplay, ref string displayValue, ref string displayName, ref Color displayColor, ref Color displayShadowColor)
+		{
+			if (currentDisplay == InfoDisplay.Stopwatch)
+			{
+				if (Main.LocalPlayer.HeldItem.ModItem is NanitesGauntlet gauntlet)
+				{
+					int speed = 0;
+					if (int.TryParse(displayValue.Split(' ').First(), out int result)) speed = result;
+					displayValue = Language.GetTextValue("GameUI.Speed", (int)(speed * gauntlet.AddedVelocityMult));
+				}
+			}
 		}
 	}
 }

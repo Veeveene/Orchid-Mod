@@ -23,14 +23,10 @@ namespace OrchidMod.Content.Guardian.Armors.Void
 
 		public override void UpdateEquip(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
-			modPlayer.GuardianGuardRecharge += 0.75f;
-			modPlayer.GuardianSlamRecharge += 0.75f;
+			OrchidGuardian modPlayer = Guardian(player);
 			modPlayer.GuardianGuardMax++;
-			modPlayer.GuardianSlamMax++;
 			player.GetAttackSpeed(DamageClass.Melee) += 0.15f;
 			player.GetCritChance<GuardianDamageClass>() += 6;
-			player.aggro += 600;
 		}
 
 		public override void AddRecipes()

@@ -1,35 +1,75 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Microsoft.Xna.Framework;
 using OrchidMod.Common.ModObjects;
-using OrchidMod.Content.Guardian;
+using OrchidMod.Content.General.Prefixes;
 using OrchidMod.Content.Guardian.Buffs;
 using OrchidMod.Content.Guardian.Projectiles.Misc;
 using OrchidMod.Content.Guardian.Projectiles.Standards;
 using OrchidMod.Content.Guardian.Weapons.Gauntlets;
-using System;
-using System.Reflection;
-using System.Collections.Generic;
 using Terraria;
-using Terraria.Localization;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameInput;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using System.Linq;
 using OrchidMod.Content.Guardian.Accessories;
 using OrchidMod.Common;
+using Terraria.Graphics.Shaders;
+using Terraria.Utilities;
+using Microsoft.Xna.Framework.Graphics;
+using OrchidMod.Utilities;
 
-namespace OrchidMod
+namespace OrchidMod.Content.Guardian
 {
 	public class OrchidGuardian : ModPlayer
 	{
+		public ModPlayer ThoriumPlayer;
+		public static Type ThoriumPlayerType;
+		public static ModKeybind ThoriumArmorKey;
+		public static ModKeybind ThoriumAccessoryKey;
 
+		public bool GauntletInputSwap => OrchidMod.OrchidClientConfig.GuardianSwapGauntletInputs;
+		public bool PaviseInputSwap => OrchidMod.OrchidClientConfig.GuardianSwapPaviseInputs;
+		
+		public SoundStyle DingSound => OrchidMod.OrchidClientConfig.GuardianAltChargeSounds ? SoundID.DD2_BetsyFireballShot : SoundID.MaxMana;
+		
+		public PlayerDeathReason VoidDeath
+		{
+			get
+			{
+				string path(string suffix) => Mod.GetLocalizationKey("Items.ThoriumGuardianVoidHead.Death." + suffix);
+				WeightedRandom<string> deathTexts = new(Main.rand);
+				deathTexts.Add(path("Common1"), 20);
+				deathTexts.Add(path("Common2"), 20);
+				deathTexts.Add(path("Common3"), 20);
+				deathTexts.Add(path("Common4"), 20);
+				deathTexts.Add(path("Common5"), 20);
+				deathTexts.Add(path("Common6"), 20);
+				deathTexts.Add(path("Common7"), 20);
+				deathTexts.Add(path("Common8"), 20);
+				deathTexts.Add(path("Rare1"), 4);
+				deathTexts.Add(path("Rare2"), 1);
+            
+				return PlayerDeathReason.ByCustomReason(NetworkText.FromKey(deathTexts.Get(), Player.name));
+			}
+		}
 
 		public bool CrossModGodMode;
 
 		// Misc & Static fields
 
 		/// <summary> Current timer for slam stack regen or degen. Increments slams at 1 or higher, decrements at -1 or lower.</summary>
-		public static List<int> ProjectilesBlockBlacklist;
+		// 
+		public delegate void OnTryBlockAction(Projectile projectile, Projectile anchor);
+		public static Dictionary<int, OnTryBlockAction> ProjectilesBlockBlacklist;
+		public static void AddProjectileToBlockBlacklist(int type, OnTryBlockAction onTryBlock = null) => ProjectilesBlockBlacklist.Add(type, onTryBlock);
+		public static void AddProjectileToBlockBlacklist<T>(OnTryBlockAction onTryBlock = null) where T : ModProjectile => ProjectilesBlockBlacklist.Add(ModContent.ProjectileType<T>(), onTryBlock);
+		
 		public OrchidPlayer modPlayer;
 
 		// Can be edited by gear
@@ -60,6 +100,8 @@ namespace OrchidMod
 		public float GuardianDeflectStunDuration = 1f;
 		public float GuardianMeleeSpeed = 1f; // Edited via reforges. It multiplies the player MeleeSpeed in postupdate
 		public float GuardianWeaponScale = 1f; // Multiplies pavise scale
+		/// <summary> Multiplies weapon charging speed without affecting melee speed. Defaults to 1f.</summary>
+		public float GuardianChargeSpeed = 1f;
 
 		// Set effects, accessories, misc
 
@@ -68,6 +110,7 @@ namespace OrchidMod
 		public bool GuardianGit = false;
 		public bool GuardianHorizon = false;
 		public bool GuardianCrystalNinja = false;
+		public bool GuardianVoid = false;
 		public float GuardianSpikeDamage = 0; // Accessories
 		public bool GuardianSpikeDungeon = false;
 		public bool GuardianSpikeMech = false;
@@ -86,6 +129,8 @@ namespace OrchidMod
 		public int GuardianDebugVisuals = 0;
 		public int OldGuardianDebugVisuals = 0;
 		public byte GuardianJewelerGauntlet = 0;
+		public byte GuardianVoidQuarterstaff = 0; // Holds amount of stacks for Flux Ripper's effect. 
+		public byte GuardianVoidQuarterstaffTimer = 0; // . 
 		public bool GuardianBronzeShieldBuff = false;
 		public float GuardianBronzeShieldDamage = 0;
 		public bool GuardianBronzeShieldProtection = false;
@@ -144,6 +189,8 @@ namespace OrchidMod
 		/// <summary> Makes the GuardianCounter indicator flash Horizon colors instead of red. </summary>
 		public bool GuardianCounterHorizon;
 		public int GuardianShieldSpikeReflect = 5; // Shgield spikes only fire a projectile if this is >0
+		/// <summary>Stores a copy of <see cref="GuardianItemCharge"/>, in case .</summary>
+		public float CachedGuardianItemCharge = 0f;
 		public List<BlockedEnemy> GuardianBlockedEnemies = new List<BlockedEnemy>();
 		/// <summary>Enemies deflected by the player's last <c>DoDeflect</c>. Cleared and repopulated when <c>DoDeflect</c> is called.</summary>
 		public List<NPC> DeflectedEnemies = new List<NPC>();
@@ -200,6 +247,14 @@ namespace OrchidMod
 					}
 				}
 			}
+
+			if (GuardianVoid && GuardianGuard == 0 && OrchidMod.ThoriumMod is { } thoriumMod)
+			{
+				int glitchDye = thoriumMod.Find<ModItem>("GlitchDye").Type;
+				int glitchShaderID = GameShaders.Armor.GetShaderIdFromItemId(glitchDye);
+
+				drawInfo.cHead = drawInfo.cBody = drawInfo.cLegs = glitchShaderID;
+			}
 		}
 		
 		public Mod CheatSheet;
@@ -211,25 +266,57 @@ namespace OrchidMod
 		
 		public override void SetStaticDefaults()
 		{
-			ProjectilesBlockBlacklist = new List<int>
-			{
-				ProjectileID.PhantasmalDeathray,
-				ProjectileID.FairyQueenSunDance,
-				ProjectileID.SandBallFalling,
-				ProjectileID.SiltBall,
-				ProjectileID.SlushBall,
-				ProjectileID.EbonsandBallFalling,
-				ProjectileID.CrimsandBallFalling,
-				ProjectileID.PearlSandBallFalling,
-				ProjectileID.AshBallFalling
-			};
+			ProjectilesBlockBlacklist = new Dictionary<int, OnTryBlockAction>();
+			AddProjectileToBlockBlacklist(ProjectileID.PhantasmalDeathray);
+			AddProjectileToBlockBlacklist(ProjectileID.FairyQueenSunDance);
+			AddProjectileToBlockBlacklist(ProjectileID.SandBallFalling);
+			AddProjectileToBlockBlacklist(ProjectileID.SiltBall);
+			AddProjectileToBlockBlacklist(ProjectileID.SlushBall);
+			AddProjectileToBlockBlacklist(ProjectileID.EbonsandBallFalling);
+			AddProjectileToBlockBlacklist(ProjectileID.CrimsandBallFalling);
+			AddProjectileToBlockBlacklist(ProjectileID.PearlSandBallFalling);
+			AddProjectileToBlockBlacklist(ProjectileID.AshBallFalling);
 
 			Mod thoriumMod = OrchidMod.ThoriumMod;
 			if (thoriumMod != null)
 			{
-				ProjectilesBlockBlacklist.Add(thoriumMod.Find<ModProjectile>("OctopusArm").Type);
-				ProjectilesBlockBlacklist.Add(thoriumMod.Find<ModProjectile>("GraniteEradicatorArm").Type);
-				ProjectilesBlockBlacklist.Add(thoriumMod.Find<ModProjectile>("KrakenArm").Type);
+				void pushArm(Projectile projectile, Projectile anchor, float distance)
+				{
+					Vector2 tip = projectile.position + projectile.rotation.ToRotationVector2() * (projectile.ai[1]);
+					Player owner = Main.player[anchor.owner];
+					// CombatText.NewText(Main.player[anchor.owner].getRect(), Color.Pink, Math.Acos(Vector2.Dot(Vector2.Normalize(tip - projectile.Center), Vector2.Normalize(anchor.Center - projectile.Center))).ToString());
+					// Dust.QuickDust(tip, Color.NavajoWhite);
+					if (Math.Acos(Vector2.Dot(Vector2.Normalize(tip - projectile.Center), Vector2.Normalize(anchor.Center - projectile.Center))) < MathHelper.PiOver2) projectile.ai[1] = Math.Min(Vector2.Distance(projectile.Center, anchor.Center), distance);
+				}
+
+				AddProjectileToBlockBlacklist(thoriumMod.Find<ModProjectile>("OctopusArm").Type, (projectile, anchor) => pushArm(projectile, anchor, 100f));
+				AddProjectileToBlockBlacklist(thoriumMod.Find<ModProjectile>("GraniteEradicatorArm").Type, (projectile, anchor) => pushArm(projectile, anchor, 75f));
+				AddProjectileToBlockBlacklist(thoriumMod.Find<ModProjectile>("KrakenArm").Type, (projectile, anchor) => pushArm(projectile, anchor, 160f));
+				AddProjectileToBlockBlacklist(thoriumMod.Find<ModProjectile>("QueenJellyfishArm").Type, (projectile, anchor) => pushArm(projectile, anchor, 250f));;
+				
+				FieldInfo armorKey = thoriumMod.Code.GetType("ThoriumMod.ThoriumHotkeySystem")?.GetField("ArmorKey", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+				if (armorKey != null)
+				{
+					Mod.Logger.Debug("OrchidGuardian: ArmorKey detected");
+					ModKeybind keybind = (ModKeybind)armorKey.GetValue(null);
+					if (keybind != null)
+					{
+						ThoriumArmorKey = keybind;
+						Mod.Logger.Debug(ThoriumArmorKey.DisplayName);
+					}
+				}
+				
+				FieldInfo accessKey = thoriumMod.Code.GetType("ThoriumMod.ThoriumHotkeySystem")?.GetField("AccessoryKey", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+				if (accessKey != null)
+				{
+					Mod.Logger.Debug("OrchidGuardian: AccessoryKey detected");
+					ModKeybind keybind = (ModKeybind)accessKey.GetValue(null);
+					if (keybind != null)
+					{
+						ThoriumAccessoryKey = keybind;
+						Mod.Logger.Debug(ThoriumAccessoryKey.DisplayName);
+					}
+				}
 			}
 			
 			if (ModLoader.TryGetMod("CheatSheet", out Mod cheatSheet))
@@ -269,6 +356,9 @@ namespace OrchidMod
 					Mod.Logger.Debug("OrchidGuardian: DragonLens detected");
 				}
 			}
+			
+			if (ThoriumArmorKey != null && ThoriumAccessoryKey != null) 
+				Mod.Logger.Debug("Both Thorium hotkeys loaded!");
 		}
 
 
@@ -280,11 +370,35 @@ namespace OrchidMod
 			CSGodMode = null;
 			HMGodMode = null;
 			DLGodMode = null;
+
+			modPlayer = null;
+
+			ThoriumPlayer = null;
+			ThoriumPlayerType = null;
+			ThoriumArmorKey = null;
+			ThoriumAccessoryKey = null;
 		}
 
 		public override void Initialize()
 		{
 			modPlayer = Player.GetModPlayer<OrchidPlayer>();
+
+			var thoriumMod = OrchidMod.ThoriumMod;
+			if (thoriumMod != null)
+			{
+				// Ended up being unused, but this is how I would check for the players shield health, potentially to target unshielded players.
+				foreach (ModPlayer thoriumPlayer in Player.ModPlayers)
+				{
+					if (thoriumPlayer.Name == "ThoriumPlayer" && thoriumPlayer.Mod == thoriumMod)
+					{
+						ThoriumPlayer = thoriumPlayer;
+						ThoriumPlayerType = thoriumPlayer.GetType();
+						// FieldInfo field = thoriumPlayer.GetType().GetField("shieldHealth", BindingFlags.Public | BindingFlags.Instance);
+						// int shieldHealth = (int)field.GetValue(thoriumPlayer);
+						break;
+					}
+				}
+			}
 		}
 
 		public override void OnRespawn()
@@ -296,6 +410,35 @@ namespace OrchidMod
 		public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
 		{
 			GuardianItemCharge = 0;
+			
+			if (GuardianVoid)
+			{
+				bool voidOverloaded = damageSource == VoidDeath;
+				
+				SoundEngine.PlaySound(SoundID.NPCDeath24, Player.Center);
+				if (voidOverloaded) SoundEngine.PlaySound(SoundID.NPCDeath10 with { Pitch = -1f, Volume = 0.3f }, Player.Center);
+				
+				int dustType = DustID.Shadowflame;
+					
+				for (int i = 0; i < (voidOverloaded ? 100 : 20); i++)
+				{
+					Dust dust = Dust.NewDustPerfect(Player.Center, dustType, Main.rand.NextVector2CircularEdge(8f, 8f), Alpha: 255, newColor: new Color(255, 98, 236), Scale: Main.rand.NextFloat(0.5f, 5f));
+					dust.velocity *= Main.rand.NextFloat(voidOverloaded ? 5f : 1f);
+					dust.noGravity = true;
+				}
+				if (OrchidMod.ThoriumMod is {} thoriumMod)
+				{
+					dustType = thoriumMod.Find<ModDust>("VoidHeartDust").Type;
+					for (int i = 0; i < (voidOverloaded ? 20 : 4); i++)
+					{
+						Dust dust = Dust.NewDustDirect(Player.Center, 0, 0, dustType);
+						dust.velocity *= Main.rand.NextFloat(voidOverloaded ? 10f : 1.5f);
+						dust.scale = Main.rand.NextFloat(3f) + 1.5f;
+						dust.fadeIn = 1f;
+					}
+				}
+				
+			}
 		}
 
 		public override void PostUpdate()
@@ -332,20 +475,57 @@ namespace OrchidMod
 
 				// Condition for parrying an Aggro Dummy or Boss Dummy from Thorium 
 				// (only if the player is either in godmode, or if there aren't any enemies/bosses within 45 tiles)
+				NPC dummy = null;
 				if (OrchidMod.ThoriumMod != null && Main.npc.Any(npc => {
 					int aggroDummy = OrchidMod.ThoriumMod.Find<ModNPC>("AggroDummy").Type;
 					int bossDummy = OrchidMod.ThoriumMod.Find<ModNPC>("BossDummy").Type;
 					if ((npc.type == aggroDummy || npc.type == bossDummy) && Collision.CheckAABBvAABBCollision(Player.Center, Player.Hitbox.Size(), npc.Center, npc.Hitbox.Size())) 
 					{
+						dummy = npc;
 						if (Player.creativeGodMode || CrossModGodMode) return true;
-						else return !Main.npc.Any(n => n.active && (!n.friendly || n.boss) && !(npc.type == aggroDummy || npc.type == bossDummy) && n.Center.DistanceSQ(Player.Center) <= 1638400f);
+						return !Main.npc.Any(n => n.active && (!n.friendly || n.boss) && !(npc.type == aggroDummy || npc.type == bossDummy) && n.Center.DistanceSQ(Player.Center) <= 1638400f);
 					}
 					return false;
 				})
-				) DoParryItemParry(null);
+				) DoParryItemParry(dummy);
 			}
 
 			if (GauntletPunchCooldown > -10) GauntletPunchCooldown--;
+
+
+			if (GuardianVoid)
+			{
+				if (Main.rand.NextBool((int)Utils.Remap(GuardianGuard, 0, GuardianGuardMax, 4, 20)) && OrchidMod.ThoriumMod is {} thoriumMod)
+				{
+					Dust dust = Dust.NewDustDirect(Player.Center, 0, 0, thoriumMod.Find<ModDust>("VoidHeartDust").Type);
+					dust.velocity.X *= Main.rand.NextFloat(1.5f);
+					dust.velocity.Y -= Main.rand.NextFloat(5f);
+					dust.scale = Main.rand.NextFloat() + 0.5f;
+					dust.fadeIn = 1f;
+				}
+
+				bool hpDangerZone = Player.statLife / (float)Player.statLifeMax2 < 0.5f;
+
+				if (GuardianGuard <= 0 && !Main.dedServ && Player.miscCounterNormalized * (hpDangerZone ? 6 : 4) % 1 == 0)
+					SoundEngine.PlaySound(SoundID.Item15 with { Volume = hpDangerZone ? 2f : 1.5f, Pitch = hpDangerZone ? 0.2f : 0f, MaxInstances = 5 }, Player.Center);
+
+				if (Player.HeldItem.ModItem is OrchidModGuardianParryItem guardianItem && CachedGuardianItemCharge > 0)
+				{
+					float ratio = CachedGuardianItemCharge / (30f / Player.HeldItem.useTime * Player.GetTotalAttackSpeed(DamageClass.Melee));
+					GuardianChargeSpeed = 1 + GetWeaponChargeRate(guardianItem, GuardianChargeSpeed + ratio);
+				}
+			}
+		}
+
+		public override void ProcessTriggers(TriggersSet triggersSet)
+		{
+			var thoriumMod = OrchidMod.ThoriumMod;
+			if (thoriumMod != null && ThoriumAccessoryKey != null)
+			{
+				if (ThoriumArmorKey != null && ThoriumArmorKey.JustPressed && Player.active && !Player.dead)
+				{
+				}
+			}
 		}
 
 		public override void UpdateLifeRegen()
@@ -356,9 +536,9 @@ namespace OrchidMod
 		public override void ResetEffects()
 		{
 		
-			bool csGodMode = CheatSheet != null && CSGodMode != null && CSGodMode?.GetValue(null) is true;
-			bool hmGodMode = HerosMod != null && HMGodMode != null && HMGodMode?.GetValue(null) is true;
-			bool dlGodMode = DragonLens != null && DLGodMode != null && DLGodMode?.GetValue(null) is true;
+			bool csGodMode = CheatSheet != null && CSGodMode != null && CSGodMode?.GetValue(Player) is true;
+			bool hmGodMode = HerosMod != null && HMGodMode != null && HMGodMode?.GetValue(Player) is true;
+			bool dlGodMode = DragonLens != null && DLGodMode != null && DLGodMode?.GetValue(Player) is true;
 			CrossModGodMode = csGodMode || hmGodMode || dlGodMode;
 
 			// Resetting Core guardian fields
@@ -414,6 +594,13 @@ namespace OrchidMod
 				ChargeHoldTimer = 0;
 			}
 
+			if (GuardianItemCharge > CachedGuardianItemCharge)
+				CachedGuardianItemCharge = 0;
+			if (CachedGuardianItemCharge > 179f)
+				CachedGuardianItemCharge = 179f;
+			else if (CachedGuardianItemCharge < 0)
+				CachedGuardianItemCharge = 0;
+
 			if (Player.HeldItem.ModItem is OrchidModGuardianGauntlet)
 			{
 				GauntletSlamPool += 0.0017f; // charges in 5 seconds
@@ -433,6 +620,24 @@ namespace OrchidMod
 				GuardianBadgeHopliteLevel = 0;
 			}
 
+			if (Player.HasBuff<GuardianVoidQuarterstaffBuff>())
+			{
+				if (GuardianVoidQuarterstaff > 15)
+					GuardianVoidQuarterstaff = 15;
+			}
+			else if (GuardianVoidQuarterstaff > 0) GuardianVoidQuarterstaff = 0;
+
+			if (GuardianVoidQuarterstaff > 0)
+			{
+				GuardianVoidQuarterstaffTimer--;
+				if (GuardianVoidQuarterstaffTimer == 0)
+				{
+					GuardianVoidQuarterstaffTimer = 60;
+					GuardianVoidQuarterstaff--;
+				}
+			}
+			else GuardianVoidQuarterstaffTimer = 60;
+			
 			if (GuardianCounter)
 			{
 				if (GuardianCounterTime > 0) GuardianCounterTime--;
@@ -477,7 +682,9 @@ namespace OrchidMod
 			GuardCostUI = 0;
 
 			if (GuardianGuard > GuardianGuardMax) GuardianGuard = GuardianGuardMax;
+			else if (GuardianGuard < 0) GuardianGuard = 0;
 			if (GuardianSlam > GuardianSlamMax) GuardianSlam = GuardianSlamMax;
+			else if (GuardianSlam < 0) GuardianSlam = 0;
 
 			RuneProjectiles.Clear();
 
@@ -502,6 +709,7 @@ namespace OrchidMod
 			GuardianDeflectStunDuration = 1f;
 			GuardianMeleeSpeed = 1f;
 			GuardianWeaponScale = 1f;
+			GuardianChargeSpeed = 1f;
 			ParryInvincibilityBonus = 0;
 			GuardianChain = 0f;
 			GuardianStaffRocket = 0;
@@ -524,6 +732,7 @@ namespace OrchidMod
 			GuardianGit = false;
 			GuardianHorizon = false;
 			GuardianCrystalNinja = false;
+			GuardianVoid = false;
 			GuardianHoneyPotion = false;
 			GuardianWormTooth = false;
 			GuardianMonsterFang = false;
@@ -533,16 +742,13 @@ namespace OrchidMod
 			{
 				if (Main.myPlayer == Player.whoAmI)
 				{
-					/*
-					if (GuardianDebugVisuals == 1) CombatText.NewText(Player.Hitbox, new Color(1f, 0f, 1f), "Enabled shield and deflect check", true);
-					if (GuardianDebugVisuals == 1) CombatText.NewText(Player.Hitbox, new Color(1f, 0f, 1f), "Enabled attackinfo display", true);
-					if (GuardianDebugVisuals == 1) CombatText.NewText(Player.Hitbox, new Color(1f, 0f, 1f), "Enabled greathammer hand placement visual", true);
-					*/
-					if (GuardianDebugVisuals == 1)
+					if (GuardianDebugVisuals > 0)
 					{
+						Main.NewText("Individual test modes haven't been implemented yet; currently mode " + GuardianDebugVisuals, 175, 255, 175);
 						Main.NewText("Enabled shield and deflect check", 175, 255, 175);
 						Main.NewText("Enabled attackinfo display", 175, 255, 175);
 						Main.NewText("Enabled greathammer hand placement visual", 175, 255, 175);
+						Main.NewText("Enabled UI mouse region outlines", 175, 255, 175);
 						Main.NewText("Hide the Guardian Test accessory to disable test visuals", 255, 128, 255);
 					}
 					else
@@ -751,13 +957,88 @@ namespace OrchidMod
 				DoParryItemParry(entity);
 				modifiers.Cancel();
 			}
+			
+			if (GuardianVoid)
+			{
+				modifiers.DamageSource.TryGetCausingEntity(out Entity entity);
+
+				modifiers.DisableSound();
+				if (!Player.dead) SoundEngine.PlaySound(SoundID.NPCHit21, Player.Center);
+				if (entity is not null) modifiers.Cancel();
+				else return;
+				
+				if (modifiers.Dodgeable)
+				{
+					SoundEngine.PlaySound(SoundID.NPCHit21, Player.Center);
+					
+					if (Player.immune) return;
+					
+					if (UseGuard(1, true))
+					{
+						if (Player.HeldItem.ModItem is OrchidModGuardianParryItem)
+						{
+							DoParryItemParry(entity);
+							if (GuardianItemCharge > 0)
+							{
+								CachedGuardianItemCharge = GuardianItemCharge;
+								GuardianItemCharge = 0;
+							}
+						}
+						else modPlayer.SetDodgeImmuneTime();
+
+						SoundEngine.PlaySound(SoundID.Item52 with {Volume = 0.5f}, Player.Center);
+						SoundEngine.PlaySound(SoundID.Item67 with {PitchRange = (0.4f, 0.6f), Volume = 0.5f}, Player.Center);
+						
+						if (GuardianDisplayUI < 60) GuardianDisplayUI = 60;
+						
+						int dustType = DustID.Shadowflame;
+						for (int i = 0; i < 15; i++)
+						{
+							Dust dust = Dust.NewDustPerfect(Player.Center, dustType, Main.rand.NextVector2CircularEdge(3f, 3f), Alpha: 255, newColor: new Color(255, 98, 236), Scale: 1.5f);
+							dust.noGravity = true;
+						}
+						if (OrchidMod.ThoriumMod is {} thoriumMod)
+						{
+							dustType = thoriumMod.Find<ModDust>("VoidHeartDust").Type;
+							for (int i = 0; i < 4; i++)
+							{
+								Dust dust = Dust.NewDustDirect(Player.Center, 0, 0, dustType);
+								dust.velocity *= Main.rand.NextFloat() * 2.0f + 0.5f;
+								dust.scale = Main.rand.NextFloat() + 1.5f;
+								dust.fadeIn = 1f;
+							}
+						}
+
+						CombatText.NewText(Player.getRect(), Color.DarkMagenta, Language.GetTextValue(Mod.GetLocalizationKey("UI.GuardianItem.Interrupted")), dot: true);
+
+						UseGuard();
+						
+						return;
+					}
+					
+					if (Player.statLife > (int)(Player.statLifeMax2 * 0.5f))
+					{
+						int damage = Player.statLife - 10;
+						Player.statLife = 10;
+						CombatText.NewText(Player.getRect(), Color.DarkOrchid, damage, true, true);
+						Player.AddImmuneTime(modifiers.CooldownCounter, Player.longInvince ? 80 : 40);
+						Player.immune = true;
+						modifiers.Cancel();	
+						SoundEngine.PlaySound(SoundID.Item46 with { Pitch = -0.2f, Volume = 1.5f }, Player.Center);
+
+						return;
+					}
+				}
+				
+				Player.KillMe(VoidDeath, 9999, 1);
+			}
 		}
 
 		// Below are custom Guardian Methods
 
 		public void OnUseSlam()
 		{
-			if (GuardianThoriumCenser && OrchidMod.ThoriumMod != null)
+			if (GuardianThoriumCenser && OrchidMod.ThoriumMod is {} thoriumMod)
 			{
 				Player lowestHealthPlayer = Player;
 				foreach (Player player in Main.player)
@@ -781,7 +1062,7 @@ namespace OrchidMod
 				*/
 
 				// This is how the War Forger applies its shield, where 5f is the shield amount, and 10f is the maximum shield amount that can be applied
-				int projectileType = OrchidMod.ThoriumMod.Find<ModProjectile>("HealerShield").Type;
+				int projectileType = thoriumMod.Find<ModProjectile>("HealerShield").Type;
 				Projectile.NewProjectile(Player.GetSource_FromThis(), lowestHealthPlayer.Center, Vector2.Zero, projectileType, 0, 0.0f, Player.whoAmI, 5f, 10f, 0.0f);
 			}
 			if (MissingResourcesTimer > 0)
@@ -874,7 +1155,7 @@ namespace OrchidMod
 				if (!checkOnly)
 				{
 					GuardianSlam -= nb;
-					if (GuardianBamboo) Player.AddBuff(ModContent.BuffType<BambooBuff>(), 300);
+					if (GuardianBamboo) Player.AddBuff<BambooBuff>(300);
 					if (GuardianSlamRecharging < 0) GuardianSlamRecharging = 0;
 
 					while (nb > 0)
@@ -939,7 +1220,7 @@ namespace OrchidMod
 				if (!checkOnly)
 				{
 					GuardianGuard -= nb;
-					if (GuardianBamboo) Player.AddBuff(ModContent.BuffType<BambooBuff>(), 300);
+					if (GuardianBamboo) Player.AddBuff<BambooBuff>(300);
 					if (GuardianGuardRecharging < 0) GuardianGuardRecharging = 0;
 
 					while (nb > 0)
@@ -1048,11 +1329,11 @@ namespace OrchidMod
 		{ // Called by both BlockEffect methods to do universal block effects
 			if (GuardianGit)
 			{
-				Player.AddBuff(ModContent.BuffType<GuardianGitBuff>(), 600);
+				Player.AddBuff<GuardianGitBuff>(600);
 			}
 			if ((GuardianSharpRebuttalBlock && !parry) || (GuardianSharpRebuttalParry && parry))
 			{
-				Player.AddBuff(ModContent.BuffType<GuardianSpikeBuff>(), 600);
+				Player.AddBuff<GuardianSpikeBuff>(600);
 			}
 		}
 
@@ -1069,7 +1350,7 @@ namespace OrchidMod
 			{
 				if (shieldAnchor.ShieldItem.ModItem is OrchidModGuardianShield shield)
 				{
-					shield.Reflect(Player, anchor, blockedProjectile, ref GuardianShieldSpikeReflect);
+					shield.Reflect(Player, this, anchor, blockedProjectile, ref GuardianShieldSpikeReflect);
 				}
 
 				if (GuardianShieldSpikeReflect > 0)
@@ -1151,19 +1432,6 @@ namespace OrchidMod
 				Player.immune = true;
 
 				Projectile anchor = null;
-
-				/*
-				int[] anchorTypes = [ModContent.ProjectileType<GuardianQuarterstaffAnchor>(), ModContent.ProjectileType<GuardianGauntletAnchor>(), ModContent.ProjectileType<GuardianHorizonLanceAnchor>()];
-
-				foreach (int type in anchorTypes)
-				{
-					if (Player.ownedProjectileCounts[type] > 0)
-					{
-						anchor = Main.projectile.First(i => i.active && i.owner == Player.whoAmI && (i.type == type));
-						break;
-					}
-				}
-				*/
 
 				foreach (Projectile anchorProjectile in Main.projectile)
 				{
@@ -1335,7 +1603,7 @@ namespace OrchidMod
 			}
 
 			//DEBUG
-			if (GuardianDebugVisuals == 1)
+			if (GuardianDebugVisuals > 0)
 			{
 				CombatText.NewText(new Rectangle((int)Player.Center.X, Player.Hitbox.Y, 0, 0), Color.White, GuardianTest.AttackTypeString(info) + " (" + (byte)info + ")");
 			}
@@ -1360,7 +1628,7 @@ namespace OrchidMod
 			if (item != null && !item.PreDeflect(ref targetArea, ref success, ref caughtProjectile, ref killedNPC, anchor, ref EnemyPredicate, ref ProjPredicate, ref range, ref lenience, ref from, ref dmg))
 				return false;
 
-			if (GuardianDebugVisuals == 1)
+			if (GuardianDebugVisuals > 0)
 			{
 				Dust dust = Dust.NewDustPerfect(targetArea.TopLeft(), DustID.MagicMirror);
 				dust.velocity = Vector2.Zero;
@@ -1395,7 +1663,7 @@ namespace OrchidMod
 			Predicate<Projectile> ProjInRange;
 			if (range < 0) ProjInRange = new Predicate<Projectile>(T => T.Hitbox.Intersects(targetArea) || (lenience > 0 && Collision.CheckAABBvLineCollision(targetArea.TopLeft(), targetArea.Size(), T.Hitbox.ClosestPointInRect(from), T.Hitbox.ClosestPointInRect(from) + (T.velocity - fromVel) * lenience)));
 			else ProjInRange = new Predicate<Projectile>(T => (T.Hitbox.Intersects(targetArea) || (lenience > 0 && Collision.CheckAABBvLineCollision(targetArea.TopLeft(), targetArea.Size(), T.Hitbox.ClosestPointInRect(from), T.Hitbox.ClosestPointInRect(from) + (T.velocity - fromVel) * lenience))) && (T.Hitbox.ClosestPointInRect(from).Distance(from) <= range || (lenience > 0 && from.ClosestPointOnLine(T.Hitbox.ClosestPointInRect(from), T.Hitbox.ClosestPointInRect(from) + (T.velocity - fromVel) * lenience).Distance(from) <= range)));
-			foreach (Projectile proj in Main.projectile.Where(T => T.active && !ProjectilesBlockBlacklist.Contains(T.type) && ProjInRange(T) && ProjPredicate(T)))
+			foreach (Projectile proj in Main.projectile.Where(T => T.active && !ProjectilesBlockBlacklist.ContainsKey(T.type) && ProjInRange(T) && ProjPredicate(T)))
 			{
 				if (anchor != null && proj.ModProjectile == anchor)
 				{
@@ -1479,6 +1747,45 @@ namespace OrchidMod
 				packet.Write(GuardianItemCharge);
 				packet.Send();
 			}
+		}
+		
+		public float GetParryDuration(Item item, int baseDuration) => baseDuration * item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * GuardianParryDuration;
+		public float GetBlockDuration(Item item, int baseDuration) => baseDuration * item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * GuardianBlockDuration;
+		
+		public float GetWeaponChargeRate(OrchidModGuardianItem guardianItem, float baseRate = 1f) => baseRate + ((GuardianChargeSpeed - 1) * guardianItem.BonusChargeRateMultiplier);
+
+		/// <summary>Returns the primary mouse input for "gauntlet-like" weapons: <c>Main.mouseLeft</c> by default, or <c>Main.mouseRight</c> if swapped in the config.</summary>
+		/// <param name="tap">If <c>Main.mouseLeftRelease</c>/<c>Main.mouseRightRelease</c> should be considered as part of the input. Returns <c>Main.mouseLeftRelease</c>/<c>Main.mouseRightRelease</c> by itself if null.</param>
+		public bool GetGauntletPunchInput(bool? tap)
+		{
+			if (GauntletInputSwap)
+				return tap != null ? Main.mouseRight && (tap == false || Main.mouseRightRelease) : Main.mouseRightRelease;
+			return tap != null ? Main.mouseLeft && (tap == false || Main.mouseLeftRelease) : Main.mouseLeftRelease;
+		}
+
+		/// <summary>Returns the secondary mouse input for "gauntlet-like" weapons: <c>Main.mouseRight</c> by default, or <c>Main.mouseLeft</c> if swapped in the config.</summary>
+		/// <param name="tap">If <c>Main.mouseRightRelease</c>/<c>Main.mouseLeftRelease</c> should be considered as part of the input. Returns <c>Main.mouseRightRelease</c>/<c>Main.mouseLeftRelease</c> by itself if null</param>
+		public bool GetGauntletBlockInput(bool? tap)
+		{
+			if (GauntletInputSwap)
+				return tap != null ? Main.mouseLeft && (tap == false || Main.mouseLeftRelease) : Main.mouseLeftRelease;
+			return tap != null ? Main.mouseRight && (tap == false || Main.mouseRightRelease) : Main.mouseRightRelease;
+		}
+		/// <summary>Returns the primary mouse input for "pavise-like" weapons: <c>Main.mouseLeft</c> by default, or <c>Main.mouseRight</c> if swapped in the config.</summary>
+		/// <param name="tap">If <c>Main.mouseLeftRelease</c>/<c>Main.mouseRightRelease</c> should be considered as part of the input. Returns <c>Main.mouseLeftRelease</c>/<c>Main.mouseRightRelease</c> by itself if null</param>
+		public bool GetPaviseSlamInput(bool? tap)
+		{
+			if (PaviseInputSwap)
+				return tap != null ? Main.mouseRight && (tap == false || Main.mouseRightRelease) : Main.mouseRightRelease;
+			return tap != null ? Main.mouseLeft && (tap == false || Main.mouseLeftRelease) : Main.mouseLeftRelease;
+		}
+		/// <summary>Returns the secondary mouse input for "pavise-like" weapons: <c>Main.mouseRight</c> by default, or <c>Main.mouseLeft</c> if swapped in the config.</summary>
+		/// <param name="tap">If <c>Main.mouseRightRelease</c>/<c>Main.mouseLeftRelease</c> should be considered as part of the input. Returns <c>Main.mouseRightRelease</c>/<c>Main.mouseLeftRelease</c> by itself if null</param>
+		public bool GetPaviseBlockInput(bool? tap)
+		{
+			if (GauntletInputSwap)
+				return tap != null ? Main.mouseLeft && (tap == false || Main.mouseLeftRelease) : Main.mouseLeftRelease;
+			return tap != null ? Main.mouseRight && (tap == false || Main.mouseRightRelease) : Main.mouseRightRelease;
 		}
 	}
 }

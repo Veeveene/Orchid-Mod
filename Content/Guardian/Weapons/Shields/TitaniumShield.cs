@@ -25,16 +25,16 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 
 		public override void HoldItemFrame(Player player)
 		{
-			player.GetModPlayer<OrchidGuardian>().GuardianCounter = true;
+			Guardian(player).GuardianCounter = true;
 		}
 
-		public override void Protect(Player player, Projectile shield)
+		public override void Protect(Player player, OrchidGuardian guardian, Projectile shield)
 		{
 			player.GetModPlayer<OrchidPlayer>().SpawnTitaniumShards(shield.GetSource_FromThis());
 			Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, player.Center);
 		}
 
-		public override bool Block(Player player, Projectile shield, Projectile projectile)
+		public override bool Block(Player player, OrchidGuardian guardian, Projectile shield, Projectile projectile)
 		{
 			player.GetModPlayer<OrchidPlayer>().SpawnTitaniumShards(shield.GetSource_FromThis());
 			return true;
@@ -47,7 +47,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			return true;
 		}
 
-		public override void Slam(Player player, Projectile shield, bool WeakSlam)
+		public override void Slam(Player player, OrchidGuardian guardian, Projectile shield, bool WeakSlam)
 		{
 			if (counter)
 			{

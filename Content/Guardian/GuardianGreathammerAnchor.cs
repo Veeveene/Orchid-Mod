@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using OrchidMod.Common;
+using OrchidMod.Utilities;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
@@ -72,7 +73,7 @@ namespace OrchidMod.Content.Guardian
 			if (item.ModItem is OrchidModGuardianGreathammer)
 			{
 				HammerItem = item.ModItem as OrchidModGuardianGreathammer;
-				OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+				OrchidGuardian guardian = player.Guardian();
 				HammerTexture = ModContent.Request<Texture2D>(HammerItem.HammerTexture, AssetRequestMode.ImmediateLoad).Value;
 				Projectile.netUpdate = true;
 				Projectile.friendly = false;
@@ -128,7 +129,7 @@ namespace OrchidMod.Content.Guardian
 		public override void AI()
 		{
 			Player player = Main.player[Projectile.owner];
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 			if (NeedNetUpdate)
 			{
 				Projectile.netUpdate = NeedNetUpdate;
@@ -266,13 +267,9 @@ namespace OrchidMod.Content.Guardian
 				{
 					if (IsLocalOwner)
 					{
-						bool swingInput = Main.mouseRight;
-						bool chargeInput = Main.mouseLeft;
-						if (ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs)
-						{
-							swingInput = Main.mouseLeft;
-							chargeInput = Main.mouseRight;
-						}
+						bool swingInput = guardian.GetGauntletBlockInput(false);
+						bool chargeInput = guardian.GetGauntletPunchInput(false);
+						
 						if (guardian.GuardianItemCharge < 210f)
 						{
 							guardian.GuardianItemCharge += 30f / HammerItem.Item.useTime * HammerItem.WaitChargeGain * player.GetTotalAttackSpeed(DamageClass.Melee);

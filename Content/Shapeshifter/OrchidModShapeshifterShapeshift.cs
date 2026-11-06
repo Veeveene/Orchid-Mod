@@ -145,7 +145,7 @@ namespace OrchidMod.Content.Shapeshifter
 
 		public sealed override void HoldItem(Player player)
 		{
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = Shapeshifter(player);
 			if (PlayerInput.ScrollWheelDelta != 0)
 			{
 				shapeshifter.ShapeshifterScrollTransformationBuffer = ModContent.GetInstance<OrchidClientConfig>().ShapeshifterScrollDelay;
@@ -157,7 +157,7 @@ namespace OrchidMod.Content.Shapeshifter
 
 				if (player.ownedProjectileCounts[projectileType] != 0)
 				{
-					Projectile proj = Main.projectile.First(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
+					Projectile proj = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
 					if (proj != null && proj.ModProjectile is ShapeshifterShapeshiftAnchor anchor)
 					{
 						if (anchor.ShapeshifterItem != Item)
@@ -186,7 +186,7 @@ namespace OrchidMod.Content.Shapeshifter
 						}
 					}
 
-					player.GetModPlayer<OrchidShapeshifter>().ShapeshifterScrollTransformationBuffer = 0;
+					Shapeshifter(player).ShapeshifterScrollTransformationBuffer = 0;
 					CreateNewAnchor(player);
 				}
 			}
@@ -195,7 +195,7 @@ namespace OrchidMod.Content.Shapeshifter
 
 		public void CreateNewAnchor(Player player)
 		{
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = Shapeshifter(player);
 			if (shapeshifter.ShapeshifterFastShapeshiftTimer >= 300)
 			{
 				player.itemTime = 10;
@@ -230,13 +230,13 @@ namespace OrchidMod.Content.Shapeshifter
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips)
 		{
-			TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
-			if (tt != null)
-			{
-				string[] splitText = tt.Text.Split(' ');
-				string damageValue = splitText.First();
-				tt.Text = damageValue + " " + Language.GetTextValue(ModContent.GetInstance<OrchidMod>().GetLocalizationKey("DamageClasses.ShapeshifterDamageClass.DisplayName"));
-			}
+			// TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
+			// if (tt != null)
+			// {
+			// 	string[] splitText = tt.Text.Split(' ');
+			// 	string damageValue = splitText.First();
+			// 	tt.Text = damageValue + " " + Language.GetTextValue(Mod.GetLocalizationKey("DamageClasses.ShapeshifterDamageClass.DisplayName"));
+			// }
 
 			int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Knockback"));
 			tooltips.Insert(index + 1, new TooltipLine(Mod, "ToolTipType", TypeTooltip)
@@ -839,7 +839,7 @@ namespace OrchidMod.Content.Shapeshifter
 
 		public void HandleSpecificInteractionsPostUpdate(Projectile projectile, Player player)
 		{ // Cross mod interactions, or buff specific interactions. Handled on a case-by-case basis
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = Shapeshifter(player);
 			if (shapeshifter.Player.windPushed)
 			{ // mighty winds (sandstorm)
 				ShapeshifterShapeshiftAnchor anchor = shapeshifter.ShapeshiftAnchor;
@@ -897,7 +897,7 @@ namespace OrchidMod.Content.Shapeshifter
 
 		public void HandleSpecificInteractionsFinalVelocity(ref Vector2 intendedVelocity, ref bool phaseThroughTiles, Projectile projectile, Player player, bool stepUpDown = false, bool cancelSlopeOffet = true, bool preventDownInput = false, bool forceFallThrough = false)
 		{ // Cross mod interactions, or buff specific interactions. Handled on a case-by-case basis
-			OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+			OrchidShapeshifter shapeshifter = Shapeshifter(player);
 			if (player.windPushed && projectile.ModProjectile is ShapeshifterShapeshiftAnchor anchor)
 			{ // mighty winds (sandstorm)
 				float windSpeed = Main.windSpeedCurrent * 0.025f;

@@ -5,6 +5,7 @@ using OrchidMod.Content.General.Prefixes;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using OrchidMod.Utilities;
 using Terraria;
 using Terraria.Localization;
 using Terraria.Audio;
@@ -164,13 +165,12 @@ namespace OrchidMod.Content.Guardian
 
 				if (Charging)
 				{ // Katars never stop charging, even while jabbing
-					guardian.GuardianItemCharge += 45f / KatarItem.useTime * ((owner.GetTotalAttackSpeed(DamageClass.Melee) * 2f + guardian.GuardianBadgeHopliteLevel * 0.25f) - 1f) * guardianItem.ChargeSpeedMultiplier;
+					guardian.GuardianItemCharge += 45f / KatarItem.useTime * ((owner.GetTotalAttackSpeed(DamageClass.Melee) * 2f + guardian.GuardianBadgeHopliteLevel * 0.25f) - 1f) * guardian.GetWeaponChargeRate(guardianItem, guardianItem.ChargeSpeedMultiplier);
 					if (guardian.GuardianItemCharge > 180f)
 					{
 						if (!Ding && IsLocalOwner)
 						{
-							if (ModContent.GetInstance<OrchidClientConfig>().GuardianAltChargeSounds) SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, owner.Center);
-							else SoundEngine.PlaySound(SoundID.MaxMana, owner.Center);
+							SoundEngine.PlaySound(guardian.DingSound, owner.Center);
 							Ding = true;
 						}
 						guardian.GuardianItemCharge = 180f;
@@ -333,7 +333,7 @@ namespace OrchidMod.Content.Guardian
 					else if (OffHandKatar && projectile.localAI[1] == 0f) Projectile.rotation += MathHelper.Pi;
 
 
-					if ((ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs ? !Main.mouseRight : !Main.mouseLeft) && owner.whoAmI == Main.myPlayer && guardian.GuardianItemCharge >= 180f && !OffHandKatar)
+					if ((ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletInputs ? !Main.mouseRight : !Main.mouseLeft) && owner.whoAmI == Main.myPlayer && guardian.GuardianItemCharge >= 180f && !OffHandKatar)
 					{
 						Projectile.ai[0] = -2f; // fully charged
 						Projectile.ai[1] = Vector2.Normalize(Main.MouseWorld - owner.MountedCenter).ToRotation() - MathHelper.PiOver2;
@@ -366,7 +366,7 @@ namespace OrchidMod.Content.Guardian
 						if (!OffHandKatar)
 						{
 							guardianItem.ChargeJabCostUI(owner, guardian, Projectile);
-							if ((ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs ? Main.mouseLeft : Main.mouseRight) && owner.whoAmI == Main.myPlayer)
+							if ((ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletInputs ? Main.mouseLeft : Main.mouseRight) && owner.whoAmI == Main.myPlayer && guardianItem.ChargeJabCost(owner, guardian, Projectile, true))
 							{
 								if (guardianItem.ChargeJabCost(owner, guardian, Projectile, true))
 								{
@@ -380,7 +380,7 @@ namespace OrchidMod.Content.Guardian
 									guardian.WarnMissingResources(0, 1, playSound: false);
 								}
 							}
-							else if ((ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs ? !Main.mouseRight : !Main.mouseLeft) && owner.whoAmI == Main.myPlayer)
+							else if ((ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletInputs ? !Main.mouseRight : !Main.mouseLeft) && owner.whoAmI == Main.myPlayer)
 							{
 								if (IsLocalOwner && guardian.GuardianItemCharge >= 180f)
 								{
@@ -459,7 +459,7 @@ namespace OrchidMod.Content.Guardian
 			if (!ModContent.HasAsset(guardianItem.KatarTexture)) return false;
 
 			Player player = Main.player[Projectile.owner];
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 			Color color = Lighting.GetColor((int)(Projectile.Center.X / 16f), (int)(Projectile.Center.Y / 16f), Color.White);
 
 			if (guardianItem.PreDrawKatar(spriteBatch, Projectile, player, OffHandKatar, ref color))

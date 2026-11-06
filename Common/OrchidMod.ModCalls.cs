@@ -9,11 +9,10 @@ using OrchidMod.Content.Alchemist.Bag;
 using OrchidMod.Content.Alchemist.Misc;
 using OrchidMod.Content.Gambler;
 using System;
-using System.Collections.Generic;
 using System.Reflection;
+using OrchidMod.Utilities;
 using ReLogic.Content;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace OrchidMod
@@ -24,7 +23,7 @@ namespace OrchidMod
 		{
 			player.statDefense += 3;
 			player.lifeRegen += 6;
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 			guardian.GuardianGuardMax += 3;
 			guardian.GuardianSlamMax += 3;
 		});

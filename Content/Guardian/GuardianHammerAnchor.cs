@@ -11,7 +11,9 @@ using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.Enums;
 using Terraria.GameContent;
+using Terraria.GameContent.Achievements;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -22,6 +24,7 @@ namespace OrchidMod.Content.Guardian
 		public List<Vector2> OldPosition;
 		public List<float> OldRotation;
 		public List<int> BlockedNPCs;
+		public List<int> BlockedProjectiles;
 
 		public bool returning = false;
 		public OrchidModGuardianHammer HammerItem;
@@ -74,15 +77,16 @@ namespace OrchidMod.Content.Guardian
 			Frame = 0;
 
 			InitialVelocity = Vector2.Zero;
-			OldPosition = new List<Vector2>();
-			OldRotation = new List<float>();
-			BlockedNPCs = new List<int>();
+			OldPosition = [];
+			OldRotation = [];
+			BlockedNPCs = [];
+			BlockedProjectiles = [];
 		}
 
 		public override void OnSpawn(IEntitySource source)
 		{
 			Player player = Main.player[Projectile.owner];
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 			Item item = player.inventory[player.selectedItem];
 
 			if (item == null || !(item.ModItem is OrchidModGuardianHammer hammerItem))
@@ -207,24 +211,33 @@ namespace OrchidMod.Content.Guardian
 						hitBox.Width += HammerTexture.Width + 8;
 						hitBox.Height += HammerTexture.Width + 8;
 
-						for (int l = 0; l < Main.projectile.Length; l++)
-						{
-							Projectile proj = Main.projectile[l];
-							if (proj.active && proj.hostile && proj.damage > 0 && !OrchidGuardian.ProjectilesBlockBlacklist.Contains(proj.type))
+						foreach (Projectile proj in Main.projectile)
+						{							
+							bool inBlacklist = OrchidGuardian.ProjectilesBlockBlacklist.TryGetValue(proj.type, out OrchidGuardian.OnTryBlockAction action);
+							if (proj.hostile && proj.damage > 0)
 							{
-								if (proj.Hitbox.Intersects(Projectile.Hitbox))
+								if (proj.Hitbox.Intersects(Projectile.Hitbox) || proj.Colliding(proj.Hitbox, Projectile.Hitbox))
 								{
-									bool killProj = HammerItem.OnBlockProjectile(owner, guardian, Projectile, proj);
-									guardian.OnBlockProjectile(Projectile, proj);
-									if (!FirstBlock)
+									bool killProj = HammerItem.OnBlockProjectile(owner, guardian, Projectile, proj) && !inBlacklist;
+									if (!BlockedProjectiles.Contains(proj.whoAmI))
 									{
-										FirstBlock = true;
-										guardian.OnBlockProjectileFirst(Projectile, proj);
-										HammerItem.OnBlockFirstProjectile(owner, guardian, Projectile, proj);
-										SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), owner.Center);
+										guardian.OnBlockProjectile(Projectile, proj);
+										if (!FirstBlock)
+										{
+											FirstBlock = true;
+											guardian.OnBlockProjectileFirst(Projectile, proj);
+											HammerItem.OnBlockFirstProjectile(owner, guardian, Projectile, proj);
+											SoundEngine.PlaySound(SoundID.Item37.WithPitchOffset(Main.rand.NextFloat(0.4f, 0.6f)), owner.Center);
+										}
+										SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
 									}
 									if (killProj) proj.Kill();
-									SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
+									else
+									{
+										action?.Invoke(proj, Projectile);
+										if (!BlockedProjectiles.Contains(proj.whoAmI)) BlockedProjectiles.Add(proj.whoAmI);
+
+									}
 								}
 							}
 						}
@@ -235,10 +248,9 @@ namespace OrchidMod.Content.Guardian
 						hitBox.Width += 4;
 						hitBox.Height += 4;
 
-						for (int k = 0; k < Main.maxNPCs; k++)
+						foreach (NPC target in Main.ActiveNPCs)
 						{
-							NPC target = Main.npc[k];
-							if (target.active && !target.dontTakeDamage && !target.friendly && target.Hitbox.Intersects(hitBox))
+							if (!target.dontTakeDamage && !target.friendly && target.Hitbox.Intersects(hitBox))
 							{
 								HammerItem.OnBlockContact(owner, guardian, target, Projectile);
 
@@ -310,8 +322,7 @@ namespace OrchidMod.Content.Guardian
 						if (guardian.GuardianItemCharge >= 180f && !Ding)
 						{
 							Ding = true;
-							if (ModContent.GetInstance<OrchidClientConfig>().GuardianAltChargeSounds) SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, owner.Center);
-							else SoundEngine.PlaySound(SoundID.MaxMana, owner.Center);
+							SoundEngine.PlaySound(guardian.DingSound, owner.Center);
 						}
 
 						if (Projectile.ai[1] == 0)
@@ -447,7 +458,21 @@ namespace OrchidMod.Content.Guardian
 								if (Projectile.ai[1] < -52) chainOffset = (chainOffset / 8f) * (Projectile.ai[1] + 60);
 								if (Projectile.ai[1] > -35) chainOffset += (chainOffset / 15f) * (-Projectile.ai[1] - 35);
 
+								Vector2 preOffsetCenter = Projectile.Center;
 								Projectile.Center += chainDirection * chainOffset;
+
+								if (CanCutTiles() is not false)
+								{
+									AchievementsHelper.CurrentlyMining = true;
+									
+									bool[] tileCutIgnore = Owner.GetTileCutIgnorance(false, false);
+									DelegateMethods.tilecut_0 = TileCuttingContext.AttackMelee;
+									DelegateMethods.tileCutIgnore = tileCutIgnore;
+
+									Utils.PlotTileLine(preOffsetCenter, Projectile.Center, 8f, DelegateMethods.CutTiles);
+									
+									AchievementsHelper.CurrentlyMining = false;
+								}
 							}
 
 							float toAdd = 30f / HammerItem.Item.useTime * HammerItem.SwingSpeed * owner.GetTotalAttackSpeed(DamageClass.Melee);
@@ -474,7 +499,7 @@ namespace OrchidMod.Content.Guardian
 					if (HammerItem.ThrowAI(owner, guardian, Projectile, WeakThrow, OffHand))
 					{
 						if (Projectile.timeLeft < 598 && range > 0) // Delay helps preventing the hammer from instantly despawning if launched from inside a tile
-						Projectile.tileCollide = HammerItem.TileCollide;
+							Projectile.tileCollide = HammerItem.TileCollide;
 						else Projectile.tileCollide = false;
 
 						if (range == HammerItem.Range)
@@ -490,6 +515,15 @@ namespace OrchidMod.Content.Guardian
 							InitialVelocity = Projectile.velocity;
 
 							guardian.OnAttack(WeakThrow ? AttackID.HammerBash : AttackID.HammerCharge, HammerItem);
+						}
+
+						if (Projectile.tileCollide)
+						{
+							(int u, int v) = Projectile.Bottom.ToTileCoordinates().XYTuple();
+							if (WorldGen.InWorld(u, v) && Main.tile[u, v] != null && Main.tile[u, v].LiquidAmount == 255 && Main.tile[u, v].LiquidType == LiquidID.Shimmer && Projectile.velocity.Y > 0f) {
+								Projectile.velocity.Y *= -1f;
+								Projectile.netUpdate = true;
+							}
 						}
 
 						if (guardian.GuardianHammerMagnet > 0f && !HammerItem.CannotMagnet && Projectile.timeLeft < 598 && range > 0 && BlockDuration == 0 && owner == Main.LocalPlayer && !Main.dedServ)
@@ -687,7 +721,7 @@ namespace OrchidMod.Content.Guardian
 				else range = -40;
 			}
 			Player player = Main.player[Projectile.owner];
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 			HammerItem.OnThrowTileCollide(player, guardian, Projectile, oldVelocity, OffHand);
 			return false;
 		}
@@ -811,7 +845,7 @@ namespace OrchidMod.Content.Guardian
 		{
 			if (HammerTexture == null) return false;
 			Player player = Main.player[Projectile.owner];
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 			Rectangle drawRectangle = HammerTexture.Frame(1, HammerItem.HammerFrames, 0, Frame % HammerItem.HammerFrames);
 
 			if (HammerItem.PreDrawHammer(player, guardian, Projectile, spriteBatch, ref lightColor, ref HammerTexture, ref drawRectangle, OffHand))
@@ -872,7 +906,7 @@ namespace OrchidMod.Content.Guardian
 				}
 				else if (guardian.GuardianChain > 0f && guardian.GuardianChainTexture != null)
 				{ // I want to consume a shoebox
-					Texture2D chainTexture = ModContent.Request<Texture2D>(guardian.GuardianChainTexture, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+					Texture2D chainTexture = ModContent.Request<Texture2D>(guardian.GuardianChainTexture, AssetRequestMode.ImmediateLoad).Value;
 					Vector2 chainDirection = Vector2.Normalize(Projectile.Center - player.Center);
 					float chainOffset = guardian.GuardianChain;
 					if (Projectile.ai[1] < -52) chainOffset = (chainOffset / 8f) * (Projectile.ai[1] + 60);

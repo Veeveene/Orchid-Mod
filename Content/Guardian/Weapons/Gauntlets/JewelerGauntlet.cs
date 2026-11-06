@@ -71,7 +71,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Gauntlets
 			}
 		}
 
-		public override void SafeModifyTooltips(List<TooltipLine> tooltips)
+		public override void SafeModifyTooltips(List<TooltipLine> tooltips, OrchidGuardian guardian)
 		{
 			string tooltip;
 			Color? color = null;
@@ -114,7 +114,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Gauntlets
 			int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Tooltip0"));
 			if (index < 0) index = tooltips.Count - 1;
 
-			var line = new TooltipLine(Mod, "Tooltip", tooltip);
+			TooltipLine line = new(Mod, "Tooltip", tooltip);
 
 			if (color.HasValue)
 				line.OverrideColor = color.Value;

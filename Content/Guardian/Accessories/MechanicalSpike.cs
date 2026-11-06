@@ -16,7 +16,7 @@ namespace OrchidMod.Content.Guardian.Accessories
 
 		public override void UpdateAccessory(Player player, bool hideVisual)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = Guardian(player);
 			if (modPlayer.GuardianSpikeDamage < 2f)
 				modPlayer.GuardianSpikeDamage = 2f;
 			modPlayer.GuardianSharpRebuttalBlock = true;

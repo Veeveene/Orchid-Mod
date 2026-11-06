@@ -24,7 +24,7 @@ namespace OrchidMod.Content.Guardian.Armors.OreHelms
 
 		public override void UpdateEquip(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = Guardian(player);
 			player.GetCritChance<GuardianDamageClass>() += 12;
 			player.GetAttackSpeed<MeleeDamageClass>() += 0.12f;
 			modPlayer.GuardianSlamMax += 1;

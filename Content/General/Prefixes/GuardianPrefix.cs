@@ -3,6 +3,7 @@ using System.IO;
 using OrchidMod.Common.Global.Items;
 using OrchidMod.Common.ModObjects;
 using OrchidMod.Content.Guardian;
+using OrchidMod.Content.Guardian.Weapons.Warhammers;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -31,6 +32,8 @@ namespace OrchidMod.Content.General.Prefixes
 		private readonly float blockDuration;
 		private readonly int crit;
 		private readonly float speed;
+		
+		public virtual float obnoxiousness => 1f; // exclusive to toy hammers' special Annoying prefix
 
 		public override void Unload() => prefixes.Clear();
 
@@ -55,11 +58,15 @@ namespace OrchidMod.Content.General.Prefixes
 		public override void Load() => prefixes.Add(this);
 
 		public override void Apply(Item item)
-			=> item.GetGlobalItem<GuardianPrefixItem>().SetPrefixVariables(damage, knockback, blockDuration, crit, speed);
-
+		{
+			item.GetGlobalItem<GuardianPrefixItem>().SetPrefixVariables(damage, knockback, blockDuration, crit, speed);
+			if (item.ModItem is ToyWarhammers honk && obnoxiousness != 1f)
+				honk.VolumeModifier *= obnoxiousness;
+		}
 		public override void ModifyValue(ref float valueMult)
 		{
 			float multiplier = 1f + (damage - 1f) * 0.05f + (knockback - 1f) * 0.05f + (blockDuration - 1f) * 0.05f + (speed - 1f) * 0.05f + crit * 0.0015f;
+			if (obnoxiousness > 1f) multiplier -= 0.0075f;
 			valueMult *= multiplier;
 		}
 
@@ -69,7 +76,34 @@ namespace OrchidMod.Content.General.Prefixes
 			damageMult = damage;
 			critBonus = crit;
 			knockbackMult = knockback;
-			//useTimeMult = 1f + (speed - 1f) * -1f;
+		}
+
+		public override IEnumerable<TooltipLine> GetTooltipLines(Item item)
+		{
+			string block = Language.GetTextValue("Mods.OrchidMod.Prefixes.Effects.AddDurationParry");
+
+			if (item.ModItem is OrchidModGuardianShield || item.ModItem is OrchidModGuardianHammer)
+				block = Language.GetTextValue("Mods.OrchidMod.Prefixes.Effects.AddDurationBlock");
+			
+			if (blockDuration != 1f && blockDuration != 0f)
+			{
+				yield return new TooltipLine(Mod, "BlockDurationPrefix", Language.GetTextValue("Mods.OrchidMod.Prefixes.Effects.AddDuration", (blockDuration - 1f) * 100f, block))
+				{
+					IsModifier = true,
+					IsModifierBad = blockDuration < 1
+				};
+			}
+
+			if (speed != 1f && speed != 0f)
+			{
+				string key = item.ModItem is OrchidModGuardianShield ? "Mods.OrchidMod.Prefixes.Effects.AddSize" : "Mods.OrchidMod.Prefixes.Effects.AddSpeed";
+				float value = (speed - 1f) * 100f;
+				yield return new TooltipLine(Mod, "SpeedPrefix", Language.GetTextValue(key, value))
+				{
+					IsModifier = true,
+					IsModifierBad = speed < 1
+				};
+			}
 		}
 	}
 
@@ -131,22 +165,18 @@ namespace OrchidMod.Content.General.Prefixes
 
 		public override void HoldItem(Item item, Player player)
 		{
-			OrchidPlayer modPlayer = player.GetModPlayer<OrchidPlayer>();
+			OrchidGuardian modPlayer = player.Guardian();
 			//if (blockDuration != 1f && blockDuration != 0f) modPlayer.modPlayerGuardian.GuardianBlockDuration += blockDuration;
 			if (speed != 1f && speed != 0f)
 			{
 				if (item.ModItem is OrchidModGuardianShield)
-				{
-					modPlayer.modPlayerGuardian.GuardianWeaponScale += speed - 1f;
-				}
+					modPlayer.GuardianWeaponScale += speed - 1f;
 				else
-				{
-					modPlayer.modPlayerGuardian.GuardianMeleeSpeed += speed - 1f;
-				}
+					modPlayer.GuardianMeleeSpeed += speed - 1f;
 			}
 		}
 
-		public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
+		/* public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
 		{
 			if ((blockDuration != 1f && blockDuration != 0f) || (speed != 1f && speed != 0f))
 			{
@@ -205,7 +235,7 @@ namespace OrchidMod.Content.General.Prefixes
 					});
 				}
 			}
-		}
+		} */
 
 		public override int ChoosePrefix(Item item, UnifiedRandom rand)
 		{
@@ -218,10 +248,10 @@ namespace OrchidMod.Content.General.Prefixes
 				{
 					foreach (var prefix in GuardianPrefix.GetPrefixes)
 					{
+						if (prefix is AnnoyingPrefixGuardian && item.ModItem is not ToyWarhammers)
+							continue;
 						if (prefix is not HaidexPrefix || Main.rand.NextBool(100))
-						{
 							UniversalPrefixesIDs.Add(prefix.Type);
-						}
 					}
 				}
 

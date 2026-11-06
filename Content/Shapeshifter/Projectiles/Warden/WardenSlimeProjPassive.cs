@@ -65,7 +65,7 @@ namespace OrchidMod.Content.Shapeshifter.Projectiles.Warden
 				{
 					if (player.active && player.statLifeMax2 > player.statLife)
 					{
-						OrchidShapeshifter shapeshifter = player.GetModPlayer<OrchidShapeshifter>();
+						OrchidShapeshifter shapeshifter = Shapeshifter(player);
 						if (shapeshifter.IsShapeshifted)
 						{ // Heals any friendly player that touches the projectile
 							if (shapeshifter.ShapeshiftAnchor.ShapeshifterItem.ModItem is WardenSlime && player.Hitbox.Intersects(Projectile.Hitbox) && player.team == Main.player[Projectile.owner].team)

@@ -16,5 +16,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			Item.knockBack = 9f;
 			Item.damage = 35;
 		}
+		
+		public override bool SafeCanHitNPC(Player player, Projectile anchor, NPC target) => Collision.CanHit(player, target);
 	}
 }

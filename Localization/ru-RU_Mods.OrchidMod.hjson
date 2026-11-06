@@ -258,8 +258,18 @@ Buffs: {
 	}
 
 	GuardianVoidQuarterstaffBuff: {
-		// Description: Void Rush
-		// DisplayName: 150% increased Flux Ripper attack speed
+		// DisplayName: Void Rush
+		// Description: 150% increased Flux Ripper charge speed
+	}
+
+	GuardianDreadGauntletBuff: {
+		// DisplayName: Dread Reaper's Fury
+		// Description: 60% increased melee speed and 20% increased movement speed, at a cost...
+	}
+
+	GuardianBoreanStriderQuarterstaffBuff: {
+		// DisplayName: Flash Freezing
+		// Description: Your next charged attack with the Frost Walker is expedited
 	}
 
 	GreathammerStunDebuff: {
@@ -3131,15 +3141,6 @@ Items: {
 		Tooltip: Полностью заряженные атаки выпускают наносящие урон споры
 	}
 
-	StaffRocketYellow: {
-		DisplayName: Жёлтая нашестовая ракетная установка
-		Tooltip:
-			'''
-			Нажмите ЛКМ по время парирования боевым шестом, чтобы совершить рывок
-			Расходует 1 оч. нападения
-			'''
-	}
-
 	StaffRocketRed: {
 		DisplayName: Красная нашестовая ракетная установка
 		Tooltip:
@@ -3160,6 +3161,15 @@ Items: {
 
 	StaffRocketBlue: {
 		DisplayName: Синяя нашестовая ракетная установка
+		Tooltip:
+			'''
+			Нажмите ЛКМ по время парирования боевым шестом, чтобы совершить рывок
+			Расходует 1 оч. нападения
+			'''
+	}
+
+	StaffRocketYellow: {
+		DisplayName: Жёлтая нашестовая ракетная установка
 		Tooltip:
 			'''
 			Нажмите ЛКМ по время парирования боевым шестом, чтобы совершить рывок
@@ -3254,26 +3264,21 @@ Items: {
 	}
 
 	ToyWarhammers: {
-		// DisplayName: The Big Honkers
-		// Tooltip: Lets you dual wield a pair of very squeaky hammers
-	}
-
-	ThoriumValadiumWarhammer: {
-		// DisplayName: Thorium Valadium Warhammer
+		// DisplayName: Toy Hammers
 		/* Tooltip:
 			'''
-			[c/FF0000:Test Item]
-			Right click after throwing to make the hammer pull nearby enemies towards its center, costing a slam
-			Blocking will periodically gravitate nearby enemies towards the center
-			Damage will blast enemies with inter-dimensional energy
+			'Honk honk'
+			Lets you dual wield a pair of very squeaky rubber hammers
 			''' */
+		// AnnoyingPrefix: "{0:+0;-0}% obnoxiousness"
 	}
 
 	ThoriumLodestoneWarhammer: {
 		// DisplayName: Lodestone Crusher
 		/* Tooltip:
 			'''
-			Left click after throwing to make the hammer crash down, costing 3 slams
+			Charged throws crash down, erupting with damaging rocks on contact
+			Slams blast the hammer downward after a delay, producing a larger eruption 
 			Damage will sunder enemies, increasing the damage they take by 10%
 			''' */
 	}
@@ -3293,9 +3298,10 @@ Items: {
 		// DisplayName: Flux Ripper
 		/* Tooltip:
 			'''
-			Slam to warp to an enemy in line of sight, increasing melee speed dramatically
-			Hold UP or DOWN to control knockback trajectory
+			Slam to warp to an enemy in line of sight, empowering the staff on hit
+			While empowered, charge speed is massively increased
 			''' */
+		// Grants: Grants 1 guard when fully charged, but only when Void Rush is not active
 	}
 
 	ThoriumNagaQuarterstaff: {
@@ -3314,6 +3320,7 @@ Items: {
 			'''
 			[c/FF0000:Test Item]
 			Fully charging creates a damage-sharing link between enemies
+			'The wonders of the world shall be connected'
 			''' */
 	}
 
@@ -3321,15 +3328,20 @@ Items: {
 		// DisplayName: Frost Walker
 		/* Tooltip:
 			'''
-			[c/FF0000:Test Item]
-			Attacks grant Cold Energy charge
-			At full Cold Energy charge, your next slam will release a giant snowflake
+			Launches small snowflakes on jab that grant charge and freeze enemies
+			Charged attacks conjure massive snowflakes that grant resources on hit
+			Counterattacks temporarily boost next attack's charge rate greatly on hit
 			''' */
 	}
 
 	ThoriumDreadGauntlet: {
 		// DisplayName: Dread Reaper's Claw
-		// Tooltip: ""
+		/* Tooltip:
+			'''
+			Hooking an enemy refunds a guard, deals damage, and triggers your active parry
+			Parrying increases speed for a short time, and launches kunai on punch
+			''' */
+		// Parry: "{0} click fires a grappling claw, costing 2 guards"
 	}
 
 	ThoriumGuardianTitanHead: {
@@ -3345,34 +3357,34 @@ Items: {
 		// SetBonus: Damage done increased by 18%
 	}
 
-	ThoriumGuardianVoidLegs: {
-		// DisplayName: Void Sentinel Greaves
-		/* Tooltip:
-			'''
-			[c/FF0000:Test Item]
-			Regenerates slams over time
-			Increases maximum slams by 1
-			Increases movement speed by 20% and increases jump and fall speed
-			Enemies are significantly more likely to target you
-			''' */
-	}
-
 	ThoriumGuardianVoidHead: {
-		// DisplayName: Thorium Guardian Void Head
+		// DisplayName: Void Sentinel Helmet
 		/* Tooltip:
 			'''
 			[c/FF0000:Test Item]
-			Regenerates guards over time
 			Increases maximum guards by 1
-			10% increased opposing damage
-			Enemies are significantly more likely to target you
+			21% increased opposing damage
 			''' */
 		/* SetBonus:
 			'''
-			Decreases max life by 250
-			Guardian attacks briefly grant massively increased health and resource regeration
-			While blocking or parrying you will attract nearby blockable projectiles
+			'It clings to your soul like a parasite'
+			Automatically consumes guards to parry or dodge damage
+			Damage taken above 50% max life will spare you with 10 health
+			Below 50% is instant death
 			''' */
+
+		Death: {
+			// Common1: "{0} could not control the Void energy any longer"
+			// Common2: "{0} was forced to use alternative payment"
+			// Common3: "{0}'s soul got transmuted into Guards to shield their corpse"
+			// Common4: "{0} was consumed by darkness..."
+			// Common5: "{0} was sent to Coznix's House by Void Sentinel Armor"
+			// Common6: "{0} was digested by their armor"
+			// Common7: "{0} was used up"
+			// Common8: "{0} could no longer hold up their end of the deal"
+			// Rare1: "{0} experienced instant death"
+			// Rare2: "{0} had a skill issue"
+		}
 	}
 
 	ThoriumGuardianVoidChest: {
@@ -3380,10 +3392,20 @@ Items: {
 		/* Tooltip:
 			'''
 			[c/FF0000:Test Item]
-			Regenerates guards and slams over time
-			Increases maximum guards and slams by 1
-			15% increased melee speed and 6% increased opposing critical strike chance 
-			Enemies are significantly more likely to target you
+			Increases maximum guards by 2
+			15% increased melee speed
+			6% increased opposing critical strike chance 
+			''' */
+	}
+
+	ThoriumGuardianVoidLegs: {
+		// DisplayName: Void Sentinel Greaves
+		/* Tooltip:
+			'''
+			[c/FF0000:Test Item]
+			Increases maximum guards by 1
+			Increases movement speed by 30% and greatly increases mobility
+			'Yes, the texture is a recolor of [i:OrchidMod/GuardianMeteoriteLegs], this is a placeholder'
 			''' */
 	}
 
@@ -3642,6 +3664,7 @@ Prefixes: {
 	BlockingPrefix.DisplayName: Блокирующий
 	# Guardian
 	HaidexPrefix.DisplayName: Непонятный
+	// AnnoyingPrefixGuardian.DisplayName: Annoying
 	FlimsyPrefix.DisplayName: Хлипкий
 	FeeblePrefix.DisplayName: Хилый
 	FragilePrefix.DisplayName: Ветхий
@@ -3941,17 +3964,19 @@ Projectiles: {
 	// GuardianKatarAnchor.DisplayName: Katar
 	// HellstoneKatarProjectile.DisplayName: Trailblaze
 	// ThoriumGraniteKatarProjectile.DisplayName: Ion Deluge
-	// ToyWarhammerProjectile.DisplayName: The Big Honker
-	// ThoriumVoidQuarterstaffProjectile.DisplayName: Void
-	// ThoriumDemonBloodGauntletProjectile.DisplayName: Thorium Demon Blood Gauntlet Projectile
-	// ThoriumNagaQuarterstaffProjectile.DisplayName: Thorium Naga Quarterstaff Projectile
-	// ThoriumConcentratedThoriumQuarterstaffProjectile.DisplayName: Thorium Concentrated Thorium Quarterstaff Projectile
-	// ThoriumTerrariumWarhammerProjectile.DisplayName: Thorium Terrarium Warhammer Projectile
-	// GuardianDoubleHammerAnchor.DisplayName: Dual Warhammers
+	// ThoriumNagaQuarterstaffProjectile.DisplayName: Riptide
+
+	ThoriumBoreanStriderQuarterstaffProjectile: {
+		// DisplayName: Snowflake
+		// StrongName: Giga Snowflake
+	}
+
+	// ConsolariaLepusEggNestProjectile.DisplayName: Easter Egg
 	// ThoriumPharaohQuarterstaffProjectile.DisplayName: Pharaoh Sand
-	// ConsolariaLepusEggNestProjectile.DisplayName: Consolaria Lepus Egg Nest Projectile
 	// GuardianGreathammerAnchor.DisplayName: Guardian Greathammer Anchor
 	// GreathammerDeflectedProjectile.DisplayName: Greathammer Deflected Projectile
+	// ThoriumNagaQuarterstaffProjectileAlt.DisplayName: Thorium Naga Quarterstaff Projectile Alt
+	// ThoriumVoidQuarterstaffProjectile.DisplayName: Void
 }
 
 Configs: {
@@ -3983,14 +4008,14 @@ Configs: {
 			Tooltip: Использовать старый интерфейс молотов хранителя (в стиле Paper Mario)
 		}
 
-		GuardianSwapPaviseImputs: {
-			Label: Поменять клавиши функционала павез
-			Tooltip: Меняет местами ЛКМ и ПКМ для функционала павез хранителя
+		GuardianSwapPaviseInputs: {
+			// Label: Swap Pavise Inputs
+			// Tooltip: Swap Left and Right click inputs for Guardian Pavises
 		}
 
-		GuardianSwapGauntletImputs: {
-			Label: Поменять клавишу предметов парирования
-			Tooltip: Меняет местами ЛКМ и ПКМ для предметов хранителя, использующих парирование (перчатки, боевые шесты и т.д.)
+		GuardianSwapGauntletInputs: {
+			// Label: Swap Parry Items Inputs
+			// Tooltip: Swap Left and Right click inputs for Guardian Parry Items (Gauntlets, Quarterstaves, ...)
 		}
 
 		GuardianAltChargeSounds: {
@@ -4059,19 +4084,9 @@ Configs: {
 			Tooltip: Перчатки хранителя при возможности всегда будут использовать атаку нападением, независимо от того, как долго удерживалась клавиша
 		}
 
-		GuardianThoriumThorsHammerConversion: {
-			// Label: Convert Thor's Hammer to Opposing Mode on right click
-			// Tooltip: If Thorium is installed, right clicking the Thor's Hammer: Magic will convert it to Opposing Mode, and Opposing into Melee
-		}
-
 		GuardianUseFancyUI: {
 			// Label: Fancy Guardian UI
 			// Tooltip: Use 'fancy' textures for Guardian UI elements
-		}
-
-		GuardianThoriumBoreanStriderColorUI: {
-			// Label: Frost Walker UI uses colored icon
-			// Tooltip: The Frost Walker's special 'snowflake charge' UI will use a colored icon (the Ice Gauntlet's crystal projectile) instead of a monochrome variant
 		}
 
 		SmartSmartCursor: {
@@ -4082,11 +4097,24 @@ Configs: {
 				No effect if Smart Cursor isn't set to 'Toggle'
 				''' */
 		}
+
+		KatarDistanceUnit: {
+			// Label: Katar Tooltip Distance Unit
+			/* Tooltip:
+				'''
+				The unit of measure used to describe katars' parry-dash distance.
+				Uses default parry-duration tooltip behavior if 'Duration' is used
+				''' */
+		}
 	}
 
 	OrchidServerConfig: {
 		DisplayName: Серверная конфигурация
-		Headers.General: Основной раздел
+
+		Headers: {
+			General: Основной раздел
+			// Guardian: Guardian Header
+		}
 
 		LoadCrossmodContentWithoutRequiredMods: {
 			Label: Загружать кроссмод-контент без требуемых модов
@@ -4106,6 +4134,75 @@ Configs: {
 		EnableContentShapeshifter: {
 			Label: Доступность контента оборотня
 			Tooltip: Делает предметы, относящиеся к классу оборотня, доступными для получения
+		}
+
+		GuardianThoriumThorsHammerConversion: {
+			// Label: Thor's Hammer Recipe
+			// Tooltip: Re-enables the original Thor's Hammer: Opposing recipe using any of the other Thor's Hammer variants
+		}
+	}
+
+	KatarDistanceUnits: {
+		// Tooltip: ""
+
+		Descriptor: {
+			// Label: Descriptor
+			/* Tooltip:
+				'''
+				Katar parry-dash tooltips will use a vague descriptor to signify their distance, similarly to Vanilla stat tooltips
+				Baseline descriptor of "Average dash distance" is defined as the default stats of 20 velocity for 10 ticks (i.e. Serrated Katar)
+				''' */
+		}
+
+		Pixels: {
+			// Label: Pixels
+			/* Tooltip:
+				'''
+				Katar parry-dash tooltips will use pixels to signify their distance
+
+				''' */
+		}
+
+		Tiles: {
+			// Label: Tiles
+			/* Tooltip:
+				'''
+				Katar parry-dash tooltips will use tiles to signify their distance
+				(1 tile is equal to 16 pixels)
+				''' */
+		}
+
+		Feet: {
+			// Label: Feet
+			/* Tooltip:
+				'''
+				Katar parry-dash tooltips will use feet to signify their distance
+				(1 foot is equal to 8 pixels, since 1 tile is equal to 2 feet)
+				''' */
+		}
+
+		Inches: {
+			// Label: Inches
+			/* Tooltip:
+				'''
+				Katar parry-dash tooltips will use inches to signify their distance
+				(1 inch is equal to 1.5 pixels, since 1 tile is equal to 24 inches)
+				''' */
+		}
+
+		// Meters: {
+		//	Label: Meters
+		//	Tooltip:
+		//	    '''
+		//	    Katar parry-dash tooltips will use meters to signify their distance
+		//	    (1 meter is equal to about 26.25 pixels, since 1 tile is equal to 0.6096 meters)
+		//	    (Why would you use this though?)
+		//	    '''
+		// }
+		
+		Duration: {
+			// Label: Duration
+			// Tooltip: Katar parry tooltips will use default behavior of time duration
 		}
 	}
 }
@@ -4130,6 +4227,7 @@ Misc: {
 	EntryAdded: Запись {0} добавлена в рукопись о скрытых реакциях!
 	CurrentСard: "Текущая карта: "
 	PlayingСard: "Разыгранная карта: "
+	// MiscInput: press "{0}"
 	Crossmod: "Кроссмод предмет с "
 	// ThoriumMagicThorHammer: Right click within your inventory to activate Opposing Mode
 }
@@ -4185,15 +4283,18 @@ UI: {
 			Зарядите, чтобы взмахнуть
 			Нажмите {0}, чтобы нанести колющий удар во время зарядки
 			'''
-		// ChargeToJab: Charge to swing, {0} click to slam while charging
+		// ChargeToJab: Charge to swing, {0} to slam while charging
+		// ChargeToJabKatar: Charge to jab, {0} to slam while charging
 		ChargeToDash:
 			'''
 			Зарядите, чтобы совершить рывок
 			Нажмите {0}, чтобы нанести колющий удар во время зарядки
 			'''
 		ParryDuration: Длительность парирования: {0} сек.
+		// ParryDistance: "{0}{1} parry dash distance"
 		BlockDuration: Длительность блока: {0} сек.
 		// SlamDuration: "{0} second slam duration"
+		// ParryAndBlockDuration: "{0} second parry duration, {1} second block duration"
 		Interrupted: Прервано
 		Charged: Заряжено
 		Reinforced: Усилено
@@ -4202,7 +4303,9 @@ UI: {
 		Slam: "{0} оч. нападения"
 		Parry: Нажмите {0}, чтобы совершить парирование
 		ParryDash: Нажмите {0}, чтобы совершить парирование рывком вниз
+		// ParryDashNeedle: "{0} to parry, dashing downwards"
 		ChargeToThrow: Зарядите, чтобы бросить
+		// ChargeToParry: Charge to parry
 		SwingWhileCharging:
 			'''
 			Зарядите, чтобы бросить
@@ -4210,24 +4313,39 @@ UI: {
 			'''
 		UsesUpTo: Использует до {0} оч. нападения
 		RuneDuration: Время действия руны: {0} сек.
-		// Block: "{0} click to block"
+		// DashDuringSwing: "{0} during reinforced attack to dash"
+		Block: Нажмите {0}, чтобы сделать блок
 		// ToBlock: to block
 		// ToSlam: to slam
-		// HammerBlock: "{0} click {1}"
-		// HammerBlockGuard: "{0} click {1}, costing {2} {^2:guard;guards}"
-		// HammerBlockSlam: "{0} click {1}, costing {3} {^3:slam;slams}"
-		// HammerBlockGuardSlamSame: "{0} click {1}, costing {2} {^2:guard;guards} and {^2:slam;slams}"
-		// HammerBlockGuardSlam: "{0} click {1}, costing {2} {^2:guard;guards} and {3} {^3:slam;slams}"
+		// HammerBlock: "{0} {1}"
+		// HammerBlockGuard: "{0} {1}, costing {2} {^2:guard;guards}"
+		// HammerBlockSlam: "{0} {1}, costing {3} {^3:slam;slams}"
+		// HammerBlockGuardSlamSame: "{0} {1}, costing {2} {^2:guard;guards} and {^2:slam;slams}"
+		// HammerBlockGuardSlam: "{0} {1}, costing {2} {^2:guard;guards} and {3} {^3:slam;slams}"
 		BuffDuration: Длительность эффекта: {0} сек.
 		HorizonLaceShieldStacks: Даёт 3 оч. обороны при полном заряде
 		DamageOfDefense: Наносит противостоящий урон, равный {0}% от вашей защиты
-		// Deflect: "{0} click to deflect enemies and projectiles"
-		// GreathammerDeflect: "{0} click to deflect, stunning enemies and reflecting projectiles"
+		// NoChargeScaling: Does not scale with charge speed
+		// SpecialChargeScaling: "{0}% benefit from charge speed boosts"
+		// Deflect: "{0} to deflect enemies and projectiles"
+		// GreathammerDeflect: "{0} to deflect, stunning enemies and reflecting projectiles"
 		// DeflectGrants: Successful deflects cost {0} {^0:guard;guards} and grant {0} {^0:slam;slams}
-		// SlamChargeToThrow: Charge to throw, {0} click to slam while charging
+		// SlamChargeToThrow: Charge to throw, {0} to slam while charging
 		// MissingGuards: Not enough guards!
 		// MissingSlams: Not enough slams!
 		// MissingGuardsAndSlams: Not enough guards or slams!
+
+		ParryDistanceDescriptor: {
+			// AbsurdlyFar: Absurdly long
+			// ExtremelyFar: Extremely long
+			// VeryFar: Very long
+			// Far: Long
+			// Average: Average
+			// Short: Short
+			// VeryShort: Very short
+			// ExtremelyShort: Extremely short
+			// None: No
+		}
 	}
 
 	DanserItem: {
@@ -4239,6 +4357,13 @@ UI: {
 	ReactionBook: {
 		UnknownReaction: Неизвестная реакция
 		Page: Стр.: {0}/{1}
+	}
+
+	Units: {
+		// Pixels: " pixel"
+		// Tiles: " tile"
+		// Feet: " foot"
+		// Inches: " inch"
 	}
 }
 

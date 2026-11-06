@@ -4,6 +4,7 @@ using OrchidMod.Common.Global.Items;
 using OrchidMod.Utilities;
 using System.Collections.Generic;
 using System.Linq;
+using OrchidMod.Common;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -49,7 +50,7 @@ namespace OrchidMod.Content.Guardian
 		/// <summary>Draws extra UI elements on the GuardianUIState while held.</summary>
 		public virtual void StandardPostDrawUI(SpriteBatch spriteBatch, Player player, ref Color lightColor, Projectile projectile) { }
 		
-		public override int? AnchorType => ModContent.ProjectileType<GuardianStandardAnchor>();
+		public override int AnchorType => ModContent.ProjectileType<GuardianStandardAnchor>();
 		public sealed override void SetDefaults()
 		{
 			Item.DamageType = ModContent.GetInstance<GuardianDamageClass>();
@@ -86,11 +87,10 @@ namespace OrchidMod.Content.Guardian
 		{
 			if (player.whoAmI == Main.myPlayer && !player.cursed)
 			{
-				var projectileType = ModContent.ProjectileType<GuardianStandardAnchor>();
-				if (player.ownedProjectileCounts[projectileType] > 0)
+				if (player.ownedProjectileCounts[AnchorType] > 0)
 				{
-					var guardian = player.GetModPlayer<OrchidGuardian>();
-					var proj = Main.projectile.First(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
+					var guardian = Guardian(player);
+					var proj = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == AnchorType);
 					if (proj != null && proj.ModProjectile is GuardianStandardAnchor anchor && guardian.GuardianItemCharge == 0f)
 					{
 						proj.ai[0] = 1f;
@@ -105,35 +105,27 @@ namespace OrchidMod.Content.Guardian
 
 		public sealed override void HoldItem(Player player)
 		{
-			var projectileType = ModContent.ProjectileType<GuardianStandardAnchor>();
-			var guardian = player.GetModPlayer<OrchidGuardian>();
+			var guardian = Guardian(player);
 			guardian.GuardianDisplayUI = 300;
 
-			if (player.ownedProjectileCounts[projectileType] != 1)
+			if (player.ownedProjectileCounts[AnchorType] != 1)
 			{
 				foreach (Projectile projectile in Main.projectile)
 				{
-					if (projectile.active && projectile.owner == player.whoAmI && projectile.type == projectileType)
+					if (projectile.active && projectile.owner == player.whoAmI && projectile.type == AnchorType)
 					{
 						projectile.Kill();
 					}
 				}
 
-				var index = Projectile.NewProjectile(Item.GetSource_FromThis(), player.Center.X, player.Center.Y, 0f, 0f, projectileType, 0, 0f, player.whoAmI);
-
-				var proj = Main.projectile[index];
-				if (proj.ModProjectile is not GuardianStandardAnchor standard)
-				{
-					proj.Kill();
-				}
-				else
-				{
+				var proj = SpawnAnchor(player, out GuardianStandardAnchor standard);
+				if (standard is not null)
 					standard.OnChangeSelectedItem(player);
-				}
+				else proj.Kill();
 			}
 			else
 			{
-				var proj = Main.projectile.First(i => i.active && i.owner == player.whoAmI && i.type == projectileType);
+				var proj = Main.projectile.FirstOrDefault(i => i.active && i.owner == player.whoAmI && i.type == AnchorType);
 				if (proj != null && proj.ModProjectile is GuardianStandardAnchor standard)
 				{
 					if (standard.SelectedItem != player.selectedItem)
@@ -151,20 +143,14 @@ namespace OrchidMod.Content.Guardian
 
 			if (GuardStacks > 0 || SlamStacks > 0)
 			{
-				string TooltipToGet = ModContent.GetInstance<OrchidMod>().GetLocalizationKey("Misc.GuardianGrants");
-				switch(GuardStacks)
-				{
-					case > 0: TooltipToGet += "Guard"; break;
-				}
-				switch (SlamStacks)
-				{
-					case > 0: TooltipToGet += "Slam"; break;
-				}
+				string TooltipToGet = Mod.GetLocalizationKey("Misc.GuardianGrants");
+				if (GuardStacks> 0) TooltipToGet += "Guard";
+				if (SlamStacks > 0) TooltipToGet += "Slam";
 				if (GuardStacks == SlamStacks) TooltipToGet += "Same";
 
-				tooltips.Insert(index + 1, new TooltipLine(Mod, "GuardianGrants", Language.GetText(TooltipToGet).Format(GuardStacks, SlamStacks))
+				tooltips.Insert(index + 1, new TooltipLine(Mod, "GuardianGrants", Language.GetTextValue(TooltipToGet, GuardStacks, SlamStacks))
 				{
-					OverrideColor = new Color(175, 255, 175)
+					OverrideColor = OrchidColors.GuardianTooltip
 				});
 			}
 
@@ -172,12 +158,12 @@ namespace OrchidMod.Content.Guardian
 			{
 				tooltips.Insert(index + 1, new TooltipLine(Mod, "ShieldSlams", "Grants " + this.SlamStacks + " slam" + (this.SlamStacks > 1 ? "s" : "") + " when fully charged")
 				{
-					OverrideColor = new Color(175, 255, 175)
+					OverrideColor = OrchidColors.GuardianTooltip
 				});
 			}*/
 
 			index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Knockback"));
-			tooltips.Insert(index + 1, new TooltipLine(Mod, "RuneDuration", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.BuffDuration", OrchidUtils.FramesToSeconds((int)(StandardDuration * Main.LocalPlayer.GetModPlayer<OrchidGuardian>().GuardianRuneTimer)))));
+			tooltips.Insert(index + 1, new TooltipLine(Mod, "RuneDuration", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.BuffDuration", OrchidUtils.FramesToSeconds((int)(StandardDuration * Guardian().GuardianRuneTimer)))));
 
 			tooltips.RemoveAll(x => x.Name == "Damage" && x.Mod == "Terraria");
 			tooltips.RemoveAll(x => x.Name == "Knockback" && x.Mod == "Terraria");

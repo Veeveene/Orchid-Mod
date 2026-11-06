@@ -56,13 +56,13 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 
 		public override void HoldItemFrame(Player player)
 		{
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = Guardian(player);
 			guardian.GuardianCounter = true;
 			guardian.GuardianCounterHorizon = true;
 			TimeHeld ++;
 		}
 
-		public override void Slam(Player player, Projectile shield, bool WeakSlam)
+		public override void Slam(Player player, OrchidGuardian guardian, Projectile shield, bool WeakSlam)
 		{
 			if (IsLocalPlayer(player) && !WeakSlam)
 			{
@@ -75,7 +75,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			}
 		}
 
-		public override void ExtraAIShield(Player player, Projectile projectile)
+		public override void ExtraAIShield(Player player, OrchidGuardian guardian, Projectile projectile)
 		{
 			if (projectile.ai[1] + projectile.ai[0] > 0)
 			{
@@ -124,7 +124,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			}
 		}
 
-		public override void Protect(Player player, Projectile shield)
+		public override void Protect(Player player, OrchidGuardian guardian, Projectile shield)
 		{
 			if (!StoredBlock && IsLocalPlayer(player))
 			{

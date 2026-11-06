@@ -27,15 +27,14 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			shouldFlip = true;
 		}
 
-		public override void Slam(Player player, Projectile shield, bool WeakSlam)
+		public override void Slam(Player player, OrchidGuardian guardian, Projectile shield, bool WeakSlam)
 		{
 			if (!WeakSlam)
 			{
 				Vector2 dir = Vector2.Zero;
-				if (Main.MouseWorld != player.Center) dir = Vector2.Normalize(Main.MouseWorld - player.Center) * Item.shootSpeed;
+				if (Main.MouseWorld != player.Center) dir = Vector2.Normalize(Main.MouseWorld - player.Center) * Item.shootSpeed * guardian.GuardianSlamDistance;
 				if (IsLocalPlayer(player))
 				{
-					OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
 					Projectile anchor = GetAnchor(player).Projectile;
 					int type = ModContent.ProjectileType<DemoniteShieldProjectile>();
 					Projectile projectile = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), anchor.Center, dir, type, guardian.GetGuardianDamage(Item.damage), Item.knockBack, player.whoAmI);
@@ -48,7 +47,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			}
 		}
 
-		public override void ExtraAIShield(Player player, Projectile projectile)
+		public override void ExtraAIShield(Player player, OrchidGuardian guardian, Projectile projectile)
 		{
 			if (projectile.ai[0] > 0 && Main.rand.NextBool(15))
 				Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.Demonite, 0f, 0f, 200, default, 1.2f);

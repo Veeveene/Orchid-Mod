@@ -90,7 +90,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Gauntlets
 				}
 
 				Vector2 velocity = Vector2.UnitY.RotatedBy((Main.MouseWorld - player.MountedCenter).ToRotation() - MathHelper.PiOver2) * Item.shootSpeed;
-				Projectile newprojectile = Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), projectile.Center + velocity, velocity, projType, damage, 5f, player.whoAmI, offHandGauntlet ? 2f : 1f, -1f, projectile.whoAmI);
+				Projectile newprojectile = Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), projectile.Center + velocity, velocity + player.velocity * 0.25f, projType, damage, 5f, player.whoAmI, offHandGauntlet ? 2f : 1f, -1f, projectile.whoAmI);
 				newprojectile.CritChance = (int)(player.GetCritChance<GuardianDamageClass>() + player.GetCritChance<GenericDamageClass>() + Item.crit);
 				HookProjectile = newprojectile;
 				return false;
@@ -187,31 +187,12 @@ namespace OrchidMod.Content.Guardian.Weapons.Gauntlets
 			
 		}
 
-		public override void ModifyTooltips(List<TooltipLine> tooltips)
+		public override void SafeModifyTooltips(List<TooltipLine> tooltips, OrchidGuardian guardian)
 		{
-			var guardian = Main.LocalPlayer.GetModPlayer<OrchidGuardian>();
-			TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
-			if (tt != null)
-			{
-				string[] splitText = tt.Text.Split(' ');
-				string damageValue = splitText.First();
-				tt.Text = damageValue + " " + Language.GetTextValue(ModContent.GetInstance<OrchidMod>().GetLocalizationKey("DamageClasses.GuardianDamageClass.DisplayName"));
-			}
-
-			int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Knockback"));
-			tooltips.Insert(index + 1, new TooltipLine(Mod, "ParryDuration", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.ParryDuration", OrchidUtils.FramesToSeconds((int)(ParryDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration() * guardian.GuardianParryDuration)))));
-
-
-			string click = ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs ? Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.LeftClick") : Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.RightClick");
-			tooltips.Insert(index + 2, new TooltipLine(Mod, "ClickInfo", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.Parry", click))
-			{
-				OverrideColor = new Color(175, 255, 175)
-			});
+			int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Tooltip0"));
 
 			string pull = PullOnKill ? Language.GetTextValue("Mods.OrchidMod.Items.ThoriumYewGauntlet.PullOnKill") : Language.GetTextValue("Mods.OrchidMod.Items.ThoriumYewGauntlet.NoPullOnKill");
-			tooltips.Insert(index + 4, new TooltipLine(Mod, "ClickInfo2", pull));
-
-			SafeModifyTooltips(tooltips);
+			tooltips.Insert(index + 1, new TooltipLine(Mod, "ClickInfo2", pull) {OverrideColor = Color.DarkGray});
 		}
 	
 	}

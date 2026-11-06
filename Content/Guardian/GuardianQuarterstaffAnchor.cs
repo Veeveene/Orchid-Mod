@@ -128,7 +128,13 @@ namespace OrchidMod.Content.Guardian
 
 				TimeSpent++;
 				Projectile.timeLeft = 5;
-
+				
+				if (guardian.GuardianItemCharge >= 180f && !Ding)
+				{ // Sound cue when fully charged
+					Ding = true;
+					SoundEngine.PlaySound(guardian.DingSound, owner.Center);
+				}
+				
 				if (Projectile.ai[2] > 0f)
 				{ // Blocking
 					Projectile.friendly = false;
@@ -171,7 +177,7 @@ namespace OrchidMod.Content.Guardian
 						ResetSize();
 					}
 
-					if (guardian.GuardianStaffRocket > 0 && guardian.GuardianStaffRocketCooldown <= 0 && Main.mouseLeft && Main.mouseLeftRelease && IsLocalOwner && guardian.UseSlam(1, true)) 
+					if (guardian.GuardianStaffRocket > 0 && guardian.GuardianStaffRocketCooldown <= 0 && guardian.GetGauntletPunchInput(true) && IsLocalOwner && guardian.UseSlam(1, true)) 
 					{ // Staff Rocket dash
 					  // spawning a projectile makes it easy to sync the effects & direction of the dash
 						int projectileType = ModContent.ProjectileType<StaffRocketProjectile>();
@@ -254,14 +260,11 @@ namespace OrchidMod.Content.Guardian
 						ResetSize();
 						Projectile.friendly = false;
 
+						guardianItem.OnAttackEnd(owner, guardian, Projectile, false, true);
+
 						if (IsLocalOwner)
 						{
-							bool blockInput = Main.mouseRight;
-
-							if (ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs)
-							{
-								blockInput = Main.mouseRight;
-							}
+							bool blockInput = guardian.GetGauntletBlockInput(false);
 
 							if (blockInput && guardian.UseGuard(1, true))
 							{
@@ -275,6 +278,7 @@ namespace OrchidMod.Content.Guardian
 								SoundEngine.PlaySound(SoundID.Item37, owner.Center);
 								guardian.GuardianParry = true;
 								guardian.GuardianParryBuffer = true;
+								guardianItem.OnBlock(owner, guardian, Projectile);
 							}
 						}
 					}
@@ -286,7 +290,7 @@ namespace OrchidMod.Content.Guardian
 					Projectile.friendly = false;
 					if (guardian.GuardianItemCharge < 180f)
 					{ // Increase guardian charge
-						guardian.GuardianItemCharge += 30f / guardianItem.Item.useTime * owner.GetTotalAttackSpeed(DamageClass.Melee);
+						guardian.GuardianItemCharge += 30f / guardianItem.Item.useTime * owner.GetTotalAttackSpeed(DamageClass.Melee) * guardian.GetWeaponChargeRate(guardianItem, guardianItem.ChargeRate);
 						if (guardian.GuardianItemCharge > 180f) guardian.GuardianItemCharge = 180f;
 					}
 
@@ -307,21 +311,10 @@ namespace OrchidMod.Content.Guardian
 
 					if (IsLocalOwner)
 					{
-						if (guardian.GuardianItemCharge >= 180f && !Ding)
-						{ // Sound cue when fully charged
-							Ding = true;
-							if (ModContent.GetInstance<OrchidClientConfig>().GuardianAltChargeSounds) SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, owner.Center);
-							else SoundEngine.PlaySound(SoundID.MaxMana, owner.Center);
-						}
+						
 
-						bool jabInput = Main.mouseRight;
-						bool chargeInput = Main.mouseLeft;
-
-						if (ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs)
-						{
-							jabInput = Main.mouseLeft;
-							chargeInput = Main.mouseRight;
-						}
+						bool jabInput = guardian.GetGauntletBlockInput(false);
+						bool chargeInput = guardian.GetGauntletPunchInput(false);
 
 						if (!chargeInput)
 						{
@@ -403,6 +396,8 @@ namespace OrchidMod.Content.Guardian
 						Projectile.ai[1] = 0f;
 						Projectile.friendly = false;
 
+						guardianItem.OnAttackEnd(owner, guardian, Projectile, true, false);
+						
 						if (Main.mouseLeft && Main.mouseRight)
 						{ // Perfect jab loop while holding the attack
 							Projectile.ai[0] = -40f;
@@ -496,6 +491,10 @@ namespace OrchidMod.Content.Guardian
 						Projectile.ai[0] = 0f;
 						Projectile.ai[1] = 0f;
 						Projectile.friendly = false;
+						
+						guardianItem.OnAttackEnd(owner, guardian, Projectile, false, false);
+						Ding = false;
+						Projectile.netUpdate = true;
 					}
 
 					guardianItem.ExtraAIQuarterstaffSwinging(owner, guardian, Projectile);
@@ -738,7 +737,8 @@ namespace OrchidMod.Content.Guardian
 
 		public override bool? CanHitNPC(NPC target)
 		{ // hitting wiith the end of the staff or spinning
-			if (target.Hitbox.Intersects(HitBox[0]) || target.Hitbox.Intersects(HitBox[1]) || target.Hitbox.Intersects(HitBox[2]) || Projectile.ai[2] < 0f) return base.CanHitNPC(target);
+			if ((target.Hitbox.Intersects(HitBox[0]) || target.Hitbox.Intersects(HitBox[1]) || target.Hitbox.Intersects(HitBox[2]) || Projectile.ai[2] < 0f) && QuarterstaffItem.ModItem is OrchidModGuardianQuarterstaff guardianItem && guardianItem.SafeCanHitNPC(Owner, Projectile, target))
+				return base.CanHitNPC(target);
 			return false;
 		}
 
@@ -750,7 +750,7 @@ namespace OrchidMod.Content.Guardian
 			if (QuarterstaffItem.ModItem is not OrchidModGuardianQuarterstaff guardianItem) return false;
 
 			Player player = Main.player[Projectile.owner];
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 			SpriteEffects effect = SpriteEffects.None;
 			float rotationoffset = 0f;
 
@@ -760,7 +760,7 @@ namespace OrchidMod.Content.Guardian
 				rotationoffset = -MathHelper.PiOver2;
 			}
 
-			if (guardianItem.PreDrawQuarterstaff(spriteBatch, Projectile, player, ref lightColor))
+			if (guardianItem.PreDrawQuarterstaff(spriteBatch, Projectile, player, ref lightColor, effect))
 			{
 				Rectangle frame = QuarterstaffTexture.Frame(1, guardianItem.QuarterstaffFrames, 0, QuarterstaffAnimFrame % guardianItem.QuarterstaffFrames);
 				
@@ -788,7 +788,7 @@ namespace OrchidMod.Content.Guardian
 					spriteBatch.Draw(QuarterstaffTextureGlow, drawPosition, frame, glowColor, Projectile.rotation + rotationoffset, QuarterstaffTextureGlow.Size() * 0.5f, Projectile.scale, effect, 0f);
 				}
 			}
-			guardianItem.PostDrawQuarterstaff(spriteBatch, Projectile, player, lightColor);
+			guardianItem.PostDrawQuarterstaff(spriteBatch, Projectile, player, lightColor, effect);
 
 			return false;
 		}

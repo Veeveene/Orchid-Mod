@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using OrchidMod.Utilities;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -19,6 +20,7 @@ namespace OrchidMod.Content.Guardian.Misc
 		public override void SetStaticDefaults()
 		{
 			ItemID.Sets.IsAPickup[Type] = true;
+			ItemID.Sets.IgnoresEncumberingStone[Type] = true;
 			Item.ResearchUnlockCount = -1;
 		}
 
@@ -34,14 +36,14 @@ namespace OrchidMod.Content.Guardian.Misc
 
 		public override bool CanPickup(Player player)
 		{
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 			if (guardian.GuardianSlam >= guardian.GuardianSlamMax && Main.netMode == NetmodeID.SinglePlayer) return false; // CBA to sync slam stacks in mp
 			return base.CanPickup(player);
 		}
 
 		public override bool OnPickup(Player player)
 		{
-			OrchidGuardian guardian = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian guardian = player.Guardian();
 			guardian.AddSlam(1);
 			SoundEngine.PlaySound(SoundID.Item53, player.Center);
 			return false;

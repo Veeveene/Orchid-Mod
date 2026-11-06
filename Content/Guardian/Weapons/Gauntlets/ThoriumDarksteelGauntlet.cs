@@ -34,7 +34,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Gauntlets
 			return new Color(255, 200, 200);
 		}
 
-		public override void ModifyTooltips(List<TooltipLine> tooltips)
+		public override void SafeModifyTooltips(List<TooltipLine> tooltips, OrchidGuardian guardian)
 		{
 			TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
 			if (tt != null)
@@ -43,23 +43,12 @@ namespace OrchidMod.Content.Guardian.Weapons.Gauntlets
 				string damageValue = splitText.First();
 				tt.Text = Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.DamageOfDefense", damageValue);
 			}
-
-			int index = tooltips.FindIndex(ttip => ttip.Mod.Equals("Terraria") && ttip.Name.Equals("Knockback"));
-			tooltips.Insert(index + 1, new TooltipLine(Mod, "ParryDuration", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.ParryDuration", OrchidUtils.FramesToSeconds((int)(ParryDuration * Item.GetGlobalItem<GuardianPrefixItem>().GetBlockDuration())))));
-
-			string click = ModContent.GetInstance<OrchidClientConfig>().GuardianSwapGauntletImputs ? Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.LeftClick") : Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.RightClick");
-			tooltips.Insert(index + 2, new TooltipLine(Mod, "ClickInfo", Language.GetTextValue("Mods.OrchidMod.UI.GuardianItem.Parry", click))
-			{
-				OverrideColor = new Color(175, 255, 175)
-			});
 		}
 
 		public override void ExtraAIGauntlet(Player player, OrchidGuardian guardian, Projectile projectile, bool offHandGauntlet)
 		{
-			if (projectile.ai[2] > 0)
-			{
-				Main.player[projectile.owner].GetModPlayer<OrchidGuardian>().GuardianItemCharge += 0.3f / Item.useTime * Main.player[projectile.owner].statDefense;
-			}
+			// The gauntlet anchor already passes in Main.player[projectile.owner] for the "player" parameter
+			ChargeSpeedMultiplier = 1 + 0.01f * player.statDefense;
 		}
 
 		public override bool OnPunch(Player player, OrchidGuardian guardian, Projectile projectile, bool offHandGauntlet, bool fullyManuallyCharged, ref bool charged, ref int damage)

@@ -27,7 +27,7 @@ namespace OrchidMod.Content.Guardian.Armors.Empress
 
 		public override void UpdateEquip(Player player)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = Guardian(player);
 			modPlayer.GuardianSlamMax += 1;
 			modPlayer.GuardianGuardMax += 1;
 			player.aggro += 250;

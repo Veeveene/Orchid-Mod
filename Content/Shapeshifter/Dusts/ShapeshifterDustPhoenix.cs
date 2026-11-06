@@ -25,14 +25,20 @@ namespace OrchidMod.Content.Shapeshifter.Dusts
 				if (dust.alpha > 240f) dust.active = false;
 			}
 
-			int style = (int)dust.customData % 4 == 0 ? 1 : 0;
+			int style = 0;
+			int styleData = 0;
+			if (dust.customData is int customData)
+			{
+				styleData = customData;
+				style = customData % 4 == 0 ? 1 : 0;
+			}
 			dust.frame = new Rectangle(10 * style, dust.frame.Y, 10, 10);
 
 			dust.position += dust.velocity;
 			dust.velocity *= 0.95f;
-			dust.velocity.X += (float)Math.Sin(Main.GlobalTimeWrappedHourly * (514f / ((int)dust.customData + 200f))) * 0.075f;
+			dust.velocity.X += (float)Math.Sin(Main.GlobalTimeWrappedHourly * (514f / (styleData + 200f))) * 0.075f;
 			dust.velocity.Y = 1.5f - Math.Abs(dust.velocity.X);
-			dust.rotation = MathHelper.PiOver4 - dust.velocity.X * 0.75f + ((int)dust.customData % 2 == 0 ? MathHelper.Pi : 0);
+			dust.rotation = MathHelper.PiOver4 - dust.velocity.X * 0.75f + (styleData % 2 == 0 ? MathHelper.Pi : 0);
 			return false;
 		}
 	}

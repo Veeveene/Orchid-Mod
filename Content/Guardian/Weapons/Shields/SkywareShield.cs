@@ -27,7 +27,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 			shouldFlip = true;
 		}
 
-		public override void Slam(Player player, Projectile shield, bool WeakSlam)
+		public override void Slam(Player player, OrchidGuardian guardian, Projectile shield, bool WeakSlam)
 		{
 			if (IsLocalPlayer(player) && !WeakSlam)
 			{
@@ -35,7 +35,7 @@ namespace OrchidMod.Content.Guardian.Weapons.Shields
 				int type = ModContent.ProjectileType<SkywareShieldProj>();
 				for (int i = 0; i < 2 + Main.rand.Next(2); i++)
 				{
-					Vector2 dir = Vector2.Normalize(Main.MouseWorld - player.Center).RotatedByRandom(MathHelper.ToRadians(20f)) * Item.shootSpeed;
+					Vector2 dir = Vector2.Normalize(Main.MouseWorld - player.Center).RotatedByRandom(MathHelper.ToRadians(20f)) * Item.shootSpeed * guardian.GuardianSlamDistance;
 					Projectile newProjectile = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), anchor.Center + Vector2.UnitY.RotatedByRandom(MathHelper.Pi) * Main.rand.NextFloat(16f), dir, type, (int)(shield.damage * 0.7f), Item.knockBack, player.whoAmI);
 					newProjectile.CritChance = (int)(player.GetCritChance<GuardianDamageClass>() + player.GetCritChance<GenericDamageClass>() + Item.crit);
 				}

@@ -17,7 +17,7 @@ namespace OrchidMod.Content.Guardian.Accessories
 
 		public override void UpdateAccessory(Player player, bool hideVisual)
 		{
-			OrchidGuardian modPlayer = player.GetModPlayer<OrchidGuardian>();
+			OrchidGuardian modPlayer = Guardian(player);
 			modPlayer.GuardianBlockDuration += 0.25f;
 			modPlayer.GuardianParryDuration += 0.25f;
 			player.GetAttackSpeed(DamageClass.Melee) += 0.12f;

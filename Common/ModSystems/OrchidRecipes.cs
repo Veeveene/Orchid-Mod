@@ -34,7 +34,7 @@ namespace OrchidMod.Common.ModSystems
 			string str = "RecipeGroups.";
 			if (RecipeGroupAnyText != null)
 				return;
-			RecipeGroupAnyText = ((ModType)this).Mod.GetLocalization(str + "Any", (Func<string>)null);
+			RecipeGroupAnyText = Mod.GetLocalization(str + "Any");
 		}
 
 
@@ -45,35 +45,35 @@ namespace OrchidMod.Common.ModSystems
 			var thoriumMod = OrchidMod.ThoriumMod;
 			if (OrchidMod.ThoriumMod != null)
 			{
-				thoriumMod.TryFind<ModItem>("MeleeThorHammer", out ModItem thorsHammerMelee);
-				thoriumMod.TryFind<ModItem>("RangedThorHammer", out ModItem thorsHammerRanged);
-				thoriumMod.TryFind<ModItem>("MagicThorHammer", out ModItem thorsHammerMagic);
+				thoriumMod.TryFind("MeleeThorHammer", out ModItem thorsHammerMelee);
+				thoriumMod.TryFind("RangedThorHammer", out ModItem thorsHammerRanged);
+				thoriumMod.TryFind("MagicThorHammer", out ModItem thorsHammerMagic);
 				
-				RecipeGroup group = new RecipeGroup(() => $"{any} " + thorsHammerMelee.DisplayName.ToString().Split(':').First(), thorsHammerMelee.Type, thorsHammerRanged.Type, thorsHammerMagic.Type);
+				RecipeGroup group = new(() => $"{any} " + thorsHammerMelee.DisplayName.ToString().Split(':').First(), thorsHammerMelee.Type, thorsHammerRanged.Type, thorsHammerMagic.Type);
 				RecipeGroup.RegisterGroup("ThorsHammers", group);
 			}
 
 			// Taken from the Thorium Mod
 			AnyCopperBarGroup = RecipeGroup.RegisterGroup("CopperBar", new RecipeGroup(()
-				=> RecipeGroupAnyText.Format([any, Lang.GetItemNameValue(ItemID.CopperBar)]), [ItemID.CopperBar, ItemID.TinBar]));
+				=> RecipeGroupAnyText.Format(any, Lang.GetItemNameValue(ItemID.CopperBar)), ItemID.CopperBar, ItemID.TinBar));
 
 			AnySilverBarGroup = RecipeGroup.RegisterGroup("SilverBar", new RecipeGroup(()
-				=> RecipeGroupAnyText.Format([any, Lang.GetItemNameValue(ItemID.CopperBar)]), [ItemID.SilverBar, ItemID.TungstenBar]));
+				=> RecipeGroupAnyText.Format(any, Lang.GetItemNameValue(ItemID.SilverBar)), ItemID.SilverBar, ItemID.TungstenBar));
 
 			AnyGoldBarGroup = RecipeGroup.RegisterGroup("GoldBar", new RecipeGroup(()
-				=> RecipeGroupAnyText.Format([any, Lang.GetItemNameValue(ItemID.CopperBar)]), [ItemID.GoldBar, ItemID.PlatinumBar]));
+				=> RecipeGroupAnyText.Format(any, Lang.GetItemNameValue(ItemID.GoldBar)), ItemID.GoldBar, ItemID.PlatinumBar));
 
 			AnyDemoniteBarGroup = RecipeGroup.RegisterGroup("DemoniteBar", new RecipeGroup(()
-				=> RecipeGroupAnyText.Format([any, Lang.GetItemNameValue(ItemID.CopperBar)]), [ItemID.DemoniteBar, ItemID.CrimtaneBar]));
+				=> RecipeGroupAnyText.Format(any, Lang.GetItemNameValue(ItemID.DemoniteBar)), ItemID.DemoniteBar, ItemID.CrimtaneBar));
 
 			AnyCobaltBarGroup = RecipeGroup.RegisterGroup("CobaltBar", new RecipeGroup(()
-				=> RecipeGroupAnyText.Format([any, Lang.GetItemNameValue(ItemID.CopperBar)]), [ItemID.CobaltBar, ItemID.PalladiumBar]));
+				=> RecipeGroupAnyText.Format(any, Lang.GetItemNameValue(ItemID.CobaltBar)), ItemID.CobaltBar, ItemID.PalladiumBar));
 
 			AnyMythrilBarGroup = RecipeGroup.RegisterGroup("MythrilBar", new RecipeGroup(()
-				=> RecipeGroupAnyText.Format([any, Lang.GetItemNameValue(ItemID.CopperBar)]), [ItemID.MythrilBar, ItemID.OrichalcumBar]));
+				=> RecipeGroupAnyText.Format(any, Lang.GetItemNameValue(ItemID.MythrilBar)), ItemID.MythrilBar, ItemID.OrichalcumBar));
 
 			AnyAdamantiteBarGroup = RecipeGroup.RegisterGroup("AdamantiteBar", new RecipeGroup(()
-				=> RecipeGroupAnyText.Format([any, Lang.GetItemNameValue(ItemID.CopperBar)]), [ItemID.AdamantiteBar, ItemID.TitaniumBar]));
+				=> RecipeGroupAnyText.Format(any, Lang.GetItemNameValue(ItemID.AdamantiteBar)), ItemID.AdamantiteBar, ItemID.TitaniumBar));
 		}
 
 		public override void PostAddRecipes()
@@ -84,17 +84,15 @@ namespace OrchidMod.Common.ModSystems
 
 			if (!ContentAlchemist || !ContentGambler || !ContentShapeshifter)
 			{
-				Recipe recipe;
-
 				for (int i = 0; i < Recipe.numRecipes; i++)
 				{
-					recipe = Main.recipe[i];
-					if (!ContentAlchemist && (recipe.createItem.ModItem is OrchidModAlchemistItem || recipe.createItem.ModItem is OrchidModAlchemistMisc || recipe.createItem.ModItem is OrchidModAlchemistEquipable))
+					Recipe recipe = Main.recipe[i];
+					if (!ContentAlchemist && recipe.createItem.ModItem is OrchidModAlchemistItem or OrchidModAlchemistMisc or OrchidModAlchemistEquipable)
 					{
 						recipe.DisableRecipe();
 					}
 
-					if (!ContentGambler && (recipe.createItem.ModItem is OrchidModGamblerEquipable || recipe.createItem.ModItem is OrchidModGamblerDie || recipe.createItem.ModItem is OrchidModGamblerChipItem || recipe.createItem.ModItem is GamblerDeck))
+					if (!ContentGambler && recipe.createItem.ModItem is OrchidModGamblerEquipable or OrchidModGamblerDie or OrchidModGamblerChipItem or GamblerDeck)
 					{
 						recipe.DisableRecipe();
 					}

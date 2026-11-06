@@ -11,6 +11,9 @@ namespace OrchidMod.Content.Shapeshifter
 	[ClassTag(ClassTags.Shapeshifter)]
 	public abstract class OrchidModShapeshifterItem : ModItem
 	{
+		/// <seealso cref="OrchidUtils.Shapeshifter(Player)"/>
+		public static OrchidShapeshifter Shapeshifter(Player player = null) => player.Shapeshifter();
+		
 		public bool IsLocalPlayer(Player player) => player.whoAmI == Main.myPlayer;
 
 		public virtual void SafeSetDefaults() { }
@@ -27,13 +30,13 @@ namespace OrchidMod.Content.Shapeshifter
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips)
 		{
-			TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
-			if (tt != null)
-			{
-				string[] splitText = tt.Text.Split(' ');
-				string damageValue = splitText.First();
-				tt.Text = damageValue + " " + Language.GetTextValue(ModContent.GetInstance<OrchidMod>().GetLocalizationKey("DamageClasses.ShapeshifterDamageClass.DisplayName"));
-			}
+			// TooltipLine tt = tooltips.FirstOrDefault(x => x.Name == "Damage" && x.Mod == "Terraria");
+			// if (tt != null)
+			// {
+			// 	string[] splitText = tt.Text.Split(' ');
+			// 	string damageValue = splitText.First();
+			// 	tt.Text = damageValue + " " + Language.GetTextValue(Mod.GetLocalizationKey("DamageClasses.ShapeshifterDamageClass.DisplayName"));
+			// }
 		}
 	}
 }

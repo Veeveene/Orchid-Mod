@@ -134,10 +134,10 @@ namespace OrchidMod.Content.Guardian.Weapons.Quarterstaves
 			Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, player.velocity, projType, 0, 0f, player.whoAmI);
 		}
 
-		public override bool PreDrawQuarterstaff(SpriteBatch spriteBatch, Projectile projectile, Player player, ref Color lightColor)
+		public override bool PreDrawQuarterstaff(SpriteBatch spriteBatch, Projectile projectile, Player player, ref Color lightColor, SpriteEffects effects)
 		{ // Hide Quarterstaff while counterattacking
 			if (IsCounterAttacking > 0) return false;
-			return base.PreDrawQuarterstaff(spriteBatch, projectile, player, ref lightColor);
+			return base.PreDrawQuarterstaff(spriteBatch, projectile, player, ref lightColor, effects);
 		}
 	}
 }

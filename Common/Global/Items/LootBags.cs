@@ -195,6 +195,18 @@ namespace OrchidMod.Common.Global.Items
 				QuickSpawnItem<ThoriumGraniteKatar>(player, 1, 3);
 				return;
 			}
+			
+			if (thoriumMod.IsItemTypeEquals("MartianSaucerBag", arg))
+			{
+				QuickSpawnItem<MartianWarhammer>(player, 1, 4);
+				return;
+			}
+			
+			if (thoriumMod.IsItemTypeEquals("BoreanBag", arg))
+			{
+				QuickSpawnItem<ThoriumBoreanStriderQuarterstaff>(player, 1, 3);
+				return;
+			}
 
 			// ThunderBirdBag JellyFishBag GraniteBag CountBag BeholderBag BoreanBag LichBag AbyssionBag
 
